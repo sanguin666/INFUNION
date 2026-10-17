@@ -250,7 +250,7 @@ export class SuperadminService {
       items.push({
         level: 'warn',
         title: `${row.name} · admin inactif`,
-        detail: row.last ? 'aucune connexion depuis plus de 30 jours' : 'aucune connexion enregistrée',
+        detail: row.last ? 'aucune connexion depuis plus de 30 jours' : 'pas encore de connexion enregistrée',
         poiId: row.id,
       });
     }

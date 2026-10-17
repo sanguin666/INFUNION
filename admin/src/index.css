@@ -1746,3 +1746,236 @@ label.link-button:focus-within {
     align-items: flex-start;
   }
 }
+
+/* ---------- Superadmin (Seb, 17 Oct 2026) ---------- */
+
+.sa-gate {
+  max-width: 440px;
+  margin: 48px auto;
+}
+
+.sa-gate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sa-code-input {
+  font-size: 28px !important;
+  letter-spacing: 0.3em;
+  font-variant-numeric: tabular-nums;
+}
+
+.sa-qr {
+  align-items: center;
+  text-align: center;
+}
+
+.sa-qr img {
+  width: 220px;
+  height: 220px;
+  image-rendering: pixelated;
+}
+
+.sa-secret {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  word-break: break-all;
+  color: var(--color-text);
+}
+
+.sa-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sa-heading h2 {
+  margin-bottom: 8px;
+}
+
+.sa-actions {
+  margin: 12px 0 8px;
+}
+
+.sa-gap {
+  margin-top: 12px;
+}
+
+.sa-hint {
+  font-size: 14px;
+}
+
+.sa-sub {
+  display: block;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.sa-nowrap {
+  white-space: nowrap;
+}
+
+.sa-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 15px;
+}
+
+.sa-notice {
+  color: var(--delta-up);
+  font-weight: 600;
+}
+
+.sa-failed {
+  color: var(--color-primary-strong);
+}
+
+/* State in words and colour, never a pill: a pill would be a box in the
+   white box. */
+.sa-status {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sa-status-paying {
+  color: var(--delta-up);
+}
+
+.sa-status-trial {
+  color: var(--color-primary-strong);
+}
+
+.sa-status-comped {
+  color: var(--color-text);
+}
+
+.sa-status-free,
+.sa-status-suspended {
+  color: var(--color-text-muted);
+}
+
+.sa-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  justify-self: center;
+}
+
+.sa-dot-ok {
+  background: var(--delta-up);
+}
+
+.sa-dot-warn {
+  background: var(--color-primary);
+}
+
+.sa-dot-alert {
+  background: var(--color-danger);
+}
+
+.sa-watch-row {
+  grid-template-columns: 24px 1fr auto;
+}
+
+.sa-warning {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sa-search {
+  margin-top: 8px;
+}
+
+.sa-table-card {
+  padding-top: 0;
+  padding-bottom: 4px;
+}
+
+.sa-table-scroll {
+  overflow-x: auto;
+}
+
+.sa-table {
+  font-size: 16px;
+  margin-top: 0;
+}
+
+.sa-table th {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  padding-top: 14px;
+}
+
+.sa-table td {
+  padding: 12px 8px;
+  vertical-align: top;
+}
+
+.sa-table tr:last-child td {
+  border-bottom: none;
+}
+
+.sa-row-link {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.sa-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.sa-reveal {
+  margin: 12px 0;
+}
+
+.sa-password {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 4px 0 8px;
+}
+
+.sa-delete-row {
+  align-items: flex-end;
+}
+
+.sa-inline-input {
+  display: block;
+  margin-top: 6px;
+  width: 100%;
+  max-width: 360px;
+  border: none;
+  background: transparent;
+  padding: 4px 0;
+  font-size: 19px;
+  color: var(--color-text);
+  outline: none;
+}
+
+.sa-inline-input::placeholder {
+  color: var(--color-placeholder);
+}
+
+/* The superadmin inside a community's own admin. */
+.sa-viewing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin: -8px 0 20px;
+  padding: 10px 0;
+  border-bottom: 2px solid var(--color-primary);
+  font-weight: 600;
+}
