@@ -7,6 +7,8 @@ import { LanguagePicker } from '../components/LanguagePicker';
 import { AppearancePicker } from '../components/AppearancePicker';
 import { PickerRow, PickerSheet, PinIcon } from '../components/PickerSheet';
 import { getActiveModules } from '../api/activeModules';
+import { getPoi } from '../api/pois';
+import { getSuperadminSession } from '../api/client';
 import type { ActiveModule, ModuleType } from '../api/types';
 import type { Translations } from '../i18n/translations';
 import type { DashboardContext } from './usePoiId';
@@ -56,9 +58,23 @@ export function DashboardLayout() {
 
   useEffect(refreshModules, [refreshModules]);
 
-  if (!user) return null;
+  // The superadmin opening a community it is not an admin of ("Ouvrir son
+  // admin"): its name comes from the public directory.
+  const memberPoi = user?.adminPois.find((p) => p.id === poiId);
+  const [visitedName, setVisitedName] = useState<{ poiId: string; name: string } | null>(null);
+  const visiting = !!user?.isSuperadmin && !!poiId && !memberPoi;
+  useEffect(() => {
+    if (!visiting || !poiId) return;
+    getPoi(poiId)
+      .then((poi) => setVisitedName({ poiId, name: poi.name }))
+      .catch(() => setVisitedName({ poiId, name: '' }));
+  }, [visiting, poiId]);
 
-  const currentPoi = user.adminPois.find((p) => p.id === poiId);
+  if (!user) return null;
+  if (visiting && !getSuperadminSession()) return <Navigate to={`/superadmin/communities/${poiId}`} replace />;
+
+  const currentPoi =
+    memberPoi ?? (visiting && visitedName?.poiId === poiId ? { id: poiId, name: visitedName.name } : undefined);
 
   function isLive(type: ModuleType) {
     return !!modules?.some((m) => m.moduleType === type && LIVE_STATUSES.has(m.status));
@@ -116,6 +132,15 @@ export function DashboardLayout() {
 
         <hr className="menu-divider" />
 
+        {user.isSuperadmin && (
+          <>
+            <nav>
+              <NavLink to={visiting ? `/superadmin/communities/${poiId}` : '/superadmin'}>Superadmin</NavLink>
+            </nav>
+            <hr className="menu-divider" />
+          </>
+        )}
+
         <nav>
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to}>
@@ -135,6 +160,12 @@ export function DashboardLayout() {
       </aside>
 
       <main className="main">
+        {visiting && (
+          <p className="sa-viewing" role="status">
+            <span>Vous voyez l’admin de {currentPoi?.name || 'cette communauté'} en tant que superadmin.</span>
+            <NavLink to={`/superadmin/communities/${poiId}`}>Revenir au superadmin</NavLink>
+          </p>
+        )}
         <Outlet context={{ poiId: poiId!, modules, refreshModules } satisfies DashboardContext} />
       </main>
     </div>

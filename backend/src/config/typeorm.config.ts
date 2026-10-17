@@ -23,6 +23,7 @@ import { DailyReading } from '../daily-readings/entities/daily-reading.entity.js
 import { PoiBadge } from '../poi-badges/entities/poi-badge.entity.js';
 import { PushToken } from '../notifications/entities/push-token.entity.js';
 import { EventReminder } from '../notifications/entities/event-reminder.entity.js';
+import { AuditLog } from '../superadmin/entities/audit-log.entity.js';
 
 // Every entity the app maps. Exported so the metadata check in
 // typeorm.config.spec.ts, and data-source.ts (which the TypeORM CLI loads
@@ -53,6 +54,7 @@ export const ENTITIES = [
   PoiBadge,
   PushToken,
   EventReminder,
+  AuditLog,
 ];
 
 export function buildTypeOrmConfig(

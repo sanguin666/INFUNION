@@ -62,6 +62,35 @@ export class User {
   @Column({ type: 'enum', enum: Language, default: Language.EN })
   language!: Language;
 
+  // ANSAE's own superadmin (Seb, 17 Oct 2026). Never set from the API:
+  // SuperadminBootstrap writes it on boot for the one address named by
+  // SUPERADMIN_EMAIL and clears it everywhere else, and every superadmin
+  // check also compares the email against that variable.
+  @Column({ name: 'is_superadmin', default: false })
+  isSuperadmin!: boolean;
+
+  // The superadmin's authenticator app secret, encrypted (see
+  // superadmin/secret-box.ts). The pending one is the secret being set up,
+  // kept apart until a first code proves the phone has it.
+  @Column({ name: 'totp_secret', type: 'text', nullable: true, select: false })
+  totpSecret?: string | null;
+
+  @Column({ name: 'totp_pending_secret', type: 'text', nullable: true, select: false })
+  totpPendingSecret?: string | null;
+
+  // The 30-second step of the last code accepted, so a code is good once.
+  @Column({ name: 'totp_last_step', type: 'bigint', nullable: true, select: false })
+  totpLastStep?: string | null;
+
+  // Last time this account used the API, written at most once an hour
+  // (JwtAuthGuard). Feeds "members active over 30 days" in the superadmin.
+  @Column({ name: 'last_seen_at', type: 'timestamptz', nullable: true })
+  lastSeenAt?: Date | null;
+
+  // Last successful email + password sign-in (admins only).
+  @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
+  lastLoginAt?: Date | null;
+
   @OneToMany(() => UserPoi, (membership) => membership.user)
   pois!: Relation<UserPoi>[];
 

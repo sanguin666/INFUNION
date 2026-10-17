@@ -282,6 +282,20 @@ The app and admin dashboard UI (menus, buttons, labels, error messages — every
 
 The admin dashboard (`admin/`) uses a real email + password login (`POST /auth/login`, JWT), separate from the congregant app's phone login below. A `PoiAdminGuard` (`backend/src/auth/guards`) checks the caller has an `admin` `user_pois` row for the `:poiId` in the URL before allowing an admin-only action — see `backend/src/auth` for the guard and `backend/src/user-pois/user-pois.service.ts` for the membership lookups it uses.
 
+## Superadmin
+
+ANSAE's own section of the admin (Seb, 17 Oct 2026): the whole app's figures (revenue of the month, members, donations), every community (create, edit, admins, modules, offering a module, suspending, deleting), every account, server health and a Journal of who did what.
+
+How it is locked:
+
+- **One account, named by the server.** `SUPERADMIN_EMAIL` on the backend is the superadmin. On every boot `SuperadminBootstrap` flags that account and unflags any other; nothing in the API can set the flag, and every check also compares the email to the variable, so the database alone can't make someone superadmin.
+- **First sign-in.** If the account doesn't exist, it is created with `SUPERADMIN_INITIAL_PASSWORD` (12 characters or more). Remove that variable once signed in and the password changed (Santé technique shows a warning while it is set).
+- **Password, then a six-digit code.** After the ordinary sign-in, the admin asks for a code from an authenticator app (Google Authenticator, 1Password...). Setting up the app asks for the password again. The code buys a separate superadmin token (`aud: ansae-superadmin`) good for one hour, kept in the browser tab's session storage only. Ordinary tokens never pass `SuperadminGuard`. Each code works once.
+- **Lost phone.** Set `SUPERADMIN_RESET_2FA=yes`, restart, set the app up again, then remove the variable.
+- **Guessing.** Five wrong passwords on an admin address, or five wrong superadmin codes, lock it for 15 minutes.
+- **Seeing a community's admin.** `PoiAdminGuard` lets the superadmin in only with a superadmin token, and every change made that way goes in the Journal (`audit_log`), as do admin sign-ins, failed ones included.
+- The authenticator secret is stored encrypted (AES-256-GCM, key from `SUPERADMIN_SECRET_KEY` or else `JWT_SECRET`). Superadmin answers carry `Cache-Control: no-store`.
+
 ## Who can call what
 
 Every write route is behind something now. The rules, in one place:
@@ -291,7 +305,7 @@ Every write route is behind something now. The rules, in one place:
 | `GET` on places, events, announcements, prayer requests, community, livestreams, page blocks | anyone |
 | `POST` a prayer request, a "praying" tap, a community post or reply | any signed-in congregant |
 | `POST` an announcement | an admin of that place — an announcement is the community speaking |
-| `POST /pois` (create a place) | any signed-in user, who becomes that place's first admin |
+| creating a community (`POST /superadmin/pois`) and everything else under `/superadmin` | the superadmin only, with a superadmin token (see below) |
 | `PATCH`/`DELETE` a place, its modules, its settings, its page, and all moderation | an admin of *that* place (`PoiAdminGuard`) |
 | anything under `/users/:id` or `/users/:userId/pois` | that user, and only that user (`SelfGuard`) |
 | `POST` a donation, and the Stripe webhook | anyone (a gift doesn't need an account; the webhook verifies Stripe's signature) |
