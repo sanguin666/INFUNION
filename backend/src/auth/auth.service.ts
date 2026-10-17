@@ -1,4 +1,5 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import type { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service.js';
@@ -7,6 +8,11 @@ import { PoisService } from '../pois/pois.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { JoinPoiDto } from '../user-pois/dto/join-poi.dto.js';
 import type { Language } from '../common/enums/language.enum.js';
+import { LoginThrottle } from './login-throttle.js';
+import { SuperadminAccess } from './superadmin-access.service.js';
+
+// Five wrong passwords for one address in 15 minutes locks it for 15.
+const adminLoginThrottle = new LoginThrottle(5, 15 * 60_000, 15 * 60_000);
 
 @Injectable()
 export class AuthService {
@@ -15,13 +21,27 @@ export class AuthService {
     private readonly userPoisService: UserPoisService,
     private readonly poisService: PoisService,
     private readonly jwtService: JwtService,
+    private readonly superadminAccess: SuperadminAccess,
   ) {}
 
-  async login(dto: LoginDto): Promise<{ accessToken: string }> {
+  async login(dto: LoginDto, request?: Request): Promise<{ accessToken: string }> {
+    const key = dto.email.trim().toLowerCase();
+    if (adminLoginThrottle.lockedFor(key) > 0) {
+      throw new HttpException('Too many attempts. Try again in 15 minutes.', HttpStatus.TOO_MANY_REQUESTS);
+    }
     const user = await this.usersService.findByEmailForLogin(dto.email);
     if (!user?.passwordHash || !(await bcrypt.compare(dto.password, user.passwordHash))) {
+      adminLoginThrottle.fail(key);
+      await this.superadminAccess.record({
+        action: 'admin.login.failed',
+        actorEmail: key,
+        request,
+      });
       throw new UnauthorizedException('Invalid email or password');
     }
+    adminLoginThrottle.succeed(key);
+    await this.usersService.markLoggedIn(user.id);
+    await this.superadminAccess.record({ action: 'admin.login', actorId: user.id, actorEmail: key, request });
     const accessToken = await this.jwtService.signAsync({ sub: user.id });
     return { accessToken };
   }
@@ -45,6 +65,8 @@ export class AuthService {
       // deleted, so the app treats it as a preference, not a guarantee.
       lastActivePoiId: user.lastActivePoiId,
       language: user.language,
+      // Shows the Superadmin menu; every superadmin route checks again.
+      isSuperadmin: (await this.superadminAccess.identify(userId)) !== null,
       adminPois,
       // Every place this person belongs to, admin or not — the app's "my
       // places" list, which used to be device-local only.

@@ -52,6 +52,8 @@ export type BillingModule = {
   trialEndsAt?: Date | null;
   paidUntil?: Date | null;
   cancelAtPeriodEnd: boolean;
+  // Given by ANSAE: never billed, never paused.
+  offered?: boolean;
 };
 
 export type InvoiceDraft = {
@@ -122,7 +124,7 @@ export function settle(poi: BillingPoi, modules: BillingModule[], now: Date): In
     const next = addInterval(at, poi.billingInterval);
     const lines: InvoiceDraft['lines'] = [];
     for (const module of modules) {
-      if (module.status !== ModuleStatus.ACTIVE || isFree(module.moduleType)) continue;
+      if (module.status !== ModuleStatus.ACTIVE || isFree(module.moduleType) || module.offered) continue;
       if (!module.paidUntil || module.paidUntil > at) continue;
       if (module.cancelAtPeriodEnd) {
         module.status = ModuleStatus.CANCELLED;

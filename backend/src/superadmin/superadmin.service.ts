@@ -1,0 +1,590 @@
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, ILike, In, LessThan, Repository } from 'typeorm';
+import { randomInt, randomUUID } from 'node:crypto';
+import * as bcrypt from 'bcryptjs';
+import type { Request } from 'express';
+import { Poi } from '../pois/entities/poi.entity.js';
+import { User } from '../users/entities/user.entity.js';
+import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
+import { ActiveModule } from '../active-modules/entities/active-module.entity.js';
+import { BillingInvoice } from '../active-modules/entities/billing-invoice.entity.js';
+import { PushToken } from '../notifications/entities/push-token.entity.js';
+import { AuditLog } from './entities/audit-log.entity.js';
+import { ModuleBillingService } from '../active-modules/module-billing.service.js';
+import { MemberRole } from '../common/enums/member-role.enum.js';
+import { ModuleType } from '../common/enums/module-type.enum.js';
+import { ModuleStatus } from '../common/enums/module-status.enum.js';
+import { BillingInterval } from '../common/enums/billing-interval.enum.js';
+import { PRICES, isFree } from '../active-modules/billing-rules.js';
+import { SuperadminAccess, type SuperadminIdentity } from '../auth/superadmin-access.service.js';
+import { ErrorTracker } from './error-tracker.js';
+import type { CreateCommunityDto, UpdateCommunityDto } from './dto/superadmin.dto.js';
+
+const DAY = 24 * 60 * 60 * 1000;
+const LIVE = [ModuleStatus.TRIAL, ModuleStatus.ACTIVE];
+const bootedAt = new Date();
+
+function monthStart(date: Date, offset = 0): Date {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + offset, 1));
+}
+
+function money(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+/**
+ * A password a person can read out over the phone: no 0/O, 1/l/I.
+ * 15 characters from 54 is about 86 bits.
+ */
+export function temporaryPassword(): string {
+  const alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const groups: string[] = [];
+  for (let g = 0; g < 3; g++) {
+    let group = '';
+    for (let i = 0; i < 5; i++) group += alphabet[randomInt(alphabet.length)];
+    groups.push(group);
+  }
+  return groups.join('-');
+}
+
+type Actor = { identity: SuperadminIdentity; request: Request };
+
+/**
+ * Everything the superadmin section reads and changes (Seb, 17 Oct 2026):
+ * the whole app's figures, every community, every account. Every change
+ * goes in the Journal with who, when and from where.
+ */
+@Injectable()
+export class SuperadminService {
+  constructor(
+    private readonly data: DataSource,
+    private readonly config: ConfigService,
+    private readonly access: SuperadminAccess,
+    private readonly billing: ModuleBillingService,
+    private readonly errors: ErrorTracker,
+    @InjectRepository(Poi) private readonly pois: Repository<Poi>,
+    @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(UserPoi) private readonly memberships: Repository<UserPoi>,
+    @InjectRepository(ActiveModule) private readonly modules: Repository<ActiveModule>,
+    @InjectRepository(BillingInvoice) private readonly invoices: Repository<BillingInvoice>,
+    @InjectRepository(PushToken) private readonly pushTokens: Repository<PushToken>,
+    @InjectRepository(AuditLog) private readonly audit: Repository<AuditLog>,
+  ) {}
+
+  private log(actor: Actor, action: string, poi?: Pick<Poi, 'id' | 'name'> | null, details: Record<string, unknown> = {}) {
+    return this.access.record({
+      action: `superadmin.${action}`,
+      actorId: actor.identity.userId,
+      actorEmail: actor.identity.email,
+      poiId: poi?.id ?? null,
+      poiName: poi?.name ?? null,
+      details,
+      request: actor.request,
+    });
+  }
+
+  private async findPoi(poiId: string): Promise<Poi> {
+    const poi = await this.pois.findOne({ where: { id: poiId } });
+    if (!poi) throw new NotFoundException('Unknown community');
+    return poi;
+  }
+
+  /** Lazily settled billing, brought up to date for every community. */
+  private async settleAll(): Promise<void> {
+    const all = await this.pois.find({ select: { id: true } });
+    for (const poi of all) await this.billing.settle(poi.id);
+  }
+
+  // ---------------------------------------------------------------- overview
+
+  async overview() {
+    await this.settleAll();
+    const now = new Date();
+    const thisMonth = monthStart(now);
+    const lastMonth = monthStart(now, -1);
+    const firstMonth = monthStart(now, -11);
+
+    const revenueRows: { month: Date; total: string }[] = await this.data.query(
+      `SELECT date_trunc('month', issued_at AT TIME ZONE 'UTC') AS month, SUM(amount) AS total
+         FROM billing_invoices WHERE issued_at >= $1 GROUP BY 1`,
+      [firstMonth],
+    );
+    const revenueByMonth = Array.from({ length: 12 }, (_, i) => {
+      const start = monthStart(now, i - 11);
+      const row = revenueRows.find((r) => new Date(r.month).getTime() === start.getTime());
+      return { month: start.toISOString().slice(0, 7), total: money(Number(row?.total ?? 0)) };
+    });
+    const revenueThisMonth = revenueByMonth[11].total;
+    const revenueLastMonth = revenueByMonth[10].total;
+
+    const pois = await this.pois.find();
+    const modules = await this.modules.find({ relations: { poi: true } });
+    const live = modules.filter((m) => LIVE.includes(m.status));
+    let monthlyRecurring = 0;
+    let paidModules = 0;
+    let trialModules = 0;
+    let offeredModules = 0;
+    const paying = new Set<string>();
+    for (const module of live) {
+      if (module.offered) offeredModules += 1;
+      if (module.poi.billingComped || module.offered || isFree(module.moduleType)) continue;
+      if (module.status === ModuleStatus.TRIAL) {
+        trialModules += 1;
+        continue;
+      }
+      paidModules += 1;
+      paying.add(module.poi.id);
+      if (!module.cancelAtPeriodEnd) {
+        monthlyRecurring +=
+          module.poi.billingInterval === BillingInterval.YEARLY
+            ? PRICES[BillingInterval.YEARLY] / 12
+            : PRICES[BillingInterval.MONTHLY];
+      }
+    }
+
+    const [members] = await this.data.query(
+      `SELECT COUNT(DISTINCT user_id)::int AS total,
+              COUNT(*) FILTER (WHERE joined_at >= $1)::int AS new_this_month
+         FROM user_pois WHERE role = 'member'`,
+      [thisMonth],
+    );
+    const [active] = await this.data.query(
+      `SELECT COUNT(*)::int AS total FROM users u
+        WHERE u.last_seen_at >= $1 AND EXISTS (SELECT 1 FROM user_pois m WHERE m.user_id = u.id)`,
+      [new Date(now.getTime() - 30 * DAY)],
+    );
+    const [gifts] = await this.data.query(
+      `SELECT COALESCE(SUM(amount), 0) AS total, COUNT(*)::int AS count
+         FROM donations WHERE status = 'completed' AND created_at >= $1`,
+      [thisMonth],
+    );
+    const [requests] = await this.data.query(
+      `SELECT COUNT(*)::int AS open,
+              COUNT(*) FILTER (WHERE status = 'received' AND created_at < $1)::int AS waiting
+         FROM service_requests WHERE status IN ('received', 'in_progress', 'appointment_set')`,
+      [new Date(now.getTime() - 7 * DAY)],
+    );
+
+    return {
+      generatedAt: now.toISOString(),
+      environment: this.environment(),
+      revenue: {
+        thisMonth: revenueThisMonth,
+        lastMonth: revenueLastMonth,
+        byMonth: revenueByMonth,
+        monthlyRecurring: money(monthlyRecurring),
+        paidModules,
+        trialModules,
+        trialPotential: trialModules * PRICES[BillingInterval.MONTHLY],
+        offeredModules,
+        // Nothing is charged yet (no payment provider): what would be.
+        demo: true,
+      },
+      communities: {
+        total: pois.length,
+        comped: pois.filter((p) => p.billingComped).length,
+        paying: paying.size,
+        suspended: pois.filter((p) => p.suspendedAt).length,
+        newThisMonth: pois.filter((p) => p.createdAt >= thisMonth).length,
+      },
+      members: {
+        total: members.total as number,
+        newThisMonth: members.new_this_month as number,
+        active30Days: active.total as number,
+      },
+      donations: { thisMonth: money(Number(gifts.total)), count: gifts.count as number },
+      requests: { open: requests.open as number, waitingOverAWeek: requests.waiting as number },
+      lastMonthStart: lastMonth.toISOString(),
+      watch: await this.watchList(now, pois, live),
+    };
+  }
+
+  private async watchList(now: Date, pois: Poi[], live: ActiveModule[]) {
+    const items: { level: 'warn' | 'alert' | 'ok'; title: string; detail: string; poiId?: string }[] = [];
+    const soon = new Date(now.getTime() + 7 * DAY);
+    for (const module of live) {
+      if (module.status !== ModuleStatus.TRIAL || !module.trialEndsAt || module.trialEndsAt > soon) continue;
+      if (module.poi.billingComped || module.poi.paymentMethodLabel) continue;
+      const days = Math.max(0, Math.ceil((module.trialEndsAt.getTime() - now.getTime()) / DAY));
+      items.push({
+        level: 'warn',
+        title: `${module.poi.name} · essai ${module.moduleType}`,
+        detail: `se termine dans ${days} jour${days > 1 ? 's' : ''}, pas de moyen de paiement`,
+        poiId: module.poi.id,
+      });
+    }
+    const waiting: { poi_id: string; name: string; count: number; oldest: Date }[] = await this.data.query(
+      `SELECT r.poi_id, p.name, COUNT(*)::int AS count, MIN(r.created_at) AS oldest
+         FROM service_requests r JOIN pois p ON p.id = r.poi_id
+        WHERE r.status = 'received' AND r.created_at < $1
+        GROUP BY r.poi_id, p.name`,
+      [new Date(now.getTime() - 7 * DAY)],
+    );
+    for (const row of waiting) {
+      const days = Math.floor((now.getTime() - new Date(row.oldest).getTime()) / DAY);
+      items.push({
+        level: 'alert',
+        title: `${row.name} · ${row.count} demande${row.count > 1 ? 's' : ''} sans réponse`,
+        detail: `la plus ancienne a ${days} jours`,
+        poiId: row.poi_id,
+      });
+    }
+    const quiet: { id: string; name: string; last: Date | null }[] = await this.data.query(
+      `SELECT p.id, p.name, MAX(u.last_login_at) AS last
+         FROM pois p
+         LEFT JOIN user_pois m ON m.poi_id = p.id AND m.role = 'admin'
+         LEFT JOIN users u ON u.id = m.user_id
+        WHERE p.suspended_at IS NULL
+        GROUP BY p.id, p.name
+       HAVING MAX(u.last_login_at) IS NULL OR MAX(u.last_login_at) < $1`,
+      [new Date(now.getTime() - 30 * DAY)],
+    );
+    for (const row of quiet) {
+      items.push({
+        level: 'warn',
+        title: `${row.name} · admin inactif`,
+        detail: row.last ? 'aucune connexion depuis plus de 30 jours' : 'aucune connexion enregistrée',
+        poiId: row.id,
+      });
+    }
+    for (const poi of pois.filter((p) => p.suspendedAt)) {
+      items.push({ level: 'warn', title: `${poi.name} · suspendue`, detail: 'depuis le ' + poi.suspendedAt!.toISOString().slice(0, 10), poiId: poi.id });
+    }
+    if (this.demoLoginOn() && this.isProduction()) {
+      items.push({
+        level: 'alert',
+        title: 'Connexion démo active en production',
+        detail: "n'importe qui peut entrer avec n'importe quel numéro",
+      });
+    }
+    const errors = this.errors.countSince(new Date(now.getTime() - DAY));
+    items.push(
+      errors
+        ? { level: 'alert', title: `${errors} erreur${errors > 1 ? 's' : ''} serveur sur 24 h`, detail: 'voir Santé technique' }
+        : { level: 'ok', title: 'Serveur en ligne · 0 erreur sur 24 h', detail: `démarré le ${bootedAt.toISOString().slice(0, 16).replace('T', ' ')} UTC` },
+    );
+    return items;
+  }
+
+  // ------------------------------------------------------------- communities
+
+  async listCommunities() {
+    const pois = await this.pois.find({ order: { name: 'ASC' } });
+    if (!pois.length) return [];
+    await this.settleAll();
+    const ids = pois.map((p) => p.id);
+    const counts: { poi_id: string; members: number; admins: number; last_login: Date | null }[] = await this.data.query(
+      `SELECT m.poi_id,
+              COUNT(*) FILTER (WHERE m.role = 'member')::int AS members,
+              COUNT(*) FILTER (WHERE m.role = 'admin')::int AS admins,
+              MAX(u.last_login_at) FILTER (WHERE m.role = 'admin') AS last_login
+         FROM user_pois m JOIN users u ON u.id = m.user_id
+        WHERE m.poi_id = ANY($1) GROUP BY m.poi_id`,
+      [ids],
+    );
+    const modules = await this.modules.find({ where: { poi: { id: In(ids) } }, relations: { poi: true } });
+    return pois.map((poi) => {
+      const row = counts.find((c) => c.poi_id === poi.id);
+      const mine = modules.filter((m) => m.poi.id === poi.id && LIVE.includes(m.status));
+      const trials = mine.filter((m) => m.status === ModuleStatus.TRIAL && !poi.billingComped);
+      const paid = mine.filter((m) => m.status === ModuleStatus.ACTIVE && !m.offered && !isFree(m.moduleType) && !poi.billingComped);
+      const billing = poi.suspendedAt
+        ? 'suspended'
+        : poi.billingComped
+          ? 'comped'
+          : paid.length
+            ? 'paying'
+            : trials.length
+              ? 'trial'
+              : 'free';
+      const nextTrialEnd = trials
+        .map((m) => m.trialEndsAt)
+        .filter((d): d is Date => !!d)
+        .sort((a, b) => a.getTime() - b.getTime())[0];
+      return {
+        id: poi.id,
+        name: poi.name,
+        city: poi.city ?? null,
+        postalCode: poi.postalCode ?? null,
+        language: poi.language,
+        createdAt: poi.createdAt,
+        suspendedAt: poi.suspendedAt ?? null,
+        billing,
+        members: row?.members ?? 0,
+        admins: row?.admins ?? 0,
+        lastAdminLoginAt: row?.last_login ?? null,
+        liveModules: mine.length,
+        totalModules: Object.values(ModuleType).length,
+        paidModules: paid.length,
+        offeredModules: mine.filter((m) => m.offered).length,
+        nextTrialEnd: nextTrialEnd ?? null,
+        monthly: money(
+          paid.length *
+            (poi.billingInterval === BillingInterval.YEARLY ? PRICES[BillingInterval.YEARLY] / 12 : PRICES[BillingInterval.MONTHLY]),
+        ),
+      };
+    });
+  }
+
+  async community(poiId: string) {
+    const poi = await this.findPoi(poiId);
+    const billing = await this.billing.summary(poiId);
+    const admins = await this.memberships.find({
+      where: { poi: { id: poiId }, role: MemberRole.ADMIN },
+      relations: { user: true },
+    });
+    const memberCount = await this.memberships.count({ where: { poi: { id: poiId }, role: MemberRole.MEMBER } });
+    return {
+      poi: {
+        id: poi.id,
+        name: poi.name,
+        type: poi.type,
+        language: poi.language,
+        address: poi.address ?? null,
+        city: poi.city ?? null,
+        postalCode: poi.postalCode ?? null,
+        qrCodeToken: poi.qrCodeToken,
+        createdAt: poi.createdAt,
+        suspendedAt: poi.suspendedAt ?? null,
+      },
+      memberCount,
+      admins: admins.map((m) => ({
+        id: m.user.id,
+        email: m.user.email ?? null,
+        firstName: m.user.firstName ?? null,
+        lastName: m.user.lastName ?? null,
+        lastLoginAt: m.user.lastLoginAt ?? null,
+      })),
+      billing,
+      allModules: Object.values(ModuleType),
+    };
+  }
+
+  async createCommunity(actor: Actor, dto: CreateCommunityDto) {
+    const { adminEmail, adminFirstName, billingComped, ...fields } = dto;
+    const poi = await this.pois.save(
+      this.pois.create({ ...fields, name: fields.name.trim(), billingComped: !!billingComped, qrCodeToken: randomUUID() }),
+    );
+    // Événements is free and on everywhere, as on the demo communities.
+    await this.billing.start(poi.id, ModuleType.EVENTS);
+    const admin = await this.grantAdmin(poi, adminEmail, adminFirstName);
+    await this.log(actor, 'poi.create', poi, { adminEmail: admin.email, comped: !!billingComped });
+    return { poi: { id: poi.id, name: poi.name }, admin };
+  }
+
+  async updateCommunity(actor: Actor, poiId: string, dto: UpdateCommunityDto) {
+    const poi = await this.findPoi(poiId);
+    const changed = Object.keys(dto).filter((key) => (dto as Record<string, unknown>)[key] !== undefined);
+    if (dto.name !== undefined) dto.name = dto.name.trim();
+    Object.assign(poi, dto);
+    await this.pois.save(poi);
+    if (dto.billingComped === false) await this.billing.settle(poiId);
+    await this.log(actor, 'poi.update', poi, { fields: changed });
+    return this.community(poiId);
+  }
+
+  async setSuspended(actor: Actor, poiId: string, suspended: boolean) {
+    const poi = await this.findPoi(poiId);
+    poi.suspendedAt = suspended ? new Date() : null;
+    await this.pois.save(poi);
+    await this.log(actor, suspended ? 'poi.suspend' : 'poi.unsuspend', poi);
+    return this.community(poiId);
+  }
+
+  async deleteCommunity(actor: Actor, poiId: string, confirmName: string) {
+    const poi = await this.findPoi(poiId);
+    if (confirmName.trim() !== poi.name.trim()) throw new BadRequestException('name_mismatch');
+    const members = await this.memberships.count({ where: { poi: { id: poiId } } });
+    await this.pois.remove(poi);
+    await this.log(actor, 'poi.delete', { id: poiId, name: poi.name }, { memberships: members });
+  }
+
+  async moduleAction(actor: Actor, poiId: string, type: ModuleType, action: 'start' | 'stop' | 'offer' | 'unoffer' | 'extend-trial') {
+    const poi = await this.findPoi(poiId);
+    if (action === 'start') await this.billing.start(poiId, type);
+    else if (action === 'stop') await this.billing.stop(poiId, type);
+    else if (action === 'offer') await this.billing.offer(poiId, type);
+    else if (action === 'unoffer') await this.billing.unoffer(poiId, type);
+    else await this.billing.extendTrial(poiId, type);
+    await this.log(actor, `module.${action}`, poi, { module: type });
+    return this.community(poiId);
+  }
+
+  // ------------------------------------------------------------------ admins
+
+  /**
+   * Makes `email` an admin of `poi`, creating the account if needed. The
+   * temporary password is returned once, here, and never stored in clear.
+   */
+  private async grantAdmin(poi: Poi, rawEmail: string, firstName?: string) {
+    const email = rawEmail.trim().toLowerCase();
+    let user = await this.users.createQueryBuilder('u').where('lower(u.email) = :email', { email }).getOne();
+    let password: string | null = null;
+    if (!user) {
+      password = temporaryPassword();
+      user = await this.users.save(
+        this.users.create({ email, firstName: firstName?.trim() || undefined, passwordHash: await bcrypt.hash(password, 12) }),
+      );
+    }
+    if (user.isSuperadmin) throw new BadRequestException('superadmin_cannot_be_admin');
+    const existing = await this.memberships.findOne({ where: { user: { id: user.id }, poi: { id: poi.id } } });
+    if (existing) {
+      if (existing.role === MemberRole.ADMIN) throw new ConflictException('already_admin');
+      existing.role = MemberRole.ADMIN;
+      await this.memberships.save(existing);
+    } else {
+      await this.memberships.save(this.memberships.create({ user: { id: user.id }, poi: { id: poi.id }, role: MemberRole.ADMIN }));
+    }
+    return { userId: user.id, email, temporaryPassword: password };
+  }
+
+  async addAdmin(actor: Actor, poiId: string, email: string, firstName?: string) {
+    const poi = await this.findPoi(poiId);
+    const admin = await this.grantAdmin(poi, email, firstName);
+    await this.log(actor, 'admin.add', poi, { email: admin.email, newAccount: !!admin.temporaryPassword });
+    return { admin, community: await this.community(poiId) };
+  }
+
+  private async adminMembership(poiId: string, userId: string) {
+    const membership = await this.memberships.findOne({
+      where: { poi: { id: poiId }, user: { id: userId }, role: MemberRole.ADMIN },
+      relations: { user: true, poi: true },
+    });
+    if (!membership) throw new NotFoundException('Not an admin of this community');
+    return membership;
+  }
+
+  async removeAdmin(actor: Actor, poiId: string, userId: string) {
+    const membership = await this.adminMembership(poiId, userId);
+    await this.memberships.remove(membership);
+    await this.log(actor, 'admin.remove', membership.poi, { email: membership.user.email });
+    return this.community(poiId);
+  }
+
+  async resetAdminPassword(actor: Actor, poiId: string, userId: string) {
+    const membership = await this.adminMembership(poiId, userId);
+    if (membership.user.isSuperadmin) throw new BadRequestException('Not allowed');
+    const password = temporaryPassword();
+    await this.users.update(userId, { passwordHash: await bcrypt.hash(password, 12) });
+    await this.log(actor, 'admin.password_reset', membership.poi, { email: membership.user.email });
+    return { email: membership.user.email, temporaryPassword: password };
+  }
+
+  // ------------------------------------------------------------------- users
+
+  async searchUsers(query: string) {
+    const q = query.trim();
+    if (q.length < 2) return [];
+    const like = `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+    const users = await this.users.find({
+      where: [{ email: ILike(like) }, { phone: ILike(like) }, { firstName: ILike(like) }, { lastName: ILike(like) }],
+      order: { createdAt: 'DESC' },
+      take: 50,
+    });
+    return Promise.all(users.map((user) => this.describeUser(user)));
+  }
+
+  async user(userId: string) {
+    const user = await this.users.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Unknown account');
+    return this.describeUser(user);
+  }
+
+  private async describeUser(user: User) {
+    const memberships = await this.memberships.find({ where: { user: { id: user.id } }, relations: { poi: true } });
+    return {
+      id: user.id,
+      email: user.email ?? null,
+      phone: user.phone ?? null,
+      firstName: user.firstName ?? null,
+      lastName: user.lastName ?? null,
+      language: user.language,
+      createdAt: user.createdAt,
+      lastSeenAt: user.lastSeenAt ?? null,
+      lastLoginAt: user.lastLoginAt ?? null,
+      isSuperadmin: user.isSuperadmin,
+      communities: memberships.map((m) => ({ id: m.poi.id, name: m.poi.name, role: m.role, joinedAt: m.joinedAt })),
+    };
+  }
+
+  /** On request (GDPR): the account and what is only theirs goes. */
+  async deleteUser(actor: Actor, userId: string) {
+    const user = await this.users.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Unknown account');
+    if (user.isSuperadmin || user.id === actor.identity.userId) throw new BadRequestException('Not allowed');
+    await this.users.remove(user);
+    await this.log(actor, 'user.delete', null, { userId, name: [user.firstName, user.lastName].filter(Boolean).join(' ') || null });
+  }
+
+  // ------------------------------------------------------------------ health
+
+  private isProduction(): boolean {
+    return this.config.get<string>('NODE_ENV', 'development') === 'production';
+  }
+
+  private demoLoginOn(): boolean {
+    // Mirrors PhoneAuthService.demoLoginEnabled with no SMS sender wired.
+    return (
+      this.config.get<string>('DEMO_LOGIN') !== 'off' &&
+      (!this.isProduction() || this.config.get<string>('DEMO_LOGIN') === 'on')
+    );
+  }
+
+  private environment(): string {
+    return this.config.get<string>('RAILWAY_ENVIRONMENT_NAME') || this.config.get<string>('NODE_ENV', 'development');
+  }
+
+  async health() {
+    const started = Date.now();
+    await this.data.query('SELECT 1');
+    const dbLatencyMs = Date.now() - started;
+    const [size] = await this.data.query('SELECT pg_database_size(current_database())::bigint AS bytes');
+    const now = new Date();
+    const warnings: string[] = [];
+    if (this.demoLoginOn() && this.isProduction()) warnings.push('La connexion démo est active en production (DEMO_LOGIN=on).');
+    if (this.config.get<string>('SUPERADMIN_INITIAL_PASSWORD')) {
+      warnings.push('SUPERADMIN_INITIAL_PASSWORD est encore défini sur le serveur : à retirer une fois le mot de passe changé.');
+    }
+    if (this.config.get<string>('SUPERADMIN_RESET_2FA')) warnings.push('SUPERADMIN_RESET_2FA est encore défini : à retirer.');
+    if (this.isProduction() && !this.config.get<string>('CORS_ORIGINS')) warnings.push('CORS_ORIGINS n’est pas défini.');
+    return {
+      environment: this.environment(),
+      nodeEnv: this.config.get<string>('NODE_ENV', 'development'),
+      version: (this.config.get<string>('RAILWAY_GIT_COMMIT_SHA') ?? '').slice(0, 7) || null,
+      branch: this.config.get<string>('RAILWAY_GIT_BRANCH') ?? null,
+      startedAt: bootedAt.toISOString(),
+      uptimeSeconds: Math.round((now.getTime() - bootedAt.getTime()) / 1000),
+      memoryMb: Math.round(process.memoryUsage().rss / 1024 / 1024),
+      database: { ok: true, latencyMs: dbLatencyMs, sizeMb: Math.round(Number(size.bytes) / 1024 / 1024) },
+      errors24h: this.errors.countSince(new Date(now.getTime() - DAY)),
+      recentErrors: this.errors.recent(20),
+      push: {
+        enabled: this.config.get<string>('PUSH_NOTIFICATIONS', 'on') !== 'off',
+        devices: await this.pushTokens.count(),
+      },
+      demoLogin: this.demoLoginOn(),
+      stripe: !!this.config.get<string>('STRIPE_SECRET_KEY'),
+      warnings,
+    };
+  }
+
+  // ------------------------------------------------------------------- audit
+
+  journal(before?: string, action?: string) {
+    const where: Record<string, unknown> = {};
+    if (before) {
+      const date = new Date(before);
+      if (Number.isNaN(date.getTime())) throw new BadRequestException('Bad date');
+      where.createdAt = LessThan(date);
+    }
+    if (action) where.action = ILike(`${action.replace(/[\\%_]/g, (c) => `\\${c}`)}%`);
+    return this.audit.find({ where, order: { createdAt: 'DESC' }, take: 100 });
+  }
+}

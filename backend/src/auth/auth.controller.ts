@@ -14,6 +14,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import type { Request } from 'express';
 import { JoinPoiDto } from '../user-pois/dto/join-poi.dto.js';
 import { AuthService } from './auth.service.js';
 import { PhoneAuthService } from './phone-auth.service.js';
@@ -41,8 +42,8 @@ export class AuthController {
 
   // Email + password, used by the admin dashboard only.
   @Post('login')
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  login(@Body() dto: LoginDto, @Req() request: Request) {
+    return this.authService.login(dto, request);
   }
 
   // The congregant app's login: a code by SMS, no password to remember.
