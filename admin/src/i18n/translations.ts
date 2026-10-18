@@ -370,6 +370,7 @@ export type Translations = {
     title: string;
     subtitle: string;
     typeLabel: string;
+    typeLocked: string;
     kind_church: string;
     kind_mosque: string;
     kind_synagogue: string;
@@ -1114,6 +1115,7 @@ const en: Translations = {
     title: 'Address and map',
     subtitle: 'Where your community is. With a pin, it appears on the ANSAE map and in “Near you” in the app, so people living nearby can find it and join.',
     typeLabel: 'Kind of place',
+    typeLocked: 'To change it, write to ANSAE.',
     kind_church: 'Church',
     kind_mosque: 'Mosque',
     kind_synagogue: 'Synagogue',
@@ -1858,6 +1860,7 @@ const es: Translations = {
     title: 'Dirección y mapa',
     subtitle: 'Dónde está su comunidad. Con un marcador, aparece en el mapa de ANSAE y en «Cerca de usted» en la aplicación, para que las personas que viven cerca puedan encontrarla y unirse.',
     typeLabel: 'Tipo de lugar',
+    typeLocked: 'Para cambiarlo, escriba a ANSAE.',
     kind_church: 'Iglesia',
     kind_mosque: 'Mezquita',
     kind_synagogue: 'Sinagoga',
@@ -2602,6 +2605,7 @@ const fr: Translations = {
     title: 'Adresse et carte',
     subtitle: 'Où se trouve votre communauté. Avec une épingle, elle apparaît sur la carte ANSAE et dans « Près de vous » dans l’application, pour que les personnes qui habitent à côté la trouvent et la rejoignent.',
     typeLabel: 'Type de lieu',
+    typeLocked: 'Pour le changer, écrivez à ANSAE.',
     kind_church: 'Église',
     kind_mosque: 'Mosquée',
     kind_synagogue: 'Synagogue',
@@ -3346,6 +3350,7 @@ const va: Translations = {
     title: 'Adreça i mapa',
     subtitle: 'On és la vostra comunitat. Amb una marca, apareix en el mapa d’ANSAE i en «Prop de vosté» en l’aplicació, perquè les persones que viuen a prop la troben i s’hi unisquen.',
     typeLabel: 'Tipus de lloc',
+    typeLocked: 'Per a canviar-lo, escriviu a ANSAE.',
     kind_church: 'Església',
     kind_mosque: 'Mesquita',
     kind_synagogue: 'Sinagoga',
@@ -4090,6 +4095,7 @@ const gl: Translations = {
     title: 'Enderezo e mapa',
     subtitle: 'Onde está a súa comunidade. Cun marcador, aparece no mapa de ANSAE e en «Preto de vostede» na aplicación, para que as persoas que viven preto a atopen e se unan.',
     typeLabel: 'Tipo de lugar',
+    typeLocked: 'Para cambialo, escriba a ANSAE.',
     kind_church: 'Igrexa',
     kind_mosque: 'Mesquita',
     kind_synagogue: 'Sinagoga',
@@ -4834,6 +4840,7 @@ const pt: Translations = {
     title: 'Morada e mapa',
     subtitle: 'Onde fica a sua comunidade. Com um marcador, aparece no mapa da ANSAE e em «Perto de si» na aplicação, para que as pessoas que vivem perto a encontrem e se juntem.',
     typeLabel: 'Tipo de local',
+    typeLocked: 'Para o alterar, escreva à ANSAE.',
     kind_church: 'Igreja',
     kind_mosque: 'Mesquita',
     kind_synagogue: 'Sinagoga',

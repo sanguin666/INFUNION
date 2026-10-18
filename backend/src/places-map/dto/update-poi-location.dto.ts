@@ -1,12 +1,10 @@
-import { IsBoolean, IsEnum, IsLatitude, IsLongitude, IsOptional, IsString, MaxLength, ValidateIf } from 'class-validator';
-import { PoiType } from '../../common/enums/poi-type.enum.js';
+import { IsBoolean, IsLatitude, IsLongitude, IsOptional, IsString, MaxLength, ValidateIf } from 'class-validator';
 
-/** What the admin's "Address and map" card saves. null clears the pin. */
+/**
+ * What the admin's "Address and map" card saves. null clears the pin. Not
+ * the kind of place: only the superadmin changes that (Seb, 18 Oct 2026).
+ */
 export class UpdatePoiLocationDto {
-  @IsOptional()
-  @IsEnum(PoiType)
-  type?: PoiType;
-
   @IsOptional()
   @IsString()
   @MaxLength(300)

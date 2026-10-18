@@ -40,17 +40,21 @@ describe('Places map (e2e)', () => {
     return created;
   }
 
-  it('lets only the office set the kind and pin, and checks them', async () => {
+  it('lets only the office set the pin, never the kind, and checks it', async () => {
     const url = `/pois/${carmen.id}/location`;
     const member = await signInWithId(app, '+34600600002', 'Ana');
     await client(app).patch(url).set(as(member.token)).send({ latitude: 1, longitude: 1 }).expect(403);
     await client(app).patch(url).set(as(admin.token)).send({ latitude: 95, longitude: 1 }).expect(400);
-    await client(app).patch(url).set(as(admin.token)).send({ type: 'castle' }).expect(400);
+
+    // The kind of place is the superadmin's to change, not the office's.
+    await client(app).patch(url).set(as(admin.token)).send({ type: 'mosque' }).expect(200);
+    await client(app).patch(`/pois/${carmen.id}`).set(as(admin.token)).send({ type: 'mosque' }).expect(200);
+    expect((await client(app).get(`/pois/${carmen.id}`).expect(200)).body.type).toBe('church');
 
     const saved = await client(app)
       .patch(url)
       .set(as(admin.token))
-      .send({ type: 'church', address: 'Plaça de l’Església 1', city: "L'Eliana", latitude: ELIANA.lat, longitude: ELIANA.lng })
+      .send({ address: 'Plaça de l’Església 1', city: "L'Eliana", latitude: ELIANA.lat, longitude: ELIANA.lng })
       .expect(200);
     expect(saved.body).toMatchObject({ latitude: ELIANA.lat, longitude: ELIANA.lng, mapVisible: true });
 

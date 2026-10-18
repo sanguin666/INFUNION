@@ -1,5 +1,5 @@
 import { ApiError, apiDelete, apiGet, apiPatch, apiPost, setSuperadminSession, type SuperadminSession } from './client';
-import type { BillingSummary, ModuleType, SupportedLanguage } from './types';
+import type { BillingSummary, ModuleType, PoiType, SupportedLanguage } from './types';
 
 // ---- the code step
 
@@ -113,7 +113,7 @@ export type CommunityDetail = {
   poi: {
     id: string;
     name: string;
-    type: string;
+    type: PoiType;
     language: SupportedLanguage;
     address: string | null;
     city: string | null;
@@ -130,6 +130,8 @@ export type CommunityDetail = {
 
 export type CommunityInput = {
   name?: string;
+  // The kind of place: only the superadmin sets it (Seb, 18 Oct 2026).
+  type?: PoiType;
   language?: SupportedLanguage;
   address?: string;
   city?: string;
