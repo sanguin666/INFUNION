@@ -102,24 +102,44 @@ function GateFrame({ children }: { children: ReactNode }) {
   return <div className="sa-gate-step">{children}</div>;
 }
 
+/**
+ * Six boxes, one digit each (Seb, 18 Oct 2026). Underneath sits one real
+ * input stretched over them, so pasting, the phone's code suggestion and
+ * screen readers all work as with a plain field.
+ */
 function CodeField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const { s } = useSa();
+  const [focused, setFocused] = useState(true);
   return (
-    <label>
-      {s('gate.codeLabel')}
-      <input
-        id="superadmin-code"
-        className="sa-code-input"
-        inputMode="numeric"
-        autoComplete="one-time-code"
-        pattern="\d{6}"
-        maxLength={6}
-        value={value}
-        onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
-        autoFocus
-        required
-      />
-    </label>
+    <div className="sa-code">
+      <label htmlFor="superadmin-code" className="sa-code-label">
+        {s('gate.codeLabel')}
+      </label>
+      <div className="sa-code-boxes">
+        {Array.from({ length: 6 }, (_, i) => (
+          <span
+            key={i}
+            aria-hidden="true"
+            className={`sa-code-box${focused && i === Math.min(value.length, 5) ? ' sa-code-box-active' : ''}`}
+          >
+            {value[i] ?? ''}
+          </span>
+        ))}
+        <input
+          id="superadmin-code"
+          className="sa-code-input"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          pattern="\d{6}"
+          value={value}
+          onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          autoFocus
+          required
+        />
+      </div>
+    </div>
   );
 }
 
