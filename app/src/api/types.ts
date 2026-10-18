@@ -1,4 +1,4 @@
-export type PoiType = 'church';
+export type PoiType = 'church' | 'mosque' | 'synagogue' | 'other_worship' | 'association' | 'culture';
 
 export type Poi = {
   id: string;
@@ -7,6 +7,9 @@ export type Poi = {
   address: string | null;
   city: string | null;
   postalCode: string | null;
+  // The pin on the map of communities; null until the office places it.
+  latitude?: number | null;
+  longitude?: number | null;
   qrCodeToken: string;
   // A few lines about the place, written in the admin; the home page
   // shows it when the place hasn't built a page yet.

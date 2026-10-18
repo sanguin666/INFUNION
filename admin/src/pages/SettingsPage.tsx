@@ -7,6 +7,7 @@ import { updatePoiLanguage, updatePoiProfile } from '../api/poiSettings';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
 import type { ActiveModule, Poi } from '../api/types';
 import { MenuOrderCard } from './MenuOrderCard';
+import { LocationCard } from './LocationCard';
 
 export function SettingsPage() {
   const poiId = usePoiId();
@@ -119,6 +120,8 @@ export function SettingsPage() {
           </div>
         </div>
       )}
+
+      {poi && <LocationCard key={poi.id} poi={poi} onSaved={setPoi} />}
 
       {poi && (
         <div className="card">

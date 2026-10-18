@@ -35,6 +35,7 @@ import { ServiceRequestMessage } from './service-requests/entities/service-reque
 import { ServiceRequestDocument } from './service-requests/entities/service-request-document.entity.js';
 import { MassIntention, MassIntentionStatus } from './mass-intentions/entities/mass-intention.entity.js';
 import { CARMEN_ADMIN_EMAIL, CARMEN_ADMIN_PASSWORD, seedCarmen } from './seed-carmen.js';
+import { seedMap } from './seed-map.js';
 
 /**
  * Seeds two demo POIs with fixed QR tokens, so the app has something real
@@ -441,6 +442,8 @@ async function seed() {
 
   // The default demo since 24 Sep 2026.
   const carmen = await seedCarmen(dataSource);
+  // Carmen's pin and a few neighbours of every kind for the map.
+  await seedMap(dataSource);
 
   // Module billing (30 Sep 2026): Carmen keeps every module on at no
   // charge ("Offert"). St. Mary's and Holy Trinity pay like real

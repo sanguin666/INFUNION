@@ -4,6 +4,7 @@ import { UpdateLanguageDto } from '../common/dto/update-language.dto.js';
 import { UpdatePoiProfileDto } from '../common/dto/update-poi-profile.dto.js';
 import { UpdateMenuOrderDto } from '../common/dto/update-menu-order.dto.js';
 import { UpdateReceiptSettingsDto } from '../common/dto/update-receipt-settings.dto.js';
+import { UpdatePoiLocationDto } from '../places-map/dto/update-poi-location.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
 
@@ -41,5 +42,16 @@ export class PoiSettingsController {
   @UseGuards(JwtAuthGuard, PoiAdminGuard)
   updateReceiptSettings(@Param('poiId') poiId: string, @Body() dto: UpdateReceiptSettingsDto) {
     return this.poisService.update(poiId, dto);
+  }
+
+  // Kind of place, address and pin for the map of communities, and
+  // whether to show there at all (Seb, 18 Oct 2026).
+  @Patch('location')
+  @UseGuards(JwtAuthGuard, PoiAdminGuard)
+  updateLocation(@Param('poiId') poiId: string, @Body() dto: UpdatePoiLocationDto) {
+    // Only the fields sent: the DTO instance carries the others as
+    // undefined, which would blank them in the place handed back.
+    const sent = Object.fromEntries(Object.entries(dto).filter(([, value]) => value !== undefined));
+    return this.poisService.update(poiId, sent);
   }
 }

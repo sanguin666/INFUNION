@@ -137,6 +137,45 @@ export type Translations = {
     title: string;
     codeLabel: string;
   };
+  nearby: {
+    addTitle: string;
+    addExplainer: string;
+    useLocation: string;
+    locationDenied: string;
+    locationUnavailable: string;
+    townLabel: string;
+    townPlaceholder: string;
+    townSearch: string;
+    townNotFound: string;
+    haveCode: string;
+    title: string;
+    listTab: string;
+    mapTab: string;
+    all: string;
+    nearYou: string;
+    nearPlace: string;
+    empty: string;
+    mapUnavailable: string;
+    mapLabel: string;
+    close: string;
+    join: string;
+    open: string;
+    directions: string;
+    members: string;
+    memberOne: string;
+    kind_church: string;
+    kind_mosque: string;
+    kind_synagogue: string;
+    kind_other_worship: string;
+    kind_association: string;
+    kind_culture: string;
+    kindPlural_church: string;
+    kindPlural_mosque: string;
+    kindPlural_synagogue: string;
+    kindPlural_other_worship: string;
+    kindPlural_association: string;
+    kindPlural_culture: string;
+  };
   places: {
     title: string;
     addPlace: string;
@@ -604,6 +643,45 @@ const en: Translations = {
   addPlace: {
     title: 'Add the place you belong to.',
     codeLabel: 'Or type the place number printed on the flyer',
+  },
+  nearby: {
+    addTitle: 'The communities around you',
+    addExplainer: 'ANSAE uses your location once, to sort the places by distance. It is never stored.',
+    useLocation: 'Use my location',
+    locationDenied: 'ANSAE is not allowed to see your location. You can type a town instead.',
+    locationUnavailable: 'Your location could not be found. You can type a town instead.',
+    townLabel: 'Or a town, a postcode',
+    townPlaceholder: 'e.g. Valencia',
+    townSearch: 'Search around this town',
+    townNotFound: 'That town could not be found. Check the spelling.',
+    haveCode: 'You have a code?',
+    title: 'Find a community',
+    listTab: 'List',
+    mapTab: 'Map',
+    all: 'All',
+    nearYou: 'Near you',
+    nearPlace: 'Near {{place}}',
+    empty: 'No community on the ANSAE map around here yet.',
+    mapUnavailable: 'The map could not load. Check your connection, or use the list.',
+    mapLabel: 'Map of the communities',
+    close: 'Close',
+    join: 'Join',
+    open: 'Open',
+    directions: 'Directions',
+    members: '{{count}} members on ANSAE',
+    memberOne: '1 member on ANSAE',
+    kind_church: 'Church',
+    kind_mosque: 'Mosque',
+    kind_synagogue: 'Synagogue',
+    kind_other_worship: 'Place of worship',
+    kind_association: 'Association',
+    kind_culture: 'Culture & sport',
+    kindPlural_church: 'Churches',
+    kindPlural_mosque: 'Mosques',
+    kindPlural_synagogue: 'Synagogues',
+    kindPlural_other_worship: 'Other worship',
+    kindPlural_association: 'Associations',
+    kindPlural_culture: 'Culture & sport',
   },
   places: {
     title: 'Your places',
@@ -1075,6 +1153,45 @@ const es: Translations = {
     title: 'Añade el lugar al que perteneces.',
     codeLabel: 'O escribe el número del lugar impreso en el folleto',
   },
+  nearby: {
+    addTitle: 'Las comunidades cerca de usted',
+    addExplainer: 'ANSAE usa su ubicación una sola vez, para ordenar los lugares por distancia. Nunca se guarda.',
+    useLocation: 'Usar mi ubicación',
+    locationDenied: 'ANSAE no tiene permiso para ver su ubicación. Puede escribir una localidad.',
+    locationUnavailable: 'No se ha podido encontrar su ubicación. Puede escribir una localidad.',
+    townLabel: 'O una localidad, un código postal',
+    townPlaceholder: 'p. ej. Valencia',
+    townSearch: 'Buscar cerca de esta localidad',
+    townNotFound: 'No se ha encontrado esa localidad. Revise cómo está escrita.',
+    haveCode: '¿Tiene un código?',
+    title: 'Encontrar una comunidad',
+    listTab: 'Lista',
+    mapTab: 'Mapa',
+    all: 'Todas',
+    nearYou: 'Cerca de usted',
+    nearPlace: 'Cerca de {{place}}',
+    empty: 'Todavía no hay ninguna comunidad en el mapa de ANSAE por aquí.',
+    mapUnavailable: 'No se ha podido cargar el mapa. Compruebe su conexión, o use la lista.',
+    mapLabel: 'Mapa de las comunidades',
+    close: 'Cerrar',
+    join: 'Unirme',
+    open: 'Abrir',
+    directions: 'Cómo llegar',
+    members: '{{count}} miembros en ANSAE',
+    memberOne: '1 miembro en ANSAE',
+    kind_church: 'Iglesia',
+    kind_mosque: 'Mezquita',
+    kind_synagogue: 'Sinagoga',
+    kind_other_worship: 'Lugar de culto',
+    kind_association: 'Asociación',
+    kind_culture: 'Cultura y deporte',
+    kindPlural_church: 'Iglesias',
+    kindPlural_mosque: 'Mezquitas',
+    kindPlural_synagogue: 'Sinagogas',
+    kindPlural_other_worship: 'Otros cultos',
+    kindPlural_association: 'Asociaciones',
+    kindPlural_culture: 'Cultura y deporte',
+  },
   places: {
     title: 'Tus lugares',
     addPlace: 'Añadir un lugar',
@@ -1544,6 +1661,45 @@ const fr: Translations = {
   addPlace: {
     title: 'Ajoutez le lieu auquel vous appartenez.',
     codeLabel: 'Ou saisissez le numéro du lieu imprimé sur le dépliant',
+  },
+  nearby: {
+    addTitle: 'Les communautés autour de vous',
+    addExplainer: 'ANSAE utilise votre position une seule fois, pour trier les lieux par distance. Elle n’est jamais enregistrée.',
+    useLocation: 'Utiliser ma position',
+    locationDenied: 'ANSAE n’a pas l’autorisation de voir votre position. Vous pouvez taper une ville.',
+    locationUnavailable: 'Votre position est introuvable. Vous pouvez taper une ville.',
+    townLabel: 'Ou une ville, un code postal',
+    townPlaceholder: 'ex. Valence',
+    townSearch: 'Chercher autour de cette ville',
+    townNotFound: 'Cette ville est introuvable. Vérifiez l’orthographe.',
+    haveCode: 'Vous avez un code ?',
+    title: 'Trouver une communauté',
+    listTab: 'Liste',
+    mapTab: 'Carte',
+    all: 'Tous',
+    nearYou: 'Près de vous',
+    nearPlace: 'Près de {{place}}',
+    empty: 'Pas encore de communauté sur la carte ANSAE par ici.',
+    mapUnavailable: 'La carte n’a pas pu se charger. Vérifiez votre connexion, ou utilisez la liste.',
+    mapLabel: 'Carte des communautés',
+    close: 'Fermer',
+    join: 'Rejoindre',
+    open: 'Ouvrir',
+    directions: 'Itinéraire',
+    members: '{{count}} membres sur ANSAE',
+    memberOne: '1 membre sur ANSAE',
+    kind_church: 'Église',
+    kind_mosque: 'Mosquée',
+    kind_synagogue: 'Synagogue',
+    kind_other_worship: 'Lieu de culte',
+    kind_association: 'Association',
+    kind_culture: 'Culture et sport',
+    kindPlural_church: 'Églises',
+    kindPlural_mosque: 'Mosquées',
+    kindPlural_synagogue: 'Synagogues',
+    kindPlural_other_worship: 'Autres cultes',
+    kindPlural_association: 'Associations',
+    kindPlural_culture: 'Culture et sport',
   },
   places: {
     title: 'Vos lieux',
@@ -2015,6 +2171,45 @@ const va: Translations = {
     title: 'Afig el lloc al qual pertanys.',
     codeLabel: 'O escriu el número del lloc imprés en el fullet',
   },
+  nearby: {
+    addTitle: 'Les comunitats prop de vosté',
+    addExplainer: 'ANSAE usa la vostra ubicació una sola vegada, per a ordenar els llocs per distància. No es guarda mai.',
+    useLocation: 'Usar la meua ubicació',
+    locationDenied: 'ANSAE no té permís per a veure la vostra ubicació. Podeu escriure una localitat.',
+    locationUnavailable: 'No s’ha pogut trobar la vostra ubicació. Podeu escriure una localitat.',
+    townLabel: 'O una localitat, un codi postal',
+    townPlaceholder: 'p. ex. València',
+    townSearch: 'Buscar prop d’esta localitat',
+    townNotFound: 'No s’ha trobat eixa localitat. Reviseu com està escrita.',
+    haveCode: 'Teniu un codi?',
+    title: 'Trobar una comunitat',
+    listTab: 'Llista',
+    mapTab: 'Mapa',
+    all: 'Totes',
+    nearYou: 'Prop de vosté',
+    nearPlace: 'Prop de {{place}}',
+    empty: 'Encara no hi ha cap comunitat en el mapa d’ANSAE per ací.',
+    mapUnavailable: 'No s’ha pogut carregar el mapa. Comproveu la connexió, o useu la llista.',
+    mapLabel: 'Mapa de les comunitats',
+    close: 'Tancar',
+    join: 'Unir-me',
+    open: 'Obrir',
+    directions: 'Com arribar',
+    members: '{{count}} membres en ANSAE',
+    memberOne: '1 membre en ANSAE',
+    kind_church: 'Església',
+    kind_mosque: 'Mesquita',
+    kind_synagogue: 'Sinagoga',
+    kind_other_worship: 'Lloc de culte',
+    kind_association: 'Associació',
+    kind_culture: 'Cultura i esport',
+    kindPlural_church: 'Esglésies',
+    kindPlural_mosque: 'Mesquites',
+    kindPlural_synagogue: 'Sinagogues',
+    kindPlural_other_worship: 'Altres cultes',
+    kindPlural_association: 'Associacions',
+    kindPlural_culture: 'Cultura i esport',
+  },
   places: {
     title: 'Els teus llocs',
     addPlace: 'Afegir un lloc',
@@ -2484,6 +2679,45 @@ const gl: Translations = {
   addPlace: {
     title: 'Engade o lugar ao que pertences.',
     codeLabel: 'Ou escribe o número do lugar impreso no folleto',
+  },
+  nearby: {
+    addTitle: 'As comunidades preto de vostede',
+    addExplainer: 'ANSAE usa a súa localización unha soa vez, para ordenar os lugares por distancia. Nunca se garda.',
+    useLocation: 'Usar a miña localización',
+    locationDenied: 'ANSAE non ten permiso para ver a súa localización. Pode escribir unha localidade.',
+    locationUnavailable: 'Non se puido atopar a súa localización. Pode escribir unha localidade.',
+    townLabel: 'Ou unha localidade, un código postal',
+    townPlaceholder: 'p. ex. Valencia',
+    townSearch: 'Buscar preto desta localidade',
+    townNotFound: 'Non se atopou esa localidade. Revise como está escrita.',
+    haveCode: 'Ten un código?',
+    title: 'Atopar unha comunidade',
+    listTab: 'Lista',
+    mapTab: 'Mapa',
+    all: 'Todas',
+    nearYou: 'Preto de vostede',
+    nearPlace: 'Preto de {{place}}',
+    empty: 'Aínda non hai ningunha comunidade no mapa de ANSAE por aquí.',
+    mapUnavailable: 'Non se puido cargar o mapa. Comprobe a conexión, ou use a lista.',
+    mapLabel: 'Mapa das comunidades',
+    close: 'Pechar',
+    join: 'Unirme',
+    open: 'Abrir',
+    directions: 'Como chegar',
+    members: '{{count}} membros en ANSAE',
+    memberOne: '1 membro en ANSAE',
+    kind_church: 'Igrexa',
+    kind_mosque: 'Mesquita',
+    kind_synagogue: 'Sinagoga',
+    kind_other_worship: 'Lugar de culto',
+    kind_association: 'Asociación',
+    kind_culture: 'Cultura e deporte',
+    kindPlural_church: 'Igrexas',
+    kindPlural_mosque: 'Mesquitas',
+    kindPlural_synagogue: 'Sinagogas',
+    kindPlural_other_worship: 'Outros cultos',
+    kindPlural_association: 'Asociacións',
+    kindPlural_culture: 'Cultura e deporte',
   },
   places: {
     title: 'Os teus lugares',
@@ -2955,6 +3189,45 @@ const pt: Translations = {
   addPlace: {
     title: 'Adicione o local a que pertence.',
     codeLabel: 'Ou escreva o número do local impresso no folheto',
+  },
+  nearby: {
+    addTitle: 'As comunidades perto de si',
+    addExplainer: 'A ANSAE usa a sua localização uma única vez, para ordenar os locais por distância. Nunca é guardada.',
+    useLocation: 'Usar a minha localização',
+    locationDenied: 'A ANSAE não tem autorização para ver a sua localização. Pode escrever uma localidade.',
+    locationUnavailable: 'Não foi possível encontrar a sua localização. Pode escrever uma localidade.',
+    townLabel: 'Ou uma localidade, um código postal',
+    townPlaceholder: 'p. ex. Lisboa',
+    townSearch: 'Procurar perto desta localidade',
+    townNotFound: 'Essa localidade não foi encontrada. Verifique a ortografia.',
+    haveCode: 'Tem um código?',
+    title: 'Encontrar uma comunidade',
+    listTab: 'Lista',
+    mapTab: 'Mapa',
+    all: 'Todas',
+    nearYou: 'Perto de si',
+    nearPlace: 'Perto de {{place}}',
+    empty: 'Ainda não há nenhuma comunidade no mapa da ANSAE por aqui.',
+    mapUnavailable: 'Não foi possível carregar o mapa. Verifique a ligação, ou use a lista.',
+    mapLabel: 'Mapa das comunidades',
+    close: 'Fechar',
+    join: 'Juntar-me',
+    open: 'Abrir',
+    directions: 'Como chegar',
+    members: '{{count}} membros na ANSAE',
+    memberOne: '1 membro na ANSAE',
+    kind_church: 'Igreja',
+    kind_mosque: 'Mesquita',
+    kind_synagogue: 'Sinagoga',
+    kind_other_worship: 'Local de culto',
+    kind_association: 'Associação',
+    kind_culture: 'Cultura e desporto',
+    kindPlural_church: 'Igrejas',
+    kindPlural_mosque: 'Mesquitas',
+    kindPlural_synagogue: 'Sinagogas',
+    kindPlural_other_worship: 'Outros cultos',
+    kindPlural_association: 'Associações',
+    kindPlural_culture: 'Cultura e desporto',
   },
   places: {
     title: 'Os seus locais',
