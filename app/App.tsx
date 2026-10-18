@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AddPlaceScreen } from './src/screens/AddPlaceScreen';
 import { OnboardingScreen } from './src/screens/OnboardingScreen';
 import { ScanQRScreen } from './src/screens/ScanQRScreen';
+import { NearbyScreen } from './src/screens/NearbyScreen';
 import { PoiHubScreen } from './src/screens/PoiHubScreen';
 import { PhoneLoginScreen } from './src/screens/PhoneLoginScreen';
 import { PlaceSwitcher } from './src/components/PlaceSwitcher';
@@ -21,6 +22,7 @@ import { landingPoi } from './src/landing';
 import { applyColorScheme, colors } from './src/theme/theme';
 import { AppearanceProvider, useAppearance } from './src/theme/AppearanceContext';
 import type { Poi } from './src/api/types';
+import type { MapPlace, Origin } from './src/api/placesMap';
 
 // Set once this phone has been asked about notifications, so the question
 // comes up the first time someone is signed in and never again uninvited.
@@ -29,6 +31,7 @@ const PUSH_ASKED_KEY = 'ansae.push.asked.v1';
 type Route =
   | { name: 'addPlace' }
   | { name: 'scan' }
+  | { name: 'nearby'; origin: Origin }
   | { name: 'signIn' }
   | { name: 'hub'; poi: Poi };
 
@@ -176,6 +179,12 @@ function AppRoutes() {
     closeSwitcher();
   }
 
+  // A place picked on the map or in "near you": what the map knows is a
+  // public summary, so the place itself is fetched before entering it.
+  async function openMapPlace(place: MapPlace) {
+    openPoi(await getPoi(place.id));
+  }
+
   /**
    * Leaving the place somebody is currently in. The membership goes
    * first, then the device's own copy, and only then does the app work
@@ -288,8 +297,13 @@ function AppRoutes() {
         <AddPlaceScreen
           onScanQR={() => push({ name: 'scan' })}
           onOpenPoi={openPoi}
-          onBack={places.length > 0 ? () => setSwitcherOpen(true) : undefined}
+          onFindNearby={(origin) => push({ name: 'nearby', origin })}
+          onBack={stack.length > 1 ? pop : places.length > 0 ? () => setSwitcherOpen(true) : undefined}
         />
+      )}
+
+      {ready && me && current?.name === 'nearby' && (
+        <NearbyScreen origin={current.origin} onOpenPlace={openMapPlace} onBack={pop} />
       )}
 
       {ready && current?.name === 'scan' && <ScanQRScreen onBack={pop} onFound={openPoi} />}
@@ -303,7 +317,7 @@ function AppRoutes() {
           key={current.poi.id}
           poi={current.poi}
           onOpenPlaces={() => setSwitcherOpen(true)}
-          onAddPlace={() => push({ name: 'scan' })}
+          onAddPlace={() => push({ name: 'addPlace' })}
           onLeavePlace={() => leaveCurrentPoi(current.poi)}
           onSignIn={startSignIn}
           pushTarget={pushTarget?.poiId === current.poi.id ? pushTarget : null}
@@ -322,7 +336,7 @@ function AppRoutes() {
           onSelect={selectPlace}
           onAddPlace={() => {
             closeSwitcher();
-            push({ name: 'scan' });
+            push({ name: 'addPlace' });
           }}
           onClose={closeSwitcher}
         />

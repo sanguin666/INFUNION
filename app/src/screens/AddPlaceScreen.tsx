@@ -6,14 +6,18 @@ import { AccessibleButton } from '../components/AccessibleButton';
 import { FormCard, FormField } from '../components/FormCard';
 import { LogoMark } from '../components/icons';
 import { getPoiByQrCode } from '../api/pois';
+import { geocode, type Origin } from '../api/placesMap';
 import { ApiError } from '../api/client';
 import { useI18n } from '../i18n/I18nContext';
+import { currentPosition } from '../utils/location';
 import type { Poi } from '../api/types';
-import { cardSurface, colors, fontSizes, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
+import { colors, minTouchTarget, spacing, themedStyles } from '../theme/theme';
 
 type Props = {
   onScanQR: () => void;
   onOpenPoi: (poi: Poi) => void;
+  // "Near you" around the phone, or around the town the person typed.
+  onFindNearby: (origin: Origin) => void;
   // Absent for somebody who has no places yet: there is nothing to go
   // back to, so the screen shows no way out.
   onBack?: () => void;
@@ -21,18 +25,20 @@ type Props = {
 
 /**
  * Where a signed-in person with no place yet arrives, and where "add
- * another" leads afterwards. Two ways in, because a flyer carries both: a
- * QR code to point the camera at, and the same code printed underneath
- * for anyone whose camera will not focus or who would rather type.
+ * another" leads afterwards. Three ways in: the communities around them
+ * (their position, asked once and never stored, or a town they type),
+ * and the flyer's QR code or the same code printed underneath it.
  */
-export function AddPlaceScreen({ onScanQR, onOpenPoi, onBack }: Props) {
-  const { t } = useI18n();
+export function AddPlaceScreen({ onScanQR, onOpenPoi, onFindNearby, onBack }: Props) {
+  const { t, language } = useI18n();
   const [code, setCode] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [town, setTown] = useState('');
+  const [busy, setBusy] = useState<'code' | 'position' | 'town' | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [nearbyError, setNearbyError] = useState<string | null>(null);
 
   async function openByCode() {
-    setBusy(true);
+    setBusy('code');
     setError(null);
     try {
       onOpenPoi(await getPoiByQrCode(code.trim()));
@@ -43,9 +49,48 @@ export function AddPlaceScreen({ onScanQR, onOpenPoi, onBack }: Props) {
           : t('home.error'),
       );
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   }
+
+  async function useMyPosition() {
+    setBusy('position');
+    setNearbyError(null);
+    const position = await currentPosition();
+    setBusy(null);
+    if (position === 'denied') {
+      setNearbyError(t('nearby.locationDenied'));
+    } else if (position === 'unavailable') {
+      setNearbyError(t('nearby.locationUnavailable'));
+    } else {
+      onFindNearby({ ...position, label: null });
+    }
+  }
+
+  async function searchTown() {
+    const query = town.trim();
+    if (!query) return;
+    setBusy('town');
+    setNearbyError(null);
+    try {
+      const [first] = await geocode(query, language);
+      if (first) {
+        onFindNearby({ latitude: first.latitude, longitude: first.longitude, label: first.city ?? query });
+      } else {
+        setNearbyError(t('nearby.townNotFound'));
+      }
+    } catch {
+      setNearbyError(t('home.error'));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const spinner = (
+    <View style={styles.busy}>
+      <ActivityIndicator color={colors.primaryStrong} size="large" />
+    </View>
+  );
 
   return (
     <Screen scroll>
@@ -57,7 +102,43 @@ export function AddPlaceScreen({ onScanQR, onOpenPoi, onBack }: Props) {
       </View>
 
       <AccessibleText variant="bodyLarge" style={styles.lead}>
-        {t('addPlace.title')}
+        {t('nearby.addTitle')}
+      </AccessibleText>
+      <AccessibleText variant="body" color={colors.textMuted}>
+        {t('nearby.addExplainer')}
+      </AccessibleText>
+
+      {nearbyError && (
+        <AccessibleText variant="body" color={colors.danger}>
+          {nearbyError}
+        </AccessibleText>
+      )}
+
+      {busy === 'position' ? spinner : (
+        <AccessibleButton label={t('nearby.useLocation')} onPress={() => void useMyPosition()} />
+      )}
+
+      <FormCard>
+        <FormField
+          label={t('nearby.townLabel')}
+          value={town}
+          onChangeText={(value) => {
+            setTown(value);
+            setNearbyError(null);
+          }}
+          placeholder={t('nearby.townPlaceholder')}
+          autoCorrect={false}
+          returnKeyType="search"
+          onSubmitEditing={() => void searchTown()}
+        />
+      </FormCard>
+      {town.trim().length > 0 &&
+        (busy === 'town' ? spinner : (
+          <AccessibleButton label={t('nearby.townSearch')} variant="secondary" onPress={() => void searchTown()} />
+        ))}
+
+      <AccessibleText variant="bodyLarge" style={styles.section}>
+        {t('nearby.haveCode')}
       </AccessibleText>
 
       {error && (
@@ -66,7 +147,7 @@ export function AddPlaceScreen({ onScanQR, onOpenPoi, onBack }: Props) {
         </AccessibleText>
       )}
 
-      <AccessibleButton label={t('home.scanButton')} onPress={onScanQR} />
+      <AccessibleButton label={t('home.scanButton')} variant="secondary" onPress={onScanQR} />
 
       <FormCard>
         <FormField
@@ -82,13 +163,10 @@ export function AddPlaceScreen({ onScanQR, onOpenPoi, onBack }: Props) {
         />
       </FormCard>
 
-      {busy ? (
-        <View style={styles.busy}>
-          <ActivityIndicator color={colors.primaryStrong} size="large" />
-        </View>
-      ) : (
+      {busy === 'code' ? spinner : (
         <AccessibleButton
           label={t('scan.codeButton')}
+          variant="secondary"
           disabled={code.trim().length === 0}
           style={code.trim() ? undefined : styles.buttonDisabled}
           onPress={() => void openByCode()}
@@ -113,7 +191,11 @@ const styles = themedStyles(() => ({
     letterSpacing: 2,
   },
   lead: {
-    marginBottom: spacing.sm,
+    fontWeight: '700',
+  },
+  section: {
+    fontWeight: '700',
+    marginTop: spacing.lg,
   },
   buttonDisabled: {
     opacity: 0.45,

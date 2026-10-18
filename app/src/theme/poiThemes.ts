@@ -18,7 +18,7 @@ export type PoiTheme = {
 };
 
 // Functions rather than values so the accent follows light / dark mode.
-const POI_THEMES: Record<PoiType, () => PoiTheme> = {
+const POI_THEMES: Partial<Record<PoiType, () => PoiTheme>> = {
   church: () => ({
     accent: colors.primary,
     accentStrong: colors.primaryStrong,
@@ -29,5 +29,7 @@ const POI_THEMES: Record<PoiType, () => PoiTheme> = {
 };
 
 export function getPoiTheme(type: PoiType): PoiTheme {
-  return (POI_THEMES[type] ?? POI_THEMES.church)();
+  // Every kind wears ANSAE's coral inside its own pages for now; the map
+  // is where the kinds get their own colours (theme/placeKinds.ts).
+  return (POI_THEMES[type] ?? POI_THEMES.church!)();
 }

@@ -2035,3 +2035,22 @@ label.link-button:focus-within {
   align-items: center;
   gap: 12px;
 }
+
+/* A switch inside a form keeps its own shape, not a text field's. */
+.form input.switch {
+  width: 52px;
+  height: 32px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 16px;
+  background: #9a8f82;
+}
+
+.form input.switch:checked {
+  background: var(--color-primary);
+}
+
+.input-with-action .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
