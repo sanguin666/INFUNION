@@ -31,7 +31,7 @@ const PUSH_ASKED_KEY = 'ansae.push.asked.v1';
 type Route =
   | { name: 'addPlace' }
   | { name: 'scan' }
-  | { name: 'nearby'; origin: Origin }
+  | { name: 'nearby'; origin: Origin | null; query?: string }
   | { name: 'signIn' }
   | { name: 'hub'; poi: Poi };
 
@@ -298,12 +298,20 @@ function AppRoutes() {
           onScanQR={() => push({ name: 'scan' })}
           onOpenPoi={openPoi}
           onFindNearby={(origin) => push({ name: 'nearby', origin })}
+          onFindByName={(query) => push({ name: 'nearby', origin: null, query })}
           onBack={stack.length > 1 ? pop : places.length > 0 ? () => setSwitcherOpen(true) : undefined}
         />
       )}
 
       {ready && me && current?.name === 'nearby' && (
-        <NearbyScreen origin={current.origin} onOpenPlace={openMapPlace} onBack={pop} />
+        <NearbyScreen
+          key={current.query ?? `${current.origin?.latitude},${current.origin?.longitude}`}
+          origin={current.origin}
+          query={current.query}
+          onOpenPlace={openMapPlace}
+          onFindNearby={(origin) => push({ name: 'nearby', origin })}
+          onBack={pop}
+        />
       )}
 
       {ready && current?.name === 'scan' && <ScanQRScreen onBack={pop} onFound={openPoi} />}

@@ -91,6 +91,31 @@ describe('Places map (e2e)', () => {
     await client(app).get('/map/places').query({ lat: 39 }).expect(400);
   });
 
+  it('finds places by name, accents and case aside, pinned or not', async () => {
+    await app.get(PoisService).update(carmen.id, { name: 'Nuestra Señora del Carmen', latitude: ELIANA.lat, longitude: ELIANA.lng });
+    await place('Coro Valencia', { type: 'culture', latitude: 39.47, longitude: -0.376 });
+    await place('Carmelitas 50% Solidario', { type: 'association' });
+    await place('Carmen oculto', { mapVisible: false });
+
+    const names = (body: { name: string }[]) => body.map((p) => p.name);
+    const carm = await client(app).get('/map/places').query({ q: 'CARM' }).expect(200);
+    expect(names(carm.body)).toEqual(['Carmelitas 50% Solidario', 'Nuestra Señora del Carmen']);
+    expect(carm.body[0]).toMatchObject({ latitude: null, longitude: null, distanceKm: null });
+
+    const words = await client(app).get('/map/places').query({ q: 'senora  carmen' }).expect(200);
+    expect(names(words.body)).toEqual(['Nuestra Señora del Carmen']);
+
+    // Pinned places first by distance, then the unpinned one.
+    const near = await client(app).get('/map/places').query({ q: 'carm', ...ELIANA }).expect(200);
+    expect(names(near.body)).toEqual(['Nuestra Señora del Carmen', 'Carmelitas 50% Solidario']);
+    expect(near.body[1].distanceKm).toBeNull();
+
+    // A % is a plain character, not a wildcard.
+    expect(names((await client(app).get('/map/places').query({ q: '%' }).expect(200)).body)).toEqual([
+      'Carmelitas 50% Solidario',
+    ]);
+  });
+
   it('looks up an address for signed-in people only', async () => {
     await client(app).get('/map/geocode').query({ q: 'Valencia' }).expect(401);
     const found = await client(app).get('/map/geocode').set(as(admin.token)).query({ q: 'Calle Mayor 1' }).expect(200);

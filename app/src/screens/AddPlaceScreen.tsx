@@ -6,7 +6,7 @@ import { AccessibleButton } from '../components/AccessibleButton';
 import { FormCard, FormField } from '../components/FormCard';
 import { LogoMark } from '../components/icons';
 import { getPoiByQrCode } from '../api/pois';
-import { geocode, type Origin } from '../api/placesMap';
+import { geocode, getMapPlaces, type Origin } from '../api/placesMap';
 import { ApiError } from '../api/client';
 import { useI18n } from '../i18n/I18nContext';
 import { currentPosition } from '../utils/location';
@@ -18,6 +18,8 @@ type Props = {
   onOpenPoi: (poi: Poi) => void;
   // "Near you" around the phone, or around the town the person typed.
   onFindNearby: (origin: Origin) => void;
+  // The communities whose name holds what the person typed.
+  onFindByName: (query: string) => void;
   // Absent for somebody who has no places yet: there is nothing to go
   // back to, so the screen shows no way out.
   onBack?: () => void;
@@ -26,10 +28,10 @@ type Props = {
 /**
  * Where a signed-in person with no place yet arrives, and where "add
  * another" leads afterwards. Three ways in: the communities around them
- * (their position, asked once and never stored, or a town they type),
- * and the flyer's QR code or the same code printed underneath it.
+ * (their position, asked once and never stored), a community's name or a
+ * town they type, and the flyer's QR code or the code printed under it.
  */
-export function AddPlaceScreen({ onScanQR, onOpenPoi, onFindNearby, onBack }: Props) {
+export function AddPlaceScreen({ onScanQR, onOpenPoi, onFindNearby, onFindByName, onBack }: Props) {
   const { t, language } = useI18n();
   const [code, setCode] = useState('');
   const [town, setTown] = useState('');
@@ -67,12 +69,17 @@ export function AddPlaceScreen({ onScanQR, onOpenPoi, onFindNearby, onBack }: Pr
     }
   }
 
+  // A community's name first; when no name holds the words, a town.
   async function searchTown() {
     const query = town.trim();
     if (!query) return;
     setBusy('town');
     setNearbyError(null);
     try {
+      if ((await getMapPlaces(null, query)).length > 0) {
+        onFindByName(query);
+        return;
+      }
       const [first] = await geocode(query, language);
       if (first) {
         onFindNearby({ latitude: first.latitude, longitude: first.longitude, label: first.city ?? query });

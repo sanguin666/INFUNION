@@ -11,8 +11,9 @@ export type MapPlace = {
   address: string | null;
   city: string | null;
   postalCode: string | null;
-  latitude: number;
-  longitude: number;
+  // Null only in a name search, for a place not pinned on the map yet.
+  latitude: number | null;
+  longitude: number | null;
   qrCodeToken: string;
   memberCount: number;
   // Kilometres from where the person is; null when the app gave no point.
@@ -22,9 +23,10 @@ export type MapPlace = {
 export type Origin = { latitude: number; longitude: number; label: string | null };
 
 // Nearest first around `origin`. The position goes into this one request
-// and is stored nowhere.
-export function getMapPlaces(origin: Origin | null): Promise<MapPlace[]> {
+// and is stored nowhere. With `name`, only the places whose name holds it.
+export function getMapPlaces(origin: Origin | null, name?: string): Promise<MapPlace[]> {
   const params = new URLSearchParams();
+  if (name) params.set('q', name);
   if (origin) {
     params.set('lat', String(origin.latitude));
     params.set('lng', String(origin.longitude));

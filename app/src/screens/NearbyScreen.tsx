@@ -7,7 +7,7 @@ import { AccessibleButton } from '../components/AccessibleButton';
 import { KindDot } from '../components/KindDot';
 import { PlacesMap } from '../components/PlacesMap';
 import { BackChevronIcon, ChevronRightIcon, CloseIcon } from '../components/icons';
-import { getMapPlaces, type MapPlace, type Origin } from '../api/placesMap';
+import { geocode, getMapPlaces, type MapPlace, type Origin } from '../api/placesMap';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
@@ -17,9 +17,14 @@ import type { PoiType } from '../api/types';
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 
 type Props = {
-  origin: Origin;
+  // Around a point, or (null) everywhere, for a search by name.
+  origin: Origin | null;
+  // Part of a community's name the person typed.
+  query?: string;
   // Join (or open, for a member) the place picked.
   onOpenPlace: (place: MapPlace) => Promise<void>;
+  // "Or search around the town …", when a name search was really a town.
+  onFindNearby: (origin: Origin) => void;
   onBack: () => void;
 };
 
@@ -30,7 +35,7 @@ type View_ = 'list' | 'map';
  * the ANSAE map, nearest first, as a list or on a map with one colour and
  * symbol per kind of place. Tapping one shows its card, with Join.
  */
-export function NearbyScreen({ origin, onOpenPlace, onBack }: Props) {
+export function NearbyScreen({ origin, query, onOpenPlace, onFindNearby, onBack }: Props) {
   const { t, language } = useI18n();
   const { me } = useAuth();
   const insets = useSafeAreaInsets();
@@ -40,16 +45,18 @@ export function NearbyScreen({ origin, onOpenPlace, onBack }: Props) {
   const [kind, setKind] = useState<PoiType | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mapFailed, setMapFailed] = useState(false);
+  const [townBusy, setTownBusy] = useState(false);
+  const [townError, setTownError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    getMapPlaces(origin)
+    getMapPlaces(origin, query)
       .then((found) => !cancelled && setPlaces(found))
       .catch(() => !cancelled && setFailed(true));
     return () => {
       cancelled = true;
     };
-  }, [origin.latitude, origin.longitude]);
+  }, [origin?.latitude, origin?.longitude, query]);
 
   // Android's back closes the open card before leaving the screen.
   useEffect(() => {
@@ -68,15 +75,37 @@ export function NearbyScreen({ origin, onOpenPlace, onBack }: Props) {
   );
   const shown = useMemo(() => (places ?? []).filter((place) => !kind || place.type === kind), [places, kind]);
   const pins = useMemo(
-    () => shown.map(({ id, type, latitude, longitude, name }) => ({ id, type, latitude, longitude, name })),
+    () =>
+      shown.flatMap(({ id, type, latitude, longitude, name }) =>
+        latitude !== null && longitude !== null ? [{ id, type, latitude, longitude, name }] : [],
+      ),
     [shown],
   );
   const mapOrigin = useMemo(
-    () => ({ latitude: origin.latitude, longitude: origin.longitude }),
-    [origin.latitude, origin.longitude],
+    () => (origin ? { latitude: origin.latitude, longitude: origin.longitude } : null),
+    [origin?.latitude, origin?.longitude],
   );
   const selected = places?.find((place) => place.id === selectedId) ?? null;
   const locale = intlLocale(language);
+
+  // The name matched nothing the person meant: look the words up as a town.
+  async function searchAroundTown() {
+    if (!query) return;
+    setTownBusy(true);
+    setTownError(null);
+    try {
+      const [first] = await geocode(query, language);
+      if (first) {
+        onFindNearby({ latitude: first.latitude, longitude: first.longitude, label: first.city ?? query });
+      } else {
+        setTownError(t('nearby.townNotFound'));
+      }
+    } catch {
+      setTownError(t('home.error'));
+    } finally {
+      setTownBusy(false);
+    }
+  }
 
   function meta(place: MapPlace): string {
     return [
@@ -149,7 +178,11 @@ export function NearbyScreen({ origin, onOpenPlace, onBack }: Props) {
       )}
 
       <AccessibleText variant="caption" color={colors.textMuted} style={styles.near}>
-        {origin.label ? t('nearby.nearPlace', { place: origin.label }) : t('nearby.nearYou')}
+        {query
+          ? t('nearby.resultsFor', { query })
+          : origin?.label
+            ? t('nearby.nearPlace', { place: origin.label })
+            : t('nearby.nearYou')}
       </AccessibleText>
     </View>
   );
@@ -228,6 +261,27 @@ export function NearbyScreen({ origin, onOpenPlace, onBack }: Props) {
               <ChevronRightIcon size={22} color={colors.primaryStrong} />
             </Pressable>
           ))}
+        </View>
+      )}
+
+      {query && places && (
+        <View>
+          {townError && (
+            <AccessibleText variant="body" color={colors.danger}>
+              {townError}
+            </AccessibleText>
+          )}
+          {townBusy ? (
+            <View style={styles.busy}>
+              <ActivityIndicator color={colors.primaryStrong} size="large" />
+            </View>
+          ) : (
+            <Pressable accessibilityRole="button" onPress={() => void searchAroundTown()} style={styles.directions}>
+              <AccessibleText variant="body" color={colors.primaryStrong} style={styles.bold}>
+                {t('nearby.aroundTown', { query })}
+              </AccessibleText>
+            </Pressable>
+          )}
         </View>
       )}
 
@@ -317,19 +371,21 @@ function PlaceCard({
       ) : (
         <AccessibleButton label={isMember ? t('nearby.open') : t('nearby.join')} onPress={() => void open()} />
       )}
-      <Pressable
-        accessibilityRole="link"
-        onPress={() =>
-          void Linking.openURL(
-            `https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`,
-          )
-        }
-        style={styles.directions}
-      >
-        <AccessibleText variant="body" color={colors.primaryStrong} style={styles.bold}>
-          {t('nearby.directions')}
-        </AccessibleText>
-      </Pressable>
+      {place.latitude !== null && place.longitude !== null && (
+        <Pressable
+          accessibilityRole="link"
+          onPress={() =>
+            void Linking.openURL(
+              `https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`,
+            )
+          }
+          style={styles.directions}
+        >
+          <AccessibleText variant="body" color={colors.primaryStrong} style={styles.bold}>
+            {t('nearby.directions')}
+          </AccessibleText>
+        </Pressable>
+      )}
     </View>
   );
 }

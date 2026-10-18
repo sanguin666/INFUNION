@@ -15,8 +15,9 @@ export type MapPlace = {
   address: string | null;
   city: string | null;
   postalCode: string | null;
-  latitude: number;
-  longitude: number;
+  // Null only in a name search, for a place not pinned on the map yet.
+  latitude: number | null;
+  longitude: number | null;
   qrCodeToken: string;
   menuOrder: string[];
   memberCount: number;
@@ -32,6 +33,15 @@ const DISTANCE_SQL = `(2 * 6371 * asin(sqrt(
   cos(radians(:lat)) * cos(radians(poi.latitude)) *
   power(sin(radians(poi.longitude - :lng) / 2), 2)
 )))`;
+
+// Accents and curly apostrophes folded away on both sides of a name search,
+// so "senora" finds "Señora" and "l'eliana" finds "L’Eliana".
+const ACCENTED = 'áàâäãåéèêëíìîïóòôöõúùûüñçÁÀÂÄÃÅÉÈÊËÍÌÎÏÓÒÔÖÕÚÙÛÜÑÇ’';
+const PLAIN = "aaaaaaeeeeiiiiooooouuuuncaaaaaaeeeeiiiiooooouuuunc'";
+
+function foldName(text: string): string {
+  return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/’/g, "'");
+}
 
 @Injectable()
 export class PlacesMapService {
@@ -67,11 +77,22 @@ export class PlacesMapService {
         'memberCount',
       )
       // Left off: suspended places, the ones that asked not to be shown,
-      // and those nobody has placed on the map yet.
+      // and those nobody has placed on the map yet (unless searched by name).
       .where('poi.suspended_at IS NULL')
       .andWhere('poi.map_visible = true')
-      .andWhere('poi.latitude IS NOT NULL AND poi.longitude IS NOT NULL')
       .limit(query.limit ?? (near ? 50 : 500));
+
+    const words = query.q ? foldName(query.q).split(/\s+/).filter(Boolean) : [];
+    if (words.length) {
+      words.forEach((word, index) => {
+        qb.andWhere(`lower(translate(poi.name, :accented, :plain)) LIKE :word${index} ESCAPE '\\'`, {
+          [`word${index}`]: `%${word.replace(/[\\%_]/g, (c) => `\\${c}`)}%`,
+        });
+      });
+      qb.setParameters({ accented: ACCENTED, plain: PLAIN });
+    } else {
+      qb.andWhere('poi.latitude IS NOT NULL AND poi.longitude IS NOT NULL');
+    }
 
     if (query.types?.length) {
       qb.andWhere('poi.type IN (:...types)', { types: query.types });
@@ -82,7 +103,8 @@ export class PlacesMapService {
       if (query.radiusKm !== undefined) {
         qb.andWhere(`${DISTANCE_SQL} <= :radiusKm`, { radiusKm: query.radiusKm });
       }
-      qb.orderBy('"distanceKm"', 'ASC');
+      // Places without a pin (name search only) come after the others.
+      qb.orderBy('"distanceKm"', 'ASC', 'NULLS LAST');
     } else {
       qb.orderBy('poi.name', 'ASC');
     }
@@ -90,10 +112,10 @@ export class PlacesMapService {
     const rows = await qb.getRawMany<MapPlace & { distanceKm?: number | string | null }>();
     return rows.map((row) => ({
       ...row,
-      latitude: Number(row.latitude),
-      longitude: Number(row.longitude),
+      latitude: row.latitude === null ? null : Number(row.latitude),
+      longitude: row.longitude === null ? null : Number(row.longitude),
       memberCount: Number(row.memberCount ?? 0),
-      distanceKm: near ? Math.round(Number(row.distanceKm) * 100) / 100 : null,
+      distanceKm: near && row.distanceKm !== null ? Math.round(Number(row.distanceKm) * 100) / 100 : null,
     }));
   }
 }

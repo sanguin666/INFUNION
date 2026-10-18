@@ -30,6 +30,13 @@ export class PlacesQueryDto {
   @IsEnum(PoiType, { each: true })
   types?: PoiType[];
 
+  // Part of a place's name, e.g. `carmen`: every word must appear, accents
+  // and case aside. With it, places not yet pinned on the map are found too.
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  q?: string;
+
   @IsOptional()
   @Type(() => Number)
   @IsInt()
