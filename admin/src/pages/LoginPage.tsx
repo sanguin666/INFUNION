@@ -37,7 +37,7 @@ export function LoginPage() {
     setSubmitting(true);
     setError(null);
     try {
-      await login(email, password);
+      await login(email.trim(), password);
       navigate('/', { replace: true });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('login.genericError'));

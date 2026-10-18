@@ -54,6 +54,10 @@ describe('Superadmin (e2e)', () => {
     await app.close();
   });
 
+  it('signs in whatever the case of the email', async () => {
+    await passwordToken('Boss@ANSAE.test');
+  });
+
   it('keeps every superadmin route shut without the code', async () => {
     const member = await signIn(app, '+34600700001', 'Member');
     await client(app).get('/superadmin/overview').expect(401);

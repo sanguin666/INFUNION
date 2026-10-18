@@ -34,17 +34,24 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { phone } });
   }
 
+  // Emails match whatever their case or stray spaces: a phone keyboard
+  // often capitalises the first letter.
   findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { email } });
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .where('lower(user.email) = :email', { email: email.trim().toLowerCase() })
+      .getOne();
   }
 
   // The one place the password hash is read. Everything else gets a User
   // without it — see the column's `select: false`.
   findByEmailForLogin(email: string): Promise<User | null> {
-    return this.usersRepository.findOne({
-      where: { email },
-      select: { id: true, email: true, passwordHash: true },
-    });
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .select(['user.id', 'user.email'])
+      .addSelect('user.passwordHash')
+      .where('lower(user.email) = :email', { email: email.trim().toLowerCase() })
+      .getOne();
   }
 
   /**
