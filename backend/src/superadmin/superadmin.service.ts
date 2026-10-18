@@ -61,6 +61,18 @@ type Actor = { identity: SuperadminIdentity; request: Request };
  * the whole app's figures, every community, every account. Every change
  * goes in the Journal with who, when and from where.
  */
+export type WatchItem = {
+  level: 'warn' | 'alert' | 'ok';
+  kind: 'trialEnding' | 'requestsWaiting' | 'adminQuiet' | 'suspended' | 'demoLogin' | 'errors' | 'ok';
+  poiId?: string;
+  poiName?: string;
+  module?: string;
+  n?: number;
+  days?: number;
+  date?: string;
+  never?: boolean;
+};
+
 @Injectable()
 export class SuperadminService {
   constructor(
@@ -207,7 +219,8 @@ export class SuperadminService {
   }
 
   private async watchList(now: Date, pois: Poi[], live: ActiveModule[]) {
-    const items: { level: 'warn' | 'alert' | 'ok'; title: string; detail: string; poiId?: string }[] = [];
+    // Kinds and figures only: the admin words them in Seb's chosen language.
+    const items: WatchItem[] = [];
     const soon = new Date(now.getTime() + 7 * DAY);
     for (const module of live) {
       if (module.status !== ModuleStatus.TRIAL || !module.trialEndsAt || module.trialEndsAt > soon) continue;
@@ -215,9 +228,11 @@ export class SuperadminService {
       const days = Math.max(0, Math.ceil((module.trialEndsAt.getTime() - now.getTime()) / DAY));
       items.push({
         level: 'warn',
-        title: `${module.poi.name} · essai ${module.moduleType}`,
-        detail: `se termine dans ${days} jour${days > 1 ? 's' : ''}, pas de moyen de paiement`,
+        kind: 'trialEnding',
         poiId: module.poi.id,
+        poiName: module.poi.name,
+        module: module.moduleType,
+        days,
       });
     }
     const waiting: { poi_id: string; name: string; count: number; oldest: Date }[] = await this.data.query(
@@ -229,12 +244,7 @@ export class SuperadminService {
     );
     for (const row of waiting) {
       const days = Math.floor((now.getTime() - new Date(row.oldest).getTime()) / DAY);
-      items.push({
-        level: 'alert',
-        title: `${row.name} · ${row.count} demande${row.count > 1 ? 's' : ''} sans réponse`,
-        detail: `la plus ancienne a ${days} jours`,
-        poiId: row.poi_id,
-      });
+      items.push({ level: 'alert', kind: 'requestsWaiting', poiId: row.poi_id, poiName: row.name, n: row.count, days });
     }
     const quiet: { id: string; name: string; last: Date | null }[] = await this.data.query(
       `SELECT p.id, p.name, MAX(u.last_login_at) AS last
@@ -247,28 +257,19 @@ export class SuperadminService {
       [new Date(now.getTime() - 30 * DAY)],
     );
     for (const row of quiet) {
-      items.push({
-        level: 'warn',
-        title: `${row.name} · admin inactif`,
-        detail: row.last ? 'aucune connexion depuis plus de 30 jours' : 'pas encore de connexion enregistrée',
-        poiId: row.id,
-      });
+      items.push({ level: 'warn', kind: 'adminQuiet', poiId: row.id, poiName: row.name, never: !row.last });
     }
     for (const poi of pois.filter((p) => p.suspendedAt)) {
-      items.push({ level: 'warn', title: `${poi.name} · suspendue`, detail: 'depuis le ' + poi.suspendedAt!.toISOString().slice(0, 10), poiId: poi.id });
+      items.push({ level: 'warn', kind: 'suspended', poiId: poi.id, poiName: poi.name, date: poi.suspendedAt!.toISOString() });
     }
     if (this.demoLoginOn() && this.isProduction()) {
-      items.push({
-        level: 'alert',
-        title: 'Connexion démo active en production',
-        detail: "n'importe qui peut entrer avec n'importe quel numéro",
-      });
+      items.push({ level: 'alert', kind: 'demoLogin' });
     }
     const errors = this.errors.countSince(new Date(now.getTime() - DAY));
     items.push(
       errors
-        ? { level: 'alert', title: `${errors} erreur${errors > 1 ? 's' : ''} serveur sur 24 h`, detail: 'voir Santé technique' }
-        : { level: 'ok', title: 'Serveur en ligne · 0 erreur sur 24 h', detail: `démarré le ${bootedAt.toISOString().slice(0, 16).replace('T', ' ')} UTC` },
+        ? { level: 'alert', kind: 'errors', n: errors }
+        : { level: 'ok', kind: 'ok', date: bootedAt.toISOString() },
     );
     return items;
   }
@@ -547,13 +548,14 @@ export class SuperadminService {
     const dbLatencyMs = Date.now() - started;
     const [size] = await this.data.query('SELECT pg_database_size(current_database())::bigint AS bytes');
     const now = new Date();
-    const warnings: string[] = [];
-    if (this.demoLoginOn() && this.isProduction()) warnings.push('La connexion démo est active en production (DEMO_LOGIN=on).');
+    // Codes, worded by the admin.
+    const warnings: ('demoLogin' | 'initialPassword' | 'reset2fa' | 'cors')[] = [];
+    if (this.demoLoginOn() && this.isProduction()) warnings.push('demoLogin');
     if (this.config.get<string>('SUPERADMIN_INITIAL_PASSWORD')) {
-      warnings.push('SUPERADMIN_INITIAL_PASSWORD est encore défini sur le serveur : à retirer une fois le mot de passe changé.');
+      warnings.push('initialPassword');
     }
-    if (this.config.get<string>('SUPERADMIN_RESET_2FA')) warnings.push('SUPERADMIN_RESET_2FA est encore défini : à retirer.');
-    if (this.isProduction() && !this.config.get<string>('CORS_ORIGINS')) warnings.push('CORS_ORIGINS n’est pas défini.');
+    if (this.config.get<string>('SUPERADMIN_RESET_2FA')) warnings.push('reset2fa');
+    if (this.isProduction() && !this.config.get<string>('CORS_ORIGINS')) warnings.push('cors');
     return {
       environment: this.environment(),
       nodeEnv: this.config.get<string>('NODE_ENV', 'development'),

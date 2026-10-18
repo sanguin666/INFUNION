@@ -12,6 +12,7 @@ import { getSuperadminSession } from '../api/client';
 import type { ActiveModule, ModuleType } from '../api/types';
 import type { Translations } from '../i18n/translations';
 import type { DashboardContext } from './usePoiId';
+import { useSa } from '../superadmin/format';
 
 const LIVE_STATUSES = new Set(['trial', 'active']);
 
@@ -38,6 +39,7 @@ const NAV: { to: string; label: `layout.${keyof Translations['layout']}`; module
 export function DashboardLayout() {
   const { user, logout } = useAuth();
   const { t } = useI18n();
+  const { s: sa } = useSa();
   const navigate = useNavigate();
   const location = useLocation();
   const { poiId } = useParams<{ poiId: string }>();
@@ -135,7 +137,7 @@ export function DashboardLayout() {
         {user.isSuperadmin && (
           <>
             <nav>
-              <NavLink to={visiting ? `/superadmin/communities/${poiId}` : '/superadmin'}>Superadmin</NavLink>
+              <NavLink to={visiting ? `/superadmin/communities/${poiId}` : '/superadmin'}>{sa('nav.title')}</NavLink>
             </nav>
             <hr className="menu-divider" />
           </>
@@ -162,8 +164,8 @@ export function DashboardLayout() {
       <main className="main">
         {visiting && (
           <p className="sa-viewing" role="status">
-            <span>Vous voyez l’admin de {currentPoi?.name || 'cette communauté'} en tant que superadmin.</span>
-            <NavLink to={`/superadmin/communities/${poiId}`}>Revenir au superadmin</NavLink>
+            <span>{sa('nav.viewing', { name: currentPoi?.name || sa('nav.thisCommunity') })}</span>
+            <NavLink to={`/superadmin/communities/${poiId}`}>{sa('nav.backToSuperadmin')}</NavLink>
           </p>
         )}
         <Outlet context={{ poiId: poiId!, modules, refreshModules } satisfies DashboardContext} />

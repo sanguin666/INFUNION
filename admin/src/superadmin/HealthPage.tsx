@@ -1,14 +1,21 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { changeSuperadminPassword, getHealth, type Health } from '../api/superadmin';
-import { dateTimeFr, errorText, explain } from './format';
+import { useSa, type Sa } from './format';
 
-function uptime(seconds: number): string {
+const WARNINGS: Record<Health['warnings'][number], string> = {
+  demoLogin: 'health.warnDemoLogin',
+  initialPassword: 'health.warnInitialPassword',
+  reset2fa: 'health.warnReset2fa',
+  cors: 'health.warnCors',
+};
+
+function uptime(seconds: number, { s }: Sa): string {
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  if (days) return `${days} j ${hours} h`;
-  if (hours) return `${hours} h ${minutes} min`;
-  return `${minutes} min`;
+  if (days) return s('health.days', { d: days, h: hours });
+  if (hours) return s('health.hours', { h: hours, m: minutes });
+  return s('health.minutes', { m: minutes });
 }
 
 function PasswordForm() {
@@ -16,6 +23,7 @@ function PasswordForm() {
   const [next, setNext] = useState('');
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const { s, error: describe } = useSa();
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -25,9 +33,9 @@ function PasswordForm() {
       await changeSuperadminPassword(current, next);
       setCurrent('');
       setNext('');
-      setMessage({ ok: true, text: 'Mot de passe changé.' });
+      setMessage({ ok: true, text: s('health.passwordChanged') });
     } catch (err) {
-      setMessage({ ok: false, text: explain(errorText(err)) });
+      setMessage({ ok: false, text: describe(err) });
     } finally {
       setBusy(false);
     }
@@ -35,21 +43,21 @@ function PasswordForm() {
 
   return (
     <form onSubmit={submit} aria-labelledby="sa-password-title">
-      <h3 id="sa-password-title">Mon mot de passe superadmin</h3>
+      <h3 id="sa-password-title">{s('health.passwordTitle')}</h3>
       <div className="card form">
         <label>
-          Mot de passe actuel
+          {s('health.currentPassword')}
           <input id="sa-current-password" type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} required />
         </label>
         <label>
-          Nouveau mot de passe (12 caractères ou plus)
+          {s('health.newPassword')}
           <input id="sa-new-password" type="password" autoComplete="new-password" minLength={12} value={next} onChange={(e) => setNext(e.target.value)} required />
         </label>
       </div>
       {message && <p className={message.ok ? 'sa-notice' : 'error-text'}>{message.text}</p>}
       <div className="card-actions sa-actions">
         <button type="submit" className="btn btn-primary" disabled={busy}>
-          Changer le mot de passe
+          {s('health.changePassword')}
         </button>
       </div>
     </form>
@@ -59,11 +67,13 @@ function PasswordForm() {
 export function SuperadminHealthPage() {
   const [data, setData] = useState<Health | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const sa = useSa();
+  const { s, dateTime, error: describe } = sa;
 
   const load = () =>
     getHealth()
       .then(setData)
-      .catch((err) => setError(errorText(err)));
+      .catch((err) => setError(describe(err)));
 
   useEffect(() => {
     load();
@@ -72,13 +82,13 @@ export function SuperadminHealthPage() {
   return (
     <div>
       <div className="sa-heading">
-        <h2>Santé technique</h2>
+        <h2>{s('health.title')}</h2>
         <button type="button" className="btn" onClick={load}>
-          Actualiser
+          {s('health.refresh')}
         </button>
       </div>
       {error && <p className="error-text">{error}</p>}
-      {!data && !error && <p className="muted">Chargement…</p>}
+      {!data && !error && <p className="muted">{s('common.loading')}</p>}
       {data && (
         <>
           {data.warnings.length > 0 && (
@@ -86,7 +96,7 @@ export function SuperadminHealthPage() {
               {data.warnings.map((warning) => (
                 <div className="card-row" key={warning}>
                   <span className="sa-warning">
-                    <span className="sa-dot sa-dot-alert" aria-hidden="true" /> {warning}
+                    <span className="sa-dot sa-dot-alert" aria-hidden="true" /> {s(WARNINGS[warning] ?? warning)}
                   </span>
                 </div>
               ))}
@@ -94,40 +104,40 @@ export function SuperadminHealthPage() {
           )}
           <div className="kpi-row">
             <div className="stat-tile">
-              <p className="stat-label">Serveur</p>
-              <p className="stat-value">En ligne</p>
-              <p className="stat-delta stat-delta-neutral">depuis {uptime(data.uptimeSeconds)} · {data.memoryMb} Mo</p>
+              <p className="stat-label">{s('health.server')}</p>
+              <p className="stat-value">{s('health.online')}</p>
+              <p className="stat-delta stat-delta-neutral">{s('health.uptime', { time: uptime(data.uptimeSeconds, sa), mb: data.memoryMb })}</p>
             </div>
             <div className="stat-tile">
-              <p className="stat-label">Erreurs sur 24 h</p>
+              <p className="stat-label">{s('health.errors24')}</p>
               <p className="stat-value">{data.errors24h}</p>
               <p className={`stat-delta ${data.errors24h ? 'stat-delta-down' : 'stat-delta-up'}`}>
-                {data.errors24h ? 'voir la liste plus bas' : 'tout va bien'}
+                {data.errors24h ? s('health.seeList') : s('health.allGood')}
               </p>
             </div>
             <div className="stat-tile">
-              <p className="stat-label">Base de données</p>
+              <p className="stat-label">{s('health.database')}</p>
               <p className="stat-value">{data.database.latencyMs} ms</p>
-              <p className="stat-delta stat-delta-neutral">{data.database.sizeMb} Mo</p>
+              <p className="stat-delta stat-delta-neutral">{s('health.size', { mb: data.database.sizeMb })}</p>
             </div>
             <div className="stat-tile">
-              <p className="stat-label">Téléphones pour les notifications</p>
+              <p className="stat-label">{s('health.devices')}</p>
               <p className="stat-value">{data.push.devices}</p>
-              <p className="stat-delta stat-delta-neutral">{data.push.enabled ? 'envois actifs' : 'envois coupés'}</p>
+              <p className="stat-delta stat-delta-neutral">{data.push.enabled ? s('health.sendsOn') : s('health.sendsOff')}</p>
             </div>
           </div>
 
           <div className="card card-list">
-            <div className="card-row"><span>Environnement</span><strong>{data.environment}</strong></div>
-            <div className="card-row"><span>Version déployée</span><strong>{data.version ? `${data.version}${data.branch ? ` (${data.branch})` : ''}` : 'inconnue (hors Railway)'}</strong></div>
-            <div className="card-row"><span>Démarré le</span><strong>{dateTimeFr(data.startedAt)}</strong></div>
-            <div className="card-row"><span>Connexion démo</span><strong>{data.demoLogin ? 'active' : 'coupée'}</strong></div>
-            <div className="card-row"><span>Paiement des dons (Stripe)</span><strong>{data.stripe ? 'branché' : 'démo'}</strong></div>
+            <div className="card-row"><span>{s('health.environment')}</span><strong>{data.environment}</strong></div>
+            <div className="card-row"><span>{s('health.version')}</span><strong>{data.version ? `${data.version}${data.branch ? ` (${data.branch})` : ''}` : s('health.unknownVersion')}</strong></div>
+            <div className="card-row"><span>{s('health.startedAt')}</span><strong>{dateTime(data.startedAt)}</strong></div>
+            <div className="card-row"><span>{s('health.demoLogin')}</span><strong>{data.demoLogin ? s('health.on') : s('health.off')}</strong></div>
+            <div className="card-row"><span>{s('health.stripe')}</span><strong>{data.stripe ? s('health.connected') : s('health.demo')}</strong></div>
           </div>
 
-          <h3>Dernières erreurs serveur</h3>
+          <h3>{s('health.recentErrors')}</h3>
           <div className="card card-list">
-            {data.recentErrors.length === 0 && <p className="todo-done">Aucune depuis le dernier démarrage.</p>}
+            {data.recentErrors.length === 0 && <p className="todo-done">{s('health.noErrors')}</p>}
             {data.recentErrors.map((e, i) => (
               <div className="card-row" key={i}>
                 <span>
@@ -136,7 +146,7 @@ export function SuperadminHealthPage() {
                   </span>
                   <span className="sa-sub">{e.message}</span>
                 </span>
-                <span className="sa-sub">{dateTimeFr(e.at)}</span>
+                <span className="sa-sub">{dateTime(e.at)}</span>
               </div>
             ))}
           </div>

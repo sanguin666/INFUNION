@@ -1,13 +1,15 @@
 import { useState } from 'react';
+import { useSa } from './format';
 
 /** A temporary password, shown once: to read out or copy, never stored. */
 export function PasswordReveal({ email, password, onClose }: { email: string; password: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
+  const { s } = useSa();
   return (
     <div className="card sa-reveal" role="status">
-      <p className="card-title">Mot de passe provisoire de {email}</p>
+      <p className="card-title">{s('reveal.title', { email })}</p>
       <p className="sa-password">{password}</p>
-      <p className="muted">Il ne sera plus affiché. Donnez-le à la personne : elle se connecte avec son e-mail et ce mot de passe.</p>
+      <p className="muted">{s('reveal.note')}</p>
       <div className="card-actions">
         <button
           type="button"
@@ -19,10 +21,10 @@ export function PasswordReveal({ email, password, onClose }: { email: string; pa
               .catch(() => setCopied(false))
           }
         >
-          {copied ? 'Copié' : 'Copier'}
+          {copied ? s('reveal.copied') : s('reveal.copy')}
         </button>
         <button type="button" className="btn" onClick={onClose}>
-          C’est noté
+          {s('reveal.done')}
         </button>
       </div>
     </div>

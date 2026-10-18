@@ -1,47 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getJournal, type JournalEntry } from '../api/superadmin';
-import { dateTimeFr, errorText, moduleLabel } from './format';
-
-const ACTIONS: Record<string, string> = {
-  'admin.login': 'Connexion admin',
-  'admin.login.failed': 'Connexion admin refusée',
-  'superadmin.login': 'Entrée superadmin',
-  'superadmin.login.failed': 'Code superadmin refusé',
-  'superadmin.2fa.enrolled': 'Application d’authentification activée',
-  'superadmin.2fa.enroll.failed': 'Activation refusée (mot de passe)',
-  'superadmin.2fa.reset': 'Application d’authentification oubliée',
-  'superadmin.password.changed': 'Mot de passe superadmin changé',
-  'superadmin.poi.create': 'Communauté créée',
-  'superadmin.poi.update': 'Communauté modifiée',
-  'superadmin.poi.suspend': 'Communauté suspendue',
-  'superadmin.poi.unsuspend': 'Communauté réactivée',
-  'superadmin.poi.delete': 'Communauté supprimée',
-  'superadmin.module.start': 'Module activé',
-  'superadmin.module.stop': 'Module arrêté',
-  'superadmin.module.offer': 'Module offert',
-  'superadmin.module.unoffer': 'Offre reprise',
-  'superadmin.module.extend-trial': 'Essai prolongé',
-  'superadmin.admin.add': 'Admin ajouté',
-  'superadmin.admin.remove': 'Admin retiré',
-  'superadmin.admin.password_reset': 'Mot de passe admin renouvelé',
-  'superadmin.user.delete': 'Compte supprimé',
-  'superadmin.poi_admin.write': 'Changement dans l’admin d’une communauté',
-};
+import { useSa, type Sa } from './format';
 
 const FILTERS = [
-  { key: '', label: 'Tout' },
-  { key: 'superadmin.', label: 'Superadmin' },
-  { key: 'admin.login', label: 'Connexions admin' },
+  { key: '', label: 'journal.all' },
+  { key: 'superadmin.', label: 'journal.superadmin' },
+  { key: 'admin.login', label: 'journal.adminLogins' },
 ];
 
-function describe(entry: JournalEntry): string {
+/** The action in words; an action this list does not know yet stays as it is. */
+function actionLabel(action: string, { s }: Sa): string {
+  const key = `journal.${action}`;
+  const label = s(key);
+  return label === key ? action : label;
+}
+
+function details(entry: JournalEntry, { s, moduleLabel }: Sa): string {
   const d = entry.details;
   const parts: string[] = [];
   if (typeof d.module === 'string') parts.push(moduleLabel(d.module));
   if (typeof d.email === 'string') parts.push(d.email);
   if (typeof d.adminEmail === 'string') parts.push(`admin ${d.adminEmail}`);
-  if (Array.isArray(d.fields)) parts.push(`champs : ${d.fields.join(', ')}`);
+  if (Array.isArray(d.fields)) parts.push(s('journal.fields', { list: d.fields.join(', ') }));
   if (typeof d.method === 'string' && typeof d.path === 'string') parts.push(`${d.method} ${d.path}`);
   if (typeof d.name === 'string') parts.push(d.name);
   return parts.join(' · ');
@@ -52,6 +33,8 @@ export function SuperadminJournalPage() {
   const [entries, setEntries] = useState<JournalEntry[] | null>(null);
   const [more, setMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const sa = useSa();
+  const { s, dateTime, error: describe } = sa;
 
   useEffect(() => {
     getJournal({ action: filter || undefined })
@@ -59,8 +42,8 @@ export function SuperadminJournalPage() {
         setEntries(rows);
         setMore(rows.length === 100);
       })
-      .catch((err) => setError(errorText(err)));
-  }, [filter]);
+      .catch((err) => setError(describe(err)));
+  }, [filter, describe]);
 
   function loadMore() {
     const last = entries?.[entries.length - 1];
@@ -70,14 +53,14 @@ export function SuperadminJournalPage() {
         setEntries((list) => [...(list ?? []), ...rows]);
         setMore(rows.length === 100);
       })
-      .catch((err) => setError(errorText(err)));
+      .catch((err) => setError(describe(err)));
   }
 
   return (
     <div>
-      <h2>Journal</h2>
-      <p className="muted">Qui a fait quoi, et d’où : vos actions, les connexions des admins, et vos changements dans l’admin d’une communauté.</p>
-      <div className="chips" role="group" aria-label="Filtrer">
+      <h2>{s('journal.title')}</h2>
+      <p className="muted">{s('journal.intro')}</p>
+      <div className="chips" role="group" aria-label={s('common.filter')}>
         {FILTERS.map((f) => (
           <button
             key={f.key}
@@ -90,20 +73,20 @@ export function SuperadminJournalPage() {
               setFilter(f.key);
             }}
           >
-            {f.label}
+            {s(f.label)}
           </button>
         ))}
       </div>
       {error && <p className="error-text">{error}</p>}
-      {!entries && !error && <p className="muted">Chargement…</p>}
+      {!entries && !error && <p className="muted">{s('common.loading')}</p>}
       {entries && (
         <div className="card card-list sa-gap">
-          {entries.length === 0 && <p className="todo-done">Rien pour l’instant.</p>}
+          {entries.length === 0 && <p className="todo-done">{s('journal.none')}</p>}
           {entries.map((entry) => (
             <div className="card-row" key={entry.id}>
               <span>
                 <span className={`card-title${entry.action.endsWith('.failed') ? ' sa-failed' : ''}`}>
-                  {ACTIONS[entry.action] ?? entry.action}
+                  {actionLabel(entry.action, sa)}
                   {entry.poiName &&
                     (entry.poiId && entry.action !== 'superadmin.poi.delete' ? (
                       <>
@@ -114,16 +97,16 @@ export function SuperadminJournalPage() {
                       ` · ${entry.poiName}`
                     ))}
                 </span>
-                <span className="sa-sub">{[entry.actorEmail, describe(entry), entry.ip].filter(Boolean).join(' · ')}</span>
+                <span className="sa-sub">{[entry.actorEmail, details(entry, sa), entry.ip].filter(Boolean).join(' · ')}</span>
               </span>
-              <span className="sa-sub sa-nowrap">{dateTimeFr(entry.createdAt)}</span>
+              <span className="sa-sub sa-nowrap">{dateTime(entry.createdAt)}</span>
             </div>
           ))}
         </div>
       )}
       {more && (
         <button type="button" className="btn sa-gap" onClick={loadMore}>
-          Plus ancien
+          {s('journal.older')}
         </button>
       )}
     </div>

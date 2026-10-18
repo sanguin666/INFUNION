@@ -4,17 +4,14 @@ import { useAuth } from '../auth/AuthContext';
 import { getSuperadminSession, setSuperadminSession } from '../api/client';
 import { LogoMark } from '../components/LogoMark';
 import { AppearancePicker } from '../components/AppearancePicker';
+import { LanguagePicker } from '../components/LanguagePicker';
+import { useSa } from './format';
 import { SuperadminGate } from './SuperadminGate';
 
-const NAV = [
-  { to: 'overview', label: "Vue d'ensemble" },
-  { to: 'communities', label: 'Communautés' },
-  { to: 'accounts', label: 'Utilisateurs' },
-  { to: 'health', label: 'Santé technique' },
-  { to: 'journal', label: 'Journal' },
-];
+const NAV = ['overview', 'communities', 'accounts', 'health', 'journal'];
 
 function SessionClock() {
+  const { s } = useSa();
   const [, tick] = useState(0);
   useEffect(() => {
     const timer = window.setInterval(() => tick((n) => n + 1), 30_000);
@@ -23,13 +20,14 @@ function SessionClock() {
   const session = getSuperadminSession();
   if (!session) return null;
   const minutes = Math.max(0, Math.round((new Date(session.expiresAt).getTime() - Date.now()) / 60000));
-  return <p className="sidebar-user">Session : encore {minutes} min</p>;
+  return <p className="sidebar-user">{s('nav.session', { n: minutes })}</p>;
 }
 
 /** ANSAE's own section (Seb, 17 Oct 2026), behind the code gate. */
 export function SuperadminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { s } = useSa();
   if (!user) return null;
   if (!user.isSuperadmin) return <Navigate to="/" replace />;
 
@@ -50,11 +48,11 @@ export function SuperadminLayout() {
         </div>
 
         <hr className="menu-divider" />
-        <p className="poi-switcher-caption">Superadmin</p>
+        <p className="poi-switcher-caption">{s('nav.title')}</p>
         <nav>
-          {NAV.map((item) => (
-            <NavLink key={item.to} to={item.to}>
-              {item.label}
+          {NAV.map((to) => (
+            <NavLink key={to} to={to}>
+              {s(`nav.${to}`)}
             </NavLink>
           ))}
         </nav>
@@ -63,7 +61,7 @@ export function SuperadminLayout() {
           <>
             <hr className="menu-divider" />
             <nav>
-              <Link to="/">Mes communautés</Link>
+              <Link to="/">{s('nav.myCommunities')}</Link>
             </nav>
           </>
         )}
@@ -71,12 +69,13 @@ export function SuperadminLayout() {
         <div className="sidebar-footer">
           <hr className="menu-divider" />
           <SessionClock />
+          <LanguagePicker />
           <AppearancePicker />
           <button type="button" className="btn btn-block" onClick={lock}>
-            Verrouiller
+            {s('nav.lock')}
           </button>
           <button type="button" className="btn btn-destructive btn-block" onClick={logout}>
-            Se déconnecter
+            {s('nav.signOut')}
           </button>
         </div>
       </aside>

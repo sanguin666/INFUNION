@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { deleteAccount, searchAccounts, type Account } from '../api/superadmin';
 import { DestructiveButton } from '../components/DestructiveButton';
-import { ago, dateFr, errorText, explain } from './format';
+import { useSa } from './format';
 
 /** Every account, members and admins, found by phone, email or name. */
 export function SuperadminAccountsPage() {
@@ -10,6 +10,7 @@ export function SuperadminAccountsPage() {
   const [results, setResults] = useState<Account[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const { s, date, ago, error: describe } = useSa();
 
   useEffect(() => {
     const q = query.trim();
@@ -20,33 +21,33 @@ export function SuperadminAccountsPage() {
           setResults(found);
           setError(null);
         })
-        .catch((err) => setError(errorText(err)));
+        .catch((err) => setError(describe(err)));
     }, 300);
     return () => window.clearTimeout(timer);
-  }, [query]);
+  }, [query, describe]);
 
   async function remove(account: Account) {
     setError(null);
     try {
       await deleteAccount(account.id);
       setResults((list) => list?.filter((a) => a.id !== account.id) ?? null);
-      setNotice('Compte supprimé.');
+      setNotice(s('accounts.deleted'));
     } catch (err) {
-      setError(explain(errorText(err)));
+      setError(describe(err));
     }
   }
 
   return (
     <div>
-      <h2>Utilisateurs</h2>
-      <p className="muted">Membres et admins de toutes les communautés. Tapez au moins deux caractères.</p>
+      <h2>{s('accounts.title')}</h2>
+      <p className="muted">{s('accounts.intro')}</p>
       <div className="card form">
         <label>
-          Rechercher
+          {s('common.search')}
           <input
             id="sa-accounts-search"
             type="search"
-            placeholder="Téléphone, e-mail, prénom ou nom"
+            placeholder={s('accounts.placeholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoFocus
@@ -57,44 +58,41 @@ export function SuperadminAccountsPage() {
       {notice && <p className="sa-notice" role="status">{notice}</p>}
       {query.trim().length >= 2 && results && (
         <div className="card card-list sa-gap">
-          {results.length === 0 && <p className="todo-done">Personne ne correspond.</p>}
+          {results.length === 0 && <p className="todo-done">{s('accounts.none')}</p>}
           {results.map((account) => (
             <div className="card-row sa-account" key={account.id}>
               <span>
                 <span className="card-title">
                   {[account.firstName, account.lastName].filter(Boolean).join(' ') || account.email || account.phone}
-                  {account.isSuperadmin && <span className="sa-status sa-status-comped"> · superadmin</span>}
+                  {account.isSuperadmin && <span className="sa-status sa-status-comped"> · {s('accounts.superadmin')}</span>}
                 </span>
                 <span className="sa-sub">{[account.phone, account.email].filter(Boolean).join(' · ')}</span>
                 <span className="sa-sub">
-                  Compte créé le {dateFr(account.createdAt)} · vu {ago(account.lastSeenAt)}
-                  {account.lastLoginAt && ` · connexion admin ${ago(account.lastLoginAt)}`}
+                  {s('accounts.created', { date: date(account.createdAt), when: ago(account.lastSeenAt) })}
+                  {account.lastLoginAt && s('accounts.adminLogin', { when: ago(account.lastLoginAt) })}
                 </span>
                 <span className="sa-sub">
                   {account.communities.length === 0
-                    ? 'Aucune communauté'
+                    ? s('accounts.noCommunity')
                     : account.communities.map((c, i) => (
                         <span key={c.id}>
                           {i > 0 && ', '}
                           <Link to={`../communities/${c.id}`}>{c.name}</Link>
-                          {c.role === 'admin' ? ' (admin)' : ''}
+                          {c.role === 'admin' ? s('accounts.adminTag') : ''}
                         </span>
                       ))}
                 </span>
               </span>
               {!account.isSuperadmin && (
                 <span className="sa-row-actions">
-                  <DestructiveButton quiet label="Supprimer le compte" onConfirm={() => remove(account)} />
+                  <DestructiveButton quiet label={s('accounts.delete')} onConfirm={() => remove(account)} />
                 </span>
               )}
             </div>
           ))}
         </div>
       )}
-      <p className="muted sa-hint">
-        Supprimer un compte efface la personne, ses appartenances, ses demandes et ses appareils. Ses dons et intentions de messe
-        restent dans les comptes des communautés.
-      </p>
+      <p className="muted sa-hint">{s('accounts.note')}</p>
     </div>
   );
 }

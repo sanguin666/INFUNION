@@ -9,7 +9,7 @@ import {
   verifyCode,
   type SuperadminStatus,
 } from '../api/superadmin';
-import { errorText, explain } from './format';
+import { useSa } from './format';
 
 /**
  * The second lock on the superadmin section: the six-digit code from an
@@ -20,6 +20,7 @@ export function SuperadminGate({ children }: { children: ReactNode }) {
   const [unlocked, setUnlocked] = useState(() => !!getSuperadminSession());
   const [status, setStatus] = useState<SuperadminStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { s, error: describe } = useSa();
 
   useEffect(() => {
     const lock = () => setUnlocked(false);
@@ -39,12 +40,12 @@ export function SuperadminGate({ children }: { children: ReactNode }) {
     if (unlocked) return;
     getSuperadminStatus()
       .then(setStatus)
-      .catch((err) => setError(errorText(err)));
-  }, [unlocked]);
+      .catch((err) => setError(describe(err)));
+  }, [unlocked, describe]);
 
   if (unlocked) return <>{children}</>;
   if (error) return <GateFrame><p className="error-text">{error}</p></GateFrame>;
-  if (!status) return <GateFrame><p className="muted">Chargement…</p></GateFrame>;
+  if (!status) return <GateFrame><p className="muted">{s('common.loading')}</p></GateFrame>;
   return status.enrolled ? (
     <CodeStep onDone={() => setUnlocked(true)} />
   ) : (
@@ -53,18 +54,20 @@ export function SuperadminGate({ children }: { children: ReactNode }) {
 }
 
 function GateFrame({ children }: { children: ReactNode }) {
+  const { s } = useSa();
   return (
     <div className="sa-gate">
-      <h2>Superadmin</h2>
+      <h2>{s('nav.title')}</h2>
       {children}
     </div>
   );
 }
 
 function CodeField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const { s } = useSa();
   return (
     <label>
-      Code à 6 chiffres
+      {s('gate.codeLabel')}
       <input
         id="superadmin-code"
         className="sa-code-input"
@@ -82,6 +85,7 @@ function CodeField({ value, onChange }: { value: string; onChange: (value: strin
 }
 
 function CodeStep({ onDone }: { onDone: () => void }) {
+  const { s, error: describe } = useSa();
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -94,7 +98,7 @@ function CodeStep({ onDone }: { onDone: () => void }) {
       setSuperadminSession(await verifyCode(code));
       onDone();
     } catch (err) {
-      setError(explain(errorText(err)));
+      setError(describe(err));
       setCode('');
     } finally {
       setBusy(false);
@@ -103,14 +107,14 @@ function CodeStep({ onDone }: { onDone: () => void }) {
 
   return (
     <GateFrame>
-      <p className="muted">Ouvrez votre application d’authentification et tapez le code ANSAE Superadmin. La session dure une heure.</p>
+      <p className="muted">{s('gate.codeIntro')}</p>
       <form onSubmit={submit} className="sa-gate-form">
         <div className="card form">
           <CodeField value={code} onChange={setCode} />
         </div>
         {error && <p className="error-text">{error}</p>}
         <button type="submit" className="btn btn-primary btn-block" disabled={busy || code.length !== 6}>
-          {busy ? 'Vérification…' : 'Entrer'}
+          {busy ? s('gate.checking') : s('gate.enter')}
         </button>
       </form>
     </GateFrame>
@@ -118,6 +122,7 @@ function CodeStep({ onDone }: { onDone: () => void }) {
 }
 
 function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
+  const { s, error: describe } = useSa();
   const [password, setPassword] = useState('');
   const [secret, setSecret] = useState<{ secret: string; qr: string } | null>(null);
   const [code, setCode] = useState('');
@@ -133,7 +138,7 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
       setPassword('');
       setSecret({ secret: started.secret, qr: await QRCode.toDataURL(started.otpauthUrl, { margin: 1, width: 220 }) });
     } catch (err) {
-      setError(explain(errorText(err)));
+      setError(describe(err));
     } finally {
       setBusy(false);
     }
@@ -147,7 +152,7 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
       setSuperadminSession(await confirmEnrollment(code));
       onDone();
     } catch (err) {
-      setError(explain(errorText(err)));
+      setError(describe(err));
       setCode('');
     } finally {
       setBusy(false);
@@ -157,15 +162,11 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
   if (!secret) {
     return (
       <GateFrame>
-        <p className="muted">
-          Première ouverture pour {email}. Le superadmin se protège par un second code, donné par une application
-          d’authentification sur votre téléphone (Google Authenticator, Microsoft Authenticator, 1Password…).
-          Confirmez d’abord votre mot de passe.
-        </p>
+        <p className="muted">{s('gate.enrollIntro', { email })}</p>
         <form onSubmit={begin} className="sa-gate-form">
           <div className="card form">
             <label>
-              Mot de passe
+              {s('gate.password')}
               <input
                 id="superadmin-enroll-password"
                 type="password"
@@ -178,7 +179,7 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
           </div>
           {error && <p className="error-text">{error}</p>}
           <button type="submit" className="btn btn-primary btn-block" disabled={busy || !password}>
-            Continuer
+            {s('gate.continue')}
           </button>
         </form>
       </GateFrame>
@@ -187,18 +188,18 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
 
   return (
     <GateFrame>
-      <p className="muted">Scannez ce code avec l’application, puis tapez le code à 6 chiffres qu’elle affiche.</p>
+      <p className="muted">{s('gate.scanIntro')}</p>
       <form onSubmit={confirm} className="sa-gate-form">
         <div className="card form">
           <div className="form-row sa-qr">
-            <img src={secret.qr} alt="QR code à scanner avec l’application d’authentification" width={220} height={220} />
-            <span className="muted">Sans appareil photo, saisissez cette clé : <code className="sa-secret">{secret.secret}</code></span>
+            <img src={secret.qr} alt={s('gate.qrAlt')} width={220} height={220} />
+            <span className="muted">{s('gate.noCamera')} <code className="sa-secret">{secret.secret}</code></span>
           </div>
           <CodeField value={code} onChange={setCode} />
         </div>
         {error && <p className="error-text">{error}</p>}
         <button type="submit" className="btn btn-primary btn-block" disabled={busy || code.length !== 6}>
-          Activer
+          {s('gate.activate')}
         </button>
       </form>
     </GateFrame>

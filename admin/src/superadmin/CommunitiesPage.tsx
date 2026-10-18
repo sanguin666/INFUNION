@@ -9,30 +9,16 @@ import {
 } from '../api/superadmin';
 import type { SupportedLanguage } from '../api/types';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES } from '../i18n/translations';
-import { ago, dateFr, errorText, eur, explain } from './format';
+import { useSa } from './format';
 import { PasswordReveal } from './PasswordReveal';
 
-const BILLING_LABELS: Record<CommunityBilling, string> = {
-  comped: 'Offerte',
-  paying: 'Payante',
-  trial: 'En essai',
-  free: 'Gratuite',
-  suspended: 'Suspendue',
-};
-
-const FILTERS: { key: CommunityBilling | 'all'; label: string }[] = [
-  { key: 'all', label: 'Toutes' },
-  { key: 'paying', label: 'Payantes' },
-  { key: 'trial', label: 'En essai' },
-  { key: 'comped', label: 'Offertes' },
-  { key: 'free', label: 'Gratuites' },
-  { key: 'suspended', label: 'Suspendues' },
-];
+const FILTERS: (CommunityBilling | 'all')[] = ['all', 'paying', 'trial', 'comped', 'free', 'suspended'];
 
 function BillingStatus({ row }: { row: Pick<CommunityRow, 'billing' | 'monthly' | 'nextTrialEnd'> }) {
-  let text = BILLING_LABELS[row.billing];
-  if (row.billing === 'paying') text += ` · ${eur(row.monthly)}/mois`;
-  if (row.billing === 'trial' && row.nextTrialEnd) text += ` · fin ${dateFr(row.nextTrialEnd)}`;
+  const { s, money, date } = useSa();
+  let text = s(`communities.${row.billing}`);
+  if (row.billing === 'paying') text += ` · ${s('common.perMonth', { amount: money(row.monthly) })}`;
+  if (row.billing === 'trial' && row.nextTrialEnd) text += ` · ${s('communities.trialEnd', { date: date(row.nextTrialEnd) })}`;
   return <span className={`sa-status sa-status-${row.billing}`}>{text}</span>;
 }
 
@@ -46,6 +32,7 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
   const [comped, setComped] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const { s, error: describe } = useSa();
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -63,7 +50,7 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
       });
       onCreated(created.poi.id, created.admin);
     } catch (err) {
-      setError(explain(errorText(err)));
+      setError(describe(err));
     } finally {
       setBusy(false);
     }
@@ -71,22 +58,22 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
 
   return (
     <form onSubmit={submit} aria-labelledby="sa-create-title">
-      <h3 id="sa-create-title">Nouvelle communauté</h3>
+      <h3 id="sa-create-title">{s('communities.newTitle')}</h3>
       <div className="card form">
         <label>
-          Nom
+          {s('communities.name')}
           <input id="sa-new-name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={200} />
         </label>
         <label>
-          Ville
+          {s('communities.city')}
           <input id="sa-new-city" value={city} onChange={(e) => setCity(e.target.value)} maxLength={120} />
         </label>
         <label>
-          Code postal
+          {s('communities.postalCode')}
           <input id="sa-new-postal" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} maxLength={20} />
         </label>
         <label>
-          Langue de la communauté
+          {s('communities.language')}
           <select id="sa-new-language" value={language} onChange={(e) => setLanguage(e.target.value as SupportedLanguage)}>
             {SUPPORTED_LANGUAGES.map((code) => (
               <option key={code} value={code}>
@@ -96,17 +83,17 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
           </select>
         </label>
         <label>
-          E-mail de l’admin
+          {s('communities.adminEmail')}
           <input id="sa-new-admin-email" type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
         </label>
         <label>
-          Prénom de l’admin
+          {s('communities.adminFirstName')}
           <input id="sa-new-admin-name" value={adminFirstName} onChange={(e) => setAdminFirstName(e.target.value)} maxLength={100} />
         </label>
         <div className="form-row sa-switch-row">
           <span>
-            Offerte
-            <span className="muted sa-hint">Tous les modules gratuits, comme Carmen</span>
+            {s('communities.comped')}
+            <span className="muted sa-hint">{s('communities.compedHint')}</span>
           </span>
           <input
             id="sa-new-comped"
@@ -115,17 +102,17 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
             className="switch"
             checked={comped}
             onChange={(e) => setComped(e.target.checked)}
-            aria-label="Offerte"
+            aria-label={s('communities.comped')}
           />
         </div>
       </div>
       {error && <p className="error-text">{error}</p>}
       <div className="card-actions sa-actions">
         <button type="submit" className="btn btn-primary" disabled={busy}>
-          {busy ? 'Création…' : 'Créer la communauté'}
+          {busy ? s('communities.creating') : s('communities.submit')}
         </button>
         <button type="button" className="btn" onClick={onCancel}>
-          Annuler
+          {s('common.cancel')}
         </button>
       </div>
     </form>
@@ -140,11 +127,12 @@ export function SuperadminCommunitiesPage() {
   const [filter, setFilter] = useState<CommunityBilling | 'all'>('all');
   const [creating, setCreating] = useState(false);
   const [created, setCreated] = useState<{ poiId: string; admin: NewAdmin } | null>(null);
+  const { s, ago, error: describe } = useSa();
 
   const load = () =>
     listCommunities()
       .then(setRows)
-      .catch((err) => setError(errorText(err)));
+      .catch((err) => setError(describe(err)));
 
   useEffect(() => {
     load();
@@ -162,10 +150,10 @@ export function SuperadminCommunitiesPage() {
   return (
     <div>
       <div className="sa-heading">
-        <h2>Communautés</h2>
+        <h2>{s('communities.title')}</h2>
         {!creating && (
           <button type="button" className="btn btn-primary" onClick={() => setCreating(true)}>
-            Créer une communauté
+            {s('communities.create')}
           </button>
         )}
       </div>
@@ -179,8 +167,8 @@ export function SuperadminCommunitiesPage() {
       )}
       {created && !created.admin.temporaryPassword && (
         <p className="muted">
-          Communauté créée. {created.admin.email} avait déjà un compte : il ou elle en est maintenant admin avec son mot de passe
-          habituel. <Link to={`../communities/${created.poiId}`}>Ouvrir la fiche</Link>
+          {s('communities.existingAdmin', { email: created.admin.email })}{' '}
+          <Link to={`../communities/${created.poiId}`}>{s('communities.openPage')}</Link>
         </p>
       )}
 
@@ -196,50 +184,50 @@ export function SuperadminCommunitiesPage() {
       )}
 
       {error && <p className="error-text">{error}</p>}
-      {!rows && !error && <p className="muted">Chargement…</p>}
+      {!rows && !error && <p className="muted">{s('common.loading')}</p>}
       {rows && (
         <>
           <div className="card form sa-search">
             <label>
-              Rechercher
+              {s('common.search')}
               <input
                 id="sa-communities-search"
                 type="search"
-                placeholder="Nom, ville, code postal"
+                placeholder={s('communities.searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </label>
           </div>
-          <div className="chips" role="group" aria-label="Filtrer">
-            {FILTERS.map((f) => {
-              const count = f.key === 'all' ? rows.length : rows.filter((r) => r.billing === f.key).length;
+          <div className="chips" role="group" aria-label={s('common.filter')}>
+            {FILTERS.map((key) => {
+              const count = key === 'all' ? rows.length : rows.filter((r) => r.billing === key).length;
               return (
                 <button
-                  key={f.key}
+                  key={key}
                   type="button"
-                  className={`chip${filter === f.key ? ' chip-selected' : ''}`}
-                  aria-pressed={filter === f.key}
-                  onClick={() => setFilter(f.key)}
+                  className={`chip${filter === key ? ' chip-selected' : ''}`}
+                  aria-pressed={filter === key}
+                  onClick={() => setFilter(key)}
                 >
-                  {f.label} ({count})
+                  {s(`communities.${key}`)} ({count})
                 </button>
               );
             })}
           </div>
           <div className="card sa-table-card">
             {shown.length === 0 ? (
-              <p className="todo-done">Aucune communauté ici.</p>
+              <p className="todo-done">{s('communities.none')}</p>
             ) : (
               <div className="sa-table-scroll">
                 <table className="data-table sa-table">
                   <thead>
                     <tr>
-                      <th>Communauté</th>
-                      <th>Membres</th>
-                      <th>Modules</th>
-                      <th>Facturation</th>
-                      <th>Admin vu</th>
+                      <th>{s('communities.colCommunity')}</th>
+                      <th>{s('communities.colMembers')}</th>
+                      <th>{s('communities.colModules')}</th>
+                      <th>{s('communities.colBilling')}</th>
+                      <th>{s('communities.colAdminSeen')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -254,7 +242,7 @@ export function SuperadminCommunitiesPage() {
                         <td>{row.members}</td>
                         <td>
                           {row.liveModules} / {row.totalModules}
-                          {row.offeredModules > 0 && <span className="sa-sub">{row.offeredModules} offert{row.offeredModules > 1 ? 's' : ''}</span>}
+                          {row.offeredModules > 0 && <span className="sa-sub">{s('communities.offeredCount', { n: row.offeredModules })}</span>}
                         </td>
                         <td>
                           <BillingStatus row={row} />

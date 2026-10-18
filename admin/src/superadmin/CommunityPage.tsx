@@ -15,23 +15,23 @@ import {
 import type { ActiveModule, ModuleType, SupportedLanguage } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES } from '../i18n/translations';
-import { ago, dateFr, errorText, eur, explain, moduleLabel } from './format';
+import { useSa, type Sa } from './format';
 import { PasswordReveal } from './PasswordReveal';
 
 const LIVE = new Set(['trial', 'active']);
 
-function moduleState(row: ActiveModule | undefined, comped: boolean, free: boolean): string {
+function moduleState({ s, date }: Sa, row: ActiveModule | undefined, comped: boolean, free: boolean): string {
   if (!row || !LIVE.has(row.status)) {
-    if (row?.status === 'expired') return 'En pause (essai ou paiement terminé)';
-    if (row?.status === 'cancelled') return 'Arrêté';
-    return 'Inactif';
+    if (row?.status === 'expired') return s('community.statePaused');
+    if (row?.status === 'cancelled') return s('community.stateStopped');
+    return s('community.stateOff');
   }
-  if (row.offered) return 'Offert par ANSAE';
-  if (free) return 'Gratuit';
-  if (comped) return 'Inclus (communauté offerte)';
-  if (row.status === 'trial') return `Essai gratuit jusqu’au ${dateFr(row.trialEndsAt)}`;
-  if (row.cancelAtPeriodEnd) return `S’arrête le ${dateFr(row.paidUntil)}`;
-  return `Payé jusqu’au ${dateFr(row.paidUntil)}`;
+  if (row.offered) return s('community.stateOffered');
+  if (free) return s('community.stateFree');
+  if (comped) return s('community.stateIncluded');
+  if (row.status === 'trial') return s('community.stateTrial', { date: date(row.trialEndsAt) });
+  if (row.cancelAtPeriodEnd) return s('community.stateStops', { date: date(row.paidUntil) });
+  return s('community.statePaid', { date: date(row.paidUntil) });
 }
 
 export function SuperadminCommunityPage() {
@@ -51,6 +51,8 @@ export function SuperadminCommunityPage() {
   const [adminEmail, setAdminEmail] = useState('');
   const [adminFirstName, setAdminFirstName] = useState('');
   const [confirmName, setConfirmName] = useState('');
+  const sa = useSa();
+  const { s, date, ago, money, moduleLabel, error: describe } = sa;
 
   function show(detail: CommunityDetail) {
     setData(detail);
@@ -65,8 +67,8 @@ export function SuperadminCommunityPage() {
     if (!poiId) return;
     getCommunity(poiId)
       .then(show)
-      .catch((err) => setError(errorText(err)));
-  }, [poiId]);
+      .catch((err) => setError(describe(err)));
+  }, [poiId, describe]);
 
   async function run(key: string, action: () => Promise<CommunityDetail | void>, done?: string) {
     setBusy(key);
@@ -77,7 +79,7 @@ export function SuperadminCommunityPage() {
       if (result) show(result);
       if (done) setNotice(done);
     } catch (err) {
-      setError(explain(errorText(err)));
+      setError(describe(err));
     } finally {
       setBusy(null);
     }
@@ -86,8 +88,8 @@ export function SuperadminCommunityPage() {
   if (!data) {
     return (
       <div>
-        <Link to="..">‹ Communautés</Link>
-        {error ? <p className="error-text">{error}</p> : <p className="muted">Chargement…</p>}
+        <Link to="..">{s('community.back')}</Link>
+        {error ? <p className="error-text">{error}</p> : <p className="muted">{s('common.loading')}</p>}
       </div>
     );
   }
@@ -101,7 +103,7 @@ export function SuperadminCommunityPage() {
 
   function saveInfo(event: FormEvent) {
     event.preventDefault();
-    run('info', () => updateCommunity(id, { name, city, postalCode, address, language }), 'Informations enregistrées.');
+    run('info', () => updateCommunity(id, { name, city, postalCode, address, language }), s('community.saved'));
   }
 
   function submitAdmin(event: FormEvent) {
@@ -112,7 +114,7 @@ export function SuperadminCommunityPage() {
       setAdminFirstName('');
       if (result.admin.temporaryPassword) setReveal({ email: result.admin.email, password: result.admin.temporaryPassword });
       return result.community;
-    }, 'Admin ajouté.');
+    }, s('community.adminAdded'));
   }
 
   function moduleActions(type: ModuleType) {
@@ -123,32 +125,32 @@ export function SuperadminCommunityPage() {
     const buttons = [];
     if (live && row.offered) {
       buttons.push(
-        <DestructiveButton key="unoffer" quiet label="Reprendre l’offre" disabled={pending} onConfirm={() => act(type, 'unoffer', `${moduleLabel(type)} n’est plus offert.`)} />,
+        <DestructiveButton key="unoffer" quiet label={s('community.unoffer')} disabled={pending} onConfirm={() => act(type, 'unoffer', s('community.unofferedMsg', { module: moduleLabel(type) }))} />,
       );
     } else if (!free && !billing.comped) {
       buttons.push(
-        <button key="offer" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'offer', `${moduleLabel(type)} est offert.`)}>
-          Offrir
+        <button key="offer" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'offer', s('community.offeredMsg', { module: moduleLabel(type) }))}>
+          {s('community.offer')}
         </button>,
       );
     }
     if (!free && !billing.comped && (!live || row.status === 'trial') && !row?.offered) {
       buttons.push(
-        <button key="trial" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'extend-trial', `Un mois d’essai de plus pour ${moduleLabel(type)}.`)}>
-          {live ? '+1 mois d’essai' : 'Essai 1 mois'}
+        <button key="trial" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'extend-trial', s('community.extendedMsg', { module: moduleLabel(type) }))}>
+          {live ? s('community.plusMonth') : s('community.trialMonth')}
         </button>,
       );
     }
     if (!live && (free || billing.comped)) {
       buttons.push(
-        <button key="start" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'start', `${moduleLabel(type)} est activé.`)}>
-          Activer
+        <button key="start" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'start', s('community.startedMsg', { module: moduleLabel(type) }))}>
+          {s('community.activate')}
         </button>,
       );
     }
     if (live && !row.offered && !row.cancelAtPeriodEnd) {
       buttons.push(
-        <DestructiveButton key="stop" quiet label="Arrêter" disabled={pending} onConfirm={() => act(type, 'stop', `${moduleLabel(type)} est arrêté.`)} />,
+        <DestructiveButton key="stop" quiet label={s('community.stop')} disabled={pending} onConfirm={() => act(type, 'stop', s('community.stoppedMsg', { module: moduleLabel(type) }))} />,
       );
     }
     return buttons;
@@ -156,43 +158,45 @@ export function SuperadminCommunityPage() {
 
   return (
     <div className="sa-detail">
-      <Link to="..">‹ Communautés</Link>
+      <Link to="..">{s('community.back')}</Link>
       <div className="sa-heading">
         <h2>{poi.name}</h2>
         <button type="button" className="btn" onClick={() => navigate(`/poi/${id}/dashboard`)}>
-          Ouvrir son admin
+          {s('community.openAdmin')}
         </button>
       </div>
       <p className="muted">
-        {data.memberCount} membre{data.memberCount > 1 ? 's' : ''} · créée le {dateFr(poi.createdAt)} · QR {poi.qrCodeToken}
-        {poi.suspendedAt && <strong className="sa-status sa-status-suspended"> · Suspendue depuis le {dateFr(poi.suspendedAt)}</strong>}
+        {s('community.meta', { n: data.memberCount, date: date(poi.createdAt), qr: poi.qrCodeToken })}
+        {poi.suspendedAt && (
+          <strong className="sa-status sa-status-suspended"> · {s('community.suspendedSince', { date: date(poi.suspendedAt) })}</strong>
+        )}
       </p>
 
       {error && <p className="error-text" role="alert">{error}</p>}
       {notice && <p className="sa-notice" role="status">{notice}</p>}
       {reveal && <PasswordReveal email={reveal.email} password={reveal.password} onClose={() => setReveal(null)} />}
 
-      <h3>Informations</h3>
+      <h3>{s('community.details')}</h3>
       <form onSubmit={saveInfo}>
         <div className="card form">
           <label>
-            Nom
+            {s('communities.name')}
             <input id="sa-poi-name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={200} />
           </label>
           <label>
-            Adresse
+            {s('community.address')}
             <input id="sa-poi-address" value={address} onChange={(e) => setAddress(e.target.value)} maxLength={300} />
           </label>
           <label>
-            Code postal
+            {s('communities.postalCode')}
             <input id="sa-poi-postal" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} maxLength={20} />
           </label>
           <label>
-            Ville
+            {s('communities.city')}
             <input id="sa-poi-city" value={city} onChange={(e) => setCity(e.target.value)} maxLength={120} />
           </label>
           <label>
-            Langue
+            {s('communities.language')}
             <select id="sa-poi-language" value={language} onChange={(e) => setLanguage(e.target.value as SupportedLanguage)}>
               {SUPPORTED_LANGUAGES.map((code) => (
                 <option key={code} value={code}>
@@ -204,17 +208,17 @@ export function SuperadminCommunityPage() {
         </div>
         <div className="card-actions sa-actions">
           <button type="submit" className="btn btn-primary" disabled={busy === 'info'}>
-            Enregistrer
+            {s('common.save')}
           </button>
         </div>
       </form>
 
-      <h3>Modules</h3>
+      <h3>{s('community.modules')}</h3>
       <div className="card card-list">
         <div className="card-row">
           <span>
-            <span className="card-title">Communauté offerte</span>
-            <span className="sa-sub">Tous les modules gratuits, sans facture</span>
+            <span className="card-title">{s('community.compedRow')}</span>
+            <span className="sa-sub">{s('community.compedHint')}</span>
           </span>
           <input
             id="sa-poi-comped"
@@ -224,16 +228,16 @@ export function SuperadminCommunityPage() {
             checked={billing.comped}
             disabled={busy === 'comped'}
             onChange={(e) =>
-              run('comped', () => updateCommunity(id, { billingComped: e.target.checked }), e.target.checked ? 'Communauté offerte.' : 'La communauté repasse en payant.')
+              run('comped', () => updateCommunity(id, { billingComped: e.target.checked }), e.target.checked ? s('community.compedOn') : s('community.compedOff'))
             }
-            aria-label="Communauté offerte"
+            aria-label={s('community.compedRow')}
           />
         </div>
         {data.allModules.map((type) => (
           <div className="card-row" key={type}>
             <span>
               <span className="card-title">{moduleLabel(type)}</span>
-              <span className="sa-sub">{moduleState(rowFor(type), billing.comped, isFree(type))}</span>
+              <span className="sa-sub">{moduleState(sa, rowFor(type), billing.comped, isFree(type))}</span>
             </span>
             <span className="sa-row-actions">{moduleActions(type)}</span>
           </div>
@@ -241,42 +245,45 @@ export function SuperadminCommunityPage() {
       </div>
       <p className="muted sa-hint">
         {billing.comped
-          ? 'Rien n’est facturé à cette communauté.'
-          : `Paiement : ${billing.paymentMethod ?? 'aucun moyen enregistré'} · ${billing.interval === 'yearly' ? 'annuel' : 'mensuel'}${billing.renewsAt ? ` · prochaine échéance le ${dateFr(billing.renewsAt)}` : ''}`}
+          ? s('community.nothingBilled')
+          : s('community.payment', {
+              method: billing.paymentMethod ?? s('community.noMethod'),
+              interval: billing.interval === 'yearly' ? s('community.yearly') : s('community.monthly'),
+            }) + (billing.renewsAt ? s('community.nextDue', { date: date(billing.renewsAt) }) : '')}
       </p>
 
       {billing.invoices.length > 0 && (
         <>
-          <h3>Factures</h3>
+          <h3>{s('community.invoices')}</h3>
           <div className="card card-list">
             {billing.invoices.map((invoice) => (
               <div className="card-row" key={invoice.id}>
                 <span>
-                  <span className="card-title">{dateFr(invoice.issuedAt)}</span>
+                  <span className="card-title">{date(invoice.issuedAt)}</span>
                   <span className="sa-sub">{invoice.lines.map((line) => moduleLabel(line.moduleType)).join(', ')}</span>
                 </span>
-                <strong>{eur(invoice.amount)}</strong>
+                <strong>{money(invoice.amount)}</strong>
               </div>
             ))}
           </div>
         </>
       )}
 
-      <h3>Admins</h3>
+      <h3>{s('community.admins')}</h3>
       <div className="card card-list">
-        {data.admins.length === 0 && <p className="todo-done">Aucun admin : ajoutez-en un ci-dessous.</p>}
+        {data.admins.length === 0 && <p className="todo-done">{s('community.noAdmins')}</p>}
         {data.admins.map((admin) => (
           <div className="card-row" key={admin.id}>
             <span>
               <span className="card-title">{[admin.firstName, admin.lastName].filter(Boolean).join(' ') || admin.email}</span>
               <span className="sa-sub">
-                {admin.email} · dernière connexion {ago(admin.lastLoginAt)}
+                {s('community.lastLogin', { email: admin.email ?? '', when: ago(admin.lastLoginAt) })}
               </span>
             </span>
             <span className="sa-row-actions">
               <DestructiveButton
                 quiet
-                label="Nouveau mot de passe"
+                label={s('community.newPassword')}
                 disabled={busy === `admin:${admin.id}`}
                 onConfirm={() =>
                   run(`admin:${admin.id}`, async () => {
@@ -287,65 +294,62 @@ export function SuperadminCommunityPage() {
               />
               <DestructiveButton
                 quiet
-                label="Retirer"
+                label={s('community.remove')}
                 disabled={busy === `admin:${admin.id}`}
-                onConfirm={() => run(`admin:${admin.id}`, () => removeAdmin(id, admin.id), 'Admin retiré.')}
+                onConfirm={() => run(`admin:${admin.id}`, () => removeAdmin(id, admin.id), s('community.adminRemoved'))}
               />
             </span>
           </div>
         ))}
       </div>
-      <form onSubmit={submitAdmin} aria-label="Ajouter un admin">
+      <form onSubmit={submitAdmin} aria-label={s('community.addAdmin')}>
         <div className="card form sa-gap">
           <label>
-            E-mail du nouvel admin
+            {s('community.newAdminEmail')}
             <input id="sa-add-admin-email" type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
           </label>
           <label>
-            Prénom
+            {s('community.firstName')}
             <input id="sa-add-admin-name" value={adminFirstName} onChange={(e) => setAdminFirstName(e.target.value)} maxLength={100} />
           </label>
         </div>
         <div className="card-actions sa-actions">
           <button type="submit" className="btn btn-primary" disabled={busy === 'admin'}>
-            Ajouter un admin
+            {s('community.addAdmin')}
           </button>
         </div>
       </form>
 
-      <h3>Zone sensible</h3>
+      <h3>{s('community.danger')}</h3>
       <div className="card card-list">
         <div className="card-row">
           <span>
-            <span className="card-title">{poi.suspendedAt ? 'Réactiver' : 'Suspendre'}</span>
-            <span className="sa-sub">
-              Suspendue, la communauté disparaît de l’annuaire, son QR code ne fonctionne plus et ses admins ne peuvent plus
-              entrer. Rien n’est effacé.
-            </span>
+            <span className="card-title">{poi.suspendedAt ? s('community.reactivate') : s('community.suspend')}</span>
+            <span className="sa-sub">{s('community.suspendHint')}</span>
           </span>
           {poi.suspendedAt ? (
-            <button type="button" className="btn btn-primary" disabled={busy === 'suspend'} onClick={() => run('suspend', () => setSuspended(id, false), 'Communauté réactivée.')}>
-              Réactiver
+            <button type="button" className="btn btn-primary" disabled={busy === 'suspend'} onClick={() => run('suspend', () => setSuspended(id, false), s('community.reactivatedMsg'))}>
+              {s('community.reactivate')}
             </button>
           ) : (
-            <DestructiveButton label="Suspendre" disabled={busy === 'suspend'} onConfirm={() => run('suspend', () => setSuspended(id, true), 'Communauté suspendue.')} />
+            <DestructiveButton label={s('community.suspend')} disabled={busy === 'suspend'} onConfirm={() => run('suspend', () => setSuspended(id, true), s('community.suspendedMsg'))} />
           )}
         </div>
         <div className="card-row sa-delete-row">
           <span>
-            <span className="card-title">Supprimer la communauté et toutes ses données</span>
-            <span className="sa-sub">Définitif. Tapez son nom exact pour confirmer : {poi.name}</span>
+            <span className="card-title">{s('community.deleteTitle')}</span>
+            <span className="sa-sub">{s('community.deleteHint', { name: poi.name })}</span>
             <input
               id="sa-delete-confirm"
               className="sa-inline-input"
               value={confirmName}
               onChange={(e) => setConfirmName(e.target.value)}
               placeholder={poi.name}
-              aria-label="Nom de la communauté, pour confirmer"
+              aria-label={s('community.deleteAria')}
             />
           </span>
           <DestructiveButton
-            label="Supprimer"
+            label={s('community.delete')}
             disabled={confirmName.trim() !== poi.name.trim() || busy === 'delete'}
             onConfirm={() =>
               run('delete', async () => {

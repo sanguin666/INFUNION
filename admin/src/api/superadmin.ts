@@ -41,7 +41,18 @@ async function guarded<T>(call: () => Promise<T>): Promise<T> {
 
 // ---- overview
 
-export type WatchItem = { level: 'warn' | 'alert' | 'ok'; title: string; detail: string; poiId?: string };
+/** One line of "To watch": a kind plus its figures, worded by the admin in its own language. */
+export type WatchItem = {
+  level: 'warn' | 'alert' | 'ok';
+  kind: 'trialEnding' | 'requestsWaiting' | 'adminQuiet' | 'suspended' | 'demoLogin' | 'errors' | 'ok';
+  poiId?: string;
+  poiName?: string;
+  module?: string;
+  n?: number;
+  days?: number;
+  date?: string;
+  never?: boolean;
+};
 
 export type Overview = {
   generatedAt: string;
@@ -195,7 +206,7 @@ export type Health = {
   push: { enabled: boolean; devices: number };
   demoLogin: boolean;
   stripe: boolean;
-  warnings: string[];
+  warnings: ('demoLogin' | 'initialPassword' | 'reset2fa' | 'cors')[];
 };
 
 export const getHealth = () => guarded(() => apiGet<Health>('/superadmin/health'));
