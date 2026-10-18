@@ -132,6 +132,21 @@ export class Poi {
   @Column({ name: 'postal_code', nullable: true })
   postalCode?: string;
 
+  // Where the place is, for the map of communities and "near you" (Seb,
+  // 18 Oct 2026). Set from the admin: the address is looked up once with
+  // OpenStreetMap's Nominatim, then the pin can be dragged. null until
+  // then, and a place without coordinates is simply left off the map.
+  @Column('double precision', { nullable: true })
+  latitude?: number | null;
+
+  @Column('double precision', { nullable: true })
+  longitude?: number | null;
+
+  // Whether the place shows on the map and in "near you" for people who
+  // are not members yet. On by default; the community can turn it off.
+  @Column({ name: 'map_visible', default: true })
+  mapVisible!: boolean;
+
   // Unique token encoded in the QR code printed on the flyer displayed at
   // the POI's entrance, used for automatic onboarding of a user.
   @Column({ name: 'qr_code_token', unique: true })

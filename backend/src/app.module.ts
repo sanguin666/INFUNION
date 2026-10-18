@@ -25,6 +25,7 @@ import { PrivateFilesModule } from './private-files/private-files.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
 import { DailyReadingsModule } from './daily-readings/daily-readings.module.js';
 import { SuperadminModule } from './superadmin/superadmin.module.js';
+import { PlacesMapModule } from './places-map/places-map.module.js';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { SuperadminModule } from './superadmin/superadmin.module.js';
     PrivateFilesModule,
     NotificationsModule,
     SuperadminModule,
+    PlacesMapModule,
   ],
   controllers: [AppController],
   providers: [AppService],
