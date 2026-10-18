@@ -12,9 +12,11 @@ import {
   type CommunityDetail,
   type ModuleAction,
 } from '../api/superadmin';
-import type { ActiveModule, ModuleType, SupportedLanguage } from '../api/types';
+import type { ActiveModule, ModuleType, PoiType, SupportedLanguage } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES } from '../i18n/translations';
+import { useI18n } from '../i18n/I18nContext';
+import { PLACE_KINDS } from '../placeKinds';
 import { useSa, type Sa } from './format';
 import { PasswordReveal } from './PasswordReveal';
 
@@ -48,6 +50,8 @@ export function SuperadminCommunityPage() {
   const [postalCode, setPostalCode] = useState('');
   const [address, setAddress] = useState('');
   const [language, setLanguage] = useState<SupportedLanguage>('es');
+  const [kind, setKind] = useState<PoiType>('church');
+  const { t } = useI18n();
   const [adminEmail, setAdminEmail] = useState('');
   const [adminFirstName, setAdminFirstName] = useState('');
   const [confirmName, setConfirmName] = useState('');
@@ -61,6 +65,7 @@ export function SuperadminCommunityPage() {
     setPostalCode(detail.poi.postalCode ?? '');
     setAddress(detail.poi.address ?? '');
     setLanguage(detail.poi.language);
+    setKind(detail.poi.type);
   }
 
   useEffect(() => {
@@ -103,7 +108,7 @@ export function SuperadminCommunityPage() {
 
   function saveInfo(event: FormEvent) {
     event.preventDefault();
-    run('info', () => updateCommunity(id, { name, city, postalCode, address, language }), s('community.saved'));
+    run('info', () => updateCommunity(id, { name, type: kind, city, postalCode, address, language }), s('community.saved'));
   }
 
   function submitAdmin(event: FormEvent) {
@@ -194,6 +199,16 @@ export function SuperadminCommunityPage() {
           <label>
             {s('communities.city')}
             <input id="sa-poi-city" value={city} onChange={(e) => setCity(e.target.value)} maxLength={120} />
+          </label>
+          <label>
+            {s('communities.kind')}
+            <select id="sa-poi-kind" value={kind} onChange={(e) => setKind(e.target.value as PoiType)}>
+              {PLACE_KINDS.map((option) => (
+                <option key={option} value={option}>
+                  {t(`location.kind_${option}`)}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             {s('communities.language')}

@@ -1,5 +1,5 @@
 import { apiGet, apiPatch } from './client';
-import type { Poi, PoiType } from './types';
+import type { Poi } from './types';
 
 export type GeocodeResult = {
   label: string;
@@ -20,7 +20,6 @@ export function geocode(q: string, language: string): Promise<GeocodeResult[]> {
 export function updatePoiLocation(
   poiId: string,
   body: {
-    type?: PoiType;
     address?: string;
     city?: string;
     postalCode?: string;

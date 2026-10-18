@@ -1,8 +1,8 @@
 import { lazy, Suspense, useState } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 import { geocode, updatePoiLocation, type GeocodeResult } from '../api/placesMap';
-import { PLACE_KINDS, dotSvg } from '../placeKinds';
-import type { Poi, PoiType } from '../api/types';
+import { dotSvg } from '../placeKinds';
+import type { Poi } from '../api/types';
 
 // The map library is large: it loads with the card, not with the dashboard.
 const PinMap = lazy(() => import('../components/PinMap'));
@@ -13,15 +13,16 @@ type Props = {
 };
 
 /**
- * Settings > Address and map (Seb, 18 Oct 2026): the kind of place, its
- * address and its pin, which is what puts it on the app's map of
+ * Settings > Address and map (Seb, 18 Oct 2026): the place's address and
+ * its pin, which is what puts it on the app's map of
  * communities and in "near you". The address is looked up on
  * OpenStreetMap when the office presses Search, then the pin can be
- * dragged onto the entrance.
+ * dragged onto the entrance. The kind of place only shows here: it is
+ * set when the community is created, and only the superadmin changes it.
  */
 export function LocationCard({ poi, onSaved }: Props) {
   const { t, language } = useI18n();
-  const [type, setType] = useState<PoiType>(poi.type);
+  const type = poi.type;
   const [address, setAddress] = useState(poi.address ?? '');
   const [city, setCity] = useState(poi.city ?? '');
   const [postalCode, setPostalCode] = useState(poi.postalCode ?? '');
@@ -77,7 +78,6 @@ export function LocationCard({ poi, onSaved }: Props) {
     setSaved(false);
     try {
       const updated = await updatePoiLocation(poi.id, {
-        type,
         address: address.trim(),
         city: city.trim(),
         postalCode: postalCode.trim(),
@@ -101,25 +101,13 @@ export function LocationCard({ poi, onSaved }: Props) {
         {t('location.subtitle')}
       </p>
       <div className="form" style={{ marginTop: 4 }}>
-        <div className="form-row" role="group" aria-label={t('location.typeLabel')}>
+        <div className="form-row">
           {t('location.typeLabel')}
-          <div className="chips">
-            {PLACE_KINDS.map((kind) => (
-              <button
-                key={kind}
-                type="button"
-                className={`chip chip-kind${kind === type ? ' chip-selected' : ''}`}
-                aria-pressed={kind === type}
-                onClick={() => {
-                  setType(kind);
-                  setSaved(false);
-                }}
-              >
-                <span dangerouslySetInnerHTML={{ __html: dotSvg(kind, 20) }} style={{ display: 'flex' }} />
-                {t(`location.kind_${kind}`)}
-              </button>
-            ))}
-          </div>
+          <span className="form-row-value chip-kind">
+            <span dangerouslySetInnerHTML={{ __html: dotSvg(type, 22) }} style={{ display: 'flex' }} />
+            {t(`location.kind_${type}`)}
+          </span>
+          <span style={{ fontSize: 14 }}>{t('location.typeLocked')}</span>
         </div>
         <label>
           {t('location.addressLabel')}

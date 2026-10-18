@@ -7,8 +7,10 @@ import {
   type CommunityRow,
   type NewAdmin,
 } from '../api/superadmin';
-import type { SupportedLanguage } from '../api/types';
+import type { PoiType, SupportedLanguage } from '../api/types';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES } from '../i18n/translations';
+import { useI18n } from '../i18n/I18nContext';
+import { PLACE_KINDS } from '../placeKinds';
 import { useSa } from './format';
 import { PasswordReveal } from './PasswordReveal';
 
@@ -27,6 +29,8 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [language, setLanguage] = useState<SupportedLanguage>('es');
+  const [kind, setKind] = useState<PoiType>('church');
+  const { t } = useI18n();
   const [adminEmail, setAdminEmail] = useState('');
   const [adminFirstName, setAdminFirstName] = useState('');
   const [comped, setComped] = useState(false);
@@ -43,6 +47,7 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
         name,
         city: city || undefined,
         postalCode: postalCode || undefined,
+        type: kind,
         language,
         adminEmail,
         adminFirstName: adminFirstName || undefined,
@@ -71,6 +76,16 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
         <label>
           {s('communities.postalCode')}
           <input id="sa-new-postal" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} maxLength={20} />
+        </label>
+        <label>
+          {s('communities.kind')}
+          <select id="sa-new-kind" value={kind} onChange={(e) => setKind(e.target.value as PoiType)}>
+            {PLACE_KINDS.map((option) => (
+              <option key={option} value={option}>
+                {t(`location.kind_${option}`)}
+              </option>
+            ))}
+          </select>
         </label>
         <label>
           {s('communities.language')}
