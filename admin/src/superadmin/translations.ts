@@ -49,6 +49,9 @@ const en = {
     scanIntro: 'Scan this code with the app, then type the 6-digit code it shows.',
     qrAlt: 'QR code to scan with the authenticator app',
     noCamera: 'No camera? Type this key:',
+    openApp: 'Add to my authenticator app',
+    phoneHint: 'On this phone? Tap the button: Google Authenticator opens and adds ANSAE. Then come back here and type the 6-digit code.',
+    copyKey: 'Copy the key',
     activate: 'Activate',
   },
   overview: {
@@ -338,6 +341,9 @@ const fr: SaTranslations = {
     scanIntro: 'Scannez ce code avec l’application, puis tapez le code à 6 chiffres qu’elle affiche.',
     qrAlt: 'QR code à scanner avec l’application d’authentification',
     noCamera: 'Sans appareil photo, saisissez cette clé :',
+    openApp: 'Ajouter à mon application d’authentification',
+    phoneHint: 'Sur ce téléphone ? Touchez le bouton : Google Authenticator s’ouvre et ajoute ANSAE. Revenez ensuite ici et tapez le code à 6 chiffres.',
+    copyKey: 'Copier la clé',
     activate: 'Activer',
   },
   overview: {
@@ -626,6 +632,9 @@ const es: SaTranslations = {
     scanIntro: 'Escanee este código con la aplicación y escriba el código de 6 cifras que muestra.',
     qrAlt: 'Código QR para escanear con la aplicación de autenticación',
     noCamera: '¿Sin cámara? Escriba esta clave:',
+    openApp: 'Añadir a mi aplicación de autenticación',
+    phoneHint: '¿En este teléfono? Toque el botón: Google Authenticator se abre y añade ANSAE. Vuelva aquí y escriba el código de 6 cifras.',
+    copyKey: 'Copiar la clave',
     activate: 'Activar',
   },
   overview: {
@@ -914,6 +923,9 @@ const va: SaTranslations = {
     scanIntro: "Escanegeu este codi amb l'aplicació i escriviu el codi de 6 xifres que mostra.",
     qrAlt: "Codi QR per a escanejar amb l'aplicació d'autenticació",
     noCamera: 'Sense càmera? Escriviu esta clau:',
+    openApp: 'Afegir a la meua aplicació d’autenticació',
+    phoneHint: 'En este telèfon? Toqueu el botó: Google Authenticator s’obri i afig ANSAE. Torneu ací i escriviu el codi de 6 xifres.',
+    copyKey: 'Copiar la clau',
     activate: 'Activar',
   },
   overview: {
@@ -1202,6 +1214,9 @@ const gl: SaTranslations = {
     scanIntro: 'Escanee este código coa aplicación e escriba o código de 6 cifras que amosa.',
     qrAlt: 'Código QR para escanear coa aplicación de autenticación',
     noCamera: 'Sen cámara? Escriba esta clave:',
+    openApp: 'Engadir á miña aplicación de autenticación',
+    phoneHint: 'Neste teléfono? Toque o botón: Google Authenticator ábrese e engade ANSAE. Volva aquí e escriba o código de 6 díxitos.',
+    copyKey: 'Copiar a clave',
     activate: 'Activar',
   },
   overview: {
@@ -1490,6 +1505,9 @@ const pt: SaTranslations = {
     scanIntro: 'Leia este código com a aplicação e escreva o código de 6 dígitos que ela mostra.',
     qrAlt: 'Código QR para ler com a aplicação de autenticação',
     noCamera: 'Sem câmara? Escreva esta chave:',
+    openApp: 'Adicionar à minha aplicação de autenticação',
+    phoneHint: 'Neste telemóvel? Toque no botão: o Google Authenticator abre e adiciona a ANSAE. Volte aqui e escreva o código de 6 dígitos.',
+    copyKey: 'Copiar a chave',
     activate: 'Ativar',
   },
   overview: {

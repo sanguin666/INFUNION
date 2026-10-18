@@ -124,7 +124,8 @@ function CodeStep({ onDone }: { onDone: () => void }) {
 function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
   const { s, error: describe } = useSa();
   const [password, setPassword] = useState('');
-  const [secret, setSecret] = useState<{ secret: string; qr: string } | null>(null);
+  const [secret, setSecret] = useState<{ secret: string; qr: string; url: string } | null>(null);
+  const [copied, setCopied] = useState(false);
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -136,7 +137,7 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
     try {
       const started = await startEnrollment(password);
       setPassword('');
-      setSecret({ secret: started.secret, qr: await QRCode.toDataURL(started.otpauthUrl, { margin: 1, width: 220 }) });
+      setSecret({ secret: started.secret, url: started.otpauthUrl, qr: await QRCode.toDataURL(started.otpauthUrl, { margin: 1, width: 220 }) });
     } catch (err) {
       setError(describe(err));
     } finally {
@@ -193,7 +194,27 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
         <div className="card form">
           <div className="form-row sa-qr">
             <img src={secret.qr} alt={s('gate.qrAlt')} width={220} height={220} />
-            <span className="muted">{s('gate.noCamera')} <code className="sa-secret">{secret.secret}</code></span>
+            {/* A phone cannot scan its own screen: the otpauth link opens
+                the authenticator app directly (Seb, 18 Oct 2026). */}
+            <span className="muted">{s('gate.phoneHint')}</span>
+            <a className="btn btn-block" href={secret.url}>
+              {s('gate.openApp')}
+            </a>
+            <span className="muted">
+              {s('gate.noCamera')} <code className="sa-secret">{secret.secret}</code>{' '}
+              <button
+                type="button"
+                className="text-action"
+                onClick={() =>
+                  navigator.clipboard
+                    .writeText(secret.secret)
+                    .then(() => setCopied(true))
+                    .catch(() => setCopied(false))
+                }
+              >
+                {copied ? s('reveal.copied') : s('gate.copyKey')}
+              </button>
+            </span>
           </div>
           <CodeField value={code} onChange={setCode} />
         </div>
