@@ -56,6 +56,11 @@ export class ActiveModule {
   @Column({ name: 'cancel_at_period_end', default: false })
   cancelAtPeriodEnd!: boolean;
 
+  // Given by ANSAE (superadmin, Seb 17 Oct 2026): on, never billed, never
+  // expires, like a whole community's billingComped but for one module.
+  @Column({ default: false })
+  offered!: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 

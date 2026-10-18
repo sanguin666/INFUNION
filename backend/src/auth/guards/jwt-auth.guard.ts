@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
+import { SuperadminAccess } from '../superadmin-access.service.js';
+import { extractBearerToken } from '../bearer.js';
 
 export type AuthenticatedRequest = Request & { userId: string };
 
@@ -15,7 +17,10 @@ export type AuthenticatedRequest = Request & { userId: string };
 // an admin of this POI" routes.
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly access: SuperadminAccess,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -30,10 +35,11 @@ export class JwtAuthGuard implements CanActivate {
       // undefined condition from a query instead of matching nothing.
       if (typeof payload.sub !== 'string' || !payload.sub) throw new Error('No subject');
       (request as AuthenticatedRequest).userId = payload.sub;
-      return true;
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }
+    this.access.touchLastSeen((request as AuthenticatedRequest).userId);
+    return true;
   }
 }
 
@@ -65,8 +71,4 @@ export class OptionalJwtAuthGuard implements CanActivate {
 
 export type MaybeAuthenticatedRequest = Request & { userId?: string };
 
-export function extractBearerToken(request: Request): string | undefined {
-  const header = request.headers.authorization;
-  if (!header?.startsWith('Bearer ')) return undefined;
-  return header.slice('Bearer '.length);
-}
+export { extractBearerToken };

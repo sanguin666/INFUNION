@@ -51,7 +51,12 @@ describe('Access control (e2e)', () => {
       await client(app).get(`/pois/${place.id}`).expect(200);
       await client(app).get(`/pois/qr/${place.qrCodeToken}`).expect(200);
 
-      await client(app).post('/pois').send({ name: 'Nope', type: 'church' }).expect(401);
+      await client(app).post('/pois').send({ name: 'Nope', type: 'church' }).expect(404);
+      await client(app)
+        .post('/pois')
+        .set('Authorization', `Bearer ${visitorToken}`)
+        .send({ name: 'Nope', type: 'church' })
+        .expect(404);
       await client(app).patch(`/pois/${place.id}`).send({ name: 'Nope' }).expect(401);
       await client(app).delete(`/pois/${place.id}`).expect(401);
     });

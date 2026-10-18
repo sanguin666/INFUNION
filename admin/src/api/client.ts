@@ -1,6 +1,39 @@
 export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 const TOKEN_STORAGE_KEY = 'ansae-admin-token';
 
+const SUPERADMIN_STORAGE_KEY = 'ansae-superadmin-session';
+
+export type SuperadminSession = { token: string; expiresAt: string };
+
+/**
+ * The superadmin's second token, from the six-digit code. Kept in this
+ * tab's sessionStorage only: closing the tab ends it, and it never sits
+ * on disk next to the ordinary session.
+ */
+export function getSuperadminSession(): SuperadminSession | null {
+  try {
+    const raw = sessionStorage.getItem(SUPERADMIN_STORAGE_KEY);
+    if (!raw) return null;
+    const session = JSON.parse(raw) as SuperadminSession;
+    if (new Date(session.expiresAt).getTime() - 15_000 <= Date.now()) {
+      sessionStorage.removeItem(SUPERADMIN_STORAGE_KEY);
+      return null;
+    }
+    return session;
+  } catch {
+    return null;
+  }
+}
+
+export function setSuperadminSession(session: SuperadminSession | null): void {
+  try {
+    if (session) sessionStorage.setItem(SUPERADMIN_STORAGE_KEY, JSON.stringify(session));
+    else sessionStorage.removeItem(SUPERADMIN_STORAGE_KEY);
+  } catch {
+    // A browser that refuses storage simply asks for the code again.
+  }
+}
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_STORAGE_KEY);
 }
@@ -26,7 +59,10 @@ async function request<T>(
   path: string,
   options: { method?: string; body?: BodyInit; headers?: Record<string, string> } = {},
 ): Promise<T> {
-  const token = getToken();
+  // While the superadmin's code session lasts it is used everywhere, so
+  // "Ouvrir son admin" works in any community; the server only accepts it
+  // there from the superadmin.
+  const token = getSuperadminSession()?.token ?? getToken();
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: options.method ?? 'GET',
     body: options.body,

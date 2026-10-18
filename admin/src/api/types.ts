@@ -84,6 +84,8 @@ export type CurrentUser = {
   firstName: string | null;
   lastName: string | null;
   language: SupportedLanguage;
+  // ANSAE's own account: shows the Superadmin section.
+  isSuperadmin?: boolean;
   adminPois: Poi[];
 };
 
@@ -111,6 +113,8 @@ export type ActiveModule = {
   trialEndsAt: string | null;
   paidUntil: string | null;
   cancelAtPeriodEnd: boolean;
+  // Given by ANSAE (superadmin): on and never billed.
+  offered: boolean;
 };
 
 export type BillingInterval = 'monthly' | 'yearly';

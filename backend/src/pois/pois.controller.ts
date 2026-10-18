@@ -5,33 +5,18 @@ import {
   Get,
   Param,
   Patch,
-  Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PoisService } from './pois.service.js';
-import { CreatePoiDto } from './dto/create-poi.dto.js';
 import { UpdatePoiDto } from './dto/update-poi.dto.js';
-import {
-  JwtAuthGuard,
-  type AuthenticatedRequest,
-} from '../auth/guards/jwt-auth.guard.js';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
 
+// Creating a community is the superadmin's alone (POST /superadmin/pois,
+// Seb 17 Oct 2026): it used to be open to any signed-in account.
 @Controller('pois')
 export class PoisController {
   constructor(private readonly poisService: PoisService) {}
-
-  /**
-   * Creating a place needs an account, and whoever creates it becomes its
-   * first admin — otherwise a brand-new parish would have nobody able to
-   * manage it, and anyone at all could fill the directory with places.
-   */
-  @Post()
-  @UseGuards(JwtAuthGuard)
-  create(@Req() request: AuthenticatedRequest, @Body() createPoiDto: CreatePoiDto) {
-    return this.poisService.createOwnedBy(request.userId, createPoiDto);
-  }
 
   // Reading stays open: which places exist, and what one of them is called,
   // is the public directory the app and the landing page both browse.
