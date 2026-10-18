@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,6 +11,7 @@ import type { Relation } from 'typeorm';
 import { Poi } from '../../pois/entities/poi.entity.js';
 import { User } from '../../users/entities/user.entity.js';
 import { DonationCampaign } from './donation-campaign.entity.js';
+import { donationFee } from '../platform-fee.js';
 
 /**
  * Where a gift is in the payment flow. A gift made through Stripe starts
@@ -135,6 +137,27 @@ export class Donation {
   @Column('varchar', { name: 'donor_tax_id', nullable: true })
   donorTaxId?: string | null;
 
+  // ANSAE's share of the gift (see platform-fee.ts), fixed when the gift
+  // is recorded so a later change of rate leaves past gifts as they were.
+  @Column('numeric', {
+    name: 'platform_fee',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => Number.parseFloat(value),
+    },
+  })
+  platformFee!: number;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
+
+  @BeforeInsert()
+  setPlatformFee() {
+    if (this.platformFee === undefined || this.platformFee === null) {
+      this.platformFee = donationFee(Number(this.amount) || 0);
+    }
+  }
 }
