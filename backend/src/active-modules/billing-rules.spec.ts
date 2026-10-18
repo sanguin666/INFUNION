@@ -95,4 +95,13 @@ describe('billing rules', () => {
     expect(settle(place({ billingComped: true, paymentMethodLabel: null }), modules, d('2027-01-01'))).toEqual([]);
     expect(modules[0].status).toBe(ModuleStatus.TRIAL);
   });
+
+  it('never bills or pauses a module ANSAE offered', () => {
+    const poi = place({ billingRenewsAt: d('2026-11-30'), paymentMethodLabel: null });
+    const modules: BillingModule[] = [
+      { moduleType: ModuleType.REQUESTS, status: ModuleStatus.ACTIVE, paidUntil: null, cancelAtPeriodEnd: false, offered: true },
+    ];
+    expect(settle(poi, modules, d('2027-03-01'))).toEqual([]);
+    expect(modules[0].status).toBe(ModuleStatus.ACTIVE);
+  });
 });

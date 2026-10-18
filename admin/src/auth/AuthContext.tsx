@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { getCurrentUser, login as loginRequest } from '../api/auth';
-import { getToken, setToken } from '../api/client';
+import { getToken, setSuperadminSession, setToken } from '../api/client';
 import type { CurrentUser } from '../api/types';
 
 type AuthState = {
@@ -29,12 +29,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const { accessToken } = await loginRequest(email, password);
+    setSuperadminSession(null);
     setToken(accessToken);
     const me = await getCurrentUser();
     setUser(me);
   }, []);
 
   const logout = useCallback(() => {
+    setSuperadminSession(null);
     setToken(null);
     setUser(null);
   }, []);

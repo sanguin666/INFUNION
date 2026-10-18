@@ -24,6 +24,7 @@ import { MassIntentionsModule } from './mass-intentions/mass-intentions.module.j
 import { PrivateFilesModule } from './private-files/private-files.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
 import { DailyReadingsModule } from './daily-readings/daily-readings.module.js';
+import { SuperadminModule } from './superadmin/superadmin.module.js';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { DailyReadingsModule } from './daily-readings/daily-readings.module.js';
     DailyReadingsModule,
     PrivateFilesModule,
     NotificationsModule,
+    SuperadminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

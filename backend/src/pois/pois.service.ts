@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { randomUUID } from 'node:crypto';
 import { Poi } from './entities/poi.entity.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
@@ -46,8 +46,9 @@ export class PoisService {
     return poi;
   }
 
+  // The public directory: a suspended community is left out of it.
   findAll(): Promise<Poi[]> {
-    return this.poisRepository.find();
+    return this.poisRepository.find({ where: { suspendedAt: IsNull() } });
   }
 
   async findOne(id: string): Promise<Poi> {
@@ -62,7 +63,8 @@ export class PoisService {
     const poi = await this.poisRepository.findOne({
       where: { qrCodeToken },
     });
-    if (!poi) {
+    // Nobody joins a suspended community: its flyer reads as unknown.
+    if (!poi || poi.suspendedAt) {
       throw new NotFoundException('Unknown QR code');
     }
     return poi;

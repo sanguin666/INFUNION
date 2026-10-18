@@ -156,7 +156,7 @@ export class ModuleBillingService {
     const drafts = settle(poi, modules, now);
     const row = modules.find((m) => m.moduleType === type);
     if (!row || !isLive(row)) throw new ConflictException('Module already off');
-    if (row.status === ModuleStatus.ACTIVE && !isFree(type) && !poi.billingComped && row.paidUntil) {
+    if (row.status === ModuleStatus.ACTIVE && !isFree(type) && !poi.billingComped && !row.offered && row.paidUntil) {
       row.cancelAtPeriodEnd = true;
     } else {
       row.status = ModuleStatus.CANCELLED;
@@ -171,6 +171,66 @@ export class ModuleBillingService {
     if (!row || !row.cancelAtPeriodEnd) throw new ConflictException('Nothing to resume');
     row.cancelAtPeriodEnd = false;
     await this.modules.save(row);
+    return this.summary(poiId);
+  }
+
+  /**
+   * Superadmin: gives one module to a community (Seb, 17 Oct 2026). It is
+   * switched on now, whatever it was, and no renewal ever bills it.
+   */
+  async offer(poiId: string, type: ModuleType, now = new Date()): Promise<BillingSummary> {
+    const { poi, modules } = await this.load(poiId);
+    const drafts = settle(poi, modules, now);
+    let row = modules.find((m) => m.moduleType === type);
+    if (!row) {
+      row = this.modules.create({ poi: { id: poiId }, moduleType: type, startDate: now });
+      modules.push(row);
+    }
+    row.status = ModuleStatus.ACTIVE;
+    row.offered = true;
+    row.paidUntil = null;
+    row.cancelAtPeriodEnd = false;
+    await this.save(poi, modules, drafts);
+    return this.summary(poiId);
+  }
+
+  /**
+   * Superadmin: takes a gift back. The module stops now, unless it would
+   * be free anyway (Événements, or a community that is "Offert").
+   */
+  async unoffer(poiId: string, type: ModuleType): Promise<BillingSummary> {
+    const { poi, modules } = await this.load(poiId);
+    const row = modules.find((m) => m.moduleType === type);
+    if (!row?.offered) throw new ConflictException('Module not offered');
+    row.offered = false;
+    if (!isFree(type) && !poi.billingComped) row.status = ModuleStatus.CANCELLED;
+    await this.save(poi, modules, []);
+    return this.summary(poiId);
+  }
+
+  /**
+   * Superadmin: one more free month. A running trial gets a month on its
+   * end date; a module that is off and unpaid starts a new month from now.
+   */
+  async extendTrial(poiId: string, type: ModuleType, now = new Date()): Promise<BillingSummary> {
+    const { poi, modules } = await this.load(poiId);
+    const drafts = settle(poi, modules, now);
+    let row = modules.find((m) => m.moduleType === type);
+    if (row?.status === ModuleStatus.TRIAL && row.trialEndsAt) {
+      row.trialEndsAt = addMonths(row.trialEndsAt, 1);
+    } else if (!row || !isLive(row)) {
+      if (!row) {
+        row = this.modules.create({ poi: { id: poiId }, moduleType: type });
+        modules.push(row);
+      }
+      row.status = ModuleStatus.TRIAL;
+      row.startDate = now;
+      row.trialEndsAt = addMonths(now, 1);
+      row.cancelAtPeriodEnd = false;
+    } else {
+      throw new ConflictException('Module already paid or offered');
+    }
+    await this.save(poi, modules, drafts);
     return this.summary(poiId);
   }
 

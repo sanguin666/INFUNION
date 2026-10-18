@@ -18,6 +18,13 @@ import { DashboardPage } from './pages/DashboardPage';
 import { RequestDetailPage, RequestsPage } from './pages/RequestsPage';
 import { MassIntentionsPage } from './pages/MassIntentionsPage';
 import { ReadingsPage } from './pages/ReadingsPage';
+import { SuperadminLayout } from './superadmin/SuperadminLayout';
+import { SuperadminOverviewPage } from './superadmin/OverviewPage';
+import { SuperadminCommunitiesPage } from './superadmin/CommunitiesPage';
+import { SuperadminCommunityPage } from './superadmin/CommunityPage';
+import { SuperadminAccountsPage } from './superadmin/AccountsPage';
+import { SuperadminHealthPage } from './superadmin/HealthPage';
+import { SuperadminJournalPage } from './superadmin/JournalPage';
 
 // Reconciles the UI's language with the account's saved one on login.
 // An explicit choice never gets silently discarded either direction: if
@@ -52,6 +59,7 @@ function Home() {
   const { t } = useI18n();
   if (!user) return null;
   const firstPoi = user.adminPois[0];
+  if (!firstPoi && user.isSuperadmin) return <Navigate to="/superadmin" replace />;
   if (!firstPoi) {
     return (
       <div style={{ padding: 32 }}>
@@ -103,6 +111,22 @@ function AppRoutes() {
         <Route path="home-page" element={<PoiHomePage />} />
         <Route path="modules" element={<ModulesPage />} />
         <Route path="settings" element={<SettingsPage />} />
+      </Route>
+      <Route
+        path="/superadmin"
+        element={
+          <RequireAuth>
+            <SuperadminLayout />
+          </RequireAuth>
+        }
+      >
+        <Route index element={<Navigate to="overview" replace />} />
+        <Route path="overview" element={<SuperadminOverviewPage />} />
+        <Route path="communities" element={<SuperadminCommunitiesPage />} />
+        <Route path="communities/:poiId" element={<SuperadminCommunityPage />} />
+        <Route path="accounts" element={<SuperadminAccountsPage />} />
+        <Route path="health" element={<SuperadminHealthPage />} />
+        <Route path="journal" element={<SuperadminJournalPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -2,6 +2,7 @@ import { ValidationPipe, type INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
 import request from 'supertest';
+import { PoiType } from '../src/common/enums/poi-type.enum.js';
 
 /**
  * Boots the real application against a real Postgres, because that is what
@@ -95,16 +96,17 @@ export async function signInWithId(
   return { token, userId: me.body.id as string };
 }
 
-/** Creates a place owned (and administered) by the signed-in caller. */
+/**
+ * Creates a place administered by the signed-in caller. Straight through
+ * the service: over HTTP only the superadmin can create a community.
+ */
 export async function createPlace(
   app: INestApplication,
   token: string,
   name: string,
 ): Promise<{ id: string; qrCodeToken: string }> {
-  const created = await client(app)
-    .post('/pois')
-    .set('Authorization', `Bearer ${token}`)
-    .send({ name, type: 'church' })
-    .expect(201);
-  return { id: created.body.id, qrCodeToken: created.body.qrCodeToken };
+  const me = await client(app).get('/auth/me').set('Authorization', `Bearer ${token}`).expect(200);
+  const { PoisService } = await import('../src/pois/pois.service.js');
+  const poi = await app.get(PoisService).createOwnedBy(me.body.id as string, { name, type: PoiType.CHURCH });
+  return { id: poi.id, qrCodeToken: poi.qrCodeToken };
 }

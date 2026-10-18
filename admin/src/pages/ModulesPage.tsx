@@ -100,6 +100,7 @@ export function ModulesPage() {
   const payingNext = billing.modules.filter(
     (m) =>
       !isFree(m.moduleType) &&
+      !m.offered &&
       ((m.status === 'active' && !m.cancelAtPeriodEnd) || (m.status === 'trial' && billing.paymentMethod)),
   ).length;
   const endingTrials = billing.modules.filter(
@@ -109,6 +110,8 @@ export function ModulesPage() {
 
   function status(type: ModuleType, row: ActiveModule | undefined): { text: string; on: boolean } {
     const live = !!row && LIVE.has(row.status);
+    // Given by ANSAE from the superadmin: on, and nothing to pay.
+    if (live && row.offered) return { text: t('billing.offered'), on: true };
     if (billing!.comped || isFree(type)) {
       return live
         ? { text: billing!.comped && !isFree(type) ? t('billing.offered') : t('billing.included'), on: true }

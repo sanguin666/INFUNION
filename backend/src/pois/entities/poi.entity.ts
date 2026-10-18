@@ -117,6 +117,12 @@ export class Poi {
   @Column({ name: 'billing_renews_at', type: 'timestamptz', nullable: true })
   billingRenewsAt?: Date | null;
 
+  // Set by the superadmin: the community's admins are locked out, it no
+  // longer shows in the directory and nobody new can join it. Nothing is
+  // deleted; lifting the suspension brings everything back.
+  @Column({ name: 'suspended_at', type: 'timestamptz', nullable: true })
+  suspendedAt?: Date | null;
+
   @Column({ nullable: true })
   address?: string;
 

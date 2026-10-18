@@ -108,6 +108,11 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
+  async markLoggedIn(id: string): Promise<void> {
+    const now = new Date();
+    await this.usersRepository.update(id, { lastLoginAt: now, lastSeenAt: now });
+  }
+
   async updateLanguage(id: string, language: Language): Promise<User> {
     const user = await this.findOne(id);
     user.language = language;
