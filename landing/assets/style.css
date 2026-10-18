@@ -664,6 +664,18 @@ section {
   color: var(--ink);
 }
 
+.find-row {
+  margin-bottom: 72px;
+}
+
+.find-phones {
+  gap: 32px;
+}
+
+.find-phones .phone {
+  width: 236px;
+}
+
 .app-note {
   text-align: center;
   color: var(--text-muted);
@@ -982,6 +994,15 @@ section {
 
   .gallery {
     grid-template-columns: 236px;
+  }
+
+  .find-phones {
+    gap: 16px;
+  }
+
+  .find-phones .phone {
+    width: 46%;
+    max-width: 220px;
   }
 
   #features .feature-grid {
