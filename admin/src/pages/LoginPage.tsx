@@ -5,6 +5,8 @@ import { useI18n } from '../i18n/I18nContext';
 import { ApiError } from '../api/client';
 import { IntroLogoMark } from '../components/IntroLogoMark';
 import { LanguagePicker } from '../components/LanguagePicker';
+import { SuperadminCodeDialog } from '../superadmin/SuperadminGate';
+import type { CurrentUser } from '../api/types';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -14,6 +16,8 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // The superadmin's second step pops up over this form (Seb, 18 Oct 2026).
+  const [superadmin, setSuperadmin] = useState<CurrentUser | null>(null);
   // The page arrives in steps, like the app opening: the picture, then
   // the white box, then the hearts meeting, then the form. Any click or
   // key jumps to the end, and it never plays for somebody who has asked
@@ -37,8 +41,9 @@ export function LoginPage() {
     setSubmitting(true);
     setError(null);
     try {
-      await login(email.trim(), password);
-      navigate('/', { replace: true });
+      const me = await login(email.trim(), password);
+      if (me.isSuperadmin) setSuperadmin(me);
+      else navigate('/', { replace: true });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('login.genericError'));
     } finally {
@@ -88,6 +93,12 @@ export function LoginPage() {
           <LanguagePicker />
         </div>
       </form>
+      {superadmin && (
+        <SuperadminCodeDialog
+          onDone={() => navigate('/superadmin', { replace: true })}
+          onCancel={superadmin.adminPois.length ? () => navigate('/', { replace: true }) : undefined}
+        />
+      )}
     </div>
   );
 }

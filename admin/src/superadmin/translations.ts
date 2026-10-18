@@ -52,6 +52,7 @@ const en = {
     openApp: 'Add to my authenticator app',
     phoneHint: 'On this phone? Tap the button: Google Authenticator opens and adds ANSAE. Then come back here and type the 6-digit code.',
     copyKey: 'Copy the key',
+    notNow: 'Not now',
     activate: 'Activate',
   },
   overview: {
@@ -345,6 +346,7 @@ const fr: SaTranslations = {
     openApp: 'Ajouter à mon application d’authentification',
     phoneHint: 'Sur ce téléphone ? Touchez le bouton : Google Authenticator s’ouvre et ajoute ANSAE. Revenez ensuite ici et tapez le code à 6 chiffres.',
     copyKey: 'Copier la clé',
+    notNow: 'Plus tard',
     activate: 'Activer',
   },
   overview: {
@@ -637,6 +639,7 @@ const es: SaTranslations = {
     openApp: 'Añadir a mi aplicación de autenticación',
     phoneHint: '¿En este teléfono? Toque el botón: Google Authenticator se abre y añade ANSAE. Vuelva aquí y escriba el código de 6 cifras.',
     copyKey: 'Copiar la clave',
+    notNow: 'Ahora no',
     activate: 'Activar',
   },
   overview: {
@@ -929,6 +932,7 @@ const va: SaTranslations = {
     openApp: 'Afegir a la meua aplicació d’autenticació',
     phoneHint: 'En este telèfon? Toqueu el botó: Google Authenticator s’obri i afig ANSAE. Torneu ací i escriviu el codi de 6 xifres.',
     copyKey: 'Copiar la clau',
+    notNow: 'Ara no',
     activate: 'Activar',
   },
   overview: {
@@ -1221,6 +1225,7 @@ const gl: SaTranslations = {
     openApp: 'Engadir á miña aplicación de autenticación',
     phoneHint: 'Neste teléfono? Toque o botón: Google Authenticator ábrese e engade ANSAE. Volva aquí e escriba o código de 6 díxitos.',
     copyKey: 'Copiar a clave',
+    notNow: 'Agora non',
     activate: 'Activar',
   },
   overview: {
@@ -1513,6 +1518,7 @@ const pt: SaTranslations = {
     openApp: 'Adicionar à minha aplicação de autenticação',
     phoneHint: 'Neste telemóvel? Toque no botão: o Google Authenticator abre e adiciona a ANSAE. Volte aqui e escreva o código de 6 dígitos.',
     copyKey: 'Copiar a chave',
+    notNow: 'Agora não',
     activate: 'Ativar',
   },
   overview: {

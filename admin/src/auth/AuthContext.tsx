@@ -6,7 +6,8 @@ import type { CurrentUser } from '../api/types';
 type AuthState = {
   user: CurrentUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  /** Signs in and hands back who signed in. */
+  login: (email: string, password: string) => Promise<CurrentUser>;
   logout: () => void;
 };
 
@@ -33,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(accessToken);
     const me = await getCurrentUser();
     setUser(me);
+    return me;
   }, []);
 
   const logout = useCallback(() => {

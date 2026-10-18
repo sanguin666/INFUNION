@@ -1,4 +1,6 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 import QRCode from 'qrcode';
 import { getSuperadminSession, setSuperadminSession } from '../api/client';
 import {
@@ -17,10 +19,9 @@ import { useSa } from './format';
  * app up (password again, then a QR code to scan, then a first code).
  */
 export function SuperadminGate({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [unlocked, setUnlocked] = useState(() => !!getSuperadminSession());
-  const [status, setStatus] = useState<SuperadminStatus | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const { s, error: describe } = useSa();
 
   useEffect(() => {
     const lock = () => setUnlocked(false);
@@ -36,31 +37,69 @@ export function SuperadminGate({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  if (unlocked) return <>{children}</>;
+  return (
+    <SuperadminCodeDialog
+      onDone={() => setUnlocked(true)}
+      onCancel={user?.adminPois.length ? () => navigate('/', { replace: true }) : undefined}
+    />
+  );
+}
+
+/**
+ * The code step as a popup (Seb, 18 Oct 2026): it opens straight over the
+ * login form once the password is right, and over the section when the
+ * hour runs out. "Not now" only shows when there is somewhere else to go.
+ */
+export function SuperadminCodeDialog({ onDone, onCancel }: { onDone: () => void; onCancel?: () => void }) {
+  const { s, error: describe } = useSa();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [status, setStatus] = useState<SuperadminStatus | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    if (unlocked) return;
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
+    return () => dialog?.close();
+  }, []);
+
+  useEffect(() => {
     getSuperadminStatus()
       .then(setStatus)
       .catch((err) => setError(describe(err)));
-  }, [unlocked, describe]);
+  }, [describe]);
 
-  if (unlocked) return <>{children}</>;
-  if (error) return <GateFrame><p className="error-text">{error}</p></GateFrame>;
-  if (!status) return <GateFrame><p className="muted">{s('common.loading')}</p></GateFrame>;
-  return status.enrolled ? (
-    <CodeStep onDone={() => setUnlocked(true)} />
-  ) : (
-    <EnrollStep email={status.email} onDone={() => setUnlocked(true)} />
+  return (
+    <dialog
+      ref={dialogRef}
+      className="sheet sa-dialog"
+      aria-labelledby="sa-dialog-title"
+      // Escape only closes it when there is somewhere to go back to.
+      onCancel={(e) => {
+        e.preventDefault();
+        onCancel?.();
+      }}
+    >
+      <div className="sheet-body">
+        <h2 id="sa-dialog-title" className="sheet-title">
+          {s('nav.title')}
+        </h2>
+        {error && <p className="error-text">{error}</p>}
+        {!error && !status && <p className="muted">{s('common.loading')}</p>}
+        {status &&
+          (status.enrolled ? <CodeStep onDone={onDone} /> : <EnrollStep email={status.email} onDone={onDone} />)}
+        {onCancel && (
+          <button type="button" className="btn btn-block" onClick={onCancel}>
+            {s('gate.notNow')}
+          </button>
+        )}
+      </div>
+    </dialog>
   );
 }
 
 function GateFrame({ children }: { children: ReactNode }) {
-  const { s } = useSa();
-  return (
-    <div className="sa-gate">
-      <h2>{s('nav.title')}</h2>
-      {children}
-    </div>
-  );
+  return <div className="sa-gate-step">{children}</div>;
 }
 
 function CodeField({ value, onChange }: { value: string; onChange: (value: string) => void }) {
@@ -109,7 +148,7 @@ function CodeStep({ onDone }: { onDone: () => void }) {
     <GateFrame>
       <p className="muted">{s('gate.codeIntro')}</p>
       <form onSubmit={submit} className="sa-gate-form">
-        <div className="card form">
+        <div className="form sa-dialog-fields">
           <CodeField value={code} onChange={setCode} />
         </div>
         {error && <p className="error-text">{error}</p>}
@@ -165,7 +204,7 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
       <GateFrame>
         <p className="muted">{s('gate.enrollIntro', { email })}</p>
         <form onSubmit={begin} className="sa-gate-form">
-          <div className="card form">
+          <div className="form sa-dialog-fields">
             <label>
               {s('gate.password')}
               <input
@@ -191,7 +230,7 @@ function EnrollStep({ email, onDone }: { email: string; onDone: () => void }) {
     <GateFrame>
       <p className="muted">{s('gate.scanIntro')}</p>
       <form onSubmit={confirm} className="sa-gate-form">
-        <div className="card form">
+        <div className="form sa-dialog-fields">
           <div className="form-row sa-qr">
             <img src={secret.qr} alt={s('gate.qrAlt')} width={220} height={220} />
             {/* A phone cannot scan its own screen: the otpauth link opens
