@@ -1,4 +1,4 @@
-export type PoiType = 'church';
+export type PoiType = 'church' | 'mosque' | 'synagogue' | 'other_worship' | 'association' | 'culture';
 
 export type SupportedLanguage = 'en' | 'es' | 'va' | 'gl' | 'pt' | 'fr';
 
@@ -14,6 +14,11 @@ export type Poi = {
   address: string | null;
   city: string | null;
   postalCode: string | null;
+  // The pin on the map of communities; null until the office places it.
+  latitude: number | null;
+  longitude: number | null;
+  // Whether the place shows on the map and in "near you".
+  mapVisible: boolean;
   qrCodeToken: string;
   // The order this community wants its modules in the app's bottom menu.
   // The app gives the first few a button and puts the rest under More;

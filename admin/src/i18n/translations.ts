@@ -366,6 +366,36 @@ export type Translations = {
     saveError: string;
     saveSuccess: string;
   };
+  location: {
+    title: string;
+    subtitle: string;
+    typeLabel: string;
+    kind_church: string;
+    kind_mosque: string;
+    kind_synagogue: string;
+    kind_other_worship: string;
+    kind_association: string;
+    kind_culture: string;
+    addressLabel: string;
+    addressPlaceholder: string;
+    search: string;
+    searching: string;
+    noResults: string;
+    resultsLabel: string;
+    searchError: string;
+    postalCodeLabel: string;
+    cityLabel: string;
+    visibleLabel: string;
+    visibleHelp: string;
+    mapLabel: string;
+    mapHelp: string;
+    noPin: string;
+    removePin: string;
+    save: string;
+    saving: string;
+    saved: string;
+    saveError: string;
+  };
   homePage: {
     title: string;
     subtitle: string;
@@ -1079,6 +1109,36 @@ const en: Translations = {
     saving: 'Saving…',
     saveError: 'Could not save your changes.',
     saveSuccess: 'Saved.',
+  },
+  location: {
+    title: 'Address and map',
+    subtitle: 'Where your community is. With a pin, it appears on the ANSAE map and in “Near you” in the app, so people living nearby can find it and join.',
+    typeLabel: 'Kind of place',
+    kind_church: 'Church',
+    kind_mosque: 'Mosque',
+    kind_synagogue: 'Synagogue',
+    kind_other_worship: 'Other place of worship',
+    kind_association: 'Association',
+    kind_culture: 'Culture & sport',
+    addressLabel: 'Address',
+    addressPlaceholder: 'Street and number',
+    search: 'Find on the map',
+    searching: 'Searching…',
+    noResults: 'No address found. Check the spelling, or click on the map where your place is.',
+    resultsLabel: 'Addresses found',
+    searchError: 'The address search is not available right now. You can click on the map where your place is.',
+    postalCodeLabel: 'Postcode',
+    cityLabel: 'Town',
+    visibleLabel: 'Visible on the ANSAE map',
+    visibleHelp: 'People who are not members yet see the name, the kind of place and the address.',
+    mapLabel: 'Map: drag the pin, or click where your place is',
+    mapHelp: 'Drag the pin if it is not quite on the entrance.',
+    noPin: 'No pin yet: find the address, or click on the map where your place is.',
+    removePin: 'Remove the pin',
+    save: 'Save',
+    saving: 'Saving…',
+    saved: 'Saved.',
+    saveError: 'Could not save your changes.',
   },
   homePage: {
     title: 'Home page',
@@ -1794,6 +1854,36 @@ const es: Translations = {
     saveError: 'No se pudieron guardar los cambios.',
     saveSuccess: 'Guardado.',
   },
+  location: {
+    title: 'Dirección y mapa',
+    subtitle: 'Dónde está su comunidad. Con un marcador, aparece en el mapa de ANSAE y en «Cerca de usted» en la aplicación, para que las personas que viven cerca puedan encontrarla y unirse.',
+    typeLabel: 'Tipo de lugar',
+    kind_church: 'Iglesia',
+    kind_mosque: 'Mezquita',
+    kind_synagogue: 'Sinagoga',
+    kind_other_worship: 'Otro lugar de culto',
+    kind_association: 'Asociación',
+    kind_culture: 'Cultura y deporte',
+    addressLabel: 'Dirección',
+    addressPlaceholder: 'Calle y número',
+    search: 'Buscar en el mapa',
+    searching: 'Buscando…',
+    noResults: 'No se ha encontrado la dirección. Revise cómo está escrita, o haga clic en el mapa donde está su lugar.',
+    resultsLabel: 'Direcciones encontradas',
+    searchError: 'La búsqueda de direcciones no está disponible ahora mismo. Puede hacer clic en el mapa donde está su lugar.',
+    postalCodeLabel: 'Código postal',
+    cityLabel: 'Localidad',
+    visibleLabel: 'Visible en el mapa de ANSAE',
+    visibleHelp: 'Las personas que aún no son miembros ven el nombre, el tipo de lugar y la dirección.',
+    mapLabel: 'Mapa: arrastre el marcador o haga clic donde está su lugar',
+    mapHelp: 'Arrastre el marcador si no está justo en la entrada.',
+    noPin: 'Todavía no hay marcador: busque la dirección o haga clic en el mapa donde está su lugar.',
+    removePin: 'Quitar el marcador',
+    save: 'Guardar',
+    saving: 'Guardando…',
+    saved: 'Guardado.',
+    saveError: 'No se han podido guardar los cambios.',
+  },
   homePage: {
     title: 'Página de inicio',
     subtitle: 'Lo que ve la gente al abrir tu lugar, antes de elegir algo del menú. Las secciones aparecen en el orden de abajo.',
@@ -2507,6 +2597,36 @@ const fr: Translations = {
     saving: 'Enregistrement…',
     saveError: 'Impossible d’enregistrer les modifications.',
     saveSuccess: 'Enregistré.',
+  },
+  location: {
+    title: 'Adresse et carte',
+    subtitle: 'Où se trouve votre communauté. Avec une épingle, elle apparaît sur la carte ANSAE et dans « Près de vous » dans l’application, pour que les personnes qui habitent à côté la trouvent et la rejoignent.',
+    typeLabel: 'Type de lieu',
+    kind_church: 'Église',
+    kind_mosque: 'Mosquée',
+    kind_synagogue: 'Synagogue',
+    kind_other_worship: 'Autre lieu de culte',
+    kind_association: 'Association',
+    kind_culture: 'Culture et sport',
+    addressLabel: 'Adresse',
+    addressPlaceholder: 'Rue et numéro',
+    search: 'Trouver sur la carte',
+    searching: 'Recherche…',
+    noResults: 'Adresse introuvable. Vérifiez l’orthographe, ou cliquez sur la carte à l’endroit de votre lieu.',
+    resultsLabel: 'Adresses trouvées',
+    searchError: 'La recherche d’adresse n’est pas disponible pour le moment. Vous pouvez cliquer sur la carte à l’endroit de votre lieu.',
+    postalCodeLabel: 'Code postal',
+    cityLabel: 'Ville',
+    visibleLabel: 'Visible sur la carte ANSAE',
+    visibleHelp: 'Les personnes qui ne sont pas encore membres voient le nom, le type de lieu et l’adresse.',
+    mapLabel: 'Carte : déplacez l’épingle ou cliquez à l’endroit de votre lieu',
+    mapHelp: 'Déplacez l’épingle si elle n’est pas pile sur l’entrée.',
+    noPin: 'Pas encore d’épingle : cherchez l’adresse, ou cliquez sur la carte à l’endroit de votre lieu.',
+    removePin: 'Retirer l’épingle',
+    save: 'Enregistrer',
+    saving: 'Enregistrement…',
+    saved: 'Enregistré.',
+    saveError: 'Impossible d’enregistrer vos modifications.',
   },
   homePage: {
     title: "Page d'accueil",
@@ -3222,6 +3342,36 @@ const va: Translations = {
     saveError: 'No s’han pogut guardar els canvis.',
     saveSuccess: 'Guardat.',
   },
+  location: {
+    title: 'Adreça i mapa',
+    subtitle: 'On és la vostra comunitat. Amb una marca, apareix en el mapa d’ANSAE i en «Prop de vosté» en l’aplicació, perquè les persones que viuen a prop la troben i s’hi unisquen.',
+    typeLabel: 'Tipus de lloc',
+    kind_church: 'Església',
+    kind_mosque: 'Mesquita',
+    kind_synagogue: 'Sinagoga',
+    kind_other_worship: 'Altre lloc de culte',
+    kind_association: 'Associació',
+    kind_culture: 'Cultura i esport',
+    addressLabel: 'Adreça',
+    addressPlaceholder: 'Carrer i número',
+    search: 'Buscar en el mapa',
+    searching: 'Buscant…',
+    noResults: 'No s’ha trobat l’adreça. Reviseu com està escrita, o feu clic en el mapa on és el vostre lloc.',
+    resultsLabel: 'Adreces trobades',
+    searchError: 'La busca d’adreces no està disponible ara mateix. Podeu fer clic en el mapa on és el vostre lloc.',
+    postalCodeLabel: 'Codi postal',
+    cityLabel: 'Localitat',
+    visibleLabel: 'Visible en el mapa d’ANSAE',
+    visibleHelp: 'Les persones que encara no són membres veuen el nom, el tipus de lloc i l’adreça.',
+    mapLabel: 'Mapa: arrossegueu la marca o feu clic on és el vostre lloc',
+    mapHelp: 'Arrossegueu la marca si no està just en l’entrada.',
+    noPin: 'Encara no hi ha marca: busqueu l’adreça o feu clic en el mapa on és el vostre lloc.',
+    removePin: 'Llevar la marca',
+    save: 'Guardar',
+    saving: 'Guardant…',
+    saved: 'Guardat.',
+    saveError: 'No s’han pogut guardar els canvis.',
+  },
   homePage: {
     title: 'Pàgina d’inici',
     subtitle: 'El que veu la gent en obrir el teu lloc, abans de triar res del menú. Les seccions apareixen en l’orde de davall.',
@@ -3936,6 +4086,36 @@ const gl: Translations = {
     saveError: 'Non se puideron gardar os cambios.',
     saveSuccess: 'Gardado.',
   },
+  location: {
+    title: 'Enderezo e mapa',
+    subtitle: 'Onde está a súa comunidade. Cun marcador, aparece no mapa de ANSAE e en «Preto de vostede» na aplicación, para que as persoas que viven preto a atopen e se unan.',
+    typeLabel: 'Tipo de lugar',
+    kind_church: 'Igrexa',
+    kind_mosque: 'Mesquita',
+    kind_synagogue: 'Sinagoga',
+    kind_other_worship: 'Outro lugar de culto',
+    kind_association: 'Asociación',
+    kind_culture: 'Cultura e deporte',
+    addressLabel: 'Enderezo',
+    addressPlaceholder: 'Rúa e número',
+    search: 'Buscar no mapa',
+    searching: 'Buscando…',
+    noResults: 'Non se atopou o enderezo. Revise como está escrito, ou faga clic no mapa onde está o seu lugar.',
+    resultsLabel: 'Enderezos atopados',
+    searchError: 'A busca de enderezos non está dispoñible agora mesmo. Pode facer clic no mapa onde está o seu lugar.',
+    postalCodeLabel: 'Código postal',
+    cityLabel: 'Localidade',
+    visibleLabel: 'Visible no mapa de ANSAE',
+    visibleHelp: 'As persoas que aínda non son membros ven o nome, o tipo de lugar e o enderezo.',
+    mapLabel: 'Mapa: arrastre o marcador ou faga clic onde está o seu lugar',
+    mapHelp: 'Arrastre o marcador se non está xusto na entrada.',
+    noPin: 'Aínda non hai marcador: busque o enderezo ou faga clic no mapa onde está o seu lugar.',
+    removePin: 'Quitar o marcador',
+    save: 'Gardar',
+    saving: 'Gardando…',
+    saved: 'Gardado.',
+    saveError: 'Non se puideron gardar os cambios.',
+  },
   homePage: {
     title: 'Páxina de inicio',
     subtitle: 'O que ve a xente ao abrir o teu lugar, antes de escoller algo do menú. As seccións aparecen na orde de abaixo.',
@@ -4649,6 +4829,36 @@ const pt: Translations = {
     saving: 'A guardar…',
     saveError: 'Não foi possível guardar as alterações.',
     saveSuccess: 'Guardado.',
+  },
+  location: {
+    title: 'Morada e mapa',
+    subtitle: 'Onde fica a sua comunidade. Com um marcador, aparece no mapa da ANSAE e em «Perto de si» na aplicação, para que as pessoas que vivem perto a encontrem e se juntem.',
+    typeLabel: 'Tipo de local',
+    kind_church: 'Igreja',
+    kind_mosque: 'Mesquita',
+    kind_synagogue: 'Sinagoga',
+    kind_other_worship: 'Outro local de culto',
+    kind_association: 'Associação',
+    kind_culture: 'Cultura e desporto',
+    addressLabel: 'Morada',
+    addressPlaceholder: 'Rua e número',
+    search: 'Procurar no mapa',
+    searching: 'A procurar…',
+    noResults: 'Morada não encontrada. Verifique a ortografia, ou clique no mapa onde fica o seu local.',
+    resultsLabel: 'Moradas encontradas',
+    searchError: 'A pesquisa de moradas não está disponível de momento. Pode clicar no mapa onde fica o seu local.',
+    postalCodeLabel: 'Código postal',
+    cityLabel: 'Localidade',
+    visibleLabel: 'Visível no mapa da ANSAE',
+    visibleHelp: 'As pessoas que ainda não são membros veem o nome, o tipo de local e a morada.',
+    mapLabel: 'Mapa: arraste o marcador ou clique onde fica o seu local',
+    mapHelp: 'Arraste o marcador se não estiver mesmo na entrada.',
+    noPin: 'Ainda sem marcador: procure a morada ou clique no mapa onde fica o seu local.',
+    removePin: 'Retirar o marcador',
+    save: 'Guardar',
+    saving: 'A guardar…',
+    saved: 'Guardado.',
+    saveError: 'Não foi possível guardar as alterações.',
   },
   homePage: {
     title: 'Página inicial',
