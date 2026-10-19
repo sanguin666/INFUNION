@@ -29,34 +29,38 @@ describe('Module billing (e2e)', () => {
     await app.close();
   });
 
-  it('switches Événements on at no charge and without a trial', async () => {
-    const res = await client(app).post(billing('/modules/events/start')).set(as(adminToken)).expect(201);
-    const events = res.body.modules.find((m: { moduleType: string }) => m.moduleType === 'events');
-    expect(events.status).toBe('active');
-    expect(events.trialEndsAt).toBeNull();
+  it('switches Événements and Dons on at no charge and without a trial', async () => {
+    await client(app).post(billing('/modules/events/start')).set(as(adminToken)).expect(201);
+    const res = await client(app).post(billing('/modules/donations/start')).set(as(adminToken)).expect(201);
+    for (const type of ['events', 'donations']) {
+      const row = res.body.modules.find((m: { moduleType: string }) => m.moduleType === type);
+      expect(row.status).toBe('active');
+      expect(row.trialEndsAt).toBeNull();
+    }
+    expect(res.body.freeModules).toEqual(['events', 'donations']);
     expect(res.body.invoices).toEqual([]);
   });
 
   it('gives a paid module one free month, once', async () => {
-    const res = await client(app).post(billing('/modules/donations/start')).set(as(adminToken)).expect(201);
-    const donations = res.body.modules.find((m: { moduleType: string }) => m.moduleType === 'donations');
-    expect(donations.status).toBe('trial');
-    expect(new Date(donations.trialEndsAt).getTime()).toBeGreaterThan(Date.now() + 27 * 24 * 3600 * 1000);
+    const res = await client(app).post(billing('/modules/announcements/start')).set(as(adminToken)).expect(201);
+    const announcements = res.body.modules.find((m: { moduleType: string }) => m.moduleType === 'announcements');
+    expect(announcements.status).toBe('trial');
+    expect(new Date(announcements.trialEndsAt).getTime()).toBeGreaterThan(Date.now() + 27 * 24 * 3600 * 1000);
 
-    await client(app).post(billing('/modules/donations/stop')).set(as(adminToken)).expect(201);
-    await client(app).post(billing('/modules/donations/start')).set(as(adminToken)).expect(409);
+    await client(app).post(billing('/modules/announcements/stop')).set(as(adminToken)).expect(201);
+    await client(app).post(billing('/modules/announcements/start')).set(as(adminToken)).expect(409);
     // Paying again needs a payment method first.
-    await client(app).post(billing('/modules/donations/subscribe')).set(as(adminToken)).expect(400);
+    await client(app).post(billing('/modules/announcements/subscribe')).set(as(adminToken)).expect(400);
     await client(app).put(billing('/payment-method')).set(as(adminToken)).send({ kind: 'sepa', last4: '4521' }).expect(200);
-    const paid = await client(app).post(billing('/modules/donations/subscribe')).set(as(adminToken)).expect(201);
+    const paid = await client(app).post(billing('/modules/announcements/subscribe')).set(as(adminToken)).expect(201);
     expect(paid.body.paymentMethod).toBe('SEPA •••• 4521');
     expect(paid.body.invoices).toHaveLength(1);
     expect(paid.body.invoices[0].amount).toBe(10);
     expect(paid.body.renewsAt).not.toBeNull();
 
     // Stopping a paid module keeps it on until the end of the paid month.
-    const stopped = await client(app).post(billing('/modules/donations/stop')).set(as(adminToken)).expect(201);
-    const row = stopped.body.modules.find((m: { moduleType: string }) => m.moduleType === 'donations');
+    const stopped = await client(app).post(billing('/modules/announcements/stop')).set(as(adminToken)).expect(201);
+    const row = stopped.body.modules.find((m: { moduleType: string }) => m.moduleType === 'announcements');
     expect(row.status).toBe('active');
     expect(row.cancelAtPeriodEnd).toBe(true);
   });
