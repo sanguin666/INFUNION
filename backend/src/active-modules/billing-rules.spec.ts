@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
 import { BillingInterval } from '../common/enums/billing-interval.enum.js';
-import { addMonths, settle, startPaying, type BillingModule, type BillingPoi } from './billing-rules.js';
+import { addMonths, isFree, settle, startPaying, type BillingModule, type BillingPoi } from './billing-rules.js';
 
 const d = (iso: string) => new Date(`${iso}T09:00:00Z`);
 
@@ -21,20 +21,27 @@ function trial(type: ModuleType, endsAt: string): BillingModule {
 }
 
 describe('billing rules', () => {
+  it('keeps Événements and Dons free, and charges for the rest', () => {
+    expect(isFree(ModuleType.EVENTS)).toBe(true);
+    expect(isFree(ModuleType.DONATIONS)).toBe(true);
+    expect(isFree(ModuleType.REQUESTS)).toBe(false);
+  });
+
+
   it('keeps the day of the month, or the last day when it is missing', () => {
     expect(addMonths(d('2026-01-31'), 1).toISOString().slice(0, 10)).toBe('2026-02-28');
     expect(addMonths(d('2026-09-30'), 12).toISOString().slice(0, 10)).toBe('2027-09-30');
   });
 
   it('leaves a trial alone until its month is over', () => {
-    const modules = [trial(ModuleType.DONATIONS, '2026-10-30')];
+    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
     expect(settle(place(), modules, d('2026-10-29'))).toEqual([]);
     expect(modules[0].status).toBe(ModuleStatus.TRIAL);
   });
 
   it('turns an ended trial into a paid month when a payment method is on file', () => {
     const poi = place();
-    const modules = [trial(ModuleType.DONATIONS, '2026-10-30')];
+    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
     const invoices = settle(poi, modules, d('2026-11-02'));
     expect(invoices).toHaveLength(1);
     expect(invoices[0].lines[0].amount).toBe(10);
@@ -43,7 +50,7 @@ describe('billing rules', () => {
   });
 
   it('pauses an ended trial without a payment method', () => {
-    const modules = [trial(ModuleType.DONATIONS, '2026-10-30')];
+    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
     expect(settle(place({ paymentMethodLabel: null }), modules, d('2026-11-02'))).toEqual([]);
     expect(modules[0].status).toBe(ModuleStatus.EXPIRED);
   });
@@ -61,13 +68,13 @@ describe('billing rules', () => {
     const poi = place({ billingRenewsAt: d('2026-11-30') });
     const modules: BillingModule[] = [
       { moduleType: ModuleType.REQUESTS, status: ModuleStatus.ACTIVE, paidUntil: d('2026-11-30'), cancelAtPeriodEnd: false },
-      { moduleType: ModuleType.DONATIONS, status: ModuleStatus.ACTIVE, paidUntil: d('2026-11-30'), cancelAtPeriodEnd: false },
+      { moduleType: ModuleType.ANNOUNCEMENTS, status: ModuleStatus.ACTIVE, paidUntil: d('2026-11-30'), cancelAtPeriodEnd: false },
       { moduleType: ModuleType.LIVESTREAMS, status: ModuleStatus.ACTIVE, paidUntil: d('2026-11-30'), cancelAtPeriodEnd: true },
       { moduleType: ModuleType.EVENTS, status: ModuleStatus.ACTIVE, cancelAtPeriodEnd: false },
     ];
     const invoices = settle(poi, modules, d('2026-12-01'));
     expect(invoices).toHaveLength(1);
-    expect(invoices[0].lines.map((l) => l.moduleType)).toEqual([ModuleType.REQUESTS, ModuleType.DONATIONS]);
+    expect(invoices[0].lines.map((l) => l.moduleType)).toEqual([ModuleType.REQUESTS, ModuleType.ANNOUNCEMENTS]);
     expect(modules[2].status).toBe(ModuleStatus.CANCELLED);
     expect(modules[3].status).toBe(ModuleStatus.ACTIVE);
     expect(poi.billingRenewsAt).toEqual(d('2026-12-30'));
@@ -75,7 +82,7 @@ describe('billing rules', () => {
 
   it('charges 110 for a year', () => {
     const poi = place({ billingInterval: BillingInterval.YEARLY });
-    const modules = [trial(ModuleType.DONATIONS, '2026-10-30')];
+    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
     const invoices = settle(poi, modules, d('2026-10-31'));
     expect(invoices[0].lines[0].amount).toBe(110);
     expect(poi.billingRenewsAt).toEqual(d('2027-10-30'));
@@ -91,7 +98,7 @@ describe('billing rules', () => {
   });
 
   it('never touches an offered community', () => {
-    const modules = [trial(ModuleType.DONATIONS, '2026-10-30')];
+    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
     expect(settle(place({ billingComped: true, paymentMethodLabel: null }), modules, d('2027-01-01'))).toEqual([]);
     expect(modules[0].status).toBe(ModuleStatus.TRIAL);
   });

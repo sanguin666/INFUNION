@@ -1005,7 +1005,7 @@ const en: Translations = {
   },
   billing: {
     title: "Modules",
-    subtitle: "Choose what your community offers. Every module can be tried free for a month.",
+    subtitle: "Choose what your community offers. Events and Donations are free; every other module can be tried free for a month.",
     subtitleOffered: "Choose what your community offers.",
     loading: "Loading…",
     loadError: "Couldn’t load the modules.",
@@ -1750,7 +1750,7 @@ const es: Translations = {
   },
   billing: {
     title: "Módulos",
-    subtitle: "Elige lo que ofrece tu comunidad. Cada módulo se puede probar gratis durante un mes.",
+    subtitle: "Elige lo que ofrece tu comunidad. Eventos y Donaciones son gratuitos; cada uno de los demás módulos se puede probar gratis durante un mes.",
     subtitleOffered: "Elige lo que ofrece tu comunidad.",
     loading: "Cargando…",
     loadError: "No se pudieron cargar los módulos.",
@@ -2495,7 +2495,7 @@ const fr: Translations = {
   },
   billing: {
     title: "Modules",
-    subtitle: "Choisissez ce que votre communauté propose. Chaque module s’essaie gratuitement pendant un mois.",
+    subtitle: "Choisissez ce que votre communauté propose. Événements et Dons sont gratuits ; chaque autre module s’essaie gratuitement pendant un mois.",
     subtitleOffered: "Choisissez ce que votre communauté propose.",
     loading: "Chargement…",
     loadError: "Impossible de charger les modules.",
@@ -3240,7 +3240,7 @@ const va: Translations = {
   },
   billing: {
     title: "Mòduls",
-    subtitle: "Tria el que oferix la teua comunitat. Cada mòdul es pot provar gratis durant un mes.",
+    subtitle: "Tria el que oferix la teua comunitat. Esdeveniments i Donatius són gratuïts; cada un dels altres mòduls es pot provar gratis durant un mes.",
     subtitleOffered: "Tria el que oferix la teua comunitat.",
     loading: "Carregant…",
     loadError: "No s’han pogut carregar els mòduls.",
@@ -3985,7 +3985,7 @@ const gl: Translations = {
   },
   billing: {
     title: "Módulos",
-    subtitle: "Escolle o que ofrece a túa comunidade. Cada módulo pódese probar gratis durante un mes.",
+    subtitle: "Escolle o que ofrece a túa comunidade. Eventos e Doazóns son gratuítos; cada un dos demais módulos pódese probar gratis durante un mes.",
     subtitleOffered: "Escolle o que ofrece a túa comunidade.",
     loading: "Cargando…",
     loadError: "Non se puideron cargar os módulos.",
@@ -4730,7 +4730,7 @@ const pt: Translations = {
   },
   billing: {
     title: "Módulos",
-    subtitle: "Escolha o que a sua comunidade oferece. Cada módulo pode ser experimentado gratuitamente durante um mês.",
+    subtitle: "Escolha o que a sua comunidade oferece. Eventos e Donativos são gratuitos; cada um dos restantes módulos pode ser experimentado gratuitamente durante um mês.",
     subtitleOffered: "Escolha o que a sua comunidade oferece.",
     loading: "A carregar…",
     loadError: "Não foi possível carregar os módulos.",

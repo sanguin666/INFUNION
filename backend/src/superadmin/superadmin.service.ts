@@ -173,7 +173,7 @@ export class SuperadminService {
       [new Date(now.getTime() - 30 * DAY)],
     );
     const [gifts] = await this.data.query(
-      `SELECT COALESCE(SUM(amount), 0) AS total, COUNT(*)::int AS count
+      `SELECT COALESCE(SUM(amount), 0) AS total, COALESCE(SUM(platform_fee), 0) AS fee, COUNT(*)::int AS count
          FROM donations WHERE status = 'completed' AND created_at >= $1`,
       [thisMonth],
     );
@@ -211,7 +211,8 @@ export class SuperadminService {
         newThisMonth: members.new_this_month as number,
         active30Days: active.total as number,
       },
-      donations: { thisMonth: money(Number(gifts.total)), count: gifts.count as number },
+      // fee: ANSAE's share of those gifts (donations/platform-fee.ts).
+      donations: { thisMonth: money(Number(gifts.total)), fee: money(Number(gifts.fee)), count: gifts.count as number },
       requests: { open: requests.open as number, waitingOverAWeek: requests.waiting as number },
       lastMonthStart: lastMonth.toISOString(),
       watch: await this.watchList(now, pois, live),

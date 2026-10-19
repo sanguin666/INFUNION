@@ -160,6 +160,7 @@ export function SuperadminOverviewPage() {
           <p className="stat-label">{s('overview.donations')}</p>
           <p className="stat-value">{eur(data.donations.thisMonth)}</p>
           <p className="stat-delta stat-delta-neutral">{s('overview.donationsCount', { n: data.donations.count })}</p>
+          <p className="stat-delta stat-delta-neutral">{s('overview.donationsFee', { amount: eur(data.donations.fee ?? 0) })}</p>
         </div>
         <div className="stat-tile">
           <p className="stat-label">{s('overview.openRequests')}</p>

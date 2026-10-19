@@ -70,7 +70,7 @@ export type Overview = {
   };
   communities: { total: number; comped: number; paying: number; suspended: number; newThisMonth: number };
   members: { total: number; newThisMonth: number; active30Days: number };
-  donations: { thisMonth: number; count: number };
+  donations: { thisMonth: number; fee: number; count: number };
   requests: { open: number; waitingOverAWeek: number };
   watch: WatchItem[];
 };
