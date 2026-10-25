@@ -25,6 +25,8 @@ import { ServiceRequestMessage } from './service-requests/entities/service-reque
 import { ServiceRequestDocument } from './service-requests/entities/service-request-document.entity.js';
 import { MassIntention, MassIntentionStatus } from './mass-intentions/entities/mass-intention.entity.js';
 import { DailyReading } from './daily-readings/entities/daily-reading.entity.js';
+import { MemberConversation } from './member-messages/entities/member-conversation.entity.js';
+import { MemberMessage } from './member-messages/entities/member-message.entity.js';
 import { ModuleType } from './common/enums/module-type.enum.js';
 import { ModuleStatus } from './common/enums/module-status.enum.js';
 import { LivestreamStatus } from './common/enums/livestream-status.enum.js';
@@ -208,6 +210,7 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
     ModuleType.COMMUNITY,
     ModuleType.LIVESTREAMS,
     ModuleType.DAILY_READINGS,
+    ModuleType.MESSAGES,
   ]) {
     if (!(await modules.count({ where: { ...where, moduleType } }))) {
       await modules.save(modules.create({ poi: place, moduleType, status: ModuleStatus.ACTIVE }));
@@ -564,6 +567,39 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
         purpose: DonationPurpose.COLLECTION,
         donorName: 'María',
         createdAt: new Date(Date.now() - 4 * DAY),
+      }),
+    ]);
+  }
+
+  // ---- Messages: the office writing to María in particular ----
+
+  const conversations = dataSource.getRepository(MemberConversation);
+  const memberMessages = dataSource.getRepository(MemberMessage);
+  if (!(await conversations.count({ where }))) {
+    const now = Date.now();
+    const conversation = await conversations.save(
+      conversations.create({
+        poi: place,
+        member,
+        lastMessageAt: new Date(now - 20 * 60 * 1000),
+        staffSeenAt: new Date(now - DAY),
+        memberSeenAt: new Date(now - 20 * 60 * 1000),
+      }),
+    );
+    await memberMessages.save([
+      memberMessages.create({
+        conversation,
+        author: admin,
+        fromStaff: true,
+        body: 'Hola María, ¿podrías ayudarnos a preparar las flores para la Misa del sábado? Empezamos a las 10:00.',
+        createdAt: new Date(now - DAY),
+      }),
+      memberMessages.create({
+        conversation,
+        author: member,
+        fromStaff: false,
+        body: '¡Claro! Allí estaré el sábado a las 10:00.',
+        createdAt: new Date(now - 20 * 60 * 1000),
       }),
     ]);
   }

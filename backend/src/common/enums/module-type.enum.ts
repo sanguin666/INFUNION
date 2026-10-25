@@ -18,4 +18,7 @@ export enum ModuleType {
   MASS_INTENTIONS = 'mass_intentions',
   // Lectures du jour: the texts the office gives members to read each day.
   DAILY_READINGS = 'daily_readings',
+  // Messages: the office writes to one member in particular, who gets a
+  // notification and can answer in the place's Messages section.
+  MESSAGES = 'messages',
 }
