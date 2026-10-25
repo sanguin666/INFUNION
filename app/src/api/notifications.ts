@@ -6,6 +6,7 @@ export type NotificationPreferences = {
   events: boolean;
   live: boolean;
   readings: boolean;
+  messages: boolean;
 };
 
 export type NotificationKind = keyof NotificationPreferences;

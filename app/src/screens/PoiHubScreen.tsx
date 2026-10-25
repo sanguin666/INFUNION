@@ -14,6 +14,7 @@ import { LivestreamScreen } from './LivestreamScreen';
 import { MassIntentionsScreen } from './MassIntentionsScreen';
 import { MoreScreen } from './MoreScreen';
 import { ReadingsScreen } from './ReadingsScreen';
+import { MessagesScreen } from './MessagesScreen';
 import { NotificationsScreen } from './NotificationsScreen';
 import { PoiHomeScreen } from './PoiHomeScreen';
 import { NewRequestScreen } from './NewRequestScreen';
@@ -24,6 +25,7 @@ import { RequestsScreen } from './RequestsScreen';
 import { useAuth } from '../auth/AuthContext';
 import { getActiveModules } from '../api/pois';
 import { getAnnouncements } from '../api/announcements';
+import { getMessagesUnread } from '../api/messages';
 import type { PushTarget } from '../notifications/push';
 import type { ActiveModule, Announcement, CommunityPost, Poi } from '../api/types';
 
@@ -64,6 +66,27 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
   const [tab, setTab] = useState<HubTab>('home');
   const [drilldown, setDrilldown] = useState<Drilldown>({ kind: 'list' });
   const [profileOpen, setProfileOpen] = useState(false);
+  // The office wrote and the member has not opened Messages since.
+  const [messagesUnread, setMessagesUnread] = useState(false);
+  const messagesLive = !!modules?.some((m) => m.moduleType === 'messages' && m.status !== 'expired' && m.status !== 'cancelled');
+
+  useEffect(() => {
+    setMessagesUnread(false);
+    if (!me || !messagesLive) return;
+    let cancelled = false;
+    const check = () =>
+      getMessagesUnread(poi.id)
+        .then((result) => {
+          if (!cancelled) setMessagesUnread(result.unread);
+        })
+        .catch(() => undefined);
+    check();
+    const timer = setInterval(check, 60_000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [poi.id, me, messagesLive]);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,6 +121,9 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
         break;
       case 'readings':
         selectTab('daily_readings');
+        break;
+      case 'messages':
+        selectTab('messages');
         break;
       case 'announcement':
         // The news list first, so there is something on screen at once;
@@ -159,6 +185,7 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
       me={me}
       activeTab={tab}
       onSelectTab={selectTab}
+      messagesUnread={messagesUnread}
       onBack={tab === 'home' && drilldown.kind === 'list' ? undefined : goBack}
       onOpenPlaces={onOpenPlaces}
       onOpenProfile={() => setProfileOpen(true)}
@@ -220,6 +247,10 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
       {tab === 'mass_intentions' && <MassIntentionsScreen poi={poi} />}
 
       {tab === 'daily_readings' && <ReadingsScreen poi={poi} />}
+
+      {tab === 'messages' && (
+        <MessagesScreen poi={poi} onSignIn={onSignIn} onRead={() => setMessagesUnread(false)} />
+      )}
 
       {tab === 'events' &&
         (drilldown.kind === 'calendar' ? (
