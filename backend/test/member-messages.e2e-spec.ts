@@ -53,7 +53,7 @@ describe('Member messages (e2e)', () => {
   it('lists members for the office only, and refuses messages while the module is off', async () => {
     await client(app).get(`/pois/${place.id}/members`).set(as(ana.token)).expect(403);
     const list = await client(app).get(`/pois/${place.id}/members`).set(as(admin.token)).expect(200);
-    expect(list.body.map((m: { firstName: string }) => m.firstName).sort()).toEqual(['Ana', 'Antonio', 'Luis']);
+    expect(list.body.map((m: { firstName: string }) => m.firstName).sort()).toEqual(['Ana', 'Luis']);
 
     const off = await client(app)
       .post(`/pois/${place.id}/members/${ana.userId}/messages`)

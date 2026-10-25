@@ -113,7 +113,7 @@ export function MembersPage() {
     <div>
       <h2>{t('members.title')}</h2>
       <p className="muted">
-        {live ? t('members.subtitleLive') : members ? t('members.subtitleOff', { count: members.length }) : ''}
+        {live ? t('members.subtitleLive') : members ? members.length === 1 ? t('members.subtitleOffOne') : t('members.subtitleOff', { count: members.length }) : ''}
       </p>
 
       {modules !== null && !live && (
@@ -153,7 +153,7 @@ export function MembersPage() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p className="card-title" style={{ margin: 0, fontSize: 17 }}>
                       {nameOf(member, t)}
-                      {live && member.unread && <span className="badge badge-active"> · {t('members.newBadge')}</span>}
+                      {live && member.unread && <span className="badge badge-active">{`\u00a0· ${t('members.newBadge')}`}</span>}
                     </p>
                     <p className="card-meta member-preview">
                       {live && member.lastMessage

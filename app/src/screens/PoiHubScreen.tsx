@@ -216,6 +216,7 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
           onAddPlace={onAddPlace}
           onLeavePlace={onLeavePlace}
           onOpenNotifications={() => setDrilldown({ kind: 'notifications' })}
+          messagesUnread={messagesUnread}
         />
       )}
 

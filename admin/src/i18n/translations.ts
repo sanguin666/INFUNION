@@ -724,6 +724,7 @@ export type Translations = {
     title: string;
     subtitleLive: string;
     subtitleOff: string;
+    subtitleOffOne: string;
     search: string;
     loading: string;
     loadError: string;
@@ -1500,6 +1501,7 @@ const en: Translations = {
     title: "Members",
     subtitleLive: "Write to one member in particular. They get a notification and find the message in the app.",
     subtitleOff: "{{count}} members have joined your community in the app.",
+    subtitleOffOne: "1 member has joined your community in the app.",
     search: "Search for a member (name or phone)",
     loading: "Loading members…",
     loadError: "The members could not be loaded.",
@@ -2276,6 +2278,7 @@ const es: Translations = {
     title: "Miembros",
     subtitleLive: "Escribe a un miembro en concreto. Recibe una notificación y encuentra el mensaje en la aplicación.",
     subtitleOff: "{{count}} miembros se han unido a tu comunidad en la aplicación.",
+    subtitleOffOne: "1 miembro se ha unido a tu comunidad en la aplicación.",
     search: "Buscar un miembro (nombre o teléfono)",
     loading: "Cargando los miembros…",
     loadError: "No se han podido cargar los miembros.",
@@ -3052,6 +3055,7 @@ const fr: Translations = {
     title: "Membres",
     subtitleLive: "Écrivez à un membre en particulier. Il reçoit une notification et retrouve le message dans l'application.",
     subtitleOff: "{{count}} membres ont rejoint votre communauté dans l'application.",
+    subtitleOffOne: "1 membre a rejoint votre communauté dans l'application.",
     search: "Rechercher un membre (nom ou téléphone)",
     loading: "Chargement des membres…",
     loadError: "Les membres n'ont pas pu être chargés.",
@@ -3828,6 +3832,7 @@ const va: Translations = {
     title: "Membres",
     subtitleLive: "Escriu a un membre en concret. Rep una notificació i troba el missatge en l'aplicació.",
     subtitleOff: "{{count}} membres s'han unit a la teua comunitat en l'aplicació.",
+    subtitleOffOne: "1 membre s'ha unit a la teua comunitat en l'aplicació.",
     search: "Busca un membre (nom o telèfon)",
     loading: "Carregant els membres…",
     loadError: "No s'han pogut carregar els membres.",
@@ -4604,6 +4609,7 @@ const gl: Translations = {
     title: "Membros",
     subtitleLive: "Escribe a un membro en concreto. Recibe unha notificación e atopa a mensaxe na aplicación.",
     subtitleOff: "{{count}} membros uníronse á túa comunidade na aplicación.",
+    subtitleOffOne: "1 membro uniuse á túa comunidade na aplicación.",
     search: "Buscar un membro (nome ou teléfono)",
     loading: "Cargando os membros…",
     loadError: "Non se puideron cargar os membros.",
@@ -5380,6 +5386,7 @@ const pt: Translations = {
     title: "Membros",
     subtitleLive: "Escreva a um membro em particular. Recebe uma notificação e encontra a mensagem na aplicação.",
     subtitleOff: "{{count}} membros juntaram-se à sua comunidade na aplicação.",
+    subtitleOffOne: "1 membro juntou-se à sua comunidade na aplicação.",
     search: "Procurar um membro (nome ou telefone)",
     loading: "A carregar os membros…",
     loadError: "Não foi possível carregar os membros.",

@@ -4,6 +4,7 @@ import { In, Repository } from 'typeorm';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
 import { User } from '../users/entities/user.entity.js';
 import { Poi } from '../pois/entities/poi.entity.js';
+import { MemberRole } from '../common/enums/member-role.enum.js';
 import { ActiveModulesService } from '../active-modules/active-modules.service.js';
 import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
@@ -54,10 +55,13 @@ export class MemberMessagesService {
     private readonly notifications: NotificationsService,
   ) {}
 
-  /** Everyone who joined the place, the conversations with news first. */
+  /**
+   * Everyone who joined the place, the conversations with news first.
+   * The office's own accounts are left out: nobody writes to themselves.
+   */
   async listMembers(poiId: string): Promise<MemberRow[]> {
     const memberships = await this.memberships.find({
-      where: { poi: { id: poiId } },
+      where: { poi: { id: poiId }, role: MemberRole.MEMBER },
       relations: { user: true },
     });
     const conversations = await this.conversations.find({ where: { poi: { id: poiId } }, relations: { member: true } });
@@ -80,12 +84,6 @@ export class MemberMessagesService {
       if (at !== bt) return bt - at;
       return displayName(a).localeCompare(displayName(b));
     });
-  }
-
-  /** How many members wrote and wait for the office to read it. */
-  async unreadForStaff(poiId: string): Promise<number> {
-    const rows = await this.listMembers(poiId);
-    return rows.filter((r) => r.unread).length;
   }
 
   async openForStaff(poiId: string, memberId: string): Promise<StaffConversation> {
