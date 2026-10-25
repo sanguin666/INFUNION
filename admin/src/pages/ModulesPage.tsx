@@ -20,6 +20,7 @@ type Key<S extends keyof Translations> = `${S}.${Extract<keyof Translations[S], 
 const MODULES: { type: ModuleType; name: Key<'moduleNames'>; description: Key<'billing'> }[] = [
   { type: 'events', name: 'moduleNames.events', description: 'billing.descEvents' },
   { type: 'requests', name: 'moduleNames.requests', description: 'billing.descRequests' },
+  { type: 'messages', name: 'moduleNames.messages', description: 'billing.descMessages' },
   { type: 'donations', name: 'moduleNames.donations', description: 'billing.descDonations' },
   { type: 'mass_intentions', name: 'moduleNames.massIntentions', description: 'billing.descMassIntentions' },
   { type: 'announcements', name: 'moduleNames.announcements', description: 'billing.descAnnouncements' },

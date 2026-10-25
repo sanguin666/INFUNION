@@ -15,6 +15,7 @@ const MODULE_KEYS: Record<string, keyof Translations['moduleNames']> = {
   livestreams: 'livestream',
   prayer_requests: 'prayerRequests',
   community: 'community',
+  messages: 'messages',
 };
 
 type Params = Record<string, string | number>;
