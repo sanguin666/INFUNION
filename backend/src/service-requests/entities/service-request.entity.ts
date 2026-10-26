@@ -27,6 +27,8 @@ export enum ServiceRequestType {
   MEETING = 'meeting',
   BLESSING = 'blessing',
   SICK_VISIT = 'sick_visit',
+  // Signing up for an activity: what associations ask for most.
+  REGISTRATION = 'registration',
   OTHER = 'other',
 }
 

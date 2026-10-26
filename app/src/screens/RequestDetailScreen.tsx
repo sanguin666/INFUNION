@@ -23,6 +23,7 @@ import type { Poi } from '../api/types';
 import { formatWhen } from '../utils/schedule';
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { statusColor } from './RequestsScreen';
+import { requestTypeKey } from '../utils/requestTypes';
 
 type Props = {
   poi: Poi;
@@ -155,7 +156,7 @@ export function RequestDetailScreen({ poi, requestId }: Props) {
   return (
     <>
       <View style={styles.titleBlock}>
-        <AccessibleText variant="title">{t(`requests.type_${request.type}`)}</AccessibleText>
+        <AccessibleText variant="title">{t(requestTypeKey(request.type, poi.type))}</AccessibleText>
         <AccessibleText variant="bodyLarge" color={statusColor(request.status)} style={styles.bold}>
           {t(`requests.status_${request.status}`)}
         </AccessibleText>

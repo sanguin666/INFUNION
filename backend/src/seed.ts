@@ -36,6 +36,7 @@ import { ServiceRequestDocument } from './service-requests/entities/service-requ
 import { MassIntention, MassIntentionStatus } from './mass-intentions/entities/mass-intention.entity.js';
 import { CARMEN_ADMIN_EMAIL, CARMEN_ADMIN_PASSWORD, seedCarmen } from './seed-carmen.js';
 import { seedMap } from './seed-map.js';
+import { ASSOCIATION_ADMIN_EMAIL, ASSOCIATION_ADMIN_PASSWORD, seedAssociation } from './seed-association.js';
 
 /**
  * Seeds two demo POIs with fixed QR tokens, so the app has something real
@@ -444,6 +445,8 @@ async function seed() {
   const carmen = await seedCarmen(dataSource);
   // Carmen's pin and a few neighbours of every kind for the map.
   await seedMap(dataSource);
+  // The demo association (Seb, 26 Oct 2026), joined by María.
+  const association = await seedAssociation(dataSource);
 
   // Module billing (30 Sep 2026): Carmen keeps every module on at no
   // charge ("Offert"). St. Mary's and Holy Trinity pay like real
@@ -470,6 +473,8 @@ async function seed() {
   console.log(`\nDefault demo: ${carmen.name} (QR token: ${carmen.qrCodeToken})`);
   console.log(`  admin:    ${CARMEN_ADMIN_EMAIL} / ${CARMEN_ADMIN_PASSWORD}`);
   console.log('  app:      "Iniciar sesión" opens the demo member directly');
+  if (association) console.log(`\nDemo association: ${association.name} (QR token: ${association.qrCodeToken})`);
+  if (association) console.log(`  admin:    ${ASSOCIATION_ADMIN_EMAIL} / ${ASSOCIATION_ADMIN_PASSWORD}`);
 
   // Seb, 23 Sep 2026: nothing shown anywhere should say "parish" — the
   // word is "community". The rows above are only created when missing,
