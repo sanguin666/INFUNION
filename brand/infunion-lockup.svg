@@ -1,8 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 120" role="img" aria-label="INFUNION">
   <g transform="translate(10,10) scale(1)">
-    <path d="M50 20 C49 13 43 5 32 5 C20 5 9 13 9 27 C9 42 22 62 50 84 C66 69 66 52 50 52 C34 52 34 35 50 20 Z" fill="#E1663F"/>
-    <path d="M50 20 C51 13 57 5 68 5 C80 5 91 13 91 27 C91 42 78 62 50 84 C66 69 66 52 50 52 C34 52 34 35 50 20 Z" fill="#E0A458"/>
-    <path d="M50 20 C34 35 34 52 50 52 C66 52 66 69 50 84" fill="none" stroke="#F7F1E7" stroke-width="5" stroke-linecap="round"/>
+    <path d="M18 12 L18 52 A32 32 0 0 0 82 52 L82 12" fill="none" stroke="#E0A458" stroke-width="12"/><circle cx="50" cy="20" r="7.5" fill="#E1663F"/><path d="M50 36 L50 64" stroke="#E1663F" stroke-width="12" stroke-linecap="round"/>
   </g>
   <text x="132" y="78" font-family="Nunito, 'Segoe UI', system-ui, sans-serif" font-weight="900" font-size="58" letter-spacing="0.5" fill="#111111">INFUNION</text>
 </svg>

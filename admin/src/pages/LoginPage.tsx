@@ -19,7 +19,7 @@ export function LoginPage() {
   // The superadmin's second step pops up over this form (Seb, 18 Oct 2026).
   const [superadmin, setSuperadmin] = useState<CurrentUser | null>(null);
   // The page arrives in steps, like the app opening: the picture, then
-  // the white box, then the hearts meeting, then the form. Any click or
+  // the white box, then the u closing around the i, then the form. Any click or
   // key jumps to the end, and it never plays for somebody who has asked
   // for less motion.
   const [skipIntro, setSkipIntro] = useState(
@@ -57,7 +57,7 @@ export function LoginPage() {
   return (
     <div className={skipIntro ? 'login-page' : 'login-page login-intro'}>
       <form className="login-panel" onSubmit={handleSubmit}>
-        <IntroLogoMark size={180} delay={900} skip={skipIntro} />
+        <IntroLogoMark size={160} delay={300} skip={skipIntro} />
         <h1 className="login-wordmark">{t('login.heading')}</h1>
         <p className="login-subtitle login-step">{t('login.subtitle')}</p>
 

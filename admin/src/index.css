@@ -782,23 +782,24 @@ a.btn {
   height: auto;
 }
 
-/* The opening, in the app's beats: the picture (0 to 0.7 s), the white
-   box (0.5 to 0.9 s), the hearts meeting (IntroLogoMark, 0.9 to 2.7 s),
-   the name (2.75 s), then the form (3.05 s). */
+/* The opening, in the app's beats and one second in all: the picture
+   (0 to 0.4 s), the white box (0.1 to 0.4 s), the u closing and the i
+   landing (IntroLogoMark, 0.3 to 0.9 s), the name (0.8 s), then the form
+   (0.95 s). */
 .login-intro::before {
-  animation: login-fade-in 0.7s ease-out both;
+  animation: login-fade-in 0.4s ease-out both;
 }
 
 .login-intro .login-panel {
-  animation: login-rise-in 0.4s 0.5s ease-out both;
+  animation: login-rise-in 0.3s 0.1s ease-out both;
 }
 
 .login-intro .login-wordmark {
-  animation: login-rise-in 0.4s 2.75s ease-out both;
+  animation: login-rise-in 0.25s 0.8s ease-out both;
 }
 
 .login-intro .login-step {
-  animation: login-fade-in 0.4s 3.05s ease-out both;
+  animation: login-fade-in 0.25s 0.95s ease-out both;
 }
 
 @keyframes login-fade-in {
