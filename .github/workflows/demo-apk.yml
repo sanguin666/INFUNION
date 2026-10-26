@@ -7,7 +7,7 @@ name: Demo APK
 #
 # Run it from the Actions tab: "Demo APK" > "Run workflow". The APK lands on
 # the "demo-apk" release, which always holds the latest build:
-# https://github.com/sanguin666/SOMOS/releases/tag/demo-apk
+# https://github.com/sanguin666/INFUNION/releases/tag/demo-apk
 #
 # Needs one repository secret, EXPO_TOKEN (expo.dev > Account settings >
 # Access tokens), so the build can read the version number and signing key.

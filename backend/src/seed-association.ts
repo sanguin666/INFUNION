@@ -483,7 +483,7 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
         status: ServiceRequestStatus.RECEIVED,
         contactName: 'Nuria Ferrer',
         contactPhone: '+34 611 223 344',
-        details: 'Querríamos apuntar a nuestros mellizos a la excursión a la Albufera. Somos dos adultos y dos niños.',
+        details: 'Querríamos apuntar a nuestros mellizos a la excursión a la Albufera. Vamos dos adultos y dos niños.',
         lastMemberActivityAt: new Date(now - 5 * HOUR),
         memberSeenAt: new Date(now - 5 * HOUR),
         createdAt: new Date(now - 5 * HOUR),
