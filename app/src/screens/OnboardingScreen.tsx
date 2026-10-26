@@ -65,7 +65,7 @@ export function OnboardingScreen({ onSignUp, onSignIn, onDemoSignIn }: Props) {
         <LogoMark size={184} />
 
         <AccessibleText variant="title" style={styles.wordmark}>
-          ANSAE
+          INFUNION
         </AccessibleText>
         <AccessibleText variant="bodyLarge" color={colors.textMuted} style={styles.welcome}>
           {t('onboarding.welcome')}

@@ -104,7 +104,7 @@ export function AddPlaceScreen({ onScanQR, onOpenPoi, onFindNearby, onFindByName
       <View style={styles.header}>
         <LogoMark size={56} />
         <AccessibleText variant="title" style={styles.wordmark}>
-          ANSAE
+          INFUNION
         </AccessibleText>
       </View>
 

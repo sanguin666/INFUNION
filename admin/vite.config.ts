@@ -19,7 +19,7 @@ import { defineConfig } from 'vite'
 // checkouts don't share one cache; losing it to a temp-folder cleanup only
 // costs one re-optimisation.
 const projectKey = crypto.createHash('sha1').update(import.meta.dirname).digest('hex').slice(0, 8)
-const cacheDir = path.join(os.tmpdir(), 'ansae-admin-vite', projectKey)
+const cacheDir = path.join(os.tmpdir(), 'infunion-admin-vite', projectKey)
 
 // https://vite.dev/config/
 export default defineConfig({

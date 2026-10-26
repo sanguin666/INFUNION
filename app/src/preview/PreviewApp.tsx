@@ -10,8 +10,8 @@ import type { Poi } from '../api/types';
 import { PreviewContext, type PreviewState } from './PreviewContext';
 
 // What the dashboard sends, and what this answers it with.
-const FROM_ADMIN = 'ansae-admin';
-const FROM_APP = 'ansae-app';
+const FROM_ADMIN = 'infunion-admin';
+const FROM_APP = 'infunion-app';
 
 type AdminMessage = {
   source: typeof FROM_ADMIN;

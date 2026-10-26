@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="INFUNION">
+  <rect x="4" y="4" width="92" height="92" rx="20.5" fill="#F7F1E7"/>
+  <g transform="translate(19.5,19.5) scale(0.61)">
+    <path d="M18 12 L18 52 A32 32 0 0 0 82 52 L82 12" fill="none" stroke="#E0A458" stroke-width="12"/><circle cx="50" cy="20" r="7.5" fill="#E1663F"/><path d="M50 36 L50 64" stroke="#E1663F" stroke-width="12" stroke-linecap="round"/>
+  </g>
+</svg>

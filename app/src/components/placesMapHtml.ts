@@ -18,7 +18,7 @@ export type FromMap = { type: 'ready' } | { type: 'select'; id: string } | { typ
 /**
  * The map of communities as one self-contained page, so the phone (in a
  * WebView) and the web build (in an iframe) draw exactly the same map:
- * MapLibre with OpenFreeMap's OpenStreetMap tiles, warmed toward ANSAE's
+ * MapLibre with OpenFreeMap's OpenStreetMap tiles, warmed toward INFUNION's
  * beige, one pin per place in its kind's colour and symbol.
  */
 export function placesMapHtml(): string {
@@ -40,7 +40,7 @@ var PINS=${JSON.stringify(pins)};
 function send(message){
   var text=JSON.stringify(message);
   if(window.ReactNativeWebView){window.ReactNativeWebView.postMessage(text)}
-  else if(window.parent!==window){window.parent.postMessage({source:'ansae-map',data:text},'*')}
+  else if(window.parent!==window){window.parent.postMessage({source:'infunion-map',data:text},'*')}
 }
 if(!window.maplibregl){send({type:'error'})}else{
 var map=new maplibregl.Map({container:'map',style:'${MAP_STYLE_URL}',center:[-0.5,40],zoom:5,attributionControl:{compact:true}});
@@ -79,7 +79,7 @@ function setPlaces(msg){
   }
 }
 window.receive=function(msg){if(typeof msg==='string')msg=JSON.parse(msg);if(msg.type==='places')setPlaces(msg);if(msg.type==='select')select(msg.id)};
-window.addEventListener('message',function(e){if(e.data&&e.data.source==='ansae-app')window.receive(e.data.data)});
+window.addEventListener('message',function(e){if(e.data&&e.data.source==='infunion-app')window.receive(e.data.data)});
 map.on('click',function(){select(null);send({type:'select',id:''})});
 send({type:'ready'});
 }

@@ -3,10 +3,10 @@ import { ModuleStatus } from '../common/enums/module-status.enum.js';
 import { BillingInterval } from '../common/enums/billing-interval.enum.js';
 
 /**
- * ANSAE's module pricing (Seb, 30 Sep 2026): Événements is free, every
+ * INFUNION's module pricing (Seb, 30 Sep 2026): Événements is free, every
  * other module costs 10 € a month or 110 € a year (a month off), and each
  * one can be tried free for a month, once per community. Dons is free too
- * since 18 Oct 2026: ANSAE keeps a small share of each gift instead (see
+ * since 18 Oct 2026: INFUNION keeps a small share of each gift instead (see
  * donations/platform-fee.ts).
  *
  * The rules are plain functions over plain objects so they can be tested
@@ -54,7 +54,7 @@ export type BillingModule = {
   trialEndsAt?: Date | null;
   paidUntil?: Date | null;
   cancelAtPeriodEnd: boolean;
-  // Given by ANSAE: never billed, never paused.
+  // Given by INFUNION: never billed, never paused.
   offered?: boolean;
 };
 

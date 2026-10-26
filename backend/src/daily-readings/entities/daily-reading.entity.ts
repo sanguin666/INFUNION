@@ -27,7 +27,7 @@ export interface ReadingSection {
 /**
  * The texts a community gives its members to read on one day. The office
  * types or pastes them (Seb, 30 Sep 2026): official liturgical
- * translations are copyrighted per language, so ANSAE never fetches them.
+ * translations are copyrighted per language, so INFUNION never fetches them.
  * The place's `readingsLinkUrl` points members to an official site instead.
  */
 @Entity('daily_readings')
