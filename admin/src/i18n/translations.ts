@@ -810,7 +810,7 @@ const en: Translations = {
     cancel: 'Cancel',
   },
   login: {
-    heading: 'INFUNION Admin',
+    heading: 'Admin',
     subtitle: 'Sign in to manage your community.',
     emailLabel: 'Email',
     passwordLabel: 'Password',
@@ -1588,7 +1588,7 @@ const es: Translations = {
     cancel: 'Cancelar',
   },
   login: {
-    heading: 'INFUNION Admin',
+    heading: 'Admin',
     subtitle: 'Inicia sesión para gestionar tu comunidad.',
     emailLabel: 'Correo electrónico',
     passwordLabel: 'Contraseña',
@@ -2366,7 +2366,7 @@ const fr: Translations = {
     cancel: 'Annuler',
   },
   login: {
-    heading: 'INFUNION Admin',
+    heading: 'Admin',
     subtitle: 'Connectez-vous pour gérer votre communauté.',
     emailLabel: 'E-mail',
     passwordLabel: 'Mot de passe',
@@ -3144,7 +3144,7 @@ const va: Translations = {
     cancel: 'Cancel·lar',
   },
   login: {
-    heading: 'INFUNION Admin',
+    heading: 'Admin',
     subtitle: 'Inicia sessió per a gestionar la teua comunitat.',
     emailLabel: 'Correu electrònic',
     passwordLabel: 'Contrasenya',
@@ -3922,7 +3922,7 @@ const gl: Translations = {
     cancel: 'Cancelar',
   },
   login: {
-    heading: 'INFUNION Admin',
+    heading: 'Admin',
     subtitle: 'Inicia sesión para xestionar a túa comunidade.',
     emailLabel: 'Correo electrónico',
     passwordLabel: 'Contrasinal',
@@ -4700,7 +4700,7 @@ const pt: Translations = {
     cancel: 'Cancelar',
   },
   login: {
-    heading: 'INFUNION Admin',
+    heading: 'Admin',
     subtitle: 'Inicie sessão para gerir a sua comunidade.',
     emailLabel: 'E-mail',
     passwordLabel: 'Palavra-passe',

@@ -1,14 +1,14 @@
 :root {
-  --primary: #e1663f;
-  --primary-dark: #b84f2f;
-  --accent: #e0a458;
-  --tint: #fbeae2;
+  --primary: #6c4fd9;
+  --primary-dark: #5638c7;
+  --accent: #f9b800;
+  --tint: #eeeafd;
   --bg: #ffffff;
-  --surface: #f7f1e7;
-  --ink: #16233a;
-  --text: #111111;
+  --surface: #f6f5f9;
+  --ink: #1d1a2d;
+  --text: #1D1A2D;
   --text-muted: #4a5560;
-  --border: #efe6d6;
+  --border: #e7e4f0;
   --radius: 14px;
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
@@ -101,10 +101,10 @@ img {
   color: var(--text);
 }
 
-.brand-mark {
+.brand-lockup {
   display: block;
-  width: 28px;
-  height: 28px;
+  height: 34px;
+  width: auto;
   flex-shrink: 0;
 }
 

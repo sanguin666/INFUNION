@@ -12,7 +12,7 @@
     "android": {
       "package": "com.ansae.app",
       "adaptiveIcon": {
-        "backgroundColor": "#F7F1E7",
+        "backgroundColor": "#F6F5F9",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -64,7 +64,7 @@
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
-          "color": "#E1663F"
+          "color": "#6C4FD9"
         }
       ]
     ],

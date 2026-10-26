@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { getSuperadminSession, setSuperadminSession } from '../api/client';
-import { LogoMark } from '../components/LogoMark';
+import { Lockup } from '../components/LogoMark';
 import { AppearancePicker } from '../components/AppearancePicker';
 import { LanguagePicker } from '../components/LanguagePicker';
 import { useSa } from './format';
@@ -41,8 +41,10 @@ export function SuperadminLayout() {
       <aside className="sidebar">
         <div>
           <div className="sidebar-brand">
-            <LogoMark size={30} />
-            <h1>INFUNION Admin</h1>
+            <h1 aria-label="infunion Admin">
+              <Lockup height={30} />
+              <span>Admin</span>
+            </h1>
           </div>
           <p className="sidebar-user">{user.email}</p>
         </div>

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Navigate, NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
-import { LogoMark } from '../components/LogoMark';
+import { Lockup } from '../components/LogoMark';
 import { LanguagePicker } from '../components/LanguagePicker';
 import { AppearancePicker } from '../components/AppearancePicker';
 import { PickerRow, PickerSheet, PinIcon } from '../components/PickerSheet';
@@ -103,8 +103,10 @@ export function DashboardLayout() {
       <aside className="sidebar">
         <div>
           <div className="sidebar-brand">
-            <LogoMark size={30} />
-            <h1>INFUNION Admin</h1>
+            <h1 aria-label="infunion Admin">
+              <Lockup height={30} />
+              <span>Admin</span>
+            </h1>
           </div>
           <p className="sidebar-user">{user.firstName ?? user.email}</p>
         </div>
