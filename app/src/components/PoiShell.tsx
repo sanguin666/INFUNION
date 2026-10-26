@@ -12,6 +12,7 @@ import {
   ChevronDownIcon,
   ClipboardIcon,
   BookIcon,
+  EnvelopeIcon,
   HeartIcon,
   HomeIcon,
   LogoMark,
@@ -51,6 +52,7 @@ const DEFAULT_MENU_ORDER: ModuleType[] = [
   'announcements',
   'donations',
   'requests',
+  'messages',
   'mass_intentions',
   'daily_readings',
   'prayer_requests',
@@ -132,6 +134,7 @@ export function PoiShell({
   me,
   activeTab,
   onSelectTab,
+  messagesUnread = false,
   onBack,
   onOpenPlaces,
   onOpenProfile,
@@ -225,6 +228,7 @@ export function PoiShell({
             label={label}
             active={tab === highlighted}
             activeColor={poiTheme.accentStrong}
+            dot={messagesUnread && (tab === 'messages' || (tab === 'more' && inMore.includes('messages')))}
             onPress={() => onSelectTab(tab)}
           />
         );
@@ -255,6 +259,8 @@ type Props = {
   me: Me | null;
   activeTab: HubTab;
   onSelectTab: (tab: HubTab) => void;
+  // A dot on Messages, or on More when Messages sits under it.
+  messagesUnread?: boolean;
   // Where the banner's back chevron goes, or nothing when the screen
   // showing is the place's own home page and there is nowhere back to.
   onBack?: () => void;
@@ -298,6 +304,8 @@ function describe(tab: HubTab, t: Translate): Described {
       return { icon: (c) => <ChaliceIcon size={24} color={c} />, label: t('hub.massIntentionsLabel') };
     case 'daily_readings':
       return { icon: (c) => <BookIcon size={24} color={c} />, label: t('hub.readingsLabel') };
+    case 'messages':
+      return { icon: (c) => <EnvelopeIcon size={24} color={c} />, label: t('hub.messagesLabel') };
     case 'more':
       return { icon: (c) => <MoreDotsIcon size={24} color={c} />, label: t('hub.moreLabel') };
   }
@@ -308,27 +316,33 @@ function TabBarItem({
   label,
   active,
   activeColor,
+  dot = false,
   onPress,
 }: {
   icon: (color: string) => ReactNode;
   label: string;
   active: boolean;
   activeColor: string;
+  dot?: boolean;
   onPress: () => void;
 }) {
+  const { t } = useI18n();
   const color = active ? activeColor : colors.textMuted;
 
   return (
     <Pressable
       accessibilityRole="tab"
       accessibilityState={{ selected: active }}
-      accessibilityLabel={label}
+      accessibilityLabel={dot ? `${label}. ${t('hub.newMessages')}` : label}
       onPress={onPress}
       style={styles.tabBarItem}
     >
       {/* Selection is the brand colour on the icon and the label, plus
           the bolder weight below — no fill behind it. */}
-      {icon(color)}
+      <View>
+        {icon(color)}
+        {dot && <View style={styles.tabBarDot} />}
+      </View>
       <AccessibleText variant="caption" color={color} numberOfLines={1} style={active ? styles.tabBarLabelActive : styles.tabBarLabel}>
         {label}
       </AccessibleText>
@@ -399,6 +413,18 @@ const styles = themedStyles(() => ({
     backgroundColor: colors.surface,
     borderRadius: radii.pill,
     ...floatingShadow,
+  },
+  // Something new under this button: a small orange dot on the icon.
+  tabBarDot: {
+    position: 'absolute',
+    top: -1,
+    right: -4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.primary,
+    borderWidth: 1.5,
+    borderColor: colors.surface,
   },
   tabBarItem: {
     flex: 1,

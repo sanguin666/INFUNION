@@ -14,7 +14,7 @@ import { dayKey, isTimeZone, localTime, repeats, startsBetween } from '../events
 import type { UpdateNotificationPreferencesDto } from './dto/update-notification-preferences.dto.js';
 import type { RegisterPushTokenDto } from './dto/register-push-token.dto.js';
 
-export type NotificationKind = 'news' | 'requests' | 'events' | 'live' | 'readings';
+export type NotificationKind = 'news' | 'requests' | 'events' | 'live' | 'readings' | 'messages';
 
 export interface NotificationPreferences {
   news: boolean;
@@ -22,6 +22,7 @@ export interface NotificationPreferences {
   events: boolean;
   live: boolean;
   readings: boolean;
+  messages: boolean;
 }
 
 export interface Notification {
@@ -53,6 +54,7 @@ const PREFERENCE_COLUMN = {
   events: 'notifyEvents',
   live: 'notifyLive',
   readings: 'notifyReadings',
+  messages: 'notifyMessages',
 } as const satisfies Record<NotificationKind, keyof UserPoi>;
 
 const REMINDER_LEAD_MS = 60 * 60 * 1000;
@@ -291,5 +293,6 @@ function toPreferences(membership: UserPoi): NotificationPreferences {
     events: membership.notifyEvents,
     live: membership.notifyLive,
     readings: membership.notifyReadings,
+    messages: membership.notifyMessages,
   };
 }

@@ -24,6 +24,7 @@ const MODULE_NAME_KEYS: Record<ModuleType, `moduleNames.${keyof Translations['mo
   requests: 'moduleNames.requests',
   mass_intentions: 'moduleNames.massIntentions',
   daily_readings: 'moduleNames.readings',
+  messages: 'moduleNames.messages',
 };
 
 function moduleName(type: ModuleType, t: T): string {

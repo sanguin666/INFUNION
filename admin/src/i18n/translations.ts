@@ -67,6 +67,7 @@ export type Translations = {
     navRequests: string;
     navMassIntentions: string;
     navReadings: string;
+    navMembers: string;
   };
   donations: {
     title: string;
@@ -326,6 +327,7 @@ export type Translations = {
     descLivestreams: string;
     descPrayerRequests: string;
     descCommunity: string;
+    descMessages: string;
   };
   moduleNames: {
     donations: string;
@@ -337,6 +339,7 @@ export type Translations = {
     requests: string;
     massIntentions: string;
     readings: string;
+    messages: string;
   };
   menuOrder: {
     title: string;
@@ -717,6 +720,35 @@ export type Translations = {
     giftCountMany: string;
     openReceipt: string;
   };
+  members: {
+    title: string;
+    subtitleLive: string;
+    subtitleOff: string;
+    subtitleOffOne: string;
+    search: string;
+    loading: string;
+    loadError: string;
+    empty: string;
+    noMatch: string;
+    write: string;
+    open: string;
+    newBadge: string;
+    memberSince: string;
+    you: string;
+    unnamed: string;
+    promoTitle: string;
+    promoText: string;
+    promoTry: string;
+    promoActivate: string;
+    promoError: string;
+    back: string;
+    noMessages: string;
+    messageLabel: string;
+    send: string;
+    sending: string;
+    sendHint: string;
+    sendError: string;
+  };
   readings: {
     title: string;
     subtitle: string;
@@ -811,6 +843,7 @@ const en: Translations = {
     navRequests: 'Requests',
     navMassIntentions: 'Mass intentions',
     navReadings: 'Daily readings',
+    navMembers: "Members",
   },
   donations: {
     title: 'Donations',
@@ -1070,6 +1103,7 @@ const en: Translations = {
     descLivestreams: "Masses and celebrations streamed live.",
     descPrayerRequests: "Members share their intentions and pray together.",
     descCommunity: "Members talk with one another.",
+    descMessages: "Write to one member in particular; they get a notification and can answer.",
   },
   moduleNames: {
     donations: 'Donations',
@@ -1081,6 +1115,7 @@ const en: Translations = {
     requests: 'Requests & appointments',
     massIntentions: 'Mass intentions',
     readings: 'Daily readings',
+    messages: "Messages",
   },
   menuOrder: {
     title: 'Bottom menu order',
@@ -1462,6 +1497,35 @@ const en: Translations = {
     giftCountMany: '{{n}} gifts',
     openReceipt: 'Open the receipt',
   },
+  members: {
+    title: "Members",
+    subtitleLive: "Write to one member in particular. They get a notification and find the message in the app.",
+    subtitleOff: "{{count}} members have joined your community in the app.",
+    subtitleOffOne: "1 member has joined your community in the app.",
+    search: "Search for a member (name or phone)",
+    loading: "Loading members…",
+    loadError: "The members could not be loaded.",
+    empty: "No member has joined your community yet. Share your QR code to invite them.",
+    noMatch: "No member matches this search.",
+    write: "Write",
+    open: "Open",
+    newBadge: "New",
+    memberSince: "member since {{date}}",
+    you: "You: {{body}}",
+    unnamed: "Member without a name",
+    promoTitle: "Write directly to your members",
+    promoText: "With the Messages module, send a message to one person in particular: it arrives as a notification on their phone and they can answer you. 10 €/month, the first month is free.",
+    promoTry: "Try 1 month free",
+    promoActivate: "See the Messages module",
+    promoError: "The module could not be switched on. Try again from Modules.",
+    back: "← All members",
+    noMessages: "No messages yet. Write the first one.",
+    messageLabel: "Your message",
+    send: "Send",
+    sending: "Sending…",
+    sendHint: "{{name}} gets a notification and reads it in the app.",
+    sendError: "The message could not be sent.",
+  },
   readings: {
     title: 'Daily readings',
     subtitle: 'The texts members read in the app, one day at a time. Prepare them ahead: each published day appears in the app from midnight on its date.',
@@ -1556,6 +1620,7 @@ const es: Translations = {
     navRequests: 'Solicitudes',
     navMassIntentions: 'Intenciones de misa',
     navReadings: 'Lecturas del día',
+    navMembers: "Miembros",
   },
   donations: {
     title: 'Donaciones',
@@ -1815,6 +1880,7 @@ const es: Translations = {
     descLivestreams: "Misas y celebraciones retransmitidas.",
     descPrayerRequests: "Los miembros comparten sus intenciones y rezan juntos.",
     descCommunity: "Los miembros conversan entre sí.",
+    descMessages: "Escribe a un miembro en concreto; recibe una notificación y puede responder.",
   },
   moduleNames: {
     donations: 'Donaciones',
@@ -1826,6 +1892,7 @@ const es: Translations = {
     requests: 'Solicitudes y citas',
     massIntentions: 'Intenciones de misa',
     readings: 'Lecturas del día',
+    messages: "Mensajes",
   },
   menuOrder: {
     title: 'Orden del menú inferior',
@@ -2207,6 +2274,35 @@ const es: Translations = {
     giftCountMany: '{{n}} donativos',
     openReceipt: 'Abrir el certificado',
   },
+  members: {
+    title: "Miembros",
+    subtitleLive: "Escribe a un miembro en concreto. Recibe una notificación y encuentra el mensaje en la aplicación.",
+    subtitleOff: "{{count}} miembros se han unido a tu comunidad en la aplicación.",
+    subtitleOffOne: "1 miembro se ha unido a tu comunidad en la aplicación.",
+    search: "Buscar un miembro (nombre o teléfono)",
+    loading: "Cargando los miembros…",
+    loadError: "No se han podido cargar los miembros.",
+    empty: "Todavía no se ha unido ningún miembro a tu comunidad. Comparte tu código QR para invitarlos.",
+    noMatch: "Ningún miembro coincide con esta búsqueda.",
+    write: "Escribir",
+    open: "Abrir",
+    newBadge: "Nuevo",
+    memberSince: "miembro desde el {{date}}",
+    you: "Tú: {{body}}",
+    unnamed: "Miembro sin nombre",
+    promoTitle: "Escribe directamente a tus miembros",
+    promoText: "Con el módulo Mensajes, envía un mensaje a una persona en concreto: le llega como notificación al teléfono y puede responderte. 10 €/mes, el primer mes es gratis.",
+    promoTry: "Probar 1 mes gratis",
+    promoActivate: "Ver el módulo Mensajes",
+    promoError: "No se ha podido activar el módulo. Inténtalo desde Módulos.",
+    back: "← Todos los miembros",
+    noMessages: "Todavía no hay mensajes. Escribe el primero.",
+    messageLabel: "Tu mensaje",
+    send: "Enviar",
+    sending: "Enviando…",
+    sendHint: "{{name}} recibe una notificación y lo lee en la aplicación.",
+    sendError: "No se ha podido enviar el mensaje.",
+  },
   readings: {
     title: 'Lecturas del día',
     subtitle: 'Los textos que los miembros leen en la app, día a día. Prepáralos con antelación: cada día publicado aparece en la app a medianoche de su fecha.',
@@ -2301,6 +2397,7 @@ const fr: Translations = {
     navRequests: 'Demandes',
     navMassIntentions: 'Intentions de messe',
     navReadings: 'Lectures du jour',
+    navMembers: "Membres",
   },
   donations: {
     title: 'Dons',
@@ -2560,6 +2657,7 @@ const fr: Translations = {
     descLivestreams: "Les messes et célébrations retransmises.",
     descPrayerRequests: "Les membres confient leurs intentions et prient ensemble.",
     descCommunity: "Les membres échangent entre eux.",
+    descMessages: "Écrivez à un membre en particulier ; il reçoit une notification et peut répondre.",
   },
   moduleNames: {
     donations: 'Dons',
@@ -2571,6 +2669,7 @@ const fr: Translations = {
     requests: 'Demandes et rendez-vous',
     massIntentions: 'Intentions de messe',
     readings: 'Lectures du jour',
+    messages: "Messages",
   },
   menuOrder: {
     title: 'Ordre du menu du bas',
@@ -2952,6 +3051,35 @@ const fr: Translations = {
     giftCountMany: '{{n}} dons',
     openReceipt: 'Ouvrir le reçu',
   },
+  members: {
+    title: "Membres",
+    subtitleLive: "Écrivez à un membre en particulier. Il reçoit une notification et retrouve le message dans l'application.",
+    subtitleOff: "{{count}} membres ont rejoint votre communauté dans l'application.",
+    subtitleOffOne: "1 membre a rejoint votre communauté dans l'application.",
+    search: "Rechercher un membre (nom ou téléphone)",
+    loading: "Chargement des membres…",
+    loadError: "Les membres n'ont pas pu être chargés.",
+    empty: "Aucun membre n'a encore rejoint votre communauté. Partagez votre code QR pour les inviter.",
+    noMatch: "Aucun membre ne correspond à cette recherche.",
+    write: "Écrire",
+    open: "Ouvrir",
+    newBadge: "Nouveau",
+    memberSince: "membre depuis le {{date}}",
+    you: "Vous : {{body}}",
+    unnamed: "Membre sans nom",
+    promoTitle: "Écrivez directement à vos membres",
+    promoText: "Avec le module Messages, envoyez un message à une personne précise : il arrive en notification sur son téléphone et elle peut vous répondre. 10 €/mois, le premier mois est offert.",
+    promoTry: "Essayer 1 mois gratuit",
+    promoActivate: "Voir le module Messages",
+    promoError: "Le module n'a pas pu être activé. Réessayez depuis Modules.",
+    back: "← Tous les membres",
+    noMessages: "Pas encore de message. Écrivez le premier.",
+    messageLabel: "Votre message",
+    send: "Envoyer",
+    sending: "Envoi…",
+    sendHint: "{{name}} reçoit une notification et le lit dans l'application.",
+    sendError: "Le message n'a pas pu être envoyé.",
+  },
   readings: {
     title: 'Lectures du jour',
     subtitle: 'Les textes que les membres lisent dans l’app, jour après jour. Préparez-les à l’avance : chaque jour publié apparaît dans l’app à minuit le jour même.',
@@ -3046,6 +3174,7 @@ const va: Translations = {
     navRequests: 'Sol·licituds',
     navMassIntentions: 'Intencions de missa',
     navReadings: 'Lectures del dia',
+    navMembers: "Membres",
   },
   donations: {
     title: 'Donatius',
@@ -3305,6 +3434,7 @@ const va: Translations = {
     descLivestreams: "Misses i celebracions retransmeses.",
     descPrayerRequests: "Els membres compartixen les seues intencions i resen junts.",
     descCommunity: "Els membres conversen entre ells.",
+    descMessages: "Escriu a un membre en concret; rep una notificació i pot respondre.",
   },
   moduleNames: {
     donations: 'Donatius',
@@ -3316,6 +3446,7 @@ const va: Translations = {
     requests: 'Sol·licituds i cites',
     massIntentions: 'Intencions de missa',
     readings: 'Lectures del dia',
+    messages: "Missatges",
   },
   menuOrder: {
     title: 'Orde del menú inferior',
@@ -3697,6 +3828,35 @@ const va: Translations = {
     giftCountMany: '{{n}} donatius',
     openReceipt: 'Obrir el certificat',
   },
+  members: {
+    title: "Membres",
+    subtitleLive: "Escriu a un membre en concret. Rep una notificació i troba el missatge en l'aplicació.",
+    subtitleOff: "{{count}} membres s'han unit a la teua comunitat en l'aplicació.",
+    subtitleOffOne: "1 membre s'ha unit a la teua comunitat en l'aplicació.",
+    search: "Busca un membre (nom o telèfon)",
+    loading: "Carregant els membres…",
+    loadError: "No s'han pogut carregar els membres.",
+    empty: "Encara no s'ha unit cap membre a la teua comunitat. Comparteix el teu codi QR per a convidar-los.",
+    noMatch: "Cap membre coincidix amb esta busca.",
+    write: "Escriure",
+    open: "Obrir",
+    newBadge: "Nou",
+    memberSince: "membre des del {{date}}",
+    you: "Tu: {{body}}",
+    unnamed: "Membre sense nom",
+    promoTitle: "Escriu directament als teus membres",
+    promoText: "Amb el mòdul Missatges, envia un missatge a una persona en concret: li arriba com a notificació al telèfon i et pot respondre. 10 €/mes, el primer mes és gratuït.",
+    promoTry: "Provar 1 mes gratis",
+    promoActivate: "Vore el mòdul Missatges",
+    promoError: "No s'ha pogut activar el mòdul. Torna-ho a provar des de Mòduls.",
+    back: "← Tots els membres",
+    noMessages: "Encara no hi ha missatges. Escriu el primer.",
+    messageLabel: "El teu missatge",
+    send: "Enviar",
+    sending: "Enviant…",
+    sendHint: "{{name}} rep una notificació i el llig en l'aplicació.",
+    sendError: "No s'ha pogut enviar el missatge.",
+  },
   readings: {
     title: 'Lectures del dia',
     subtitle: 'Els textos que els membres lligen en l’app, dia a dia. Prepara’ls amb antelació: cada dia publicat apareix en l’app a mitjanit de la seua data.',
@@ -3791,6 +3951,7 @@ const gl: Translations = {
     navRequests: 'Solicitudes',
     navMassIntentions: 'Intencións de misa',
     navReadings: 'Lecturas do día',
+    navMembers: "Membros",
   },
   donations: {
     title: 'Doazóns',
@@ -4050,6 +4211,7 @@ const gl: Translations = {
     descLivestreams: "Misas e celebracións retransmitidas.",
     descPrayerRequests: "Os membros comparten as súas intencións e rezan xuntos.",
     descCommunity: "Os membros conversan entre eles.",
+    descMessages: "Escribe a un membro en concreto; recibe unha notificación e pode responder.",
   },
   moduleNames: {
     donations: 'Doazóns',
@@ -4061,6 +4223,7 @@ const gl: Translations = {
     requests: 'Solicitudes e citas',
     massIntentions: 'Intencións de misa',
     readings: 'Lecturas do día',
+    messages: "Mensaxes",
   },
   menuOrder: {
     title: 'Orde do menú inferior',
@@ -4442,6 +4605,35 @@ const gl: Translations = {
     giftCountMany: '{{n}} doazóns',
     openReceipt: 'Abrir o certificado',
   },
+  members: {
+    title: "Membros",
+    subtitleLive: "Escribe a un membro en concreto. Recibe unha notificación e atopa a mensaxe na aplicación.",
+    subtitleOff: "{{count}} membros uníronse á túa comunidade na aplicación.",
+    subtitleOffOne: "1 membro uniuse á túa comunidade na aplicación.",
+    search: "Buscar un membro (nome ou teléfono)",
+    loading: "Cargando os membros…",
+    loadError: "Non se puideron cargar os membros.",
+    empty: "Aínda non se uniu ningún membro á túa comunidade. Comparte o teu código QR para convidalos.",
+    noMatch: "Ningún membro coincide con esta busca.",
+    write: "Escribir",
+    open: "Abrir",
+    newBadge: "Novo",
+    memberSince: "membro dende o {{date}}",
+    you: "Ti: {{body}}",
+    unnamed: "Membro sen nome",
+    promoTitle: "Escribe directamente aos teus membros",
+    promoText: "Co módulo Mensaxes, envía unha mensaxe a unha persoa en concreto: chégalle como notificación ao teléfono e pode responderche. 10 €/mes, o primeiro mes é gratis.",
+    promoTry: "Probar 1 mes gratis",
+    promoActivate: "Ver o módulo Mensaxes",
+    promoError: "Non se puido activar o módulo. Téntao dende Módulos.",
+    back: "← Todos os membros",
+    noMessages: "Aínda non hai mensaxes. Escribe a primeira.",
+    messageLabel: "A túa mensaxe",
+    send: "Enviar",
+    sending: "Enviando…",
+    sendHint: "{{name}} recibe unha notificación e lea na aplicación.",
+    sendError: "Non se puido enviar a mensaxe.",
+  },
   readings: {
     title: 'Lecturas do día',
     subtitle: 'Os textos que os membros len na app, día a día. Prepáraos con antelación: cada día publicado aparece na app á medianoite da súa data.',
@@ -4536,6 +4728,7 @@ const pt: Translations = {
     navRequests: 'Pedidos',
     navMassIntentions: 'Intenções de missa',
     navReadings: 'Leituras do dia',
+    navMembers: "Membros",
   },
   donations: {
     title: 'Donativos',
@@ -4795,6 +4988,7 @@ const pt: Translations = {
     descLivestreams: "Missas e celebrações transmitidas em direto.",
     descPrayerRequests: "Os membros partilham as suas intenções e rezam juntos.",
     descCommunity: "Os membros conversam entre si.",
+    descMessages: "Escreva a um membro em particular; recebe uma notificação e pode responder.",
   },
   moduleNames: {
     donations: 'Donativos',
@@ -4806,6 +5000,7 @@ const pt: Translations = {
     requests: 'Pedidos e marcações',
     massIntentions: 'Intenções de missa',
     readings: 'Leituras do dia',
+    messages: "Mensagens",
   },
   menuOrder: {
     title: 'Ordem do menu inferior',
@@ -5186,6 +5381,35 @@ const pt: Translations = {
     giftCountOne: '1 donativo',
     giftCountMany: '{{n}} donativos',
     openReceipt: 'Abrir o recibo',
+  },
+  members: {
+    title: "Membros",
+    subtitleLive: "Escreva a um membro em particular. Recebe uma notificação e encontra a mensagem na aplicação.",
+    subtitleOff: "{{count}} membros juntaram-se à sua comunidade na aplicação.",
+    subtitleOffOne: "1 membro juntou-se à sua comunidade na aplicação.",
+    search: "Procurar um membro (nome ou telefone)",
+    loading: "A carregar os membros…",
+    loadError: "Não foi possível carregar os membros.",
+    empty: "Ainda nenhum membro se juntou à sua comunidade. Partilhe o seu código QR para os convidar.",
+    noMatch: "Nenhum membro corresponde a esta pesquisa.",
+    write: "Escrever",
+    open: "Abrir",
+    newBadge: "Novo",
+    memberSince: "membro desde {{date}}",
+    you: "Você: {{body}}",
+    unnamed: "Membro sem nome",
+    promoTitle: "Escreva diretamente aos seus membros",
+    promoText: "Com o módulo Mensagens, envie uma mensagem a uma pessoa em particular: chega como notificação ao telemóvel e ela pode responder-lhe. 10 €/mês, o primeiro mês é gratuito.",
+    promoTry: "Experimentar 1 mês grátis",
+    promoActivate: "Ver o módulo Mensagens",
+    promoError: "Não foi possível ativar o módulo. Tente novamente em Módulos.",
+    back: "← Todos os membros",
+    noMessages: "Ainda não há mensagens. Escreva a primeira.",
+    messageLabel: "A sua mensagem",
+    send: "Enviar",
+    sending: "A enviar…",
+    sendHint: "{{name}} recebe uma notificação e lê-a na aplicação.",
+    sendError: "Não foi possível enviar a mensagem.",
   },
   readings: {
     title: 'Leituras do dia',

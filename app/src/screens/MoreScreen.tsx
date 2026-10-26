@@ -8,6 +8,7 @@ import {
   CandleIcon,
   ChaliceIcon,
   BookIcon,
+  EnvelopeIcon,
   ChatBubbleIcon,
   CheckIcon,
   ChevronRightIcon,
@@ -67,6 +68,8 @@ type Props = {
   onOpenPlaces: () => void;
   onAddPlace: () => void;
   onOpenNotifications: () => void;
+  // The office wrote and Messages has not been opened since.
+  messagesUnread?: boolean;
   // Resolves once the membership is gone and the app has moved on, so
   // this screen knows when to stop showing its spinner.
   onLeavePlace: () => Promise<void>;
@@ -87,6 +90,7 @@ export function MoreScreen({
   onAddPlace,
   onLeavePlace,
   onOpenNotifications,
+  messagesUnread = false,
 }: Props) {
   const { t, language, setLanguage } = useI18n();
   const insets = useSafeAreaInsets();
@@ -146,7 +150,7 @@ export function MoreScreen({
         <Pressable
           key={row.type}
           accessibilityRole="button"
-          accessibilityLabel={row.label}
+          accessibilityLabel={row.type === 'messages' && messagesUnread ? `${row.label}. ${t('hub.newMessages')}` : row.label}
           onPress={() => onSelectTab(row.type)}
           style={styles.row}
         >
@@ -154,6 +158,11 @@ export function MoreScreen({
           <AccessibleText variant="bodyLarge" style={styles.rowLabel} {...ONE_LINE}>
             {row.label}
           </AccessibleText>
+          {row.type === 'messages' && messagesUnread && (
+            <AccessibleText variant="caption" color={colors.primaryStrong} style={styles.newWord}>
+              {t('hub.newMessages')}
+            </AccessibleText>
+          )}
           <ChevronRightIcon size={22} color={colors.textMuted} />
         </Pressable>
       ))}
@@ -445,6 +454,8 @@ function moduleLabel(type: ModuleType, t: ReturnType<typeof useI18n>['t']): stri
       return t('intentions.title');
     case 'daily_readings':
       return t('readings.title');
+    case 'messages':
+      return t('messages.title');
   }
 }
 
@@ -468,6 +479,8 @@ function moduleIcon(type: ModuleType): (color: string) => ReactNode {
       return (color) => <ChaliceIcon size={26} color={color} />;
     case 'daily_readings':
       return (color) => <BookIcon size={26} color={color} />;
+    case 'messages':
+      return (color) => <EnvelopeIcon size={26} color={color} />;
   }
 }
 
@@ -476,6 +489,9 @@ function moduleIcon(type: ModuleType): (color: string) => ReactNode {
 const ONE_LINE = { numberOfLines: 1, adjustsFontSizeToFit: true, minimumFontScale: 0.7 } as const;
 
 const styles = themedStyles(() => ({
+  newWord: {
+    fontWeight: '700',
+  },
   titleBlock: {
     gap: spacing.xs,
     marginTop: spacing.sm,

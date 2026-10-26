@@ -60,10 +60,10 @@ describe('Notifications (e2e)', () => {
   it('starts with everything on and lets a member turn kinds off', async () => {
     const url = `/auth/me/pois/${place.id}/notifications`;
     const initial = await client(app).get(url).set(as(ana.token)).expect(200);
-    expect(initial.body).toEqual({ news: true, requests: true, events: true, live: true, readings: true });
+    expect(initial.body).toEqual({ news: true, requests: true, events: true, live: true, readings: true, messages: true });
 
     const updated = await client(app).patch(url).set(as(ana.token)).send({ news: false }).expect(200);
-    expect(updated.body).toEqual({ news: false, requests: true, events: true, live: true, readings: true });
+    expect(updated.body).toEqual({ news: false, requests: true, events: true, live: true, readings: true, messages: true });
 
     // Only the member's own memberships: a stranger to the place gets nothing.
     const { token: outsider } = await signInWithId(app, '+34600400009', 'Eva');

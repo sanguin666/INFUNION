@@ -2113,3 +2113,26 @@ label.link-button:focus-within {
   flex-direction: column;
   gap: 12px;
 }
+
+/* ---------- Membres ---------- */
+
+/* A member's initials in the coral wash: a mark, not a box. */
+.member-initials {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.member-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

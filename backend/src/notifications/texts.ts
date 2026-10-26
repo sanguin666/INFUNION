@@ -18,6 +18,8 @@ const TEXTS = {
     appointment: 'Appointment: {when}',
     statusNow: 'Your request is now: {status}',
     documentAsked: 'The office is asking for a document: {label}',
+    messageFrom: '{name}: {body}',
+    office: 'The office',
   },
   es: {
     live: 'En directo: {title}',
@@ -29,6 +31,8 @@ const TEXTS = {
     appointment: 'Cita: {when}',
     statusNow: 'Tu solicitud está ahora: {status}',
     documentAsked: 'La oficina te pide un documento: {label}',
+    messageFrom: '{name}: {body}',
+    office: 'La oficina',
   },
   fr: {
     live: 'En direct : {title}',
@@ -40,6 +44,8 @@ const TEXTS = {
     appointment: 'Rendez-vous : {when}',
     statusNow: 'Votre demande est maintenant : {status}',
     documentAsked: 'L’accueil vous demande un document : {label}',
+    messageFrom: '{name} : {body}',
+    office: 'L’accueil',
   },
   va: {
     live: 'En directe: {title}',
@@ -51,6 +57,8 @@ const TEXTS = {
     appointment: 'Cita: {when}',
     statusNow: 'La teua sol·licitud ara està: {status}',
     documentAsked: 'El despatx et demana un document: {label}',
+    messageFrom: '{name}: {body}',
+    office: 'El despatx',
   },
   gl: {
     live: 'En directo: {title}',
@@ -62,6 +70,8 @@ const TEXTS = {
     appointment: 'Cita: {when}',
     statusNow: 'A túa solicitude está agora: {status}',
     documentAsked: 'O despacho pídeche un documento: {label}',
+    messageFrom: '{name}: {body}',
+    office: 'O despacho',
   },
   pt: {
     live: 'Em direto: {title}',
@@ -73,6 +83,8 @@ const TEXTS = {
     appointment: 'Marcação: {when}',
     statusNow: 'O seu pedido está agora: {status}',
     documentAsked: 'A secretaria pede-lhe um documento: {label}',
+    messageFrom: '{name}: {body}',
+    office: 'A secretaria',
   },
 } satisfies Record<Language, Record<string, string>>;
 

@@ -24,6 +24,8 @@ const NAV: { to: string; label: `layout.${keyof Translations['layout']}`; module
   { to: 'home-page', label: 'layout.navHomePage' },
   { to: 'requests', label: 'layout.navRequests', module: 'requests' },
   { to: 'donations', label: 'layout.navDonations', module: 'donations' },
+  // Always there: without the Messages module the page offers it.
+  { to: 'members', label: 'layout.navMembers' },
   { to: 'events', label: 'layout.navEvents', module: 'events' },
   { to: 'mass-intentions', label: 'layout.navMassIntentions', module: 'mass_intentions' },
   { to: 'readings', label: 'layout.navReadings', module: 'daily_readings' },

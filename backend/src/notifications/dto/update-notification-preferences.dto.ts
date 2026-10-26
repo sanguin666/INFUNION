@@ -20,4 +20,8 @@ export class UpdateNotificationPreferencesDto {
   @IsOptional()
   @IsBoolean()
   readings?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  messages?: boolean;
 }
