@@ -23,7 +23,7 @@ function SessionClock() {
   return <p className="sidebar-user">{s('nav.session', { n: minutes })}</p>;
 }
 
-/** ANSAE's own section (Seb, 17 Oct 2026), behind the code gate. */
+/** INFUNION's own section (Seb, 17 Oct 2026), behind the code gate. */
 export function SuperadminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export function SuperadminLayout() {
         <div>
           <div className="sidebar-brand">
             <LogoMark size={30} />
-            <h1>ANSAE Admin</h1>
+            <h1>INFUNION Admin</h1>
           </div>
           <p className="sidebar-user">{user.email}</p>
         </div>

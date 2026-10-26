@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
- * The ANSAE mark, arriving the way the app opens (Seb, 30 Sep 2026): a
+ * The INFUNION mark, arriving the way the app opens (Seb, 30 Sep 2026): a
  * whole coral heart and a whole gold heart come in from either side and
  * meet along a straight line; once they have joined, the line bends into
  * the S while the S draws itself. Drawn frame by frame, since the clip's
@@ -84,7 +84,7 @@ export function IntroLogoMark({ size = 180, delay = 0, skip = false }: { size?: 
       height={size}
       viewBox="-60 0 220 100"
       role="img"
-      aria-label="ANSAE"
+      aria-label="INFUNION"
       className="intro-mark"
     >
       <defs>

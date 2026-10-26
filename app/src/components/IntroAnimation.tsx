@@ -8,7 +8,7 @@ import { colors } from '../theme/theme';
  * The opening Seb picked (30 Sep 2026): a whole coral heart and a whole
  * gold heart come in from either side and meet along a straight line;
  * only once they have joined does that line bend into the S, while the
- * S draws itself; then ANSAE appears under the mark and the whole thing
+ * S draws itself; then INFUNION appears under the mark and the whole thing
  * fades into the app underneath.
  *
  * Drawn frame by frame from one clock rather than with Animated, because
@@ -108,7 +108,7 @@ export function IntroAnimation({ onDone }: { onDone: () => void }) {
     <Pressable
       onPress={finish}
       accessibilityRole="image"
-      accessibilityLabel="ANSAE"
+      accessibilityLabel="INFUNION"
       style={[StyleSheet.absoluteFill, styles.root, { backgroundColor: colors.background, opacity }]}
     >
       <Svg width={230 * scale} height={90 * scale} viewBox="-65 0 230 90">
@@ -142,7 +142,7 @@ export function IntroAnimation({ onDone }: { onDone: () => void }) {
         variant="title"
         style={[styles.wordmark, { opacity: word, transform: [{ translateY: 8 * (1 - word) }] }]}
       >
-        ANSAE
+        INFUNION
       </AccessibleText>
     </Pressable>
   );

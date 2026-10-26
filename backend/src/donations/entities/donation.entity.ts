@@ -137,7 +137,7 @@ export class Donation {
   @Column('varchar', { name: 'donor_tax_id', nullable: true })
   donorTaxId?: string | null;
 
-  // ANSAE's share of the gift (see platform-fee.ts), fixed when the gift
+  // INFUNION's share of the gift (see platform-fee.ts), fixed when the gift
   // is recorded so a later change of rate leaves past gifts as they were.
   @Column('numeric', {
     name: 'platform_fee',

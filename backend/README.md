@@ -1,6 +1,6 @@
-# ANSAE — backend
+# INFUNION — backend
 
-NestJS API for the ANSAE app. See the [root README](../README.md) for full setup instructions (local demo).
+NestJS API for the INFUNION app. See the [root README](../README.md) for full setup instructions (local demo).
 
 ## Quick start
 

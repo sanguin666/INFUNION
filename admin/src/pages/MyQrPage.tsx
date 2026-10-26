@@ -12,7 +12,7 @@ import type { Poi } from '../api/types';
 // once a real onboarding flow exists. The token is a query param (read by
 // landing/assets/main.js) rather than part of the hash, since the hash is
 // just the same-page anchor.
-const LANDING_URL = import.meta.env.VITE_LANDING_URL ?? 'https://ansae.app';
+const LANDING_URL = import.meta.env.VITE_LANDING_URL ?? 'https://infunion.app';
 
 function joinUrlFor(qrCodeToken: string): string {
   return `${LANDING_URL}/?token=${encodeURIComponent(qrCodeToken)}#join`;

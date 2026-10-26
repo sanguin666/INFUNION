@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ANSAE",
+    "name": "INFUNION",
     "slug": "ansae",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -37,27 +37,27 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Allow ANSAE to use your location once, to show the communities near you. It is never stored."
+          "locationWhenInUsePermission": "Allow INFUNION to use your location once, to show the communities near you. It is never stored."
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow ANSAE to access your microphone to record a voice message."
+          "microphonePermission": "Allow INFUNION to access your microphone to record a voice message."
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow ANSAE to use the camera to scan a place’s QR code.",
+          "cameraPermission": "Allow INFUNION to use the camera to scan a place’s QR code.",
           "barcodeScannerEnabled": true
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow ANSAE to use your photos so you can choose a profile picture.",
-          "cameraPermission": "Allow ANSAE to use the camera so you can take a profile picture."
+          "photosPermission": "Allow INFUNION to use your photos so you can choose a profile picture.",
+          "cameraPermission": "Allow INFUNION to use the camera so you can take a profile picture."
         }
       ],
       [

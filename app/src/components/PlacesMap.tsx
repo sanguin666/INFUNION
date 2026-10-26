@@ -18,7 +18,7 @@ export function PlacesMap(props: PlacesMapProps) {
   return (
     <WebView
       ref={webView}
-      source={{ html, baseUrl: 'https://ansae.app/' }}
+      source={{ html, baseUrl: 'https://infunion.app/' }}
       originWhitelist={['*']}
       onMessage={(event: WebViewMessageEvent) => onMessage(event.nativeEvent.data)}
       style={props.style}

@@ -1,4 +1,4 @@
-# ANSAE
+# INFUNION
 
 Mobile + web app for churches and other points of interest: donations, events, and future modules, with a strong focus on accessibility for a mostly elderly audience.
 
@@ -8,7 +8,7 @@ Mobile + web app for churches and other points of interest: donations, events, a
 backend/   NestJS API (Node.js + TypeORM + PostgreSQL)
 app/       Expo / React Native app (+ React Native Web) — the congregant-facing app
 admin/     React (Vite) admin dashboard for community staff
-landing/   Static marketing site (no build step) advertising ANSAE to churches
+landing/   Static marketing site (no build step) advertising INFUNION to churches
 docker-compose.yml   Local PostgreSQL for development
 ```
 
@@ -170,7 +170,7 @@ For showing the app to someone off your network, a standalone build beats Expo G
 
    EAS only uses git to read the branch name and commit hash for build metadata. With `EAS_NO_VCS=1` it still respects `.gitignore`, so `node_modules` stays out of the upload and the resulting APK is the same.
 
-   **Free alternative when the Expo build allowance is used up:** GitHub builds the same APK on its own machines. On github.com, open the repo's **Actions** tab, pick **Demo APK**, press **Run workflow** (keep `production`), and wait for the green tick (about 15–20 minutes). The APK is then at [releases/tag/demo-apk](https://github.com/sanguin666/SOMOS/releases/tag/demo-apk): open that page on the phone and tap `ansae.apk`. It is signed with the same key as the EAS builds, so it installs over the existing app. One-time setup: create a token at expo.dev > Account settings > Access tokens, then add it on GitHub under Settings > Secrets and variables > Actions > New repository secret, named `EXPO_TOKEN`. The workflow is `.github/workflows/demo-apk.yml`.
+   **Free alternative when the Expo build allowance is used up:** GitHub builds the same APK on its own machines. On github.com, open the repo's **Actions** tab, pick **Demo APK**, press **Run workflow** (keep `production`), and wait for the green tick (about 15–20 minutes). The APK is then at [releases/tag/demo-apk](https://github.com/sanguin666/SOMOS/releases/tag/demo-apk): open that page on the phone and tap `infunion.apk`. It is signed with the same key as the EAS builds, so it installs over the existing app. One-time setup: create a token at expo.dev > Account settings > Access tokens, then add it on GitHub under Settings > Secrets and variables > Actions > New repository secret, named `EXPO_TOKEN`. The workflow is `.github/workflows/demo-apk.yml`.
 
 On the day, just open the app on the phone. Nothing to start, scan or type.
 
@@ -187,7 +187,7 @@ If you really need live reload on a phone off your network, note that `ngrok htt
 
 ## Scanning a place's QR code
 
-The flyer encodes a link to the landing site (`https://<landing>/?token=<qrCodeToken>#join`), not the bare token, so that someone scanning it with their phone's own camera app lands on a page explaining what Ansae is. The in-app scanner (`app/src/screens/ScanQRScreen.tsx`) pulls the token back out of that link — see `app/src/qr.ts`, which also accepts a bare token and rejects QR codes that aren't ours rather than sending them to the backend as a lookup.
+The flyer encodes a link to the landing site (`https://<landing>/?token=<qrCodeToken>#join`), not the bare token, so that someone scanning it with their phone's own camera app lands on a page explaining what INFUNION is. The in-app scanner (`app/src/screens/ScanQRScreen.tsx`) pulls the token back out of that link — see `app/src/qr.ts`, which also accepts a bare token and rejects QR codes that aren't ours rather than sending them to the backend as a lookup.
 
 Scanning uses `expo-camera`'s `CameraView` with `barcodeScannerEnabled` set in `app.json`. Permission is asked for on the screen itself, by a button, rather than on app start — an audience that mostly doesn't trust permission prompts should see what it's for first. A refused permission is not a dead end: typing the code printed under the QR does the same job, and that path is on the screen whether or not the camera works.
 
@@ -284,7 +284,7 @@ The admin dashboard (`admin/`) uses a real email + password login (`POST /auth/l
 
 ## Superadmin
 
-ANSAE's own section of the admin (Seb, 17 Oct 2026): the whole app's figures (revenue of the month, members, donations), every community (create, edit, admins, modules, offering a module, suspending, deleting), every account, server health and a Journal of who did what.
+INFUNION's own section of the admin (Seb, 17 Oct 2026): the whole app's figures (revenue of the month, members, donations), every community (create, edit, admins, modules, offering a module, suspending, deleting), every account, server health and a Journal of who did what.
 
 How it is locked:
 
@@ -383,4 +383,4 @@ Uploads are the real remaining gap: local disk is fine for one small server with
 
 ## Marketing landing page
 
-`landing/` is a small static site (plain HTML/CSS/JS, no build step, no framework) advertising ANSAE to churches — open `landing/index.html` directly in a browser, or serve the folder with any static file server (e.g. `npx serve landing`). It's one scrolling page: features, pricing, and the "join" flow are all sections of `index.html` (`#pricing`, `#join`), not separate pages. The `#join` section is what the QR flyer's code links to: today it explains how to get the app (the store links are placeholders — the app isn't published yet) and displays the scanned POI token for manual entry as a fallback (`landing/assets/main.js` reads it from the URL's `?token=` query param). Text is in Spanish by default, switchable to English/French via the header pills (`landing/assets/i18n.js`, persisted in `localStorage`). It is hosted on Railway like the rest (Root Directory `/landing`, no build or start command: Railway serves the folder as it is) at `https://ansae-landing.up.railway.app`, with `ansae-landing-staging` for staging. The admin's `VITE_LANDING_URL` (what the QR flyer opens) is left at its `https://ansae.app` default for now. A real domain can later be attached to that service in Railway.
+`landing/` is a small static site (plain HTML/CSS/JS, no build step, no framework) advertising INFUNION to churches — open `landing/index.html` directly in a browser, or serve the folder with any static file server (e.g. `npx serve landing`). It's one scrolling page: features, pricing, and the "join" flow are all sections of `index.html` (`#pricing`, `#join`), not separate pages. The `#join` section is what the QR flyer's code links to: today it explains how to get the app (the store links are placeholders — the app isn't published yet) and displays the scanned POI token for manual entry as a fallback (`landing/assets/main.js` reads it from the URL's `?token=` query param). Text is in Spanish by default, switchable to English/French via the header pills (`landing/assets/i18n.js`, persisted in `localStorage`). It is hosted on Railway like the rest (Root Directory `/landing`, no build or start command: Railway serves the folder as it is) at `https://ansae-landing.up.railway.app`, with `ansae-landing-staging` for staging. The admin's `VITE_LANDING_URL` (what the QR flyer opens) is left at its `https://infunion.app` default for now. A real domain can later be attached to that service in Railway.

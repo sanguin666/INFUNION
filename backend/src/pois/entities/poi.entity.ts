@@ -104,7 +104,7 @@ export class Poi {
   billingInterval!: BillingInterval;
 
   // "Offert": every module on at no charge. Set on the communities that
-  // existed before billing, the demos among them; only ANSAE sets it.
+  // existed before billing, the demos among them; only INFUNION sets it.
   @Column({ name: 'billing_comped', default: false })
   billingComped!: boolean;
 

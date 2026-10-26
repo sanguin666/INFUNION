@@ -71,7 +71,7 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           npx --yes eas-cli@latest build --local --non-interactive \
-            --profile preview --platform android --output "$RUNNER_TEMP/ansae.apk"
+            --profile preview --platform android --output "$RUNNER_TEMP/infunion.apk"
 
       - name: Publish on the demo-apk release
         env:
@@ -79,8 +79,8 @@ jobs:
         run: |
           sha=$(git rev-parse HEAD)
           gh release delete demo-apk --cleanup-tag --yes || true
-          gh release create demo-apk "$RUNNER_TEMP/ansae.apk" \
+          gh release create demo-apk "$RUNNER_TEMP/infunion.apk" \
             --target "$sha" --prerelease \
             --title "Demo APK (${{ inputs.branch }}, $(date -u +'%d %b %Y %H:%M') UTC)" \
-            --notes "Built from \`${{ inputs.branch }}\` at ${sha:0:7}. Open this page on the phone and tap ansae.apk to install."
+            --notes "Built from \`${{ inputs.branch }}\` at ${sha:0:7}. Open this page on the phone and tap infunion.apk to install."
           echo "APK: https://github.com/${{ github.repository }}/releases/tag/demo-apk" >> "$GITHUB_STEP_SUMMARY"

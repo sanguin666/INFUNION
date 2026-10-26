@@ -67,7 +67,7 @@ async function carmenPicture(): Promise<string | null> {
   if (existsSync(join(dir, CARMEN_PICTURE_FILE))) return path;
   try {
     const response = await fetch(CARMEN_PICTURE_SOURCE, {
-      headers: { 'User-Agent': 'ANSAE-demo-seed/1.0 (https://github.com/sanguin666/SOMOS)' },
+      headers: { 'User-Agent': 'INFUNION-demo-seed/1.0 (https://github.com/sanguin666/SOMOS)' },
     });
     const type = response.headers.get('content-type') ?? '';
     if (!response.ok || !type.startsWith('image/')) {
