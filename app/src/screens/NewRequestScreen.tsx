@@ -5,6 +5,7 @@ import { AccessibleText } from '../components/AccessibleText';
 import { FormCard, FormDivider, FormField } from '../components/FormCard';
 import { CheckIcon } from '../components/icons';
 import { createRequest, type RequestType } from '../api/requests';
+import { requestTypeKey, requestTypesFor } from '../utils/requestTypes';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import type { Poi } from '../api/types';
@@ -15,20 +16,6 @@ type Props = {
   // With the new request's id, to open it straight away.
   onCreated: (id: string) => void;
 };
-
-// In the order people ask for them most.
-const TYPES: RequestType[] = [
-  'baptism',
-  'wedding',
-  'funeral',
-  'certificate',
-  'meeting',
-  'first_communion',
-  'confirmation',
-  'sick_visit',
-  'blessing',
-  'other',
-];
 
 /**
  * Asking the office for something. What it is for comes first, as a list
@@ -80,14 +67,14 @@ export function NewRequestScreen({ poi, onCreated }: Props) {
         {t('requests.chooseType')}
       </AccessibleText>
       <View style={styles.typeCard} accessibilityRole="radiogroup">
-        {TYPES.map((option, index) => {
+        {requestTypesFor(poi.type).map((option, index) => {
           const selected = option === type;
           return (
             <Pressable
               key={option}
               accessibilityRole="radio"
               accessibilityState={{ checked: selected }}
-              accessibilityLabel={t(`requests.type_${option}`)}
+              accessibilityLabel={t(requestTypeKey(option, poi.type))}
               onPress={() => setType(option)}
               style={[styles.typeRow, index > 0 && styles.typeRowDivider, selected && styles.typeRowSelected]}
             >
@@ -96,7 +83,7 @@ export function NewRequestScreen({ poi, onCreated }: Props) {
                 color={selected ? colors.primaryStrong : colors.text}
                 style={[styles.typeLabel, selected && styles.typeLabelSelected]}
               >
-                {t(`requests.type_${option}`)}
+                {t(requestTypeKey(option, poi.type))}
               </AccessibleText>
               {selected && <CheckIcon size={24} color={colors.primaryStrong} />}
             </Pressable>

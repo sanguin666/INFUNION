@@ -414,6 +414,10 @@ export type Translations = {
     type_blessing: string;
     type_sick_visit: string;
     type_other: string;
+    type_registration: string;
+    type_meeting_team: string;
+    type_certificate_doc: string;
+    subtitleGeneral: string;
     status_received: string;
     status_in_progress: string;
     status_appointment_set: string;
@@ -941,6 +945,10 @@ const en: Translations = {
     type_blessing: 'A blessing (home, object)',
     type_sick_visit: 'Visit someone who is ill',
     type_other: 'Something else',
+    type_registration: 'Sign up for an activity',
+    type_meeting_team: 'An appointment with the team',
+    type_certificate_doc: 'A certificate or document',
+    subtitleGeneral: 'Ask the team for a registration, an appointment or a document, and follow it here.',
     status_received: 'Received',
     status_in_progress: 'In progress',
     status_appointment_set: 'Appointment set',
@@ -1468,6 +1476,10 @@ const es: Translations = {
     type_blessing: 'Una bendición (casa, objeto)',
     type_sick_visit: 'Visitar a un enfermo',
     type_other: 'Otra cosa',
+    type_registration: 'Inscripción en una actividad',
+    type_meeting_team: 'Una cita con el equipo',
+    type_certificate_doc: 'Un certificado o documento',
+    subtitleGeneral: 'Pide al equipo una inscripción, una cita o un documento, y sigue su estado aquí.',
     status_received: 'Recibida',
     status_in_progress: 'En curso',
     status_appointment_set: 'Cita fijada',
@@ -1995,6 +2007,10 @@ const fr: Translations = {
     type_blessing: 'Une bénédiction (maison, objet)',
     type_sick_visit: 'Visite à un malade',
     type_other: 'Autre demande',
+    type_registration: 'Inscription à une activité',
+    type_meeting_team: 'Un rendez-vous avec l’équipe',
+    type_certificate_doc: 'Une attestation ou un document',
+    subtitleGeneral: 'Demandez à l’équipe une inscription, un rendez-vous ou un document, et suivez-le ici.',
     status_received: 'Reçue',
     status_in_progress: 'En cours',
     status_appointment_set: 'Rendez-vous fixé',
@@ -2522,6 +2538,10 @@ const va: Translations = {
     type_blessing: 'Una benedicció (casa, objecte)',
     type_sick_visit: 'Visitar un malalt',
     type_other: 'Una altra cosa',
+    type_registration: 'Inscripció en una activitat',
+    type_meeting_team: 'Una cita amb l’equip',
+    type_certificate_doc: 'Un certificat o document',
+    subtitleGeneral: 'Demana a l’equip una inscripció, una cita o un document, i segueix-ne l’estat ací.',
     status_received: 'Rebuda',
     status_in_progress: 'En curs',
     status_appointment_set: 'Cita fixada',
@@ -3049,6 +3069,10 @@ const gl: Translations = {
     type_blessing: 'Unha bendición (casa, obxecto)',
     type_sick_visit: 'Visitar a un enfermo',
     type_other: 'Outra cousa',
+    type_registration: 'Inscrición nunha actividade',
+    type_meeting_team: 'Unha cita co equipo',
+    type_certificate_doc: 'Un certificado ou documento',
+    subtitleGeneral: 'Pídelle ao equipo unha inscrición, unha cita ou un documento, e segue o seu estado aquí.',
     status_received: 'Recibida',
     status_in_progress: 'En curso',
     status_appointment_set: 'Cita fixada',
@@ -3577,6 +3601,10 @@ const pt: Translations = {
     type_blessing: 'Uma bênção (casa, objeto)',
     type_sick_visit: 'Visitar um doente',
     type_other: 'Outra coisa',
+    type_registration: 'Inscrição numa atividade',
+    type_meeting_team: 'Uma marcação com a equipa',
+    type_certificate_doc: 'Um certificado ou documento',
+    subtitleGeneral: 'Peça à equipa uma inscrição, uma marcação ou um documento, e acompanhe-o aqui.',
     status_received: 'Recebido',
     status_in_progress: 'Em curso',
     status_appointment_set: 'Marcação feita',

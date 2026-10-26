@@ -298,6 +298,7 @@ export type ServiceRequestType =
   | 'meeting'
   | 'blessing'
   | 'sick_visit'
+  | 'registration'
   | 'other';
 
 export type ServiceRequestStatus = 'received' | 'in_progress' | 'appointment_set' | 'completed' | 'cancelled';

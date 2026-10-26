@@ -92,32 +92,32 @@ const REQUEST_TYPES: Record<Language, Record<ServiceRequestType, string>> = {
   en: {
     baptism: 'Baptism', wedding: 'Wedding', funeral: 'Funeral', first_communion: 'First Communion',
     confirmation: 'Confirmation', certificate: 'Certificate', meeting: 'Meeting', blessing: 'Blessing',
-    sick_visit: 'Visit to a sick person', other: 'Other request',
+    sick_visit: 'Visit to a sick person', other: 'Other request', registration: 'Registration',
   },
   es: {
     baptism: 'Bautizo', wedding: 'Boda', funeral: 'Funeral', first_communion: 'Primera Comunión',
     confirmation: 'Confirmación', certificate: 'Certificado', meeting: 'Cita', blessing: 'Bendición',
-    sick_visit: 'Visita a un enfermo', other: 'Otra solicitud',
+    sick_visit: 'Visita a un enfermo', other: 'Otra solicitud', registration: 'Inscripción',
   },
   fr: {
     baptism: 'Baptême', wedding: 'Mariage', funeral: 'Obsèques', first_communion: 'Première communion',
     confirmation: 'Confirmation', certificate: 'Certificat', meeting: 'Rendez-vous', blessing: 'Bénédiction',
-    sick_visit: 'Visite à un malade', other: 'Autre demande',
+    sick_visit: 'Visite à un malade', other: 'Autre demande', registration: 'Inscription',
   },
   va: {
     baptism: 'Bateig', wedding: 'Boda', funeral: 'Funeral', first_communion: 'Primera Comunió',
     confirmation: 'Confirmació', certificate: 'Certificat', meeting: 'Cita', blessing: 'Benedicció',
-    sick_visit: 'Visita a un malalt', other: 'Una altra sol·licitud',
+    sick_visit: 'Visita a un malalt', other: 'Una altra sol·licitud', registration: 'Inscripció',
   },
   gl: {
     baptism: 'Bautizo', wedding: 'Voda', funeral: 'Funeral', first_communion: 'Primeira Comuñón',
     confirmation: 'Confirmación', certificate: 'Certificado', meeting: 'Cita', blessing: 'Bendición',
-    sick_visit: 'Visita a un enfermo', other: 'Outra solicitude',
+    sick_visit: 'Visita a un enfermo', other: 'Outra solicitude', registration: 'Inscrición',
   },
   pt: {
     baptism: 'Batismo', wedding: 'Casamento', funeral: 'Funeral', first_communion: 'Primeira Comunhão',
     confirmation: 'Crisma', certificate: 'Certificado', meeting: 'Marcação', blessing: 'Bênção',
-    sick_visit: 'Visita a um doente', other: 'Outro pedido',
+    sick_visit: 'Visita a um doente', other: 'Outro pedido', registration: 'Inscrição',
   },
 };
 

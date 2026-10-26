@@ -608,6 +608,7 @@ export type Translations = {
     typeBlessing: string;
     typeSickVisit: string;
     typeOther: string;
+    typeRegistration: string;
   };
   massIntentions: {
     title: string;
@@ -1289,7 +1290,7 @@ const en: Translations = {
     addTitle: 'Add a message',
     editTitle: 'Edit the message',
     textLabel: 'Text ({{n}} characters at most)',
-    textPlaceholder: 'Church closed Monday 29th',
+    textPlaceholder: 'Closed on Monday 29th',
     styleLabel: 'Style',
     linkLabel: 'On tap, open',
     linkNone: 'Nothing',
@@ -1314,7 +1315,7 @@ const en: Translations = {
   },
   requests: {
     title: 'Requests',
-    subtitle: 'What members ask the community for from the app — a baptism, a wedding, a certificate, a meeting — and everything that follows: status, appointment, documents and messages.',
+    subtitle: 'What members ask the community for from the app — a registration, a certificate, an appointment, a baptism — and everything that follows: status, appointment, documents and messages.',
     filterLabel: 'Show',
     filterOpen: 'Still open',
     filterClosed: 'Done or cancelled',
@@ -1385,6 +1386,7 @@ const en: Translations = {
     typeBlessing: 'Blessing',
     typeSickVisit: 'Visit to a sick person',
     typeOther: 'Other',
+    typeRegistration: 'Registration',
   },
   massIntentions: {
     title: 'Mass intentions',
@@ -2066,7 +2068,7 @@ const es: Translations = {
     addTitle: 'Añadir un mensaje',
     editTitle: 'Editar el mensaje',
     textLabel: 'Texto ({{n}} caracteres como máximo)',
-    textPlaceholder: 'Iglesia cerrada el lunes 29',
+    textPlaceholder: 'Cerrado el lunes 29',
     styleLabel: 'Estilo',
     linkLabel: 'Al tocar, abrir',
     linkNone: 'Nada',
@@ -2091,7 +2093,7 @@ const es: Translations = {
   },
   requests: {
     title: 'Solicitudes',
-    subtitle: 'Lo que los miembros piden a la comunidad desde la app —un bautizo, una boda, un certificado, una cita— y todo lo que sigue: estado, cita, documentos y mensajes.',
+    subtitle: 'Lo que los miembros piden a la comunidad desde la app —una inscripción, un certificado, una cita, un bautizo— y todo lo que sigue: estado, cita, documentos y mensajes.',
     filterLabel: 'Mostrar',
     filterOpen: 'Abiertas',
     filterClosed: 'Terminadas o canceladas',
@@ -2162,6 +2164,7 @@ const es: Translations = {
     typeBlessing: 'Bendición',
     typeSickVisit: 'Visita a un enfermo',
     typeOther: 'Otra',
+    typeRegistration: 'Inscripción',
   },
   massIntentions: {
     title: 'Intenciones de misa',
@@ -2843,7 +2846,7 @@ const fr: Translations = {
     addTitle: 'Ajouter un message',
     editTitle: 'Modifier le message',
     textLabel: 'Texte ({{n}} caractères au plus)',
-    textPlaceholder: 'Église fermée lundi 29',
+    textPlaceholder: 'Fermé lundi 29',
     styleLabel: 'Style',
     linkLabel: 'Au toucher, ouvrir',
     linkNone: 'Rien',
@@ -2868,7 +2871,7 @@ const fr: Translations = {
   },
   requests: {
     title: 'Demandes',
-    subtitle: "Ce que les membres demandent à la communauté depuis l'application — un baptême, un mariage, un certificat, un rendez-vous — et tout ce qui suit : statut, rendez-vous, documents et messages.",
+    subtitle: "Ce que les membres demandent à la communauté depuis l'application — une inscription, une attestation, un rendez-vous, un baptême — et tout ce qui suit : statut, rendez-vous, documents et messages.",
     filterLabel: 'Afficher',
     filterOpen: 'En cours',
     filterClosed: 'Terminées ou annulées',
@@ -2939,6 +2942,7 @@ const fr: Translations = {
     typeBlessing: 'Bénédiction',
     typeSickVisit: 'Visite à un malade',
     typeOther: 'Autre',
+    typeRegistration: 'Inscription',
   },
   massIntentions: {
     title: 'Intentions de messe',
@@ -3620,7 +3624,7 @@ const va: Translations = {
     addTitle: 'Afegir un missatge',
     editTitle: 'Editar el missatge',
     textLabel: 'Text ({{n}} caràcters com a màxim)',
-    textPlaceholder: 'Església tancada el dilluns 29',
+    textPlaceholder: 'Tancat el dilluns 29',
     styleLabel: 'Estil',
     linkLabel: 'En tocar-lo, obrir',
     linkNone: 'Res',
@@ -3645,7 +3649,7 @@ const va: Translations = {
   },
   requests: {
     title: 'Sol·licituds',
-    subtitle: 'El que els membres demanen a la comunitat des de l’aplicació —un bateig, una boda, un certificat, una cita— i tot el que ve després: estat, cita, documents i missatges.',
+    subtitle: 'El que els membres demanen a la comunitat des de l’aplicació —una inscripció, un certificat, una cita, un bateig— i tot el que ve després: estat, cita, documents i missatges.',
     filterLabel: 'Mostrar',
     filterOpen: 'Obertes',
     filterClosed: 'Acabades o cancel·lades',
@@ -3716,6 +3720,7 @@ const va: Translations = {
     typeBlessing: 'Benedicció',
     typeSickVisit: 'Visita a un malalt',
     typeOther: 'Una altra',
+    typeRegistration: 'Inscripció',
   },
   massIntentions: {
     title: 'Intencions de missa',
@@ -4397,7 +4402,7 @@ const gl: Translations = {
     addTitle: 'Engadir unha mensaxe',
     editTitle: 'Editar a mensaxe',
     textLabel: 'Texto ({{n}} caracteres como máximo)',
-    textPlaceholder: 'Igrexa pechada o luns 29',
+    textPlaceholder: 'Pechado o luns 29',
     styleLabel: 'Estilo',
     linkLabel: 'Ao tocar, abrir',
     linkNone: 'Nada',
@@ -4422,7 +4427,7 @@ const gl: Translations = {
   },
   requests: {
     title: 'Solicitudes',
-    subtitle: 'O que os membros lle piden á comunidade desde a app —un bautizo, unha voda, un certificado, unha cita— e todo o que segue: estado, cita, documentos e mensaxes.',
+    subtitle: 'O que os membros lle piden á comunidade desde a app —unha inscrición, un certificado, unha cita, un bautizo— e todo o que segue: estado, cita, documentos e mensaxes.',
     filterLabel: 'Mostrar',
     filterOpen: 'Abertas',
     filterClosed: 'Completadas ou canceladas',
@@ -4493,6 +4498,7 @@ const gl: Translations = {
     typeBlessing: 'Bendición',
     typeSickVisit: 'Visita a un enfermo',
     typeOther: 'Outra',
+    typeRegistration: 'Inscrición',
   },
   massIntentions: {
     title: 'Intencións de misa',
@@ -5174,7 +5180,7 @@ const pt: Translations = {
     addTitle: 'Adicionar uma mensagem',
     editTitle: 'Editar a mensagem',
     textLabel: 'Texto (máximo {{n}} caracteres)',
-    textPlaceholder: 'Igreja fechada na segunda-feira, dia 29',
+    textPlaceholder: 'Fechado na segunda-feira, dia 29',
     styleLabel: 'Estilo',
     linkLabel: 'Ao tocar, abrir',
     linkNone: 'Nada',
@@ -5199,7 +5205,7 @@ const pt: Translations = {
   },
   requests: {
     title: 'Pedidos',
-    subtitle: 'O que os membros pedem à comunidade a partir da app (um batismo, um casamento, um certificado, uma marcação) e tudo o que se segue: estado, marcação, documentos e mensagens.',
+    subtitle: 'O que os membros pedem à comunidade a partir da app (uma inscrição, um certificado, uma marcação, um batismo) e tudo o que se segue: estado, marcação, documentos e mensagens.',
     filterLabel: 'Mostrar',
     filterOpen: 'Em aberto',
     filterClosed: 'Concluídos ou cancelados',
@@ -5270,6 +5276,7 @@ const pt: Translations = {
     typeBlessing: 'Bênção',
     typeSickVisit: 'Visita a um doente',
     typeOther: 'Outro',
+    typeRegistration: 'Inscrição',
   },
   massIntentions: {
     title: 'Intenções de missa',

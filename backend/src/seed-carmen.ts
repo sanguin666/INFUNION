@@ -279,7 +279,13 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
     ) => {
       // A repeat only starts on its first date, so that date goes a week
       // back: otherwise today's evening Mass would begin next Monday.
-      const back = (date: Date) => new Date(date.getTime() - 7 * DAY);
+      const back = (date: Date) => {
+        // By the calendar, not by 7 × 24 hours, so the wall-clock time
+        // survives a change to or from summer time in between.
+        const earlier = new Date(date);
+        earlier.setDate(earlier.getDate() - 7);
+        return earlier;
+      };
       return events.create({
         poi: place,
         title,
