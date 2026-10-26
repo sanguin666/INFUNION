@@ -754,7 +754,7 @@ a.btn {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('/login-background.jpg') center / cover no-repeat;
+  background: url('/login-background.jpg?v=20261026-purple') center / cover no-repeat;
 }
 
 .login-panel {
