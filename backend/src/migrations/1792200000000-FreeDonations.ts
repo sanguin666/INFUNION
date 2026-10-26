@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
- * Seb, 18 Oct 2026: the Dons module is free, and INFUNION keeps a small share
+ * Seb, 18 Oct 2026: the Dons module is free, and infunion keeps a small share
  * of each gift instead (donations/platform-fee.ts). Each gift records that
  * share from now on; gifts made before keep 0. A Dons module on trial or
  * paused for want of payment simply carries on, and one the office had

@@ -111,7 +111,7 @@ export function ModulesPage() {
 
   function status(type: ModuleType, row: ActiveModule | undefined): { text: string; on: boolean } {
     const live = !!row && LIVE.has(row.status);
-    // Given by INFUNION from the superadmin: on, and nothing to pay.
+    // Given by infunion from the superadmin: on, and nothing to pay.
     if (live && row.offered) return { text: t('billing.offered'), on: true };
     if (billing!.comped || isFree(type)) {
       return live

@@ -25,7 +25,7 @@ const CACHE_LIMIT = 500;
  * search-as-you-type. So this is only called when somebody presses
  * Search, requests are queued a second apart, and answers are cached.
  * NOMINATIM_URL can point at another Nominatim (a paid one, or our own)
- * if INFUNION outgrows the public server.
+ * if infunion outgrows the public server.
  */
 @Injectable()
 export class GeocoderService {
@@ -72,7 +72,7 @@ export class GeocoderService {
     try {
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'INFUNION community app (hello@infunion.app)',
+          'User-Agent': 'infunion community app (hello@infunion.app)',
           ...(language ? { 'Accept-Language': language === 'va' ? 'ca' : language } : {}),
         },
         signal: AbortSignal.timeout(8000),

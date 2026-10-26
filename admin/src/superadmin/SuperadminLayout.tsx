@@ -23,7 +23,7 @@ function SessionClock() {
   return <p className="sidebar-user">{s('nav.session', { n: minutes })}</p>;
 }
 
-/** INFUNION's own section (Seb, 17 Oct 2026), behind the code gate. */
+/** infunion's own section (Seb, 17 Oct 2026), behind the code gate. */
 export function SuperadminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();

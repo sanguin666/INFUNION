@@ -26,7 +26,7 @@ export type MapPlace = {
 };
 
 // Great-circle distance in km (haversine), straight in SQL so the database
-// sorts and cuts. Fine for the thousands of places INFUNION will hold; PostGIS
+// sorts and cuts. Fine for the thousands of places infunion will hold; PostGIS
 // can take over if that ever becomes millions.
 const DISTANCE_SQL = `(2 * 6371 * asin(sqrt(
   power(sin(radians(poi.latitude - :lat) / 2), 2) +

@@ -55,7 +55,7 @@ describe('Superadmin (e2e)', () => {
   });
 
   it('signs in whatever the case of the email', async () => {
-    await passwordToken('Boss@INFUNION.test');
+    await passwordToken('Boss@infunion.test');
   });
 
   it('keeps every superadmin route shut without the code', async () => {
