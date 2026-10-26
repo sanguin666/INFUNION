@@ -783,7 +783,7 @@
     });
     // Real app screenshots, taken in each language (assets/screens/<lang>/).
     document.querySelectorAll("[data-shot]").forEach(function (el) {
-      el.src = "assets/screens/" + lang + "/" + el.getAttribute("data-shot") + ".webp";
+      el.src = "assets/screens/" + lang + "/" + el.getAttribute("data-shot") + ".webp?v=20261026-purple";
     });
     document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-alt");
