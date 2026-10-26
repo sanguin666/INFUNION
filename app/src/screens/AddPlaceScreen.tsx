@@ -4,7 +4,7 @@ import { Screen } from '../components/Screen';
 import { AccessibleText } from '../components/AccessibleText';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { FormCard, FormField } from '../components/FormCard';
-import { LogoMark } from '../components/icons';
+import { Lockup } from '../components/Logo';
 import { getPoiByQrCode } from '../api/pois';
 import { geocode, getMapPlaces, type Origin } from '../api/placesMap';
 import { ApiError } from '../api/client';
@@ -102,10 +102,7 @@ export function AddPlaceScreen({ onScanQR, onOpenPoi, onFindNearby, onFindByName
   return (
     <Screen scroll>
       <View style={styles.header}>
-        <LogoMark size={56} />
-        <AccessibleText variant="title" style={styles.wordmark}>
-          INFUNION
-        </AccessibleText>
+        <Lockup height={48} />
       </View>
 
       <AccessibleText variant="bodyLarge" style={styles.lead}>
@@ -192,10 +189,6 @@ const styles = themedStyles(() => ({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-  },
-  wordmark: {
-    fontWeight: '800',
-    letterSpacing: 2,
   },
   lead: {
     fontWeight: '700',

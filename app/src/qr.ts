@@ -5,7 +5,7 @@
  * The flyer the admin dashboard prints encodes a link to the landing site —
  * `https://infunion.app/?token=<qrCodeToken>#join` (see admin's MyQrPage) —
  * rather than the bare token, so that someone scanning it with their
- * phone's built-in camera app lands on a page explaining what INFUNION is
+ * phone's built-in camera app lands on a page explaining what infunion is
  * instead of a meaningless string.
  *
  * That means the in-app scanner has to pull the token back out. Bare tokens

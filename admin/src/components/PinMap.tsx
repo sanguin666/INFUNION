@@ -82,7 +82,7 @@ export default function PinMap({ latitude, longitude, type, onMove, label }: Pro
 }
 
 /**
- * Positron is grey; this warms its land and water toward INFUNION's beige so
+ * Positron is grey; this warms its land and water toward infunion's beige so
  * the map sits on the page instead of on top of it.
  */
 function warmUp(instance: maplibregl.Map) {

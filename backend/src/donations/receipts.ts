@@ -295,17 +295,17 @@ export function receiptHtml(
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(title)} — ${escapeHtml(donor.name)}</title>
     <style>
-      body { margin: 0; background: #FAF5EE; color: #111; font: 16px/1.5 system-ui, -apple-system, sans-serif; padding: 24px 16px; }
-      main { max-width: 42rem; margin: 0 auto; background: #fff; border: 1px solid rgba(92,70,44,0.16); border-radius: 16px; padding: 32px; }
+      body { margin: 0; background: #F6F5F9; color: #111; font: 16px/1.5 system-ui, -apple-system, sans-serif; padding: 24px 16px; }
+      main { max-width: 42rem; margin: 0 auto; background: #fff; border: 1px solid rgba(45,30,110,0.14); border-radius: 16px; padding: 32px; }
       h1 { font-size: 1.6rem; margin: 0 0 4px; }
-      .number { color: #3D3D3D; margin: 0 0 24px; }
-      .legal { font-size: 0.85rem; color: #3D3D3D; margin: 0 0 24px; }
-      section { padding: 16px 0; border-top: 1px solid rgba(92,70,44,0.16); }
-      section h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: #3D3D3D; margin: 0 0 6px; }
+      .number { color: #4A4760; margin: 0 0 24px; }
+      .legal { font-size: 0.85rem; color: #4A4760; margin: 0 0 24px; }
+      section { padding: 16px 0; border-top: 1px solid rgba(45,30,110,0.14); }
+      section h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: #4A4760; margin: 0 0 6px; }
       .amount { font-size: 1.2rem; }
       .warning { color: #B3261E; font-weight: 700; }
       .signature { margin-top: 32px; }
-      button { font: inherit; font-weight: 700; color: #fff; background: #E1663F; border: 2px solid #E1663F; border-radius: 16px; padding: 14px 24px; cursor: pointer; margin-top: 24px; width: 100%; }
+      button { font: inherit; font-weight: 700; color: #fff; background: #6C4FD9; border: 2px solid #6C4FD9; border-radius: 16px; padding: 14px 24px; cursor: pointer; margin-top: 24px; width: 100%; }
       @media print { body { background: #fff; padding: 0; } main { border: 0; } button { display: none; } }
     </style>
   </head>

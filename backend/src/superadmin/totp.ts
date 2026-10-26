@@ -79,6 +79,6 @@ export function verifyTotp(secret: string, code: string, now: Date, lastStep?: n
 }
 
 export function otpauthUrl(secret: string, account: string): string {
-  const label = encodeURIComponent(`INFUNION Superadmin:${account}`);
-  return `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent('INFUNION Superadmin')}&digits=${DIGITS}&period=${STEP_SECONDS}`;
+  const label = encodeURIComponent(`infunion Superadmin:${account}`);
+  return `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent('infunion Superadmin')}&digits=${DIGITS}&period=${STEP_SECONDS}`;
 }

@@ -18,7 +18,7 @@ export type FromMap = { type: 'ready' } | { type: 'select'; id: string } | { typ
 /**
  * The map of communities as one self-contained page, so the phone (in a
  * WebView) and the web build (in an iframe) draw exactly the same map:
- * MapLibre with OpenFreeMap's OpenStreetMap tiles, warmed toward INFUNION's
+ * MapLibre with OpenFreeMap's OpenStreetMap tiles, warmed toward infunion's
  * beige, one pin per place in its kind's colour and symbol.
  */
 export function placesMapHtml(): string {

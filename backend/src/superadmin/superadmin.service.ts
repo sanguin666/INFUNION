@@ -211,7 +211,7 @@ export class SuperadminService {
         newThisMonth: members.new_this_month as number,
         active30Days: active.total as number,
       },
-      // fee: INFUNION's share of those gifts (donations/platform-fee.ts).
+      // fee: infunion's share of those gifts (donations/platform-fee.ts).
       donations: { thisMonth: money(Number(gifts.total)), fee: money(Number(gifts.fee)), count: gifts.count as number },
       requests: { open: requests.open as number, waitingOverAWeek: requests.waiting as number },
       lastMonthStart: lastMonth.toISOString(),

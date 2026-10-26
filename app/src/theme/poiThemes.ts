@@ -29,7 +29,7 @@ const POI_THEMES: Partial<Record<PoiType, () => PoiTheme>> = {
 };
 
 export function getPoiTheme(type: PoiType): PoiTheme {
-  // Every kind wears INFUNION's coral inside its own pages for now; the map
+  // Every kind wears infunion's coral inside its own pages for now; the map
   // is where the kinds get their own colours (theme/placeKinds.ts).
   return (POI_THEMES[type] ?? POI_THEMES.church!)();
 }

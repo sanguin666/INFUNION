@@ -6,23 +6,7 @@ type IconProps = {
   color?: string;
 };
 
-// The INFUNION mark (Seb, 26 Oct 2026): a coral i held inside a gold u, each
-// person held by the union. Fixed brand colors — not tinted via `color` like
-// the other icons. The paths are shared with the opening animation.
-export const LOGO_U = 'M18 12 L18 52 A32 32 0 0 0 82 52 L82 12';
-export const LOGO_I_STEM = 'M50 36 L50 64';
-export const LOGO_GOLD = '#E0A458';
-export const LOGO_CORAL = '#E1663F';
-
-export function LogoMark({ size = 40 }: { size?: number }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 100 100">
-      <Path d={LOGO_U} fill="none" stroke={LOGO_GOLD} strokeWidth={12} />
-      <Circle cx={50} cy={20} r={7.5} fill={LOGO_CORAL} />
-      <Path d={LOGO_I_STEM} stroke={LOGO_CORAL} strokeWidth={12} strokeLinecap="round" />
-    </Svg>
-  );
-}
+export { LogoMark } from './Logo';
 
 export function BackChevronIcon({ size = 20, color = colors.text }: IconProps) {
   return (
