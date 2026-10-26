@@ -8,13 +8,13 @@ export function PlacesMap(props: PlacesMapProps) {
   const frame = useRef<HTMLIFrameElement | null>(null);
   const html = useMemo(placesMapHtml, []);
   const onMessage = useMapBridge(props, (message: ToMap) => {
-    frame.current?.contentWindow?.postMessage({ source: 'ansae-app', data: JSON.stringify(message) }, '*');
+    frame.current?.contentWindow?.postMessage({ source: 'infunion-app', data: JSON.stringify(message) }, '*');
   });
 
   useEffect(() => {
     function listen(event: MessageEvent) {
       if (event.source !== frame.current?.contentWindow) return;
-      if (event.data?.source === 'ansae-map') onMessage(event.data.data);
+      if (event.data?.source === 'infunion-map') onMessage(event.data.data);
     }
     window.addEventListener('message', listen);
     return () => window.removeEventListener('message', listen);

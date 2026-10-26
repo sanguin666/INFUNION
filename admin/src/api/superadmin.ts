@@ -21,7 +21,7 @@ export function verifyCode(code: string): Promise<SuperadminSession> {
   return apiPost<SuperadminSession>('/superadmin/auth/verify', { code });
 }
 
-export const SUPERADMIN_EXPIRED_EVENT = 'ansae-superadmin-expired';
+export const SUPERADMIN_EXPIRED_EVENT = 'infunion-superadmin-expired';
 
 /**
  * Every superadmin call: a 401 means the hour is up (or the session was

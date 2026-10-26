@@ -67,7 +67,7 @@ async function carmenPicture(): Promise<string | null> {
   if (existsSync(join(dir, CARMEN_PICTURE_FILE))) return path;
   try {
     const response = await fetch(CARMEN_PICTURE_SOURCE, {
-      headers: { 'User-Agent': 'ANSAE-demo-seed/1.0 (https://github.com/sanguin666/SOMOS)' },
+      headers: { 'User-Agent': 'INFUNION-demo-seed/1.0 (https://github.com/sanguin666/INFUNION)' },
     });
     const type = response.headers.get('content-type') ?? '';
     if (!response.ok || !type.startsWith('image/')) {
@@ -279,7 +279,13 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
     ) => {
       // A repeat only starts on its first date, so that date goes a week
       // back: otherwise today's evening Mass would begin next Monday.
-      const back = (date: Date) => new Date(date.getTime() - 7 * DAY);
+      const back = (date: Date) => {
+        // By the calendar, not by 7 × 24 hours, so the wall-clock time
+        // survives a change to or from summer time in between.
+        const earlier = new Date(date);
+        earlier.setDate(earlier.getDate() - 7);
+        return earlier;
+      };
       return events.create({
         poi: place,
         title,

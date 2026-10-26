@@ -2,7 +2,7 @@ import type { INestApplication } from '@nestjs/common';
 import { client, createPlace, createTestApp, resetDatabase, signIn } from './harness.js';
 import { totpCode, totpStep } from '../src/superadmin/totp.js';
 
-const EMAIL = 'boss@ansae.test';
+const EMAIL = 'boss@infunion.test';
 const PASSWORD = 'correct-horse-battery';
 
 /**
@@ -55,7 +55,7 @@ describe('Superadmin (e2e)', () => {
   });
 
   it('signs in whatever the case of the email', async () => {
-    await passwordToken('Boss@ANSAE.test');
+    await passwordToken('Boss@INFUNION.test');
   });
 
   it('keeps every superadmin route shut without the code', async () => {
@@ -100,7 +100,7 @@ describe('Superadmin (e2e)', () => {
 
   it('only lets the account SUPERADMIN_EMAIL names be the superadmin', async () => {
     const { superToken } = await enrolled();
-    process.env.SUPERADMIN_EMAIL = 'someone-else@ansae.test';
+    process.env.SUPERADMIN_EMAIL = 'someone-else@infunion.test';
     try {
       await client(app).get('/superadmin/overview').set(as(superToken)).expect(401);
     } finally {

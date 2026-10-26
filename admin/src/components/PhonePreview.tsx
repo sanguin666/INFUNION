@@ -44,7 +44,7 @@ export function PhonePreview({ poiId, badges, blocks, drafts }: Props) {
   useEffect(() => {
     function onMessage(event: MessageEvent) {
       if (event.origin !== APP_ORIGIN || event.source !== frame.current?.contentWindow) return;
-      if (event.data?.source === 'ansae-app' && event.data?.type === 'ready') {
+      if (event.data?.source === 'infunion-app' && event.data?.type === 'ready') {
         setReady(true);
         setTimedOut(false);
       }
@@ -61,7 +61,7 @@ export function PhonePreview({ poiId, badges, blocks, drafts }: Props) {
     if (!ready) return;
     frame.current?.contentWindow?.postMessage(
       {
-        source: 'ansae-admin',
+        source: 'infunion-admin',
         type: 'preview',
         language: previewLanguage,
         // Switched-off badges never reach a member's phone either.

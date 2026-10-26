@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-title ANSAE demo launcher
+title INFUNION demo launcher
 
 REM Remote demo launcher for Windows: starts Postgres, seeds the demo data,
 REM runs the backend, and exposes it through ngrok on a fixed public domain
@@ -17,7 +17,7 @@ set "NGROK_DOMAIN=bloomers-amusable-dork.ngrok-free.dev"
 cd /d "%~dp0"
 
 echo ================================================
-echo   ANSAE - starting the remote demo backend
+echo   INFUNION - starting the remote demo backend
 echo ================================================
 echo.
 
@@ -40,8 +40,8 @@ if errorlevel 1 (
 
 REM Close windows this script opened last time, so re-running it restarts
 REM everything instead of piling up duplicate servers and tunnels.
-taskkill /F /FI "WINDOWTITLE eq ANSAE Demo Backend*" >nul 2>&1
-taskkill /F /FI "WINDOWTITLE eq ANSAE Demo Tunnel*"  >nul 2>&1
+taskkill /F /FI "WINDOWTITLE eq INFUNION Demo Backend*" >nul 2>&1
+taskkill /F /FI "WINDOWTITLE eq INFUNION Demo Tunnel*"  >nul 2>&1
 
 REM --- Database ---
 where docker >nul 2>&1
@@ -75,10 +75,10 @@ REM --- Launch the backend and the tunnel, each in its own window ---
 echo Launching backend and ngrok tunnel...
 
 pushd backend
-start "ANSAE Demo Backend" cmd /k npm run start:dev
+start "INFUNION Demo Backend" cmd /k npm run start:dev
 popd
 
-start "ANSAE Demo Tunnel" cmd /k ngrok http 3000 --url https://%NGROK_DOMAIN%
+start "INFUNION Demo Tunnel" cmd /k ngrok http 3000 --url https://%NGROK_DOMAIN%
 
 echo.
 echo ================================================
@@ -86,7 +86,7 @@ echo   Demo backend is coming up
 echo     Public API:  https://%NGROK_DOMAIN%
 echo     Local API:   http://localhost:3000
 echo.
-echo     Open the ANSAE app on your phone - it already
+echo     Open the INFUNION app on your phone - it already
 echo     points at the public URL above.
 echo.
 echo     Demo admin login: admin@carmen.example / demo1234

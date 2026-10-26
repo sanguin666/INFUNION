@@ -10,6 +10,7 @@ import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
 import type { Poi } from '../api/types';
 import { cardSurface, colors, radii, spacing, themedStyles } from '../theme/theme';
+import { requestTypeKey } from '../utils/requestTypes';
 
 type Props = {
   poi: Poi;
@@ -56,7 +57,7 @@ export function RequestsScreen({ poi, onNew, onOpen, onSignIn }: Props) {
       <View style={styles.titleBlock}>
         <AccessibleText variant="title">{t('requests.title')}</AccessibleText>
         <AccessibleText variant="body" color={colors.textMuted}>
-          {t('requests.subtitle')}
+          {t(poi.type === 'church' ? 'requests.subtitle' : 'requests.subtitleGeneral')}
         </AccessibleText>
       </View>
 
@@ -83,7 +84,7 @@ export function RequestsScreen({ poi, onNew, onOpen, onSignIn }: Props) {
           )}
 
           {requests?.map((request) => {
-            const type = t(`requests.type_${request.type}`);
+            const type = t(requestTypeKey(request.type, poi.type));
             const status = t(`requests.status_${request.status}`);
             const sent = t('requests.sentOn', {
               date: new Date(request.createdAt).toLocaleDateString(intlLocale(language), { day: 'numeric', month: 'long' }),

@@ -25,6 +25,8 @@ export function typeName(type: ServiceRequestType, t: T): string {
       return t('requests.typeBlessing');
     case 'sick_visit':
       return t('requests.typeSickVisit');
+    case 'registration':
+      return t('requests.typeRegistration');
     case 'other':
       return t('requests.typeOther');
   }

@@ -26,7 +26,7 @@ const KINDS: { kind: NotificationKind; label: 'news' | 'requests' | 'events' | '
 
 /**
  * What this place may notify about, one switch per kind, all on until
- * turned off. When the phone itself blocks ANSAE's notifications the
+ * turned off. When the phone itself blocks INFUNION's notifications the
  * switches would be a lie, so the screen says so instead and offers the
  * one way back.
  */

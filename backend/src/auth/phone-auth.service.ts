@@ -94,7 +94,7 @@ export class PhoneAuthService {
       }),
     );
 
-    await this.smsSender.send(phone, `${code} is your Ansae code.`);
+    await this.smsSender.send(phone, `${code} is your INFUNION code.`);
 
     return {
       expiresInSeconds: CODE_TTL_SECONDS,

@@ -1,6 +1,6 @@
 /**
- * ANSAE's share of each gift (Seb, 18 Oct 2026). The Dons module is free;
- * instead ANSAE keeps a small percentage of every gift made through it.
+ * INFUNION's share of each gift (Seb, 18 Oct 2026). The Dons module is free;
+ * instead INFUNION keeps a small percentage of every gift made through it.
  * It is stated in the terms only, never advertised: the landing page and
  * the admin say Dons is free.
  *

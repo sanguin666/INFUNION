@@ -62,7 +62,7 @@ export class User {
   @Column({ type: 'enum', enum: Language, default: Language.EN })
   language!: Language;
 
-  // ANSAE's own superadmin (Seb, 17 Oct 2026). Never set from the API:
+  // INFUNION's own superadmin (Seb, 17 Oct 2026). Never set from the API:
   // SuperadminBootstrap writes it on boot for the one address named by
   // SUPERADMIN_EMAIL and clears it everywhere else, and every superadmin
   // check also compares the email against that variable.

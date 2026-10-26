@@ -104,7 +104,7 @@ export function DashboardLayout() {
         <div>
           <div className="sidebar-brand">
             <LogoMark size={30} />
-            <h1>ANSAE Admin</h1>
+            <h1>INFUNION Admin</h1>
           </div>
           <p className="sidebar-user">{user.firstName ?? user.email}</p>
         </div>

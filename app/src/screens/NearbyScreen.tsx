@@ -32,7 +32,7 @@ type View_ = 'list' | 'map';
 
 /**
  * "Find a community" (Seb, 18 Oct 2026): the places that put themselves on
- * the ANSAE map, nearest first, as a list or on a map with one colour and
+ * the INFUNION map, nearest first, as a list or on a map with one colour and
  * symbol per kind of place. Tapping one shows its card, with Join.
  */
 export function NearbyScreen({ origin, query, onOpenPlace, onFindNearby, onBack }: Props) {

@@ -58,7 +58,7 @@ export async function enablePush(language: string): Promise<PermissionState> {
     // Android 8+ needs a channel before it shows anything, and 13+ only
     // shows the permission prompt once a channel exists.
     await Notifications.setNotificationChannelAsync('default', {
-      name: 'ANSAE',
+      name: 'INFUNION',
       importance: Notifications.AndroidImportance.HIGH,
     });
   }

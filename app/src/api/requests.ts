@@ -13,6 +13,7 @@ export type RequestType =
   | 'meeting'
   | 'blessing'
   | 'sick_visit'
+  | 'registration'
   | 'other';
 
 export type RequestStatus = 'received' | 'in_progress' | 'appointment_set' | 'completed' | 'cancelled';
