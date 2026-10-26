@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "INFUNION",
+    "name": "infunion",
     "slug": "ansae",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,7 +12,7 @@
     "android": {
       "package": "com.ansae.app",
       "adaptiveIcon": {
-        "backgroundColor": "#F7F1E7",
+        "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -37,34 +37,34 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Allow INFUNION to use your location once, to show the communities near you. It is never stored."
+          "locationWhenInUsePermission": "Allow infunion to use your location once, to show the communities near you. It is never stored."
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow INFUNION to access your microphone to record a voice message."
+          "microphonePermission": "Allow infunion to access your microphone to record a voice message."
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow INFUNION to use the camera to scan a place’s QR code.",
+          "cameraPermission": "Allow infunion to use the camera to scan a place’s QR code.",
           "barcodeScannerEnabled": true
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow INFUNION to use your photos so you can choose a profile picture.",
-          "cameraPermission": "Allow INFUNION to use the camera so you can take a profile picture."
+          "photosPermission": "Allow infunion to use your photos so you can choose a profile picture.",
+          "cameraPermission": "Allow infunion to use the camera so you can take a profile picture."
         }
       ],
       [
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
-          "color": "#E1663F"
+          "color": "#6C4FD9"
         }
       ]
     ],

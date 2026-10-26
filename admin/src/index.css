@@ -12,27 +12,27 @@
  * all three may sit inside a white card as well as on the beige.
  */
 :root {
-  --color-bg: #faf5ee;
+  --color-bg: #f6f5f9;
   --color-surface: #ffffff;
-  --color-text: #111111;
-  --color-text-muted: #3d3d3d;
+  --color-text: #1D1A2D;
+  --color-text-muted: #4a4760;
   /* The landing page's orange: every call to action. It only reaches
      ~3.2:1 against white, so a label on it is kept large and bold. */
-  --color-primary: #e1663f;
+  --color-primary: #6c4fd9;
   /* The same hue darkened until it clears 4.5:1 on white — for the brand
      colour as small text (a link, the label of a focused field). */
-  --color-primary-strong: #b8502e;
+  --color-primary-strong: #5638c7;
   /* A warm coral wash for the one thing currently selected on white. */
-  --color-primary-soft: #f9ddd2;
+  --color-primary-soft: #ece8fc;
   --color-danger: #b3261e;
   /* The heavy edge every button that is not orange wears. */
-  --color-border: #111111;
+  --color-border: #1D1A2D;
   /* The hairline edge of every white box — the News card's border. */
-  --color-card-border: rgba(92, 70, 44, 0.16);
+  --color-card-border: rgba(45,30,110,0.14);
   --radius: 16px;
 
   /* Chart tokens (dataviz skill reference palette); dark values below. */
-  --series-1: #e1663f;
+  --series-1: #6c4fd9;
   --chart-grid: #e1e0d9;
   --chart-axis: #c3c2b7;
   --chart-muted: #898781;
@@ -43,7 +43,7 @@
   font-size: 17px;
   line-height: 1.45;
   color-scheme: light;
-  --color-placeholder: #8a8175;
+  --color-placeholder: #8b87a0;
   --color-scrim: rgba(17, 17, 17, 0.45);
 }
 
@@ -55,20 +55,20 @@
  * stays light. The phone preview inside stays light too.
  */
 :root[data-theme='dark'] {
-  --color-bg: #17130f;
-  --color-surface: #27211b;
-  --color-text: #f5efe7;
-  --color-text-muted: #cfc5b8;
-  --color-primary-strong: #f2916b;
-  --color-primary-soft: #4a2c20;
+  --color-bg: #13111c;
+  --color-surface: #221e31;
+  --color-text: #f3f1fa;
+  --color-text-muted: #c9c4da;
+  --color-primary-strong: #b3a3f7;
+  --color-primary-soft: #332a5c;
   --color-danger: #ff8a80;
-  --color-border: #f5efe7;
-  --color-card-border: rgba(255, 236, 214, 0.16);
-  --color-placeholder: #a2988b;
+  --color-border: #f3f1fa;
+  --color-card-border: rgba(220,210,255,0.16);
+  --color-placeholder: #9f9ab5;
   --color-scrim: rgba(0, 0, 0, 0.6);
-  --chart-grid: #3a332b;
-  --chart-axis: #5a5046;
-  --chart-muted: #a89d90;
+  --chart-grid: #3a3550;
+  --chart-axis: #5a5470;
+  --chart-muted: #a49fb8;
   --delta-up: #6cc47a;
   --delta-down: #ff8a80;
   color-scheme: dark;
@@ -134,9 +134,17 @@ a {
 }
 
 .sidebar-brand h1 {
-  font-size: 21px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
   margin: 0;
-  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+
+.sidebar-brand h1 span {
+  padding-bottom: 3px;
 }
 
 .sidebar-user {
@@ -534,7 +542,7 @@ a.btn {
   height: 32px;
   margin: 0;
   border-radius: 16px;
-  background: #9a8f82;
+  background: #8f8aa3;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -773,7 +781,7 @@ a.btn {
   align-self: stretch;
 }
 
-.login-panel svg[aria-label='INFUNION'] {
+.login-panel svg[aria-label='infunion'] {
   align-self: center;
 }
 
@@ -783,9 +791,9 @@ a.btn {
 }
 
 /* The opening, in the app's beats and one second in all: the picture
-   (0 to 0.4 s), the white box (0.1 to 0.4 s), the u closing and the i
-   landing (IntroLogoMark, 0.3 to 0.9 s), the name (0.8 s), then the form
-   (0.95 s). */
+   (0 to 0.4 s), the white box (0.1 to 0.4 s), the rings linking and the
+   name (IntroLogoMark, 0.3 to 1.1 s), "Admin" (0.9 s), then the form
+   (1 s). */
 .login-intro::before {
   animation: login-fade-in 0.4s ease-out both;
 }
@@ -795,11 +803,11 @@ a.btn {
 }
 
 .login-intro .login-wordmark {
-  animation: login-rise-in 0.25s 0.8s ease-out both;
+  animation: login-rise-in 0.25s 0.9s ease-out both;
 }
 
 .login-intro .login-step {
-  animation: login-fade-in 0.25s 0.95s ease-out both;
+  animation: login-fade-in 0.25s 1s ease-out both;
 }
 
 @keyframes login-fade-in {
@@ -816,11 +824,11 @@ a.btn {
 }
 
 .login-wordmark {
-  margin: 0;
+  margin: -8px 0 0;
   text-align: center;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-muted);
 }
 
 .login-subtitle {
@@ -1228,7 +1236,7 @@ a.btn {
   height: 9px;
   border-radius: 50%;
   background: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(225, 102, 63, 0.2);
+  box-shadow: 0 0 0 4px rgba(108,79,217,0.25);
 }
 
 .phone-frame {
@@ -2091,7 +2099,7 @@ label.link-button:focus-within {
   min-height: 0;
   padding: 0;
   border-radius: 16px;
-  background: #9a8f82;
+  background: #8f8aa3;
 }
 
 .form input.switch:checked {

@@ -89,7 +89,7 @@ export type CurrentUser = {
   firstName: string | null;
   lastName: string | null;
   language: SupportedLanguage;
-  // INFUNION's own account: shows the Superadmin section.
+  // infunion's own account: shows the Superadmin section.
   isSuperadmin?: boolean;
   adminPois: Poi[];
 };
@@ -119,7 +119,7 @@ export type ActiveModule = {
   trialEndsAt: string | null;
   paidUntil: string | null;
   cancelAtPeriodEnd: boolean;
-  // Given by INFUNION (superadmin): on and never billed.
+  // Given by infunion (superadmin): on and never billed.
   offered: boolean;
 };
 
