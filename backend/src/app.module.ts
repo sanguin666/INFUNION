@@ -26,6 +26,7 @@ import { NotificationsModule } from './notifications/notifications.module.js';
 import { DailyReadingsModule } from './daily-readings/daily-readings.module.js';
 import { SuperadminModule } from './superadmin/superadmin.module.js';
 import { PlacesMapModule } from './places-map/places-map.module.js';
+import { MemberMessagesModule } from './member-messages/member-messages.module.js';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { PlacesMapModule } from './places-map/places-map.module.js';
     NotificationsModule,
     SuperadminModule,
     PlacesMapModule,
+    MemberMessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

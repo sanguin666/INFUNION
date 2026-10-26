@@ -31,7 +31,8 @@ export type ModuleType =
   | 'community'
   | 'requests'
   | 'mass_intentions'
-  | 'daily_readings';
+  | 'daily_readings'
+  | 'messages';
 
 export type ActiveModule = {
   id: string;

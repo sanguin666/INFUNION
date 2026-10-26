@@ -86,6 +86,8 @@ export type Translations = {
     requestsLabel: string;
     massIntentionsLabel: string;
     readingsLabel: string;
+    messagesLabel: string;
+    newMessages: string;
     celebrationTimes: string;
     nextMass: string;
   };
@@ -475,6 +477,8 @@ export type Translations = {
     liveHint: string;
     readings: string;
     readingsHint: string;
+    messages: string;
+    messagesHint: string;
     phoneOff: string;
     turnOn: string;
     openSettings: string;
@@ -508,6 +512,18 @@ export type Translations = {
     status_confirmed: string;
     status_celebrated: string;
     status_cancelled: string;
+  };
+  messages: {
+    title: string;
+    subtitle: string;
+    empty: string;
+    writeLabel: string;
+    send: string;
+    sending: string;
+    sendError: string;
+    loadError: string;
+    you: string;
+    office: string;
   };
   readings: {
     title: string;
@@ -595,6 +611,8 @@ const en: Translations = {
     requestsLabel: 'Requests',
     massIntentionsLabel: 'Intentions',
     readingsLabel: 'Readings',
+    messagesLabel: 'Messages',
+    newMessages: 'New message',
     celebrationTimes: 'Celebration times',
     nextMass: 'Next Mass',
   },
@@ -986,6 +1004,8 @@ const en: Translations = {
     liveHint: 'When a celebration starts live',
     readings: 'Daily readings',
     readingsHint: 'When the day’s readings are ready',
+    messages: 'Messages',
+    messagesHint: 'When the office writes to you',
     phoneOff: 'Notifications are turned off for ANSAE on this phone.',
     turnOn: 'Turn on notifications',
     openSettings: 'Open the phone’s settings',
@@ -1019,6 +1039,18 @@ const en: Translations = {
     status_confirmed: 'Planned',
     status_celebrated: 'Celebrated',
     status_cancelled: 'Cancelled',
+  },
+  messages: {
+    title: 'Messages',
+    subtitle: 'Your conversation with {{name}}.',
+    empty: 'No messages yet. The office can write to you here, and you can write to it.',
+    writeLabel: 'Write to the community',
+    send: 'Send',
+    sending: 'Sending…',
+    sendError: 'Couldn’t send your message. Please try again.',
+    loadError: 'Couldn’t load your messages. Please try again.',
+    you: 'You',
+    office: 'The office',
   },
   readings: {
     title: 'Daily readings',
@@ -1106,6 +1138,8 @@ const es: Translations = {
     requestsLabel: 'Solicitudes',
     massIntentionsLabel: 'Intenciones',
     readingsLabel: 'Lecturas',
+    messagesLabel: 'Mensajes',
+    newMessages: 'Mensaje nuevo',
     celebrationTimes: 'Horarios de celebraciones',
     nextMass: 'Próxima misa',
   },
@@ -1497,6 +1531,8 @@ const es: Translations = {
     liveHint: 'Cuando una celebración empieza en directo',
     readings: 'Lecturas del día',
     readingsHint: 'Cuando las lecturas del día están listas',
+    messages: 'Mensajes',
+    messagesHint: 'Cuando el despacho te escribe',
     phoneOff: 'Las notificaciones de ANSAE están desactivadas en este teléfono.',
     turnOn: 'Activar las notificaciones',
     openSettings: 'Abrir los ajustes del teléfono',
@@ -1530,6 +1566,18 @@ const es: Translations = {
     status_confirmed: 'Prevista',
     status_celebrated: 'Celebrada',
     status_cancelled: 'Cancelada',
+  },
+  messages: {
+    title: 'Mensajes',
+    subtitle: 'Tu conversación con {{name}}.',
+    empty: 'Todavía no hay mensajes. El despacho puede escribirte aquí y tú también puedes escribirle.',
+    writeLabel: 'Escribir a la comunidad',
+    send: 'Enviar',
+    sending: 'Enviando…',
+    sendError: 'No se ha podido enviar tu mensaje. Inténtalo de nuevo.',
+    loadError: 'No se han podido cargar tus mensajes. Inténtalo de nuevo.',
+    you: 'Tú',
+    office: 'El despacho',
   },
   readings: {
     title: 'Lecturas del día',
@@ -1617,6 +1665,8 @@ const fr: Translations = {
     requestsLabel: 'Demandes',
     massIntentionsLabel: 'Intentions',
     readingsLabel: 'Lectures',
+    messagesLabel: 'Messages',
+    newMessages: 'Nouveau message',
     celebrationTimes: 'Horaires des célébrations',
     nextMass: 'Prochaine messe',
   },
@@ -2008,6 +2058,8 @@ const fr: Translations = {
     liveHint: 'Quand une célébration commence en direct',
     readings: 'Lectures du jour',
     readingsHint: 'Quand les lectures du jour sont prêtes',
+    messages: 'Messages',
+    messagesHint: 'Quand l’accueil vous écrit',
     phoneOff: 'Les notifications d’ANSAE sont désactivées sur ce téléphone.',
     turnOn: 'Activer les notifications',
     openSettings: 'Ouvrir les réglages du téléphone',
@@ -2041,6 +2093,18 @@ const fr: Translations = {
     status_confirmed: 'Prévue',
     status_celebrated: 'Célébrée',
     status_cancelled: 'Annulée',
+  },
+  messages: {
+    title: 'Messages',
+    subtitle: 'Votre conversation avec {{name}}.',
+    empty: 'Pas encore de message. L’accueil peut vous écrire ici, et vous pouvez lui écrire.',
+    writeLabel: 'Écrire à la communauté',
+    send: 'Envoyer',
+    sending: 'Envoi…',
+    sendError: 'Votre message n’a pas pu être envoyé. Réessayez.',
+    loadError: 'Vos messages n’ont pas pu être chargés. Réessayez.',
+    you: 'Vous',
+    office: 'L’accueil',
   },
   readings: {
     title: 'Lectures du jour',
@@ -2128,6 +2192,8 @@ const va: Translations = {
     requestsLabel: 'Sol·licituds',
     massIntentionsLabel: 'Intencions',
     readingsLabel: 'Lectures',
+    messagesLabel: 'Missatges',
+    newMessages: 'Missatge nou',
     celebrationTimes: 'Horaris de celebracions',
     nextMass: 'Pròxima missa',
   },
@@ -2519,6 +2585,8 @@ const va: Translations = {
     liveHint: 'Quan una celebració comença en directe',
     readings: 'Lectures del dia',
     readingsHint: 'Quan les lectures del dia estan a punt',
+    messages: 'Missatges',
+    messagesHint: 'Quan el despatx t’escriu',
     phoneOff: 'Les notificacions d’ANSAE estan desactivades en este telèfon.',
     turnOn: 'Activar les notificacions',
     openSettings: 'Obrir la configuració del telèfon',
@@ -2552,6 +2620,18 @@ const va: Translations = {
     status_confirmed: 'Prevista',
     status_celebrated: 'Celebrada',
     status_cancelled: 'Cancel·lada',
+  },
+  messages: {
+    title: 'Missatges',
+    subtitle: 'La teua conversa amb {{name}}.',
+    empty: 'Encara no hi ha missatges. El despatx et pot escriure ací, i tu també li pots escriure.',
+    writeLabel: 'Escriure a la comunitat',
+    send: 'Enviar',
+    sending: 'Enviant…',
+    sendError: 'No s’ha pogut enviar el teu missatge. Torna-ho a provar.',
+    loadError: 'No s’han pogut carregar els teus missatges. Torna-ho a provar.',
+    you: 'Tu',
+    office: 'El despatx',
   },
   readings: {
     title: 'Lectures del dia',
@@ -2639,6 +2719,8 @@ const gl: Translations = {
     requestsLabel: 'Solicitudes',
     massIntentionsLabel: 'Intencións',
     readingsLabel: 'Lecturas',
+    messagesLabel: 'Mensaxes',
+    newMessages: 'Mensaxe nova',
     celebrationTimes: 'Horarios das celebracións',
     nextMass: 'Próxima misa',
   },
@@ -3030,6 +3112,8 @@ const gl: Translations = {
     liveHint: 'Cando unha celebración comeza en directo',
     readings: 'Lecturas do día',
     readingsHint: 'Cando as lecturas do día están listas',
+    messages: 'Mensaxes',
+    messagesHint: 'Cando o despacho che escribe',
     phoneOff: 'As notificacións de ANSAE están desactivadas neste teléfono.',
     turnOn: 'Activar as notificacións',
     openSettings: 'Abrir os axustes do teléfono',
@@ -3063,6 +3147,18 @@ const gl: Translations = {
     status_confirmed: 'Prevista',
     status_celebrated: 'Celebrada',
     status_cancelled: 'Cancelada',
+  },
+  messages: {
+    title: 'Mensaxes',
+    subtitle: 'A túa conversa con {{name}}.',
+    empty: 'Aínda non hai mensaxes. O despacho pode escribirche aquí, e ti tamén lle podes escribir.',
+    writeLabel: 'Escribir á comunidade',
+    send: 'Enviar',
+    sending: 'Enviando…',
+    sendError: 'Non se puido enviar a túa mensaxe. Téntao de novo.',
+    loadError: 'Non se puideron cargar as túas mensaxes. Téntao de novo.',
+    you: 'Ti',
+    office: 'O despacho',
   },
   readings: {
     title: 'Lecturas do día',
@@ -3151,6 +3247,8 @@ const pt: Translations = {
     requestsLabel: 'Pedidos',
     massIntentionsLabel: 'Intenções',
     readingsLabel: 'Leituras',
+    messagesLabel: 'Mensagens',
+    newMessages: 'Nova mensagem',
     celebrationTimes: 'Horários das celebrações',
     nextMass: 'Próxima missa',
   },
@@ -3542,6 +3640,8 @@ const pt: Translations = {
     liveHint: 'Quando uma celebração começa em direto',
     readings: 'Leituras do dia',
     readingsHint: 'Quando as leituras do dia estiverem prontas',
+    messages: 'Mensagens',
+    messagesHint: 'Quando a secretaria lhe escreve',
     phoneOff: 'As notificações da ANSAE estão desativadas neste telemóvel.',
     turnOn: 'Ativar as notificações',
     openSettings: 'Abrir as definições do telemóvel',
@@ -3575,6 +3675,18 @@ const pt: Translations = {
     status_confirmed: 'Prevista',
     status_celebrated: 'Celebrada',
     status_cancelled: 'Cancelada',
+  },
+  messages: {
+    title: 'Mensagens',
+    subtitle: 'A sua conversa com {{name}}.',
+    empty: 'Ainda não há mensagens. A secretaria pode escrever-lhe aqui, e também lhe pode escrever.',
+    writeLabel: 'Escrever à comunidade',
+    send: 'Enviar',
+    sending: 'A enviar…',
+    sendError: 'Não foi possível enviar a sua mensagem. Tente novamente.',
+    loadError: 'Não foi possível carregar as suas mensagens. Tente novamente.',
+    you: 'Você',
+    office: 'A secretaria',
   },
   readings: {
     title: 'Leituras do dia',

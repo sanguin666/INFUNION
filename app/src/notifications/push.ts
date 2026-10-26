@@ -14,7 +14,7 @@ import { registerPushToken, removePushToken } from '../api/notifications';
 
 export type PushTarget = {
   poiId: string;
-  screen: 'announcement' | 'request' | 'event' | 'livestream' | 'readings';
+  screen: 'announcement' | 'request' | 'event' | 'livestream' | 'readings' | 'messages';
   id: string;
 };
 

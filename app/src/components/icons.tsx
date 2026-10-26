@@ -449,6 +449,16 @@ export function BookIcon({ size = 24, color = colors.text }: IconProps) {
   );
 }
 
+// Messages: an envelope, apart from the community's speech bubble.
+export function EnvelopeIcon({ size = 24, color = colors.text }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x={3} y={5} width={18} height={14} rx={2} stroke={color} strokeWidth={2} />
+      <Path d="m3.5 6.5 8.5 6.5 8.5-6.5" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 export function PaperclipIcon({ size = 24, color = colors.text }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">

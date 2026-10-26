@@ -19,3 +19,7 @@ export function usePoiId(): string {
 export function useRefreshModules(): () => void {
   return useOutletContext<DashboardContext>().refreshModules;
 }
+
+export function useModules(): ActiveModule[] | null {
+  return useOutletContext<DashboardContext>().modules;
+}
