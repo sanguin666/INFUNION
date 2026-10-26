@@ -19,7 +19,7 @@ const lightColors = {
   // what actually holds the edge on a phone in daylight. Going lighter
   // than this closes the gap to nothing, which is the state Seb turned
   // down once already.
-  background: '#FAF5EE',
+  background: '#F6F5F9',
   // Boxes, sheets, buttons and the floating menus.
   //
   // THE RULE: only ever one white box deep. Whatever sits inside a white
@@ -34,9 +34,9 @@ const lightColors = {
   // white, use a filled button (`primary`, or `danger` for something
   // that undoes) or the `quiet` variant for the way out.
   surface: '#FFFFFF',
-  text: '#111111',
-  textMuted: '#3D3D3D',
-  primary: '#E1663F',
+  text: '#1D1A2D',
+  textMuted: '#4A4760',
+  primary: '#6C4FD9',
   // Same hue as `primary`, darkened until it clears 4.5:1 on white — use
   // this instead of `primary` wherever the brand color is small text or a
   // small filled shape (a link, a small badge). `primary` itself only
@@ -44,30 +44,30 @@ const lightColors = {
   // bold, e.g. AccessibleButton's label) and for graphical elements (icons,
   // large fills), per WCAG's large-text and non-text contrast thresholds,
   // but not for anything smaller.
-  primaryStrong: '#B8502E',
+  primaryStrong: '#5638C7',
   // A filled shape carrying white text at body size (the "important"
   // tag, a selected day). The same dark coral as `primaryStrong` in light
   // mode; kept apart because in dark mode small orange *text* goes
   // lighter while a fill under white text must stay dark.
-  primaryFill: '#B8502E',
+  primaryFill: '#5638C7',
   primaryText: '#FFFFFF',
   // A warm coral wash, for the one thing that is currently selected on a
   // white surface — the menu button you are on, the donation amount you
   // picked. Paired with a coral, bolded label, never carrying the meaning
   // on its own.
-  primarySoft: '#F9DDD2',
+  primarySoft: '#ECE8FC',
   danger: '#B3261E',
   // Same split as `primaryFill`: red behind white text (the Live badge).
   dangerFill: '#B3261E',
   dangerText: '#FFFFFF',
-  border: '#111111',
+  border: '#1D1A2D',
   // Hairline for the edge of a white card on the beige page. Warm rather
   // than grey so it reads as a shadow's edge instead of a drawn line.
-  cardBorder: 'rgba(92,70,44,0.16)',
-  focus: '#E1663F',
+  cardBorder: 'rgba(45,30,110,0.14)',
+  focus: '#6C4FD9',
   // An off switch's track, and the dot of a closed office tile.
-  switchOff: '#C9C4BC',
-  quietDot: '#9A8F82',
+  switchOff: '#C8C5D4',
+  quietDot: '#8F8AA3',
   // The dimmed page behind a sheet.
   scrim: 'rgba(17,17,17,0.45)',
 };
@@ -83,25 +83,25 @@ export type Colors = { [K in keyof typeof lightColors]: string };
  * 4.5:1 on a dark box. Every text pair here clears AA on `surface`.
  */
 const darkColors: Colors = {
-  background: '#17130F',
-  surface: '#27211B',
-  text: '#F5EFE7',
-  textMuted: '#CFC5B8',
-  primary: '#E1663F',
-  primaryStrong: '#F2916B',
-  primaryFill: '#B8502E',
+  background: '#13111C',
+  surface: '#221E31',
+  text: '#F3F1FA',
+  textMuted: '#C9C4DA',
+  primary: '#6C4FD9',
+  primaryStrong: '#B3A3F7',
+  primaryFill: '#5638C7',
   primaryText: '#FFFFFF',
-  primarySoft: '#4A2C20',
+  primarySoft: '#332A5C',
   danger: '#FF8A80',
   dangerFill: '#B3261E',
   dangerText: '#FFFFFF',
   // The heavy edge of the secondary and destructive buttons: black on
   // the light page, so near-white here.
-  border: '#F5EFE7',
-  cardBorder: 'rgba(255,236,214,0.16)',
-  focus: '#F2916B',
-  switchOff: '#6B6259',
-  quietDot: '#A89D90',
+  border: '#F3F1FA',
+  cardBorder: 'rgba(220,210,255,0.16)',
+  focus: '#B3A3F7',
+  switchOff: '#5F5A75',
+  quietDot: '#A49FB8',
   scrim: 'rgba(0,0,0,0.6)',
 };
 
@@ -132,7 +132,7 @@ export const cardSurface = {
  * half of this: `elevation` is Android's, the rest is iOS's.
  */
 export const floatingShadow = {
-  shadowColor: '#3A2A14',
+  shadowColor: '#2A1F5A',
   shadowOpacity: 0.16,
   shadowRadius: 14,
   shadowOffset: { width: 0, height: 5 },
@@ -156,7 +156,7 @@ export function applyColorScheme(scheme: ColorScheme) {
   cardSurface.borderColor = colors.cardBorder;
   // On a dark page a warm shadow can't be seen; black still lifts a
   // little.
-  floatingShadow.shadowColor = scheme === 'dark' ? '#000000' : '#3A2A14';
+  floatingShadow.shadowColor = scheme === 'dark' ? '#000000' : '#2A1F5A';
   floatingShadow.shadowOpacity = scheme === 'dark' ? 0.5 : 0.16;
 }
 

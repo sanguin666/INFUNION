@@ -69,7 +69,7 @@ function asDate(key: string): Date {
  * The office types or pastes them ahead of time; each published day shows
  * in the app from midnight on its date, and can ring members' phones at
  * the hour chosen here. The official link underneath is for the full
- * texts, which INFUNION does not copy (copyright).
+ * texts, which infunion does not copy (copyright).
  */
 export function ReadingsPage() {
   const poiId = usePoiId();

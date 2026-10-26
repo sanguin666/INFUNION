@@ -1,6 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="INFUNION">
-  <rect x="4" y="4" width="92" height="92" rx="20.5" fill="#F7F1E7"/>
-  <g transform="translate(19.5,19.5) scale(0.61)">
-    <path d="M18 12 L18 52 A32 32 0 0 0 82 52 L82 12" fill="none" stroke="#E0A458" stroke-width="12"/><circle cx="50" cy="20" r="7.5" fill="#E1663F"/><path d="M50 36 L50 64" stroke="#E1663F" stroke-width="12" stroke-linecap="round"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="infunion">
+<rect x="4" y="4" width="92" height="92" rx="20.5" fill="#FFFFFF"/>
+<g transform="translate(17 30.75) scale(0.55)">
+  <defs><clipPath id="m-low"><rect x="0" y="34" width="120" height="40"/></clipPath><clipPath id="m-high"><rect x="0" y="-4" width="120" height="40"/></clipPath></defs>
+  <g clip-path="url(#m-low)"><path d="M-7 -29 L7 -29 A25 29 0 0 1 32 0 A25 29 0 0 1 7 29 L-7 29 A25 29 0 0 1 -32 0 A25 29 0 0 1 -7 -29 Z" fill="none" stroke="#F9B800" stroke-width="10.5" transform="translate(81 35)"/></g>
+  <path d="M-7 -29 L7 -29 A25 29 0 0 1 32 0 A25 29 0 0 1 7 29 L-7 29 A25 29 0 0 1 -32 0 A25 29 0 0 1 -7 -29 Z" fill="none" stroke="#6C4FD9" stroke-width="10.5" transform="translate(38 35)"/>
+  <g clip-path="url(#m-high)"><path d="M-7 -29 L7 -29 A25 29 0 0 1 32 0 A25 29 0 0 1 7 29 L-7 29 A25 29 0 0 1 -32 0 A25 29 0 0 1 -7 -29 Z" fill="none" stroke="#F9B800" stroke-width="10.5" transform="translate(81 35)"/></g>
+</g>
 </svg>

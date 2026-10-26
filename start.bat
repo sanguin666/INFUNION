@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-title INFUNION launcher
+title infunion launcher
 
 REM One-click LOCAL dev launcher for Windows, for working at home with the
 REM phone on the same Wi-Fi and the app running in Expo Go. To demo the app
@@ -16,7 +16,7 @@ REM restart regardless of whether you closed them yourself.
 cd /d "%~dp0"
 
 echo ================================================
-echo   INFUNION - starting everything
+echo   infunion - starting everything
 echo ================================================
 echo.
 
@@ -30,9 +30,9 @@ if errorlevel 1 (
 
 REM Close windows this script opened last time, so re-running it restarts
 REM everything instead of piling up duplicate dev servers.
-taskkill /F /FI "WINDOWTITLE eq INFUNION Backend*" >nul 2>&1
-taskkill /F /FI "WINDOWTITLE eq INFUNION Admin*"   >nul 2>&1
-taskkill /F /FI "WINDOWTITLE eq INFUNION App*"     >nul 2>&1
+taskkill /F /FI "WINDOWTITLE eq infunion Backend*" >nul 2>&1
+taskkill /F /FI "WINDOWTITLE eq infunion Admin*"   >nul 2>&1
+taskkill /F /FI "WINDOWTITLE eq infunion App*"     >nul 2>&1
 
 REM --- Database ---
 where docker >nul 2>&1
@@ -99,15 +99,15 @@ REM --- Launch everything, each in its own window ---
 echo Launching backend, admin dashboard, and mobile app...
 
 pushd backend
-start "INFUNION Backend" cmd /k npm run start:dev
+start "infunion Backend" cmd /k npm run start:dev
 popd
 
 pushd admin
-start "INFUNION Admin" cmd /k npm run dev
+start "infunion Admin" cmd /k npm run dev
 popd
 
 pushd app
-start "INFUNION App" cmd /k npm run start
+start "infunion App" cmd /k npm run start
 popd
 
 echo.

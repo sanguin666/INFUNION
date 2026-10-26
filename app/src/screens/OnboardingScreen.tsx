@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { AccessibleText } from '../components/AccessibleText';
 import { HaloBackdrop } from '../components/HaloBackdrop';
-import { LogoMark } from '../components/icons';
+import { LogoMark, Wordmark } from '../components/Logo';
 import { useI18n } from '../i18n/I18nContext';
 import { colors, spacing, themedStyles } from '../theme/theme';
 
@@ -62,11 +62,10 @@ export function OnboardingScreen({ onSignUp, onSignIn, onDemoSignIn }: Props) {
           },
         ]}
       >
-        <LogoMark size={184} />
-
-        <AccessibleText variant="title" style={styles.wordmark}>
-          INFUNION
-        </AccessibleText>
+        <LogoMark size={104} />
+        <View style={styles.wordmark}>
+          <Wordmark height={72} />
+        </View>
         <AccessibleText variant="bodyLarge" color={colors.textMuted} style={styles.welcome}>
           {t('onboarding.welcome')}
         </AccessibleText>
@@ -99,8 +98,7 @@ const styles = themedStyles(() => ({
     gap: spacing.sm,
   },
   wordmark: {
-    fontWeight: '800',
-    letterSpacing: 2,
+    marginTop: spacing.xs,
   },
   welcome: {
     textAlign: 'center',

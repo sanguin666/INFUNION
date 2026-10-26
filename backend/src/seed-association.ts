@@ -42,7 +42,7 @@ const DAY = 24 * HOUR;
 /**
  * The demo association (Seb, 26 Oct 2026): a L'Eliana association that
  * supports children facing learning and developmental difficulties, and
- * their families. It shows INFUNION to associations, with no church words:
+ * their families. It shows infunion to associations, with no church words:
  * activities instead of Masses, sign-ups instead of sacraments. María
  * García (the demo member) belongs to it; its team signs in to the admin
  * as Elena Navarro (ASSOCIATION_ADMIN_EMAIL). Only created when missing, so

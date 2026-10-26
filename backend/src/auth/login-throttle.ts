@@ -3,7 +3,7 @@
  * for a while after too many: the admin password and the superadmin's
  * six-digit code would otherwise be open to guessing at network speed.
  *
- * In memory, so a restart forgets; INFUNION runs one backend replica, and a
+ * In memory, so a restart forgets; infunion runs one backend replica, and a
  * restart costs an attacker more time than it gives back.
  */
 export class LoginThrottle {

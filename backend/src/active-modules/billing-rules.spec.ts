@@ -103,7 +103,7 @@ describe('billing rules', () => {
     expect(modules[0].status).toBe(ModuleStatus.TRIAL);
   });
 
-  it('never bills or pauses a module INFUNION offered', () => {
+  it('never bills or pauses a module infunion offered', () => {
     const poi = place({ billingRenewsAt: d('2026-11-30'), paymentMethodLabel: null });
     const modules: BillingModule[] = [
       { moduleType: ModuleType.REQUESTS, status: ModuleStatus.ACTIVE, paidUntil: null, cancelAtPeriodEnd: false, offered: true },
