@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -20,6 +21,7 @@ export const MAX_BADGE_TEXT = 40;
  * automatic kinds carry no text of their own; the app fills them in.
  */
 @Entity('poi_badges')
+@Index('IDX_poi_badges_poi', ['poi'])
 export class PoiBadge {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

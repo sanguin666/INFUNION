@@ -9,8 +9,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { unlink } from 'node:fs/promises';
-import { join, relative, resolve } from 'node:path';
 import { DataSource, In, LessThan, type EntityManager } from 'typeorm';
 import { User } from '../users/entities/user.entity.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
@@ -29,8 +27,9 @@ import { PushToken } from '../notifications/entities/push-token.entity.js';
 import { EventReminder } from '../notifications/entities/event-reminder.entity.js';
 import { AuditLog } from '../superadmin/entities/audit-log.entity.js';
 import { PhoneVerificationCode } from '../auth/entities/phone-verification-code.entity.js';
-import { UPLOADS_ROOT } from '../common/upload/multer-storage.js';
-import { PRIVATE_UPLOADS_ROOT } from '../common/upload/private-storage.js';
+import { fileStore, type FileArea } from '../common/storage/file-store.js';
+import { runExclusive } from '../common/locks/run-exclusive.js';
+import { RateLimit } from '../common/rate-limit/rate-limit.entity.js';
 import { SuperadminAccess } from '../auth/superadmin-access.service.js';
 import {
   AUDIT_LOG_MONTHS,
@@ -71,11 +70,14 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
   onModuleInit(): void {
     // Tests run the retention sweep themselves, with a clock of their own.
     if (this.configService.get<string>('NODE_ENV') === 'test') return;
+    // Every copy of the API ticks; one at a time does the sweep. Hourly
+    // rather than daily: a copy rarely lives a whole day between deploys,
+    // and every step of the sweep is safe to repeat.
     this.sweep = setInterval(() => {
-      this.applyRetention().catch((error: Error) =>
+      runExclusive(this.dataSource, 'privacy-retention', () => this.applyRetention()).catch((error: Error) =>
         this.logger.warn(`Retention sweep failed: ${error.message}`),
       );
-    }, DAY_MS);
+    }, 60 * 60 * 1000);
   }
 
   onModuleDestroy(): void {
@@ -325,7 +327,7 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
       const files = await this.erase(manager, userId);
       if (user.avatarUrl)
         files.push({
-          root: UPLOADS_ROOT,
+          area: 'public',
           path: user.avatarUrl.replace(/^\/uploads\//, ''),
         });
       // Everything else that points at the account goes with it or loses
@@ -381,9 +383,9 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
     manager: EntityManager,
     userId: string,
     poiId?: string,
-  ): Promise<{ root: string; path: string }[]> {
+  ): Promise<{ area: FileArea; path: string }[]> {
     const inPlace = poiId ? { poi: { id: poiId } } : {};
-    const files: { root: string; path: string }[] = [];
+    const files: { area: FileArea; path: string }[] = [];
 
     const requests = await manager.find(ServiceRequest, {
       where: { requester: { id: userId }, ...inPlace },
@@ -401,10 +403,10 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
       ]);
       for (const d of documents)
         if (d.filePath)
-          files.push({ root: PRIVATE_UPLOADS_ROOT, path: d.filePath });
+          files.push({ area: 'private', path: d.filePath });
       for (const m of messages)
         if (m.attachmentPath)
-          files.push({ root: PRIVATE_UPLOADS_ROOT, path: m.attachmentPath });
+          files.push({ area: 'private', path: m.attachmentPath });
       await manager.delete(ServiceRequest, { id: In(requestIds) });
     }
 
@@ -502,6 +504,16 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
     await this.dataSource
       .getRepository(AuditLog)
       .delete({ createdAt: LessThan(monthsBefore(now, AUDIT_LOG_MONTHS)) });
+    // Failed-login counts (they hold e-mail addresses) once they no longer
+    // lock anything. The geocoder's shared clock stays.
+    await this.dataSource
+      .getRepository(RateLimit)
+      .createQueryBuilder()
+      .delete()
+      .where('updated_at < :before', { before: new Date(now.getTime() - DAY_MS) })
+      .andWhere('(locked_until IS NULL OR locked_until < :now)', { now })
+      .andWhere("key NOT LIKE 'geocoder:%'")
+      .execute();
 
     if (accountsDeleted > 0)
       this.logger.log(`Deleted ${accountsDeleted} inactive account(s)`);
@@ -515,14 +527,11 @@ function monthsBefore(date: Date, months: number): Date {
   return result;
 }
 
-/** Best effort, and never outside the folder a file belongs to. */
+/** Best effort, and never outside the area a file belongs to. */
 async function removeFiles(
-  files: { root: string; path: string }[],
+  files: { area: FileArea; path: string }[],
 ): Promise<void> {
-  for (const { root, path } of files) {
-    const target = resolve(join(root, path));
-    const inside = relative(resolve(root), target);
-    if (!inside || inside.startsWith('..')) continue;
-    await unlink(target).catch(() => undefined);
+  for (const { area, path } of files) {
+    await fileStore().remove(area, path);
   }
 }

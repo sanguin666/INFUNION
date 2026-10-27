@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -51,6 +52,8 @@ export enum ServiceRequestStatus {
  * asked for, and the conversation between the two sides.
  */
 @Entity('service_requests')
+@Index('IDX_service_requests_poi', ['poi'])
+@Index('IDX_service_requests_requester', ['requester'])
 export class ServiceRequest {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

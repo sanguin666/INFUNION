@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -15,6 +16,7 @@ import { LivestreamStatus } from '../../common/enums/livestream-status.enum.js';
  * platform (YouTube, Facebook, etc.) rather than hosting video itself.
  */
 @Entity('livestreams')
+@Index('IDX_livestreams_poi', ['poi'])
 export class Livestream {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

@@ -18,6 +18,7 @@ import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
 import { dayKey, isTimeZone, localTime } from '../events/occurrences.js';
 import { text } from '../notifications/texts.js';
+import { runExclusive } from '../common/locks/run-exclusive.js';
 
 // How far back the app can page: two months of days.
 const HISTORY_DAYS = 60;
@@ -45,8 +46,11 @@ export class DailyReadingsService implements OnModuleInit, OnModuleDestroy {
   onModuleInit(): void {
     // Tests call sendDueNotifications themselves, with a clock of their own.
     if (this.configService.get<string>('NODE_ENV') === 'test') return;
+    // Every copy of the API ticks; one at a time does the sending.
     this.sweep = setInterval(() => {
-      this.sendDueNotifications().catch((error: Error) =>
+      runExclusive(this.repository.manager.connection, 'daily-readings', () =>
+        this.sendDueNotifications(),
+      ).catch((error: Error) =>
         this.logger.warn(`Readings notifications failed: ${error.message}`),
       );
     }, SWEEP_MS);

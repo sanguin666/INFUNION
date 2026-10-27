@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -45,6 +46,9 @@ export enum DonationPurpose {
  * moving any money so the admin dashboard's graph still has data to show.
  */
 @Entity('donations')
+@Index('IDX_donations_poi', ['poi'])
+@Index('IDX_donations_campaign', ['campaign'])
+@Index('IDX_donations_donor', ['donor'])
 export class Donation {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
