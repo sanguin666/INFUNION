@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import type { Relation } from 'typeorm';
 import { User } from '../../users/entities/user.entity.js';
 import { ServiceRequest } from './service-request.entity.js';
@@ -8,6 +8,8 @@ import { ServiceRequest } from './service-request.entity.js';
  * with at most one file attached (a photo of a page, a PDF).
  */
 @Entity('service_request_messages')
+@Index('IDX_service_request_messages_request', ['request'])
+@Index('IDX_service_request_messages_author', ['author'])
 export class ServiceRequestMessage {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

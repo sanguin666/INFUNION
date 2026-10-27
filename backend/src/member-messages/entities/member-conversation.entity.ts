@@ -9,6 +9,7 @@ import { MemberMessage } from './member-message.entity.js';
  * (the Messages module). Created by the first message, from either side.
  */
 @Entity('member_conversations')
+@Index('IDX_member_conversations_member', ['member'])
 @Index(['poi', 'member'], { unique: true })
 export class MemberConversation {
   @PrimaryGeneratedColumn('uuid')

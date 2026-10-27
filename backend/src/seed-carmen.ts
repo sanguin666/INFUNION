@@ -1,5 +1,3 @@
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { DataSource, In, type Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User } from './users/entities/user.entity.js';
@@ -37,7 +35,8 @@ import { PageBlockType } from './common/enums/page-block-type.enum.js';
 import { BadgeKind } from './common/enums/badge-kind.enum.js';
 import { EventCategory, EventRecurrence } from './events/entities/event-kinds.js';
 import { DEMO_MEMBER_PHONE } from './common/demo/demo-account.js';
-import { UPLOADS_ROOT, publicUrlFor } from './common/upload/multer-storage.js';
+import { publicUrlFor } from './common/upload/multer-storage.js';
+import { fileStore } from './common/storage/file-store.js';
 import { atWallClock, localTime } from './events/occurrences.js';
 
 export const CARMEN_QR_TOKEN = 'DEMO-CARMEN';
@@ -62,9 +61,9 @@ const OLD_CARMEN_PICTURE =
  * Without internet the seed carries on, and the demo has no photo.
  */
 async function carmenPicture(): Promise<string | null> {
-  const dir = join(UPLOADS_ROOT, 'demo');
+  const key = `demo/${CARMEN_PICTURE_FILE}`;
   const path = publicUrlFor('demo', CARMEN_PICTURE_FILE);
-  if (existsSync(join(dir, CARMEN_PICTURE_FILE))) return path;
+  if (await fileStore().exists('public', key)) return path;
   try {
     const response = await fetch(CARMEN_PICTURE_SOURCE, {
       headers: { 'User-Agent': 'infunion-demo-seed/1.0 (https://github.com/sanguin666/INFUNION)' },
@@ -73,8 +72,7 @@ async function carmenPicture(): Promise<string | null> {
     if (!response.ok || !type.startsWith('image/')) {
       throw new Error(`HTTP ${response.status} ${type}`);
     }
-    mkdirSync(dir, { recursive: true });
-    writeFileSync(join(dir, CARMEN_PICTURE_FILE), Buffer.from(await response.arrayBuffer()));
+    await fileStore().put('public', key, Buffer.from(await response.arrayBuffer()), type);
     console.log('Downloaded the church photo from Wikimedia Commons');
     return path;
   } catch (error) {

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -16,6 +17,8 @@ import { User } from '../../users/entities/user.entity.js';
  * a threaded tree, to keep moderation and the UI simple for now.
  */
 @Entity('community_posts')
+@Index('IDX_community_posts_poi', ['poi'])
+@Index('IDX_community_posts_author', ['author'])
 export class CommunityPost {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

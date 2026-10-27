@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,8 @@ import { CommunityPost } from './community-post.entity.js';
 import { User } from '../../users/entities/user.entity.js';
 
 @Entity('community_comments')
+@Index('IDX_community_comments_post', ['post'])
+@Index('IDX_community_comments_author', ['author'])
 export class CommunityComment {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

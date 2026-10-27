@@ -35,9 +35,17 @@ const DISTANCE_SQL = `(2 * 6371 * asin(sqrt(
 )))`;
 
 // Accents and curly apostrophes folded away on both sides of a name search,
-// so "senora" finds "Señora" and "l'eliana" finds "L’Eliana".
+// so "senora" finds "Señora" and "l'eliana" finds "L’Eliana". Written into
+// the SQL as literals, not parameters, so it is word for word the
+// expression of the IDX_pois_name_search trigram index and Postgres uses it.
 const ACCENTED = 'áàâäãåéèêëíìîïóòôöõúùûüñçÁÀÂÄÃÅÉÈÊËÍÌÎÏÓÒÔÖÕÚÙÛÜÑÇ’';
 const PLAIN = "aaaaaaeeeeiiiiooooouuuuncaaaaaaeeeeiiiiooooouuuunc'";
+
+export function foldedNameSql(column: string): string {
+  return `lower(translate(${column}, '${ACCENTED}', '${PLAIN.replace(/'/g, "''")}'))`;
+}
+
+const KM_PER_DEGREE = 111.32;
 
 function foldName(text: string): string {
   return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/’/g, "'");
@@ -85,11 +93,10 @@ export class PlacesMapService {
     const words = query.q ? foldName(query.q).split(/\s+/).filter(Boolean) : [];
     if (words.length) {
       words.forEach((word, index) => {
-        qb.andWhere(`lower(translate(poi.name, :accented, :plain)) LIKE :word${index} ESCAPE '\\'`, {
+        qb.andWhere(`${foldedNameSql('poi.name')} LIKE :word${index} ESCAPE '\\'`, {
           [`word${index}`]: `%${word.replace(/[\\%_]/g, (c) => `\\${c}`)}%`,
         });
       });
-      qb.setParameters({ accented: ACCENTED, plain: PLAIN });
     } else {
       qb.andWhere('poi.latitude IS NOT NULL AND poi.longitude IS NOT NULL');
     }
@@ -101,6 +108,11 @@ export class PlacesMapService {
     if (near) {
       qb.addSelect(DISTANCE_SQL, 'distanceKm').setParameters({ lat: query.lat, lng: query.lng });
       if (query.radiusKm !== undefined) {
+        // A box around the circle first, which the latitude/longitude index
+        // answers, so the exact distance is only worked out inside it.
+        const box = boundingBox(query.lat!, query.lng!, query.radiusKm);
+        qb.andWhere('poi.latitude BETWEEN :minLat AND :maxLat', box);
+        if (box.minLng !== undefined) qb.andWhere('poi.longitude BETWEEN :minLng AND :maxLng', box);
         qb.andWhere(`${DISTANCE_SQL} <= :radiusKm`, { radiusKm: query.radiusKm });
       }
       // Places without a pin (name search only) come after the others.
@@ -118,4 +130,26 @@ export class PlacesMapService {
       distanceKm: near && row.distanceKm !== null ? Math.round(Number(row.distanceKm) * 100) / 100 : null,
     }));
   }
+}
+
+/**
+ * The latitude and longitude ranges a circle fits in. No longitude range
+ * near the poles or across the date line, where a simple range would cut
+ * the circle: the latitude range and the exact distance still apply.
+ */
+export function boundingBox(lat: number, lng: number, radiusKm: number) {
+  const dLat = radiusKm / KM_PER_DEGREE;
+  const box: { minLat: number; maxLat: number; minLng?: number; maxLng?: number } = {
+    minLat: lat - dLat,
+    maxLat: lat + dLat,
+  };
+  const cos = Math.cos((lat * Math.PI) / 180);
+  if (Math.abs(lat) + dLat < 89 && cos > 0.01) {
+    const dLng = radiusKm / (KM_PER_DEGREE * cos);
+    if (lng - dLng >= -180 && lng + dLng <= 180) {
+      box.minLng = lng - dLng;
+      box.maxLng = lng + dLng;
+    }
+  }
+  return box;
 }

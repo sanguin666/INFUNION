@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -21,6 +22,7 @@ import { Language } from '../../common/enums/language.enum.js';
  * receiving on a phone they no longer use.
  */
 @Entity('push_tokens')
+@Index('IDX_push_tokens_user', ['user'])
 export class PushToken {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
