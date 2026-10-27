@@ -112,6 +112,14 @@ describe('Running as several copies (e2e)', () => {
     await client(second).post('/auth/login').send({ email: 'nobody@example.org', password: 'wrong' }).expect(429);
   });
 
+  it('serves the map library itself, not through a public CDN', async () => {
+    const js = await client(app).get('/vendor/maplibre-gl-5.24.0.js').expect(200);
+    expect(js.headers['content-type']).toContain('javascript');
+    expect(js.headers['cache-control']).toContain('immutable');
+    await client(app).get('/vendor/maplibre-gl-5.24.0.css').expect(200);
+    await client(app).get('/vendor/package.json').expect(404);
+  });
+
   it('reports its health', async () => {
     const health = await client(app).get('/health').expect(200);
     expect(health.body).toMatchObject({ status: 'ok', storage: 's3' });
