@@ -67,14 +67,20 @@ export function LogoMark({ size = 32 }: { size?: number }) {
 
 /** The wordmark as children of a 258 × 80 drawing; `dot` and `underline` (0–1) animate it. */
 export function WordmarkArt({ onDark = false, dot = 1, underline = 1 }: { onDark?: boolean; dot?: number; underline?: number }) {
-  const fill = { ink: onDark ? '#FFFFFF' : LOGO_INK, purple: onDark ? '#FFFFFF' : LOGO_PURPLE, yellow: LOGO_YELLOW };
+  // The letters follow the theme through --logo-ink / --logo-fun (lighter
+  // in dark mode, see index.css); the brand colours are the fallback.
+  const fill = {
+    ink: onDark ? '#FFFFFF' : `var(--logo-ink, ${LOGO_INK})`,
+    purple: onDark ? '#FFFFFF' : `var(--logo-fun, ${LOGO_PURPLE})`,
+    yellow: LOGO_YELLOW,
+  };
   return (
     <g transform={WORDMARK_TRANSFORM}>
       {WORDMARK_PARTS.map((part, i) => (
         <path
           key={i}
           d={part.d}
-          fill={fill[part.role]}
+          style={{ fill: fill[part.role] }}
           opacity={i === 1 && dot <= 0 ? 0 : 1}
           transform={`translate(${part.x} ${i === 1 ? 500 * (1 - dot) : 0})`}
         />

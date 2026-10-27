@@ -55,6 +55,8 @@
  * stays light. The phone preview inside stays light too.
  */
 :root[data-theme='dark'] {
+  --logo-ink: #f3f1fa;
+  --logo-fun: #b3a3f7;
   --color-bg: #13111c;
   --color-surface: #221e31;
   --color-text: #f3f1fa;
