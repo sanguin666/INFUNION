@@ -208,7 +208,6 @@ export type Translations = {
     purposeLabel: string;
     purposeGeneral: string;
     purposeCollection: string;
-    purposeCollectionHint: string;
     campaignProgress: string;
     frequencyLabel: string;
     once: string;
@@ -770,8 +769,7 @@ const en: Translations = {
     doneButton: 'Done',
     purposeLabel: 'WHAT IS IT FOR?',
     purposeGeneral: 'Where it is most needed',
-    purposeCollection: 'The collection',
-    purposeCollectionHint: 'Your part of the Sunday collection, from wherever you are.',
+    purposeCollection: 'Day-to-day running',
     campaignProgress: '{{raised}} raised of {{goal}}',
     frequencyLabel: 'HOW OFTEN?',
     once: 'Once',
@@ -1333,8 +1331,7 @@ const es: Translations = {
     doneButton: 'Listo',
     purposeLabel: '¿PARA QUÉ?',
     purposeGeneral: 'Donde más se necesite',
-    purposeCollection: 'La colecta',
-    purposeCollectionHint: 'Tu parte de la colecta del domingo, estés donde estés.',
+    purposeCollection: 'El día a día',
     campaignProgress: '{{raised}} recaudados de {{goal}}',
     frequencyLabel: '¿CON QUÉ FRECUENCIA?',
     once: 'Una vez',
@@ -1896,8 +1893,7 @@ const fr: Translations = {
     doneButton: 'Terminé',
     purposeLabel: 'POUR QUOI ?',
     purposeGeneral: 'Là où c’est le plus utile',
-    purposeCollection: 'La quête',
-    purposeCollectionHint: 'Votre part de la quête du dimanche, où que vous soyez.',
+    purposeCollection: 'Le fonctionnement',
     campaignProgress: '{{raised}} collectés sur {{goal}}',
     frequencyLabel: 'À QUEL RYTHME ?',
     once: 'Une fois',
@@ -2459,8 +2455,7 @@ const va: Translations = {
     doneButton: 'Fet',
     purposeLabel: 'PER A QUÈ?',
     purposeGeneral: 'On més es necessite',
-    purposeCollection: 'La col·lecta',
-    purposeCollectionHint: 'La teua part de la col·lecta del diumenge, estigues on estigues.',
+    purposeCollection: 'El dia a dia',
     campaignProgress: '{{raised}} recaptats de {{goal}}',
     frequencyLabel: 'AMB QUINA FREQÜÈNCIA?',
     once: 'Una vegada',
@@ -3022,8 +3017,7 @@ const gl: Translations = {
     doneButton: 'Feito',
     purposeLabel: 'PARA QUE?',
     purposeGeneral: 'Onde máis se precise',
-    purposeCollection: 'A colecta',
-    purposeCollectionHint: 'A túa parte da colecta do domingo, esteas onde esteas.',
+    purposeCollection: 'O día a día',
     campaignProgress: '{{raised}} recadados de {{goal}}',
     frequencyLabel: 'CADA CANTO?',
     once: 'Unha vez',
@@ -3586,8 +3580,7 @@ const pt: Translations = {
     doneButton: 'Concluído',
     purposeLabel: 'PARA QUÊ?',
     purposeGeneral: 'Onde for mais necessário',
-    purposeCollection: 'O ofertório',
-    purposeCollectionHint: 'A sua parte do ofertório de domingo, esteja onde estiver.',
+    purposeCollection: 'O dia a dia',
     campaignProgress: '{{raised}} angariados de {{goal}}',
     frequencyLabel: 'COM QUE FREQUÊNCIA?',
     once: 'Uma vez',
