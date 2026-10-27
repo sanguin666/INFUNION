@@ -39,7 +39,7 @@ describe('Notifications (e2e)', () => {
     ana = await signInWithId(app, '+34600400002', 'Ana');
     luis = await signInWithId(app, '+34600400003', 'Luis');
     for (const member of [ana, luis]) {
-      await client(app).post('/auth/me/pois').set(as(member.token)).send({ qrCodeToken: place.qrCodeToken }).expect(201);
+      await client(app).post('/auth/me/pois').set(as(member.token)).send({ qrCodeToken: place.qrCodeToken, religiousConsent: true }).expect(201);
     }
     await client(app).post('/auth/me/push-tokens').set(as(ana.token)).send({ token: anaPhone }).expect(204);
     await client(app).post('/auth/me/push-tokens').set(as(luis.token)).send({ token: luisPhone }).expect(204);

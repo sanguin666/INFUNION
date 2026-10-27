@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as WebBrowser from 'expo-web-browser';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { AccessibleText } from '../components/AccessibleText';
 import { Avatar } from '../components/Avatar';
 import { FormCard, FormDivider, FormField, FormRow } from '../components/FormCard';
 import { CameraIcon, CloseIcon } from '../components/icons';
-import { updateMyProfile, uploadMyAvatar } from '../api/auth';
+import { deleteMyAccount, getMyDataLink, updateMyProfile, uploadMyAvatar } from '../api/auth';
+import { ApiError, uploadUri } from '../api/client';
+import { PRIVACY_URL, TERMS_URL } from '../legal';
 import { useAuth } from '../auth/AuthContext';
 import { cardSurface, colors, fontSizes, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { useI18n } from '../i18n/I18nContext';
@@ -40,6 +43,9 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Reopening starts from whatever the session says, so an abandoned edit
   // is never waiting there the next time.
@@ -52,6 +58,36 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
     setError(null);
     setPickerOpen(false);
   }, [visible, me]);
+
+  /**
+   * The copy of their data opens in the phone's browser, which downloads
+   * it: a ten-minute signed link, since the browser has no session.
+   */
+  async function downloadMyData() {
+    setError(null);
+    try {
+      await WebBrowser.openBrowserAsync(uploadUri(await getMyDataLink()));
+    } catch {
+      setError(t('privacy.downloadError'));
+    }
+  }
+
+  async function deleteAccount() {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteMyAccount();
+      setConfirmingDelete(false);
+      onClose();
+      await signOut();
+    } catch (failure) {
+      setDeleteError(
+        failure instanceof ApiError && failure.status === 409 ? t('privacy.deleteManager') : t('privacy.deleteError'),
+      );
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   const nameChanged =
     firstName.trim() !== (me?.firstName ?? '') || lastName.trim() !== (me?.lastName ?? '');
@@ -253,6 +289,35 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
                   void signOut();
                 }}
               />
+
+              {/* Their data: a copy, the documents, and the way out for
+                  good, which asks before acting like "Leave this place". */}
+              <AccessibleText variant="caption" color={colors.textMuted} style={styles.laterNote}>
+                {t('privacy.dataTitle')}
+              </AccessibleText>
+              <AccessibleButton
+                label={t('privacy.download')}
+                variant="secondary"
+                onPress={() => void downloadMyData()}
+              />
+              <AccessibleButton
+                label={t('privacy.privacyPolicy')}
+                variant="secondary"
+                onPress={() => void WebBrowser.openBrowserAsync(PRIVACY_URL).catch(() => undefined)}
+              />
+              <AccessibleButton
+                label={t('privacy.terms')}
+                variant="secondary"
+                onPress={() => void WebBrowser.openBrowserAsync(TERMS_URL).catch(() => undefined)}
+              />
+              <AccessibleButton
+                label={t('privacy.deleteAccount')}
+                variant="destructive"
+                onPress={() => {
+                  setDeleteError(null);
+                  setConfirmingDelete(true);
+                }}
+              />
             </>
           )}
         </ScrollView>
@@ -284,6 +349,42 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
               variant="secondary"
               onPress={() => setPickerOpen(false)}
             />
+          </View>
+        </Modal>
+
+        <Modal
+          visible={confirmingDelete}
+          transparent
+          animationType="fade"
+          onRequestClose={() => !deleting && setConfirmingDelete(false)}
+        >
+          <Pressable
+            style={styles.scrim}
+            onPress={() => !deleting && setConfirmingDelete(false)}
+            accessibilityLabel={t('profile.cancel')}
+          />
+          <View style={[styles.pickerSheet, { paddingBottom: insets.bottom + spacing.lg }]}>
+            <AccessibleText variant="title">{t('privacy.deleteQuestion')}</AccessibleText>
+            <AccessibleText variant="body" color={colors.textMuted}>
+              {t('privacy.deleteExplainer')}
+            </AccessibleText>
+            {deleteError && (
+              <AccessibleText variant="body" color={colors.danger}>
+                {deleteError}
+              </AccessibleText>
+            )}
+            {deleting ? (
+              <ActivityIndicator color={colors.primaryStrong} size="large" />
+            ) : (
+              <>
+                <AccessibleButton label={t('privacy.deleteConfirm')} onPress={() => void deleteAccount()} />
+                <AccessibleButton
+                  label={t('profile.cancel')}
+                  variant="secondary"
+                  onPress={() => setConfirmingDelete(false)}
+                />
+              </>
+            )}
           </View>
         </Modal>
       </View>

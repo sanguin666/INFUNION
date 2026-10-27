@@ -91,6 +91,16 @@ export class User {
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
   lastLoginAt?: Date | null;
 
+  // Which version of the terms of use and privacy policy this person
+  // accepted in the app, and when (GDPR art. 7: consent has to be provable).
+  // The app asks again whenever CONSENT_VERSION moves past this one.
+  // Accepting also confirms the person is 14 or older (LOPDGDD art. 7).
+  @Column({ name: 'consent_version', type: 'varchar', nullable: true })
+  consentVersion?: string | null;
+
+  @Column({ name: 'consented_at', type: 'timestamptz', nullable: true })
+  consentedAt?: Date | null;
+
   @OneToMany(() => UserPoi, (membership) => membership.user)
   pois!: Relation<UserPoi>[];
 

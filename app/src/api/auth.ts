@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { apiDelete, apiGet, apiPatch, apiPost, apiPostForm } from './client';
+import { ApiError, apiDelete, apiGet, apiPatch, apiPost, apiPostForm } from './client';
 import type { Poi } from './types';
 
 export type RequestCodeResult = {
@@ -24,6 +24,10 @@ export type Me = {
   // against `pois`, not an answer on its own.
   lastActivePoiId?: string;
   language: string;
+  // True until this person has accepted the current terms and privacy
+  // policy (`consentVersion`); the app asks before anything else.
+  consentRequired?: boolean;
+  consentVersion?: string;
   adminPois: Poi[];
   pois: Poi[];
 };
@@ -117,8 +121,35 @@ export function setLastActivePoi(poiId: string): Promise<Me> {
 // Called whenever a signed-in person opens a place, so "my places" follows
 // the account rather than the device. Joining a place you already belong to
 // is not an error — the backend returns the existing membership.
-export function joinPoi(qrCodeToken: string): Promise<unknown> {
-  return apiPost<unknown>('/auth/me/pois', { qrCodeToken });
+// A church answers 428 until the person has agreed that following it
+// records their religious belief; `religiousConsent` is that agreement.
+export function joinPoi(qrCodeToken: string, religiousConsent?: boolean): Promise<unknown> {
+  return apiPost<unknown>('/auth/me/pois', religiousConsent ? { qrCodeToken, religiousConsent } : { qrCodeToken });
+}
+
+/** Whether a failed join is the church question rather than a real error. */
+export function needsReligiousConsent(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 428;
+}
+
+/** Records that the terms and privacy policy of `version` were accepted. */
+export function acceptTerms(version: string): Promise<void> {
+  return apiPost<void>('/auth/me/consent', { version });
+}
+
+/**
+ * A ten-minute link to a copy of everything infunion holds about this
+ * person, for the phone's browser to download. Relative, like every
+ * signed link: uploadUri() puts the API address in front.
+ */
+export async function getMyDataLink(): Promise<string> {
+  const { url } = await apiPost<{ url: string }>('/auth/me/export-link');
+  return url;
+}
+
+/** Deletes the account for good. 409 means it runs a place. */
+export function deleteMyAccount(): Promise<void> {
+  return apiDelete('/auth/me');
 }
 
 /**
