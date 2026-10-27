@@ -13,6 +13,7 @@ import { ConsentScreen } from './src/screens/ConsentScreen';
 import { ReligiousConsentSheet } from './src/components/ReligiousConsentSheet';
 import { PlaceSwitcher } from './src/components/PlaceSwitcher';
 import { IntroAnimation } from './src/components/IntroAnimation';
+import { UpdateBanner } from './src/updates/UpdateBanner';
 import { PreviewApp, previewPoiId } from './src/preview/PreviewApp';
 import { I18nProvider, useI18n } from './src/i18n/I18nContext';
 import { enablePush, onNotificationTapped, refreshPush, type PushTarget } from './src/notifications/push';
@@ -404,6 +405,9 @@ function AppRoutes() {
         onAgree={() => (consentPoi ? agreeToJoin(consentPoi) : Promise.resolve())}
         onDecline={() => consentPoi && declineToJoin(consentPoi)}
       />
+
+      {/* Over everything but the opening animation. */}
+      <UpdateBanner />
 
       {!introDone && <IntroAnimation onDone={() => setIntroDone(true)} />}
 

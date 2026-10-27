@@ -1,0 +1,107 @@
+name: App update
+
+# Sends the app's new screens and logic to phones over the air, with no new
+# APK and no store review: the app checks our backend when it opens and
+# switches to the new version on the next launch (see backend/src/app-updates
+# and app/scripts/publish-update.mjs).
+#
+# Runs by itself whenever app code reaches `staging` or `production`, each to
+# its own backend. Phones only take an update made for their exact native
+# build, so a change that needs a new APK (a new native package, a
+# permission, the icon) reaches nobody until that APK is installed; the app
+# then shows "New version available" (it compares with the demo-apk release).
+#
+# Needs one repository secret, APP_UPDATES_TOKEN, with the same value as the
+# APP_UPDATES_TOKEN variable on the Railway backends. Until it is set this
+# workflow skips with a warning instead of failing.
+
+on:
+  push:
+    branches: [staging, production]
+    paths: ['app/**', '.github/workflows/app-update.yml']
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Which code to send (production goes to the phones with the demo APK)
+        type: choice
+        options: [production, staging]
+        default: production
+
+concurrency:
+  group: app-update-${{ inputs.branch || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish over-the-air update
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: app
+    env:
+      BRANCH: ${{ inputs.branch || github.ref_name }}
+
+    steps:
+      - name: Check the token is set
+        id: token
+        working-directory: .
+        env:
+          APP_UPDATES_TOKEN: ${{ secrets.APP_UPDATES_TOKEN }}
+        run: |
+          if [ -z "$APP_UPDATES_TOKEN" ]; then
+            echo "::warning::No update sent: add the APP_UPDATES_TOKEN secret (repository Settings > Secrets and variables > Actions) and the same value as APP_UPDATES_TOKEN on the Railway backends."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v5
+        if: steps.token.outputs.skip != 'true'
+        with:
+          ref: ${{ env.BRANCH }}
+
+      - uses: actions/setup-node@v5
+        if: steps.token.outputs.skip != 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - if: steps.token.outputs.skip != 'true'
+        run: npm ci
+
+      - name: Pick the backend
+        if: steps.token.outputs.skip != 'true'
+        run: |
+          case "$BRANCH" in
+            production) url=https://infunion-api.up.railway.app ;;
+            staging) url=https://infunion-api-staging.up.railway.app ;;
+            *) echo "::error::No backend for $BRANCH"; exit 1 ;;
+          esac
+          echo "EXPO_PUBLIC_API_URL=$url" >> "$GITHUB_ENV"
+
+      # Railway deploys the backend from the same push; the first time,
+      # the update endpoints may not be there yet.
+      - name: Wait for the backend
+        if: steps.token.outputs.skip != 'true'
+        run: |
+          for attempt in $(seq 1 40); do
+            status=$(curl -s -o /dev/null -w '%{http_code}' \
+              -H 'expo-platform: android' -H 'expo-runtime-version: check' -H 'expo-protocol-version: 1' \
+              "$EXPO_PUBLIC_API_URL/updates/manifest" || true)
+            [ "$status" = 200 ] && exit 0
+            echo "Backend not ready ($status), waiting..."
+            sleep 15
+          done
+          echo "::error::$EXPO_PUBLIC_API_URL/updates/manifest never answered."
+          exit 1
+
+      - name: Publish
+        if: steps.token.outputs.skip != 'true'
+        env:
+          APP_UPDATES_TOKEN: ${{ secrets.APP_UPDATES_TOKEN }}
+        run: |
+          node scripts/publish-update.mjs | tee "$RUNNER_TEMP/publish.log"
+          echo "$(tail -1 "$RUNNER_TEMP/publish.log")" >> "$GITHUB_STEP_SUMMARY"

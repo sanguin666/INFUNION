@@ -569,6 +569,13 @@ export type Translations = {
     deleteError: string;
     deleteManager: string;
   };
+  appUpdate: {
+    ready: string;
+    restart: string;
+    newApk: string;
+    download: string;
+    later: string;
+  };
 };
 
 const en: Translations = {
@@ -1124,6 +1131,13 @@ const en: Translations = {
     deleteConfirm: 'Delete for good',
     deleteError: 'Couldn’t delete your account. Please try again.',
     deleteManager: 'You manage a place, so this account can’t be deleted here. Write to hello@infunion.app.',
+  },
+  appUpdate: {
+    ready: 'A new version of infunion is ready.',
+    restart: 'Restart',
+    newApk: 'A new version of the app is available.',
+    download: 'Download',
+    later: 'Later',
   },
 };
 
@@ -1681,6 +1695,13 @@ const es: Translations = {
     deleteError: 'No se pudo eliminar tu cuenta. Inténtalo de nuevo.',
     deleteManager: 'Gestionas un lugar, así que esta cuenta no se puede eliminar aquí. Escribe a hello@infunion.app.',
   },
+  appUpdate: {
+    ready: 'Hay una nueva versión de infunion lista.',
+    restart: 'Reiniciar',
+    newApk: 'Hay una nueva versión de la aplicación.',
+    download: 'Descargar',
+    later: 'Más tarde',
+  },
 };
 
 const fr: Translations = {
@@ -2236,6 +2257,13 @@ const fr: Translations = {
     deleteConfirm: 'Supprimer définitivement',
     deleteError: 'Impossible de supprimer votre compte. Veuillez réessayer.',
     deleteManager: 'Vous gérez un lieu : ce compte ne peut pas être supprimé ici. Écrivez à hello@infunion.app.',
+  },
+  appUpdate: {
+    ready: 'Une nouvelle version d’infunion est prête.',
+    restart: 'Redémarrer',
+    newApk: 'Une nouvelle version de l’application est disponible.',
+    download: 'Télécharger',
+    later: 'Plus tard',
   },
 };
 
@@ -2793,6 +2821,13 @@ const va: Translations = {
     deleteError: 'No s’ha pogut eliminar el teu compte. Torna-ho a provar.',
     deleteManager: 'Gestiones un lloc, per això este compte no es pot eliminar ací. Escriu a hello@infunion.app.',
   },
+  appUpdate: {
+    ready: 'Hi ha una nova versió d’infunion a punt.',
+    restart: 'Reinicia',
+    newApk: 'Hi ha una nova versió de l’aplicació.',
+    download: 'Descarrega',
+    later: 'Més tard',
+  },
 };
 
 const gl: Translations = {
@@ -3348,6 +3383,13 @@ const gl: Translations = {
     deleteConfirm: 'Eliminar para sempre',
     deleteError: 'Non se puido eliminar a túa conta. Téntao de novo.',
     deleteManager: 'Xestionas un lugar, así que esta conta non se pode eliminar aquí. Escribe a hello@infunion.app.',
+  },
+  appUpdate: {
+    ready: 'Hai unha nova versión de infunion lista.',
+    restart: 'Reiniciar',
+    newApk: 'Hai unha nova versión da aplicación.',
+    download: 'Descargar',
+    later: 'Máis tarde',
   },
 };
 
@@ -3905,6 +3947,13 @@ const pt: Translations = {
     deleteConfirm: 'Eliminar para sempre',
     deleteError: 'Não foi possível eliminar a sua conta. Tente novamente.',
     deleteManager: 'Gere um lugar, por isso esta conta não pode ser eliminada aqui. Escreva para hello@infunion.app.',
+  },
+  appUpdate: {
+    ready: 'Está pronta uma nova versão da infunion.',
+    restart: 'Reiniciar',
+    newApk: 'Está disponível uma nova versão da aplicação.',
+    download: 'Transferir',
+    later: 'Mais tarde',
   },
 };
 
