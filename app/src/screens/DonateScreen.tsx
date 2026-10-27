@@ -29,7 +29,7 @@ import type { Poi } from '../api/types';
 
 type Props = {
   poi: Poi;
-  // A project's own page (or the collection's), or null for the tab itself.
+  // A project's own page, or null for the tab itself.
   project: DonationProject | null;
   onOpenProject: (project: DonationProject) => void;
   // Leaves the donation flow once it is confirmed — back to the hub feed.
@@ -424,12 +424,12 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
     </>
   );
 
-  if (project) {
-    const title = campaign ? campaign.title : t('donate.purposeCollection');
-    const description = campaign ? campaign.description : t('donate.purposeCollectionHint');
+  if (campaign) {
+    const title = campaign.title;
+    const description = campaign.description;
     return (
       <>
-        {campaign?.imageUrl ? (
+        {campaign.imageUrl ? (
           <Image
             source={{ uri: uploadUri(campaign.imageUrl) }}
             style={styles.hero}
@@ -443,7 +443,7 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
           </AccessibleText>
           {!!description && <AccessibleText variant="body">{description}</AccessibleText>}
         </View>
-        {campaign && <Progress campaign={campaign} formatted={formatted} large />}
+        <Progress campaign={campaign} formatted={formatted} large />
         {giveForm}
       </>
     );
@@ -457,30 +457,26 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
 
       {giveForm}
 
-      <AccessibleText variant="caption" style={styles.sectionLabel}>
-        {t('donate.projectsLabel')}
-      </AccessibleText>
-      <View style={styles.listCard}>
-        {campaigns.map((item, index) => (
-          <ProjectRow
-            key={item.id}
-            title={item.title}
-            imageUrl={item.imageUrl}
-            divider={index > 0}
-            onPress={() => onOpenProject({ kind: 'campaign', campaign: item })}
-          >
-            <Progress campaign={item} formatted={formatted} />
-          </ProjectRow>
-        ))}
-        <ProjectRow
-          title={t('donate.purposeCollection')}
-          imageUrl={null}
-          divider={campaigns.length > 0}
-          onPress={() => onOpenProject({ kind: 'collection' })}
-        >
-          <AccessibleText variant="caption">{t('donate.purposeCollectionHint')}</AccessibleText>
-        </ProjectRow>
-      </View>
+      {campaigns.length > 0 && (
+        <>
+          <AccessibleText variant="caption" style={styles.sectionLabel}>
+            {t('donate.projectsLabel')}
+          </AccessibleText>
+          <View style={styles.listCard}>
+            {campaigns.map((item, index) => (
+              <ProjectRow
+                key={item.id}
+                title={item.title}
+                imageUrl={item.imageUrl}
+                divider={index > 0}
+                onPress={() => onOpenProject({ kind: 'campaign', campaign: item })}
+              >
+                <Progress campaign={item} formatted={formatted} />
+              </ProjectRow>
+            ))}
+          </View>
+        </>
+      )}
 
       {monthlyGifts.length > 0 && (
         <>
