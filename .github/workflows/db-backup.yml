@@ -12,8 +12,7 @@ name: Database backup
 #   gpg --decrypt --output backup.dump <file>.dump.gpg    (asks for BACKUP_PASSPHRASE)
 #   pg_restore --no-owner --no-acl -d "$NEW_DATABASE_URL" backup.dump
 #
-# Needs these secrets in the GitHub "production" environment
-# (Settings > Environments > production > Environment secrets).
+# Needs these repository secrets (Settings > Secrets and variables > Actions).
 # Until they are set every run fails, so a missing backup never looks green.
 #   PRODUCTION_DATABASE_URL   Railway > Postgres > Variables > DATABASE_PUBLIC_URL
 #   BACKUP_PASSPHRASE         a long random password; keep a copy outside GitHub,
@@ -41,8 +40,6 @@ jobs:
     name: Back up production
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # The secrets live in the GitHub "production" environment.
-    environment: production
     env:
       DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
       PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
@@ -58,7 +55,7 @@ jobs:
         id: secrets
         run: |
           if [ -z "$DATABASE_URL" ] || [ -z "$PASSPHRASE" ]; then
-            echo "::error::No backup made: add the PRODUCTION_DATABASE_URL and BACKUP_PASSPHRASE secrets to the production environment (see the top of .github/workflows/db-backup.yml)."
+            echo "::error::No backup made: add the PRODUCTION_DATABASE_URL and BACKUP_PASSPHRASE repository secrets (see the top of .github/workflows/db-backup.yml)."
             exit 1
           elif [ -n "$ENDPOINT" ] && [ -n "$BUCKET" ] && [ -n "$AWS_ACCESS_KEY_ID" ]; then
             echo "target=r2" >> "$GITHUB_OUTPUT"
