@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from './client';
+import { apiDelete, apiGet, apiPost } from './client';
 
 export type MemberRow = {
   userId: string;
@@ -37,4 +37,14 @@ export function getMemberConversation(poiId: string, userId: string): Promise<Me
 
 export function sendMemberMessage(poiId: string, userId: string, body: string): Promise<MemberConversation> {
   return apiPost<MemberConversation>(`/pois/${poiId}/members/${userId}/messages`, { body });
+}
+
+/** What this member did in this place, for the office to hand them (GDPR art. 15). */
+export function exportMemberData(poiId: string, userId: string): Promise<unknown> {
+  return apiGet<unknown>(`/pois/${poiId}/members/${userId}/export`);
+}
+
+/** Ends the membership and erases what they wrote here, at their request. */
+export function removeMemberData(poiId: string, userId: string): Promise<void> {
+  return apiDelete<void>(`/pois/${poiId}/members/${userId}`);
 }

@@ -58,6 +58,14 @@ export class UserPoi {
   @Column({ name: 'notify_messages', default: true })
   notifyMessages!: boolean;
 
+  // When this person agreed that joining a church records their religious
+  // belief, a GDPR special category (art. 9.2.a). Null for other kinds of
+  // place, for the office's own accounts, and for memberships older than
+  // the question, which are asked the next time the app opens the place.
+  // Leaving the place withdraws it, since the membership goes with it.
+  @Column({ name: 'religious_consent_at', type: 'timestamptz', nullable: true })
+  religiousConsentAt?: Date | null;
+
   @CreateDateColumn({ name: 'joined_at' })
   joinedAt!: Date;
 }
