@@ -3,7 +3,7 @@ name: Demo APK
 # Builds the Android demo APK on GitHub's own machines instead of Expo's build
 # servers, so it doesn't use up the Expo plan's monthly build allowance
 # (`eas build --local` builds are not counted). It still signs with the same
-# key EAS holds for com.ansae.app, so the new APK installs over the old one.
+# key EAS holds for com.infunion.app, so each new APK installs over the last.
 #
 # Run it from the Actions tab: "Demo APK" > "Run workflow". The APK lands on
 # the "demo-apk" release, which always holds the latest build:
@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: Which code to build (the APK always talks to ansae-api)
+        description: Which code to build (the APK always talks to infunion-api)
         type: choice
         options: [production, staging, dev]
         default: production
