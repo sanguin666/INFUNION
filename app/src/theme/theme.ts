@@ -70,6 +70,10 @@ const lightColors = {
   quietDot: '#8F8AA3',
   // The dimmed page behind a sheet.
   scrim: 'rgba(17,17,17,0.45)',
+  // The wordmark's letters and its "fun": brand ink and purple on the
+  // light page, lighter on the dark one so the name stays readable.
+  logoInk: '#1D1A2D',
+  logoFun: '#6C4FD9',
 };
 
 export type Colors = { [K in keyof typeof lightColors]: string };
@@ -103,6 +107,8 @@ const darkColors: Colors = {
   switchOff: '#5F5A75',
   quietDot: '#A49FB8',
   scrim: 'rgba(0,0,0,0.6)',
+  logoInk: '#F3F1FA',
+  logoFun: '#B3A3F7',
 };
 
 const palettes: Record<ColorScheme, Colors> = { light: lightColors, dark: darkColors };
