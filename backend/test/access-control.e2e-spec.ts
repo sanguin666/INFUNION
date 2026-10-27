@@ -114,7 +114,7 @@ describe('Access control (e2e)', () => {
       await client(app)
         .post(`/users/${adminUserId}/pois`)
         .set('Authorization', `Bearer ${visitorToken}`)
-        .send({ qrCodeToken: place.qrCodeToken })
+        .send({ qrCodeToken: place.qrCodeToken, religiousConsent: true })
         .expect(403);
 
       await client(app)
@@ -127,7 +127,7 @@ describe('Access control (e2e)', () => {
       await client(app)
         .post('/auth/me/pois')
         .set('Authorization', `Bearer ${visitorToken}`)
-        .send({ qrCodeToken: place.qrCodeToken })
+        .send({ qrCodeToken: place.qrCodeToken, religiousConsent: true })
         .expect(201);
 
       // Opening the same place again is the app's normal behaviour, not an
@@ -135,7 +135,7 @@ describe('Access control (e2e)', () => {
       await client(app)
         .post('/auth/me/pois')
         .set('Authorization', `Bearer ${visitorToken}`)
-        .send({ qrCodeToken: place.qrCodeToken })
+        .send({ qrCodeToken: place.qrCodeToken, religiousConsent: true })
         .expect(201);
 
       const me = await client(app)
