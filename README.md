@@ -140,7 +140,7 @@ Nothing skips a step: `staging` only ever receives what is on `dev`, and `produc
 
 For showing the app to someone off your network, a standalone build beats Expo Go: the JavaScript ships inside the APK, so there's no Metro dev server, no QR code and no Expo Go login involved. The only thing that still has to be reachable is the backend.
 
-1. The APK talks to the backend hosted on [Railway](https://railway.com) (EU West), at `https://infunion-api.up.railway.app`. That URL is in the `preview` profile's `env` block in `app/eas.json`, which is what gets baked into the build. Railway redeploys it on every push to `production`, so this PC doesn't need to be on. See "Environments" below.
+1. The APK talks to the backend hosted on [Railway](https://railway.com) (EU West), at `https://api.infunion.app` (a custom domain on the `infunion-api` service, so the host can change without a new APK). That URL is in the `preview` profile's `env` block in `app/eas.json`, and the over-the-air update address in `app/app.json`, which are baked into the build. Railway redeploys it on every push to `production`, so this PC doesn't need to be on. See "Environments" below.
 
    The Railway service builds from the `backend/` folder (Root Directory `/backend`), with build command `npm run build`, pre-deploy command `npx typeorm migration:run -d dist/data-source.js && node dist/seed.js`, start command `npm run start:prod`, a PostgreSQL database in the same project, and a volume mounted at `/data` for uploads. Its variables are `NODE_ENV=production`, `DEMO_LOGIN=on`, `JWT_SECRET`, `DB_HOST`/`DB_PORT`/`DB_USERNAME`/`DB_PASSWORD`/`DB_NAME` taken from the database's `PGHOST`/`PGPORT`/`PGUSER`/`PGPASSWORD`/`PGDATABASE`, `UPLOADS_DIR=/data/uploads` and `PRIVATE_UPLOADS_DIR=/data/private`.
 
@@ -369,7 +369,7 @@ The demo defaults are deliberately convenient, and each one is a different setti
 | `JWT_SECRET` | falls back to a fixed development secret | **required** — the app refuses to start without it |
 | CORS | any origin, so a phone on the LAN and a browser both work | only the origins listed in `CORS_ORIGINS`, and none if it's unset |
 | Login codes | returned in the response as `devCode`, since nothing is sent | never returned; configure a real `SmsSender` |
-| Uploads | `./uploads` next to the backend | still local disk — set `UPLOADS_DIR` to a mounted volume, or swap in S3 |
+| Uploads | `./uploads` next to the backend | an S3-compatible bucket (Cloudflare R2) once `S3_BUCKET` is set; local disk otherwise |
 
 ### Migrations
 
@@ -383,9 +383,23 @@ npm run migration:revert                                   # undo the last one
 
 Development doesn't need any of this — it still builds the schema straight from the entities, so an entity edit shows up on the next save. Generate a migration when you change an entity so production has a path from the old shape to the new one; `synchronize` against real data is how a renamed column silently becomes a dropped one.
 
-### Still open
+### Running as several copies
 
-Uploads are the real remaining gap: local disk is fine for one small server with a persistent volume, and wrong for anything that replaces its disk between deploys or runs more than one instance. Every caller already goes through `common/upload/multer-storage.ts`, so this is a change of storage engine, not a change to the modules that upload.
+The API is built to run as more than one copy behind Railway's load balancer (Settings > Replicas), so a deploy never takes it down and one crashed copy doesn't either. What makes that safe:
+
+- **Files** live in an S3-compatible bucket, Cloudflare R2 in the EU jurisdiction (`src/common/storage/file-store.ts`). The bucket is private. `/uploads/…` is streamed by the API with a one-year cache header (file names change whenever a file does), so the CDN in front serves repeats; private documents open through a five-minute signed link to the bucket. Without `S3_BUCKET` everything stays on local disk, as in development.
+- **Timed sweeps** (event reminders every minute, daily readings, data retention hourly) each take a Postgres advisory lock (`src/common/locks/run-exclusive.ts`), so only one copy sends at a time.
+- **Login lockouts** (admin password, superadmin code) are counted in the `rate_limits` table, and the public geocoder's one-request-a-second pace is shared through it too.
+- **Reminders** store their next check time, so the minute sweep only reads bells that are due.
+- `GET /health` answers 200 only when the copy reaches its database: use it as Railway's health check path.
+
+Copies × `DB_POOL_SIZE` (default 10) must stay under Postgres's `max_connections` (100 by default).
+
+**Moving from the Railway volume to R2** (once): create the bucket and an API token in Cloudflare, set `S3_BUCKET`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` and `MIGRATE_LOCAL_FILES=on` on the backend, and deploy with the volume still attached. Files not copied yet are read from the volume meanwhile; the log says `Copied N file(s) from disk to the bucket` when done. Then detach the volume, remove `UPLOADS_DIR` / `PRIVATE_UPLOADS_DIR` / `MIGRATE_LOCAL_FILES`, and raise the replica count.
+
+**Backups**: `.github/workflows/db-backup.yml` dumps the production database every night to a separate R2 bucket and keeps 30 days. The secrets it needs, and how to restore, are at the top of the file.
+
+**Regions**: a region (Europe, Americas, Asia) is a complete copy of the backend with its own database and bucket; `REGION` names it in `/health`. See the scaling plan for when to open one.
 
 ## Marketing landing page
 

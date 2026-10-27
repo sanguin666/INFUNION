@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import type { Relation } from 'typeorm';
 import { ServiceRequest } from './service-request.entity.js';
 
@@ -8,6 +8,7 @@ import { ServiceRequest } from './service-request.entity.js';
  * off from the app instead of bringing photocopies to the office.
  */
 @Entity('service_request_documents')
+@Index('IDX_service_request_documents_request', ['request'])
 export class ServiceRequestDocument {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from './entities/event.entity.js';
+import { EventReminder } from '../notifications/entities/event-reminder.entity.js';
 import { EventRecurrence } from './entities/event-kinds.js';
 import { PoisService } from '../pois/pois.service.js';
 import { CreateEventDto } from './dto/create-event.dto.js';
@@ -81,7 +82,16 @@ export class EventsService {
             ? new Date(dto.repeatUntil)
             : null,
     });
-    return this.eventsRepository.save(normalised(event));
+    const saved = await this.eventsRepository.save(normalised(event));
+    // Its time or days may have moved: bells on it work out their next
+    // time again on the next sweep.
+    await this.eventsRepository.manager
+      .createQueryBuilder()
+      .update(EventReminder)
+      .set({ nextCheckAt: null })
+      .where('event_id = :id', { id: saved.id })
+      .execute();
+    return saved;
   }
 
   async remove(poiId: string, id: string): Promise<void> {

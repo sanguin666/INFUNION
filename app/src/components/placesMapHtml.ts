@@ -1,9 +1,11 @@
 import { MAP_STYLE_URL, PLACE_KINDS, pinSvg } from '../theme/placeKinds';
 import type { PoiType } from '../api/types';
+import { API_BASE_URL } from '../api/client';
 
-// Pinned, and loaded by the page itself: the phone fetches it from the CDN
-// the first time the map opens.
-const MAPLIBRE = 'https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl';
+// Pinned, and loaded by the page itself from infunion's own API (see the
+// backend's VendorController), not a public CDN. Keep the version in step
+// with maplibre-gl in backend/package.json.
+const MAPLIBRE = `${API_BASE_URL}/vendor/maplibre-gl-5.24.0`;
 
 export type MapPin = { id: string; type: PoiType; latitude: number; longitude: number; name: string };
 

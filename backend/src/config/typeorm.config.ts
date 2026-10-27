@@ -26,6 +26,7 @@ import { EventReminder } from '../notifications/entities/event-reminder.entity.j
 import { AuditLog } from '../superadmin/entities/audit-log.entity.js';
 import { MemberConversation } from '../member-messages/entities/member-conversation.entity.js';
 import { MemberMessage } from '../member-messages/entities/member-message.entity.js';
+import { RateLimit } from '../common/rate-limit/rate-limit.entity.js';
 
 // Every entity the app maps. Exported so the metadata check in
 // typeorm.config.spec.ts, and data-source.ts (which the TypeORM CLI loads
@@ -59,6 +60,7 @@ export const ENTITIES = [
   AuditLog,
   MemberConversation,
   MemberMessage,
+  RateLimit,
 ];
 
 export function buildTypeOrmConfig(
@@ -66,8 +68,12 @@ export function buildTypeOrmConfig(
 ): TypeOrmModuleOptions {
   const isProduction =
     configService.get<string>('NODE_ENV', 'development') === 'production';
+  // DATABASE_URL (what Railway and most hosts hand out) wins over the
+  // DB_* variables when set, so a new region needs one variable, not five.
+  const url = configService.get<string>('DATABASE_URL') || undefined;
   return {
     type: 'postgres',
+    url,
     host: configService.get<string>('DB_HOST', 'localhost'),
     port: configService.get<number>('DB_PORT', 5432),
     username: configService.get<string>('DB_USERNAME', 'ansae'),
@@ -83,6 +89,9 @@ export function buildTypeOrmConfig(
     // boot and never lets TypeORM reshape the schema on its own. `synchronize`
     // against real data is how a renamed column silently becomes a dropped
     // one. See `npm run migration:generate` in package.json.
+    // Connections per copy of the API. Copies x pool size must stay under
+    // the database's max_connections (100 on a default Postgres).
+    extra: { max: Number(configService.get<string>('DB_POOL_SIZE') ?? 10) },
     synchronize: !isProduction,
     migrationsRun: isProduction,
   };

@@ -13,7 +13,7 @@ import { SuperadminAccess } from './superadmin-access.service.js';
 import { CONSENT_VERSION } from '../privacy/consent.js';
 
 // Five wrong passwords for one address in 15 minutes locks it for 15.
-const adminLoginThrottle = new LoginThrottle(5, 15 * 60_000, 15 * 60_000);
+const adminLoginThrottle = new LoginThrottle('admin-login', 5, 15 * 60_000, 15 * 60_000);
 
 @Injectable()
 export class AuthService {
@@ -27,12 +27,12 @@ export class AuthService {
 
   async login(dto: LoginDto, request?: Request): Promise<{ accessToken: string }> {
     const key = dto.email.trim().toLowerCase();
-    if (adminLoginThrottle.lockedFor(key) > 0) {
+    if ((await adminLoginThrottle.lockedFor(key)) > 0) {
       throw new HttpException('Too many attempts. Try again in 15 minutes.', HttpStatus.TOO_MANY_REQUESTS);
     }
     const user = await this.usersService.findByEmailForLogin(dto.email);
     if (!user?.passwordHash || !(await bcrypt.compare(dto.password, user.passwordHash))) {
-      adminLoginThrottle.fail(key);
+      await adminLoginThrottle.fail(key);
       await this.superadminAccess.record({
         action: 'admin.login.failed',
         actorEmail: key,
@@ -40,7 +40,7 @@ export class AuthService {
       });
       throw new UnauthorizedException('Invalid email or password');
     }
-    adminLoginThrottle.succeed(key);
+    await adminLoginThrottle.succeed(key);
     await this.usersService.markLoggedIn(user.id);
     await this.superadminAccess.record({ action: 'admin.login', actorId: user.id, actorEmail: key, request });
     const accessToken = await this.jwtService.signAsync({ sub: user.id });

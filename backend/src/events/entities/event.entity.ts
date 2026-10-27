@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -16,6 +17,7 @@ import { EventCategory, EventRecurrence, type EventException } from './event-kin
  * funerals, communions, community gatherings, etc.).
  */
 @Entity('events')
+@Index('IDX_events_poi', ['poi'])
 export class Event {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
