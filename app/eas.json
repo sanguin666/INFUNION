@@ -9,7 +9,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://ansae-api.up.railway.app"
+        "EXPO_PUBLIC_API_URL": "https://infunion-api.up.railway.app"
       }
     },
     "production": {
