@@ -9,13 +9,13 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.infunion.app"
+        "EXPO_PUBLIC_API_URL": "https://infunion-api.up.railway.app"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.infunion.app"
+        "EXPO_PUBLIC_API_URL": "https://infunion-api.up.railway.app"
       }
     }
   }
