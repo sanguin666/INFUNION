@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -15,6 +16,7 @@ import { Poi } from '../../pois/entities/poi.entity.js';
  * (e.g. weekly bulletin, schedule changes, general news).
  */
 @Entity('announcements')
+@Index('IDX_announcements_poi', ['poi'])
 export class Announcement {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

@@ -22,6 +22,6 @@ export class RateLimit {
   @Column('timestamptz', { name: 'locked_until', nullable: true })
   lockedUntil?: Date | null;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt!: Date;
 }

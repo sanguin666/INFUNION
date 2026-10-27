@@ -1,14 +1,18 @@
+import { ServiceUnavailableException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getDataSourceToken } from '@nestjs/typeorm';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 
 describe('AppController', () => {
   let appController: AppController;
+  const dataSource = { query: vi.fn() };
 
   beforeEach(async () => {
+    dataSource.query.mockReset();
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
+      providers: [AppService, { provide: getDataSourceToken(), useValue: dataSource }],
     }).compile();
 
     appController = app.get<AppController>(AppController);
@@ -17,6 +21,18 @@ describe('AppController', () => {
   describe('root', () => {
     it('should return "Hello World!"', () => {
       expect(appController.getHello()).toBe('Hello World!');
+    });
+  });
+
+  describe('health', () => {
+    it('is ok when the database answers', async () => {
+      dataSource.query.mockResolvedValue([{ '?column?': 1 }]);
+      await expect(appController.health()).resolves.toMatchObject({ status: 'ok', storage: 'disk' });
+    });
+
+    it('is unavailable when it does not', async () => {
+      dataSource.query.mockRejectedValue(new Error('connection refused'));
+      await expect(appController.health()).rejects.toBeInstanceOf(ServiceUnavailableException);
     });
   });
 });

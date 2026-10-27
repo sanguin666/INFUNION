@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -15,6 +16,8 @@ import { User } from '../../users/entities/user.entity.js';
  * "praying" tap (prayerCount) without needing to be signed in yet.
  */
 @Entity('prayer_requests')
+@Index('IDX_prayer_requests_poi', ['poi'])
+@Index('IDX_prayer_requests_author', ['author'])
 export class PrayerRequest {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

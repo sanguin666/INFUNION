@@ -251,6 +251,37 @@ describe('Notifications (e2e)', () => {
     expect(got()).toEqual([[anaPhone, 'In 1 hour: Mass', tenAM]]);
   });
 
+  it('looks at a bell only when its next time is near, and again when the event moves', async () => {
+    const event = await client(app)
+      .post(`/pois/${place.id}/events`)
+      .set(as(adminToken))
+      .send({ title: 'Mass', startsAt: '2026-09-06T08:00:00.000Z', recurrence: 'weekly', repeatDays: [0] })
+      .expect(201);
+    const eventId = event.body.id as string;
+    await client(app).post('/auth/me/push-tokens').set(as(ana.token)).send({ token: anaPhone, timeZone: 'Europe/Madrid' }).expect(204);
+    await client(app).put(`/auth/me/event-reminders/${eventId}`).set(as(ana.token)).send({}).expect(204);
+
+    const notifications = app.get(NotificationsService);
+    const nextCheck = async () => {
+      const [row] = (await app
+        .get(DataSource)
+        .query('SELECT next_check_at FROM event_reminders WHERE event_id = $1', [eventId])) as { next_check_at: Date | null }[];
+      return row.next_check_at?.toISOString() ?? null;
+    };
+
+    // Monday: nothing due; next look an hour before Sunday 4 October, 10:00 Madrid.
+    await notifications.sendDueEventReminders(new Date('2026-09-28T07:30:00.000Z'));
+    expect(sent).toEqual([]);
+    expect(await nextCheck()).toBe('2026-10-04T07:00:00.000Z');
+
+    // Moved to Saturdays: worked out again on the next sweep, and reminded.
+    await client(app).patch(`/pois/${place.id}/events/${eventId}`).set(as(adminToken)).send({ repeatDays: [6] }).expect(200);
+    expect(await nextCheck()).toBeNull();
+    await notifications.sendDueEventReminders(new Date('2026-10-03T07:30:00.000Z'));
+    expect(sent.map((m) => [m.to, m.title])).toEqual([[anaPhone, 'In 1 hour: Mass']]);
+    expect(await nextCheck()).toBe('2026-10-10T07:00:00.000Z');
+  });
+
   it('tells members once when a livestream goes live', async () => {
     const stream = await client(app)
       .post(`/pois/${place.id}/livestreams`)

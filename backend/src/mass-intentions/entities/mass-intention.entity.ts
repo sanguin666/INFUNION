@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import type { Relation } from 'typeorm';
 import { Poi } from '../../pois/entities/poi.entity.js';
 import { User } from '../../users/entities/user.entity.js';
@@ -20,6 +20,9 @@ export enum MassIntentionStatus {
  * office, and listed by celebration for the priest to read out.
  */
 @Entity('mass_intentions')
+@Index('IDX_mass_intentions_poi', ['poi'])
+@Index('IDX_mass_intentions_requester', ['requester'])
+@Index('IDX_mass_intentions_donation', ['donation'])
 export class MassIntention {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
