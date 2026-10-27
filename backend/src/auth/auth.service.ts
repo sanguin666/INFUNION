@@ -10,6 +10,7 @@ import { JoinPoiDto } from '../user-pois/dto/join-poi.dto.js';
 import type { Language } from '../common/enums/language.enum.js';
 import { LoginThrottle } from './login-throttle.js';
 import { SuperadminAccess } from './superadmin-access.service.js';
+import { CONSENT_VERSION } from '../privacy/consent.js';
 
 // Five wrong passwords for one address in 15 minutes locks it for 15.
 const adminLoginThrottle = new LoginThrottle(5, 15 * 60_000, 15 * 60_000);
@@ -65,6 +66,10 @@ export class AuthService {
       // deleted, so the app treats it as a preference, not a guarantee.
       lastActivePoiId: user.lastActivePoiId,
       language: user.language,
+      // The app asks to accept the terms and privacy policy whenever this
+      // is true: never accepted, or accepted before the current version.
+      consentRequired: user.consentVersion !== CONSENT_VERSION,
+      consentVersion: CONSENT_VERSION,
       // Shows the Superadmin menu; every superadmin route checks again.
       isSuperadmin: (await this.superadminAccess.identify(userId)) !== null,
       adminPois,

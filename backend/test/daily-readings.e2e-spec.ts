@@ -45,7 +45,7 @@ describe('Daily readings (e2e)', () => {
       .send({ moduleType: 'daily_readings', status: 'active' })
       .expect(201);
     ana = await signInWithId(app, '+34600500002', 'Ana');
-    await client(app).post('/auth/me/pois').set(as(ana.token)).send({ qrCodeToken: place.qrCodeToken }).expect(201);
+    await client(app).post('/auth/me/pois').set(as(ana.token)).send({ qrCodeToken: place.qrCodeToken, religiousConsent: true }).expect(201);
     await client(app).post('/auth/me/push-tokens').set(as(ana.token)).send({ token: 'ExponentPushToken[ana]' }).expect(204);
   });
 

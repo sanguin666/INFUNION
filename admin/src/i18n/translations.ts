@@ -749,6 +749,10 @@ export type Translations = {
     sending: string;
     sendHint: string;
     sendError: string;
+    dataExport: string;
+    dataRemove: string;
+    dataRemoveConfirm: string;
+    dataError: string;
   };
   readings: {
     title: string;
@@ -1527,6 +1531,10 @@ const en: Translations = {
     sending: "Sending…",
     sendHint: "{{name}} gets a notification and reads it in the app.",
     sendError: "The message could not be sent.",
+    dataExport: 'Their data',
+    dataRemove: 'Remove',
+    dataRemoveConfirm: 'Remove {{name}} from this place? Their requests, prayer requests, posts and messages here are deleted for good. Gifts stay, as the law requires. Do this when the member asks for it.',
+    dataError: 'Couldn’t complete this. Please try again.',
   },
   readings: {
     title: 'Daily readings',
@@ -2305,6 +2313,10 @@ const es: Translations = {
     sending: "Enviando…",
     sendHint: "{{name}} recibe una notificación y lo lee en la aplicación.",
     sendError: "No se ha podido enviar el mensaje.",
+    dataExport: 'Sus datos',
+    dataRemove: 'Eliminar',
+    dataRemoveConfirm: '¿Eliminar a {{name}} de este lugar? Sus solicitudes, peticiones de oración, publicaciones y mensajes aquí se borran para siempre. Los donativos se conservan, como exige la ley. Hazlo cuando el miembro lo pida.',
+    dataError: 'No se pudo completar. Inténtalo de nuevo.',
   },
   readings: {
     title: 'Lecturas del día',
@@ -3083,6 +3095,10 @@ const fr: Translations = {
     sending: "Envoi…",
     sendHint: "{{name}} reçoit une notification et le lit dans l'application.",
     sendError: "Le message n'a pas pu être envoyé.",
+    dataExport: 'Ses données',
+    dataRemove: 'Retirer',
+    dataRemoveConfirm: 'Retirer {{name}} de ce lieu ? Ses demandes, intentions de prière, publications et messages ici sont supprimés définitivement. Les dons sont conservés, comme la loi l’exige. À faire quand le membre le demande.',
+    dataError: 'Impossible de terminer. Veuillez réessayer.',
   },
   readings: {
     title: 'Lectures du jour',
@@ -3861,6 +3877,10 @@ const va: Translations = {
     sending: "Enviant…",
     sendHint: "{{name}} rep una notificació i el llig en l'aplicació.",
     sendError: "No s'ha pogut enviar el missatge.",
+    dataExport: 'Les seues dades',
+    dataRemove: 'Eliminar',
+    dataRemoveConfirm: 'Vols eliminar {{name}} d’este lloc? Les seues sol·licituds, peticions d’oració, publicacions i missatges ací s’esborren per sempre. Els donatius es conserven, com exigix la llei. Fes-ho quan el membre ho demane.',
+    dataError: 'No s’ha pogut completar. Torna-ho a provar.',
   },
   readings: {
     title: 'Lectures del dia',
@@ -4639,6 +4659,10 @@ const gl: Translations = {
     sending: "Enviando…",
     sendHint: "{{name}} recibe unha notificación e lea na aplicación.",
     sendError: "Non se puido enviar a mensaxe.",
+    dataExport: 'Os seus datos',
+    dataRemove: 'Eliminar',
+    dataRemoveConfirm: 'Eliminar a {{name}} deste lugar? As súas solicitudes, peticións de oración, publicacións e mensaxes aquí bórranse para sempre. Os donativos consérvanse, como esixe a lei. Faino cando o membro o pida.',
+    dataError: 'Non se puido completar. Téntao de novo.',
   },
   readings: {
     title: 'Lecturas do día',
@@ -5417,6 +5441,10 @@ const pt: Translations = {
     sending: "A enviar…",
     sendHint: "{{name}} recebe uma notificação e lê-a na aplicação.",
     sendError: "Não foi possível enviar a mensagem.",
+    dataExport: 'Os seus dados',
+    dataRemove: 'Remover',
+    dataRemoveConfirm: 'Remover {{name}} deste lugar? Os seus pedidos, pedidos de oração, publicações e mensagens aqui são eliminados para sempre. Os donativos ficam, como a lei exige. Faça-o quando o membro o pedir.',
+    dataError: 'Não foi possível concluir. Tente novamente.',
   },
   readings: {
     title: 'Leituras do dia',

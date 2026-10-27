@@ -9,13 +9,22 @@ import { ScanQRScreen } from './src/screens/ScanQRScreen';
 import { NearbyScreen } from './src/screens/NearbyScreen';
 import { PoiHubScreen } from './src/screens/PoiHubScreen';
 import { PhoneLoginScreen } from './src/screens/PhoneLoginScreen';
+import { ConsentScreen } from './src/screens/ConsentScreen';
+import { ReligiousConsentSheet } from './src/components/ReligiousConsentSheet';
 import { PlaceSwitcher } from './src/components/PlaceSwitcher';
 import { IntroAnimation } from './src/components/IntroAnimation';
 import { PreviewApp, previewPoiId } from './src/preview/PreviewApp';
 import { I18nProvider, useI18n } from './src/i18n/I18nContext';
 import { enablePush, onNotificationTapped, refreshPush, type PushTarget } from './src/notifications/push';
 import { AuthProvider, useAuth } from './src/auth/AuthContext';
-import { demoSignIn, demoSignInAvailable, joinPoi, leavePoi, setLastActivePoi } from './src/api/auth';
+import {
+  demoSignIn,
+  demoSignInAvailable,
+  joinPoi,
+  leavePoi,
+  needsReligiousConsent,
+  setLastActivePoi,
+} from './src/api/auth';
 import { getPoi } from './src/api/pois';
 import { forgetPlace, getSavedPlaces, rememberPlace, type SavedPlace } from './src/storage/savedPlaces';
 import { landingPoi } from './src/landing';
@@ -91,6 +100,11 @@ function AppRoutes() {
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [switchingTo, setSwitchingTo] = useState<string | null>(null);
   const [switchFailed, setSwitchFailed] = useState(false);
+  // The church whose question is on screen: joining it records religious
+  // belief, so the backend wants an explicit yes first.
+  const [consentPoi, setConsentPoi] = useState<Poi | null>(null);
+  // Until the current terms are accepted, that is the only screen.
+  const consenting = !!me?.consentRequired;
 
   useEffect(() => {
     let cancelled = false;
@@ -120,11 +134,19 @@ function AppRoutes() {
       setLanded(false);
       return;
     }
-    if (landed) return;
+    // Landing waits for the terms, so the church question below comes after.
+    if (landed || me.consentRequired) return;
 
     const poi = landingPoi(me);
     setStack(poi ? [{ name: 'hub', poi }] : [{ name: 'addPlace' }]);
     setLanded(true);
+    // A church membership from before the religious-data question is asked
+    // here once; joining again is harmless for everyone else.
+    if (poi) {
+      joinPoi(poi.qrCodeToken).catch((error) => {
+        if (needsReligiousConsent(error)) setConsentPoi(poi);
+      });
+    }
   }, [ready, me, landed]);
 
   // Whether the welcome screen offers the demo account under the real
@@ -171,12 +193,37 @@ function AppRoutes() {
     // person was last, so both follow the account rather than the device.
     // Either failing is harmless — the device list below still remembers
     // the place, exactly as it did before there were accounts.
+    // A church asks first; see agreeToJoin below.
     joinPoi(poi.qrCodeToken)
       .then(() => setLastActivePoi(poi.id))
       .then(() => refresh())
-      .catch(() => undefined);
+      .catch((error) => {
+        if (needsReligiousConsent(error)) setConsentPoi(poi);
+      });
     setStack([{ name: 'hub', poi }]);
     closeSwitcher();
+  }
+
+  async function agreeToJoin(poi: Poi) {
+    await joinPoi(poi.qrCodeToken, true);
+    setConsentPoi(null);
+    await setLastActivePoi(poi.id).catch(() => undefined);
+    await refresh();
+  }
+
+  /**
+   * "Not now" keeps the place open to read, but it is not one of their
+   * places: a membership from before the question is ended, since it can't
+   * be kept without the agreement.
+   */
+  function declineToJoin(poi: Poi) {
+    setConsentPoi(null);
+    if (!me?.pois.some((mine) => mine.id === poi.id)) return;
+    leavePoi(poi.id)
+      .then(() => forgetPlace(poi.id))
+      .then(setPlaces)
+      .then(() => refresh())
+      .catch(() => undefined);
   }
 
   // A place picked on the map or in "near you": what the map knows is a
@@ -284,6 +331,8 @@ function AppRoutes() {
         />
       )}
 
+      {ready && consenting && <ConsentScreen />}
+
       {ready && current?.name === 'signIn' && (
         <PhoneLoginScreen
           onBack={() => setStack((s) => s.filter((route) => route.name !== 'signIn'))}
@@ -293,7 +342,7 @@ function AppRoutes() {
         />
       )}
 
-      {ready && me && current?.name === 'addPlace' && (
+      {ready && !consenting && me && current?.name === 'addPlace' && (
         <AddPlaceScreen
           onScanQR={() => push({ name: 'scan' })}
           onOpenPoi={openPoi}
@@ -303,7 +352,7 @@ function AppRoutes() {
         />
       )}
 
-      {ready && me && current?.name === 'nearby' && (
+      {ready && !consenting && me && current?.name === 'nearby' && (
         <NearbyScreen
           key={current.query ?? `${current.origin?.latitude},${current.origin?.longitude}`}
           origin={current.origin}
@@ -314,9 +363,9 @@ function AppRoutes() {
         />
       )}
 
-      {ready && current?.name === 'scan' && <ScanQRScreen onBack={pop} onFound={openPoi} />}
+      {ready && !consenting && current?.name === 'scan' && <ScanQRScreen onBack={pop} onFound={openPoi} />}
 
-      {ready && current?.name === 'hub' && (
+      {ready && !consenting && current?.name === 'hub' && (
         /* Keyed by the place, so entering a different one starts on its
            own home tab rather than wherever the last place was left —
            landing on another place's "More" menu after leaving one reads
@@ -334,7 +383,7 @@ function AppRoutes() {
 
       {/* Reachable from the hub's banner and from the add-a-place screen
           alike, so it lives outside both rather than inside either. */}
-      {ready && me && (
+      {ready && !consenting && me && (
         <PlaceSwitcher
           visible={switcherOpen}
           places={places}
@@ -349,6 +398,12 @@ function AppRoutes() {
           onClose={closeSwitcher}
         />
       )}
+
+      <ReligiousConsentSheet
+        poiName={consentPoi?.name ?? null}
+        onAgree={() => (consentPoi ? agreeToJoin(consentPoi) : Promise.resolve())}
+        onDecline={() => consentPoi && declineToJoin(consentPoi)}
+      />
 
       {!introDone && <IntroAnimation onDone={() => setIntroDone(true)} />}
 
