@@ -544,6 +544,31 @@ export type Translations = {
     kind_gospel: string;
     kind_other: string;
   };
+  privacy: {
+    termsTitle: string;
+    termsIntro: string;
+    ageCheck: string;
+    termsCheck: string;
+    readTerms: string;
+    readPrivacy: string;
+    continue: string;
+    termsError: string;
+    churchTitle: string;
+    churchBody: string;
+    churchAgree: string;
+    churchDecline: string;
+    dataTitle: string;
+    download: string;
+    downloadError: string;
+    privacyPolicy: string;
+    terms: string;
+    deleteAccount: string;
+    deleteQuestion: string;
+    deleteExplainer: string;
+    deleteConfirm: string;
+    deleteError: string;
+    deleteManager: string;
+  };
 };
 
 const en: Translations = {
@@ -1074,6 +1099,31 @@ const en: Translations = {
     kind_second: 'Second reading',
     kind_gospel: 'Gospel',
     kind_other: 'Reading',
+  },
+  privacy: {
+    termsTitle: 'Before you start',
+    termsIntro: 'infunion keeps your phone number, your name and what you share with your places. Here is how we look after it.',
+    ageCheck: 'I am 14 or older',
+    termsCheck: 'I accept the terms of use and the privacy policy',
+    readTerms: 'Read the terms of use',
+    readPrivacy: 'Read the privacy policy',
+    continue: 'Continue',
+    termsError: 'Couldn’t save your answer. Please try again.',
+    churchTitle: 'Join {{poiName}}?',
+    churchBody: 'Following a church shows that you share its faith. This is sensitive information, so we need your clear agreement to record it. Only this place’s team sees that you belong to it, and you can withdraw your agreement at any time by leaving the place.',
+    churchAgree: 'I agree, join',
+    churchDecline: 'Not now',
+    dataTitle: 'Your data',
+    download: 'Download my data',
+    downloadError: 'Couldn’t prepare your data. Please try again.',
+    privacyPolicy: 'Privacy policy',
+    terms: 'Terms of use',
+    deleteAccount: 'Delete my account',
+    deleteQuestion: 'Delete your account?',
+    deleteExplainer: 'Your account, your places, your requests, messages and posts are deleted for good. Gifts stay with the communities, which must keep them by law.',
+    deleteConfirm: 'Delete for good',
+    deleteError: 'Couldn’t delete your account. Please try again.',
+    deleteManager: 'You manage a place, so this account can’t be deleted here. Write to hello@infunion.app.',
   },
 };
 
@@ -1606,6 +1656,31 @@ const es: Translations = {
     kind_gospel: 'Evangelio',
     kind_other: 'Lectura',
   },
+  privacy: {
+    termsTitle: 'Antes de empezar',
+    termsIntro: 'infunion guarda tu número de teléfono, tu nombre y lo que compartes con tus lugares. Así lo cuidamos.',
+    ageCheck: 'Tengo 14 años o más',
+    termsCheck: 'Acepto las condiciones de uso y la política de privacidad',
+    readTerms: 'Leer las condiciones de uso',
+    readPrivacy: 'Leer la política de privacidad',
+    continue: 'Continuar',
+    termsError: 'No se pudo guardar tu respuesta. Inténtalo de nuevo.',
+    churchTitle: '¿Unirte a {{poiName}}?',
+    churchBody: 'Seguir una iglesia muestra que compartes su fe. Es un dato sensible, así que necesitamos tu consentimiento expreso para registrarlo. Solo el equipo de este lugar ve que formas parte de él, y puedes retirar tu consentimiento en cualquier momento dejando el lugar.',
+    churchAgree: 'Acepto, unirme',
+    churchDecline: 'Ahora no',
+    dataTitle: 'Tus datos',
+    download: 'Descargar mis datos',
+    downloadError: 'No se pudieron preparar tus datos. Inténtalo de nuevo.',
+    privacyPolicy: 'Política de privacidad',
+    terms: 'Condiciones de uso',
+    deleteAccount: 'Eliminar mi cuenta',
+    deleteQuestion: '¿Eliminar tu cuenta?',
+    deleteExplainer: 'Tu cuenta, tus lugares, tus solicitudes, mensajes y publicaciones se eliminan para siempre. Los donativos se quedan en las comunidades, que deben conservarlos por ley.',
+    deleteConfirm: 'Eliminar para siempre',
+    deleteError: 'No se pudo eliminar tu cuenta. Inténtalo de nuevo.',
+    deleteManager: 'Gestionas un lugar, así que esta cuenta no se puede eliminar aquí. Escribe a hello@infunion.app.',
+  },
 };
 
 const fr: Translations = {
@@ -2136,6 +2211,31 @@ const fr: Translations = {
     kind_second: 'Deuxième lecture',
     kind_gospel: 'Évangile',
     kind_other: 'Lecture',
+  },
+  privacy: {
+    termsTitle: 'Avant de commencer',
+    termsIntro: 'infunion conserve votre numéro de téléphone, votre nom et ce que vous partagez avec vos lieux. Voici comment nous en prenons soin.',
+    ageCheck: 'J’ai 14 ans ou plus',
+    termsCheck: 'J’accepte les conditions d’utilisation et la politique de confidentialité',
+    readTerms: 'Lire les conditions d’utilisation',
+    readPrivacy: 'Lire la politique de confidentialité',
+    continue: 'Continuer',
+    termsError: 'Impossible d’enregistrer votre réponse. Veuillez réessayer.',
+    churchTitle: 'Rejoindre {{poiName}} ?',
+    churchBody: 'Suivre une église montre que vous partagez sa foi. C’est une donnée sensible : nous avons besoin de votre accord explicite pour l’enregistrer. Seule l’équipe de ce lieu voit que vous en faites partie, et vous pouvez retirer votre accord à tout moment en quittant le lieu.',
+    churchAgree: 'J’accepte, rejoindre',
+    churchDecline: 'Pas maintenant',
+    dataTitle: 'Vos données',
+    download: 'Télécharger mes données',
+    downloadError: 'Impossible de préparer vos données. Veuillez réessayer.',
+    privacyPolicy: 'Politique de confidentialité',
+    terms: 'Conditions d’utilisation',
+    deleteAccount: 'Supprimer mon compte',
+    deleteQuestion: 'Supprimer votre compte ?',
+    deleteExplainer: 'Votre compte, vos lieux, vos demandes, messages et publications sont supprimés définitivement. Les dons restent aux communautés, qui doivent les conserver selon la loi.',
+    deleteConfirm: 'Supprimer définitivement',
+    deleteError: 'Impossible de supprimer votre compte. Veuillez réessayer.',
+    deleteManager: 'Vous gérez un lieu : ce compte ne peut pas être supprimé ici. Écrivez à hello@infunion.app.',
   },
 };
 
@@ -2668,6 +2768,31 @@ const va: Translations = {
     kind_gospel: 'Evangeli',
     kind_other: 'Lectura',
   },
+  privacy: {
+    termsTitle: 'Abans de començar',
+    termsIntro: 'infunion guarda el teu número de telèfon, el teu nom i el que comparteixes amb els teus llocs. Així ho cuidem.',
+    ageCheck: 'Tinc 14 anys o més',
+    termsCheck: 'Accepte les condicions d’ús i la política de privacitat',
+    readTerms: 'Llegir les condicions d’ús',
+    readPrivacy: 'Llegir la política de privacitat',
+    continue: 'Continuar',
+    termsError: 'No s’ha pogut guardar la teua resposta. Torna-ho a provar.',
+    churchTitle: 'Vols unir-te a {{poiName}}?',
+    churchBody: 'Seguir una església mostra que compartixes la seua fe. És una dada sensible, per això necessitem el teu consentiment exprés per a registrar-la. Només l’equip d’este lloc veu que en formes part, i pots retirar el teu consentiment en qualsevol moment deixant el lloc.',
+    churchAgree: 'Accepte, unir-me',
+    churchDecline: 'Ara no',
+    dataTitle: 'Les teues dades',
+    download: 'Descarregar les meues dades',
+    downloadError: 'No s’han pogut preparar les teues dades. Torna-ho a provar.',
+    privacyPolicy: 'Política de privacitat',
+    terms: 'Condicions d’ús',
+    deleteAccount: 'Eliminar el meu compte',
+    deleteQuestion: 'Vols eliminar el teu compte?',
+    deleteExplainer: 'El teu compte, els teus llocs, les teues sol·licituds, missatges i publicacions s’eliminen per sempre. Els donatius es queden a les comunitats, que han de conservar-los per llei.',
+    deleteConfirm: 'Eliminar per sempre',
+    deleteError: 'No s’ha pogut eliminar el teu compte. Torna-ho a provar.',
+    deleteManager: 'Gestiones un lloc, per això este compte no es pot eliminar ací. Escriu a hello@infunion.app.',
+  },
 };
 
 const gl: Translations = {
@@ -3198,6 +3323,31 @@ const gl: Translations = {
     kind_second: 'Segunda lectura',
     kind_gospel: 'Evanxeo',
     kind_other: 'Lectura',
+  },
+  privacy: {
+    termsTitle: 'Antes de comezar',
+    termsIntro: 'infunion garda o teu número de teléfono, o teu nome e o que compartes cos teus lugares. Así o coidamos.',
+    ageCheck: 'Teño 14 anos ou máis',
+    termsCheck: 'Acepto as condicións de uso e a política de privacidade',
+    readTerms: 'Ler as condicións de uso',
+    readPrivacy: 'Ler a política de privacidade',
+    continue: 'Continuar',
+    termsError: 'Non se puido gardar a túa resposta. Téntao de novo.',
+    churchTitle: 'Unirte a {{poiName}}?',
+    churchBody: 'Seguir unha igrexa mostra que compartes a súa fe. É un dato sensible, así que necesitamos o teu consentimento expreso para rexistralo. Só o equipo deste lugar ve que formas parte del, e podes retirar o teu consentimento en calquera momento deixando o lugar.',
+    churchAgree: 'Acepto, unirme',
+    churchDecline: 'Agora non',
+    dataTitle: 'Os teus datos',
+    download: 'Descargar os meus datos',
+    downloadError: 'Non se puideron preparar os teus datos. Téntao de novo.',
+    privacyPolicy: 'Política de privacidade',
+    terms: 'Condicións de uso',
+    deleteAccount: 'Eliminar a miña conta',
+    deleteQuestion: 'Eliminar a túa conta?',
+    deleteExplainer: 'A túa conta, os teus lugares, as túas solicitudes, mensaxes e publicacións elimínanse para sempre. Os donativos quedan nas comunidades, que deben conservalos por lei.',
+    deleteConfirm: 'Eliminar para sempre',
+    deleteError: 'Non se puido eliminar a túa conta. Téntao de novo.',
+    deleteManager: 'Xestionas un lugar, así que esta conta non se pode eliminar aquí. Escribe a hello@infunion.app.',
   },
 };
 
@@ -3730,6 +3880,31 @@ const pt: Translations = {
     kind_second: 'Segunda leitura',
     kind_gospel: 'Evangelho',
     kind_other: 'Leitura',
+  },
+  privacy: {
+    termsTitle: 'Antes de começar',
+    termsIntro: 'A infunion guarda o seu número de telemóvel, o seu nome e o que partilha com os seus lugares. É assim que cuidamos disso.',
+    ageCheck: 'Tenho 14 anos ou mais',
+    termsCheck: 'Aceito os termos de utilização e a política de privacidade',
+    readTerms: 'Ler os termos de utilização',
+    readPrivacy: 'Ler a política de privacidade',
+    continue: 'Continuar',
+    termsError: 'Não foi possível guardar a sua resposta. Tente novamente.',
+    churchTitle: 'Juntar-se a {{poiName}}?',
+    churchBody: 'Seguir uma igreja mostra que partilha a sua fé. É um dado sensível, por isso precisamos do seu consentimento explícito para o registar. Só a equipa deste lugar vê que faz parte dele, e pode retirar o seu consentimento a qualquer momento saindo do lugar.',
+    churchAgree: 'Aceito, juntar-me',
+    churchDecline: 'Agora não',
+    dataTitle: 'Os seus dados',
+    download: 'Descarregar os meus dados',
+    downloadError: 'Não foi possível preparar os seus dados. Tente novamente.',
+    privacyPolicy: 'Política de privacidade',
+    terms: 'Termos de utilização',
+    deleteAccount: 'Eliminar a minha conta',
+    deleteQuestion: 'Eliminar a sua conta?',
+    deleteExplainer: 'A sua conta, os seus lugares, os seus pedidos, mensagens e publicações são eliminados para sempre. Os donativos ficam com as comunidades, que os devem conservar por lei.',
+    deleteConfirm: 'Eliminar para sempre',
+    deleteError: 'Não foi possível eliminar a sua conta. Tente novamente.',
+    deleteManager: 'Gere um lugar, por isso esta conta não pode ser eliminada aqui. Escreva para hello@infunion.app.',
   },
 };
 
