@@ -6,8 +6,10 @@ import { intlLocale } from '../i18n/translations';
 import { getBilling, startModule } from '../api/billing';
 import {
   MODULE_OFF,
+  exportMemberData,
   getMemberConversation,
   getMembers,
+  removeMemberData,
   sendMemberMessage,
   type MemberConversation,
   type MemberRow,
@@ -90,6 +92,39 @@ export function MembersPage() {
     }
   }
 
+  /**
+   * A member asking the office for a copy of their data, or for it to be
+   * erased (the community is responsible for what they did here). The copy
+   * downloads as a JSON file.
+   */
+  async function downloadData(member: MemberRow) {
+    setError(null);
+    try {
+      const data = await exportMemberData(poiId, member.userId);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${fold(nameOf(member, t)).replace(/[^a-z0-9]+/g, '-')}-data.json`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch {
+      setError(t('members.dataError'));
+    }
+  }
+
+  async function removeData(member: MemberRow) {
+    if (!window.confirm(t('members.dataRemoveConfirm', { name: nameOf(member, t) }))) return;
+    setError(null);
+    try {
+      await removeMemberData(poiId, member.userId);
+      setLoaded((current) =>
+        current ? { ...current, members: current.members.filter((m) => m.userId !== member.userId) } : current,
+      );
+    } catch {
+      setError(t('members.dataError'));
+    }
+  }
+
   function write(member: MemberRow) {
     if (live) {
       navigate(member.userId);
@@ -161,6 +196,16 @@ export function MembersPage() {
                         : [member.phone, t('members.memberSince', { date: date(member.joinedAt) })].filter(Boolean).join(' · ')}
                     </p>
                   </div>
+                  <button type="button" className="text-action" onClick={() => void downloadData(member)}>
+                    {t('members.dataExport')}
+                  </button>
+                  <button
+                    type="button"
+                    className="text-action text-action-destructive"
+                    onClick={() => void removeData(member)}
+                  >
+                    {t('members.dataRemove')}
+                  </button>
                   <button type="button" className="btn" onClick={() => write(member)}>
                     {live && member.lastMessage ? t('members.open') : t('members.write')}
                   </button>
