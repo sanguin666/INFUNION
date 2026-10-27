@@ -1,8 +1,6 @@
 import { createHash } from 'node:crypto';
-import { existsSync } from 'node:fs';
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
-import { PRIVATE_UPLOADS_ROOT } from '../common/upload/private-storage.js';
+import { text } from 'node:stream/consumers';
+import { fileStore, type OpenedFile } from '../common/storage/file-store.js';
 
 /**
  * Where the app's over-the-air updates live: plain files, no table.
@@ -12,12 +10,9 @@ import { PRIVATE_UPLOADS_ROOT } from '../common/upload/private-storage.js';
  *                                        hasn't changed is stored once
  *   releases/<platform>/<runtime>.json   the update phones on that build get
  *
- * Next to the private uploads by default, so it lands on the Railway volume
- * with nothing to configure. APP_UPDATES_DIR moves it.
+ * The file store's app-updates area: next to the private uploads on disk
+ * (APP_UPDATES_DIR moves it), its own prefix in the bucket.
  */
-export const APP_UPDATES_ROOT = process.env.APP_UPDATES_DIR
-  ? resolve(process.env.APP_UPDATES_DIR)
-  : join(PRIVATE_UPLOADS_ROOT, 'app-updates');
 
 export const PLATFORMS = ['android', 'ios'] as const;
 export type Platform = (typeof PLATFORMS)[number];
@@ -67,35 +62,33 @@ export function assetHash(content: Buffer): string {
   return createHash('sha256').update(content).digest('base64url');
 }
 
-export function assetPath(hash: string): string {
-  return join(APP_UPDATES_ROOT, 'assets', hash);
+function assetKey(hash: string): string {
+  return `assets/${hash}`;
 }
 
-function releasePath(platform: Platform, runtimeVersion: string): string {
-  return join(APP_UPDATES_ROOT, 'releases', platform, `${runtimeVersion}.json`);
+function releaseKey(platform: Platform, runtimeVersion: string): string {
+  return `releases/${platform}/${runtimeVersion}.json`;
 }
 
-export function hasAsset(hash: string): boolean {
-  return existsSync(assetPath(hash));
+export function hasAsset(hash: string): Promise<boolean> {
+  return fileStore().exists('app-updates', assetKey(hash));
 }
 
-/** Written under a temporary name first, so a phone never reads half a file. */
-async function writeAtomically(path: string, content: Buffer | string): Promise<void> {
-  await mkdir(join(path, '..'), { recursive: true });
-  const temporary = `${path}.${process.pid}.${Date.now()}.tmp`;
-  await writeFile(temporary, content);
-  await rename(temporary, path);
+export function openAsset(hash: string): Promise<OpenedFile | null> {
+  return fileStore().open('app-updates', assetKey(hash));
 }
 
 export async function saveAsset(hash: string, content: Buffer): Promise<void> {
-  if (hasAsset(hash)) return;
-  await writeAtomically(assetPath(hash), content);
+  if (await hasAsset(hash)) return;
+  await fileStore().put('app-updates', assetKey(hash), content);
 }
 
 export async function saveRelease(update: StoredUpdate): Promise<void> {
-  await writeAtomically(
-    releasePath(update.platform, update.runtimeVersion),
-    JSON.stringify(update, null, 2),
+  await fileStore().put(
+    'app-updates',
+    releaseKey(update.platform, update.runtimeVersion),
+    Buffer.from(JSON.stringify(update, null, 2)),
+    'application/json',
   );
 }
 
@@ -104,7 +97,8 @@ export async function latestRelease(
   runtimeVersion: string,
 ): Promise<StoredUpdate | null> {
   try {
-    return JSON.parse(await readFile(releasePath(platform, runtimeVersion), 'utf8')) as StoredUpdate;
+    const file = await fileStore().open('app-updates', releaseKey(platform, runtimeVersion));
+    return file ? (JSON.parse(await text(file.body)) as StoredUpdate) : null;
   } catch {
     return null;
   }

@@ -24,8 +24,8 @@ import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { memoryStorage } from 'multer';
 import {
   assetHash,
-  assetPath,
   hasAsset,
+  openAsset,
   isAssetHash,
   isPlatform,
   isRuntimeVersion,
@@ -102,26 +102,29 @@ export class AppUpdatesController {
 
   /** One file of an update. Named by its hash, so it never changes. */
   @Get('assets/:hash')
-  asset(
+  async asset(
     @Param('hash') hash: string,
     @Query('type') contentType: string | undefined,
     @Res() response: Response,
-  ): void {
-    if (!isAssetHash(hash) || !hasAsset(hash)) throw new NotFoundException('No such file');
+  ): Promise<void> {
+    const file = isAssetHash(hash) ? await openAsset(hash) : null;
+    if (!file) throw new NotFoundException('No such file');
     response.setHeader(
       'content-type',
       contentType && /^[\w.+-]+\/[\w.+-]+$/.test(contentType) ? contentType : 'application/octet-stream',
     );
     response.setHeader('cache-control', 'public, max-age=31536000, immutable');
-    response.sendFile(assetPath(hash));
+    file.body.on('error', () => response.destroy());
+    file.body.pipe(response);
   }
 
   /** Which of these files the server doesn't have yet, so only those are sent. */
   @Post('missing-assets')
   @HttpCode(200)
-  missingAssets(@Headers('authorization') authorization: string | undefined, @Body() dto: MissingAssetsDto) {
+  async missingAssets(@Headers('authorization') authorization: string | undefined, @Body() dto: MissingAssetsDto) {
     this.checkPublisher(authorization);
-    return { missing: dto.hashes.filter((hash) => !hasAsset(hash)) };
+    const present = await Promise.all(dto.hashes.map((hash) => hasAsset(hash)));
+    return { missing: dto.hashes.filter((_hash, index) => !present[index]) };
   }
 
   @Put('assets/:hash')
@@ -147,7 +150,9 @@ export class AppUpdatesController {
     @Body() dto: PublishUpdateDto,
   ): Promise<{ id: string; runtimeVersion: string }> {
     this.checkPublisher(authorization);
-    const missing = [dto.launchAsset, ...dto.assets].filter((asset) => !hasAsset(asset.hash));
+    const wanted = [dto.launchAsset, ...dto.assets];
+    const present = await Promise.all(wanted.map((asset) => hasAsset(asset.hash)));
+    const missing = wanted.filter((_asset, index) => !present[index]);
     if (missing.length > 0) {
       throw new BadRequestException(`${missing.length} file(s) not uploaded yet`);
     }

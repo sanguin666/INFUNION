@@ -28,6 +28,8 @@ import { SuperadminModule } from './superadmin/superadmin.module.js';
 import { PlacesMapModule } from './places-map/places-map.module.js';
 import { MemberMessagesModule } from './member-messages/member-messages.module.js';
 import { PrivacyModule } from './privacy/privacy.module.js';
+import { PublicFilesModule } from './public-files/public-files.module.js';
+import { RateLimitModule } from './common/rate-limit/rate-limit.module.js';
 import { AppUpdatesModule } from './app-updates/app-updates.module.js';
 
 @Module({
@@ -62,6 +64,8 @@ import { AppUpdatesModule } from './app-updates/app-updates.module.js';
     PlacesMapModule,
     MemberMessagesModule,
     PrivacyModule,
+    PublicFilesModule,
+    RateLimitModule,
     AppUpdatesModule,
   ],
   controllers: [AppController],
