@@ -1,15 +1,15 @@
 import { Injectable, Logger, NotFoundException, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { And, In, IsNull, LessThanOrEqual, MoreThan, Repository } from 'typeorm';
+import { In, IsNull, LessThanOrEqual, Repository } from 'typeorm';
 import { PushToken } from './entities/push-token.entity.js';
 import { EventReminder } from './entities/event-reminder.entity.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
 import { Event } from '../events/entities/event.entity.js';
-import { EventRecurrence } from '../events/entities/event-kinds.js';
 import { Language } from '../common/enums/language.enum.js';
 import { ExpoPushClient, type PushMessage } from './expo-push.client.js';
 import { formatTime, text } from './texts.js';
+import { runExclusive } from '../common/locks/run-exclusive.js';
 import { dayKey, isTimeZone, localTime, repeats, startsBetween } from '../events/occurrences.js';
 import type { UpdateNotificationPreferencesDto } from './dto/update-notification-preferences.dto.js';
 import type { RegisterPushTokenDto } from './dto/register-push-token.dto.js';
@@ -59,6 +59,23 @@ const PREFERENCE_COLUMN = {
 
 const REMINDER_LEAD_MS = 60 * 60 * 1000;
 const REMINDER_SWEEP_MS = 60 * 1000;
+const REMINDER_BATCH = 500;
+// How far ahead a bell looks for its next time; with none in sight it
+// looks again in a week (an event that ended, or moved far away).
+const LOOKAHEAD_MS = 45 * 24 * 60 * 60 * 1000;
+const RECHECK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * When the sweep next needs this bell: an hour before its next time after
+ * `after` (the time just reminded, or now), never earlier than the next
+ * sweep and never later than a week away.
+ */
+function nextCheck(event: Event, after: Date, now: Date, timeZone: string, fits: (start: Date) => boolean): Date {
+  const next = startsBetween(event, after, new Date(after.getTime() + LOOKAHEAD_MS), timeZone).find(fits);
+  const latest = now.getTime() + RECHECK_MS;
+  if (!next) return new Date(latest);
+  return new Date(Math.min(latest, Math.max(now.getTime() + 1, next.getTime() - REMINDER_LEAD_MS)));
+}
 
 @Injectable()
 export class NotificationsService implements OnModuleInit, OnModuleDestroy {
@@ -81,8 +98,11 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
   onModuleInit(): void {
     // Tests call sendDueEventReminders themselves, with a clock of their own.
     if (this.configService.get<string>('NODE_ENV') === 'test') return;
+    // Every copy of the API ticks; one at a time does the sending.
     this.sweep = setInterval(() => {
-      this.sendDueEventReminders().catch((error: Error) =>
+      runExclusive(this.reminderRepository.manager.connection, 'event-reminders', () =>
+        this.sendDueEventReminders(),
+      ).catch((error: Error) =>
         this.logger.warn(`Event reminders failed: ${error.message}`),
       );
     }, REMINDER_SWEEP_MS);
@@ -93,6 +113,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
   }
 
   async registerToken(userId: string, dto: RegisterPushTokenDto): Promise<void> {
+    const before = await this.tokenRepository.findOne({ where: { token: dto.token } });
     // Upsert on the token: a phone that changes hands moves to its new
     // owner instead of notifying both.
     await this.tokenRepository.upsert(
@@ -104,6 +125,15 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
       },
       ['token'],
     );
+    // A new phone or a new time zone: their bells' next times move.
+    if (!before || before.timeZone !== (dto.timeZone ?? null)) {
+      await this.reminderRepository
+        .createQueryBuilder()
+        .update()
+        .set({ nextCheckAt: null })
+        .where('user_id = :userId', { userId })
+        .execute();
+    }
   }
 
   async removeToken(userId: string, token: string): Promise<void> {
@@ -143,7 +173,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     await this.findMembership(userId, event.poi.id);
     // A one-off event has one day anyway.
     const only = repeats(event) ? (onlyDate ?? null) : null;
-    await this.reminderRepository.upsert({ user: { id: userId }, event: { id: eventId }, onlyDate: only }, [
+    await this.reminderRepository.upsert({ user: { id: userId }, event: { id: eventId }, onlyDate: only, nextCheckAt: null }, [
       'user',
       'event',
     ]);
@@ -162,15 +192,21 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
    */
   async sendDueEventReminders(now = new Date()): Promise<void> {
     const until = new Date(now.getTime() + REMINDER_LEAD_MS);
-    const reminders = await this.reminderRepository.find({
-      where: [
-        { remindedAt: IsNull(), event: { recurrence: EventRecurrence.NONE, startsAt: And(MoreThan(now), LessThanOrEqual(until)) } },
-        { event: { recurrence: In([EventRecurrence.WEEKLY, EventRecurrence.MONTHLY]) } },
-      ],
-      relations: { user: true, event: { poi: true } },
-    });
-    if (reminders.length === 0) return;
+    // In batches, so a sweep after downtime never loads everything at once.
+    for (;;) {
+      const reminders = await this.reminderRepository.find({
+        where: [{ nextCheckAt: IsNull() }, { nextCheckAt: LessThanOrEqual(now) }],
+        relations: { user: true, event: { poi: true } },
+        order: { nextCheckAt: { direction: 'ASC', nulls: 'FIRST' } },
+        take: REMINDER_BATCH,
+      });
+      if (reminders.length === 0) return;
+      await this.processReminders(reminders, now, until);
+      if (reminders.length < REMINDER_BATCH) return;
+    }
+  }
 
+  private async processReminders(reminders: EventReminder[], now: Date, until: Date): Promise<void> {
     const zones = await this.timeZonesOf(reminders.map((r) => r.user.id));
     for (const reminder of reminders) {
       const { event } = reminder;
@@ -181,18 +217,21 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
         await this.reminderRepository.delete({ id: reminder.id });
         continue;
       }
-      const start = startsBetween(event, now, until, timeZone).find(
-        (s) => !reminder.onlyDate || dayKey(localTime(s, timeZone)) === reminder.onlyDate,
-      );
-      if (!start || reminder.remindedFor?.getTime() === start.getTime()) continue;
+      const fits = (s: Date) => !reminder.onlyDate || dayKey(localTime(s, timeZone)) === reminder.onlyDate;
+      const start = startsBetween(event, now, until, timeZone).find(fits);
+      const due = !!start && reminder.remindedFor?.getTime() !== start.getTime();
 
-      if (reminder.onlyDate) {
+      if (due && reminder.onlyDate) {
         await this.reminderRepository.delete({ id: reminder.id });
       } else {
-        reminder.remindedAt = now;
-        reminder.remindedFor = start;
+        if (due) {
+          reminder.remindedAt = now;
+          reminder.remindedFor = start;
+        }
+        reminder.nextCheckAt = nextCheck(event, start ?? now, now, timeZone, fits);
         await this.reminderRepository.save(reminder);
       }
+      if (!due) continue;
       await this.notifyUsers([reminder.user.id], event.poi.id, 'events', (reader) => ({
         title: text(reader.language, 'inOneHour', { title: event.title }),
         body: [formatTime(start, reader.language, reader.timeZone ?? timeZone), event.location]

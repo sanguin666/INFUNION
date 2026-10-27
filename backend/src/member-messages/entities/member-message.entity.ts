@@ -1,10 +1,12 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import type { Relation } from 'typeorm';
 import { User } from '../../users/entities/user.entity.js';
 import { MemberConversation } from './member-conversation.entity.js';
 
 /** One message in a conversation between the office and a member. */
 @Entity('member_messages')
+@Index('IDX_member_messages_conversation', ['conversation'])
+@Index('IDX_member_messages_author', ['author'])
 export class MemberMessage {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

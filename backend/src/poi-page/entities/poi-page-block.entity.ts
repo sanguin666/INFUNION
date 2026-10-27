@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -19,6 +20,7 @@ import { PageBlockType } from '../../common/enums/page-block-type.enum.js';
  * editor and the app can both read them without a schema of their own.
  */
 @Entity('poi_page_blocks')
+@Index('IDX_poi_page_blocks_poi', ['poi'])
 export class PoiPageBlock {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

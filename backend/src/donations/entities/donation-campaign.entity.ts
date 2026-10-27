@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -22,6 +23,7 @@ const money = {
  * at the campaign, so it can't drift from the gifts themselves.
  */
 @Entity('donation_campaigns')
+@Index('IDX_donation_campaigns_poi', ['poi'])
 export class DonationCampaign {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

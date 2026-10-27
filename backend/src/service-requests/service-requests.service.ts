@@ -1,12 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { unlink } from 'node:fs/promises';
-import { join } from 'node:path';
 import { In, Not, Repository } from 'typeorm';
 import { PoisService } from '../pois/pois.service.js';
 import { User } from '../users/entities/user.entity.js';
 import { SignedUrlService } from '../common/signed-url/signed-url.service.js';
-import { PRIVATE_UPLOADS_ROOT } from '../common/upload/private-storage.js';
+import { fileStore } from '../common/storage/file-store.js';
 import { signedPrivateFileUrl } from '../private-files/private-files.controller.js';
 import {
   ServiceRequest,
@@ -23,7 +21,7 @@ import type {
 import { NotificationsService, type Reader } from '../notifications/notifications.service.js';
 import { formatWhen, requestStatusLabel, requestTypeLabel, text } from '../notifications/texts.js';
 
-/** The folder under PRIVATE_UPLOADS_ROOT every request file goes in. */
+/** The folder in the private file area every request file goes in. */
 export const REQUEST_FILES_FOLDER = 'requests';
 
 /** Which side of a request is looking. Decided by the route, never guessed. */
@@ -323,7 +321,7 @@ export class ServiceRequestsService {
   private async deleteStoredFile(path: string | null | undefined): Promise<void> {
     if (!path) return;
     // Best effort: a file already gone is not worth failing the request over.
-    await unlink(join(PRIVATE_UPLOADS_ROOT, path)).catch(() => undefined);
+    await fileStore().remove('private', path);
   }
 
   private fileView(path: string | null | undefined, name: string | null | undefined, mime: string | null | undefined): FileView | null {

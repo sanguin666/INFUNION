@@ -1,4 +1,6 @@
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 export type GeocodeResult = {
   label: string;
@@ -17,6 +19,7 @@ type NominatimHit = {
 };
 
 const CACHE_LIMIT = 500;
+const PACE_KEY = 'geocoder:last-call';
 
 /**
  * Turns an address or a town into coordinates with OpenStreetMap's
@@ -25,15 +28,20 @@ const CACHE_LIMIT = 500;
  * search-as-you-type. So this is only called when somebody presses
  * Search, requests are queued a second apart, and answers are cached.
  * NOMINATIM_URL can point at another Nominatim (a paid one, or our own)
- * if infunion outgrows the public server.
+ * if infunion outgrows the public server, and GEOCODER_MIN_INTERVAL_MS
+ * loosens the pace for one that allows more.
+ *
+ * The second apart holds across every copy of the API: each call takes
+ * its turn through a Postgres lock and a shared last-call time.
  */
 @Injectable()
 export class GeocoderService {
   private readonly logger = new Logger(GeocoderService.name);
   private readonly baseUrl = (process.env.NOMINATIM_URL ?? 'https://nominatim.openstreetmap.org').replace(/\/$/, '');
   private readonly cache = new Map<string, GeocodeResult[]>();
-  private queue: Promise<unknown> = Promise.resolve();
-  private lastCallAt = 0;
+  private readonly minIntervalMs = Number(process.env.GEOCODER_MIN_INTERVAL_MS ?? 1000);
+
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async search(query: string, language?: string): Promise<GeocodeResult[]> {
     const q = query.trim().replace(/\s+/g, ' ');
@@ -50,16 +58,25 @@ export class GeocoderService {
     return results;
   }
 
-  // One call at a time, a second apart, whoever asks.
-  private throttled<T>(task: () => Promise<T>): Promise<T> {
-    const run = this.queue.then(async () => {
-      const wait = this.lastCallAt + 1000 - Date.now();
-      if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
-      this.lastCallAt = Date.now();
-      return task();
-    });
-    this.queue = run.catch(() => undefined);
-    return run;
+  // One call at a time, a second apart, whoever asks and on whichever copy.
+  private async throttled<T>(task: () => Promise<T>): Promise<T> {
+    if (this.minIntervalMs > 0) {
+      await this.dataSource.transaction(async (manager) => {
+        await manager.query('SELECT pg_advisory_xact_lock(hashtext($1))', [PACE_KEY]);
+        const rows = (await manager.query('SELECT first_at FROM rate_limits WHERE key = $1', [PACE_KEY])) as {
+          first_at: Date;
+        }[];
+        const last = rows[0] ? new Date(rows[0].first_at).getTime() : 0;
+        const wait = last + this.minIntervalMs - Date.now();
+        if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+        await manager.query(
+          `INSERT INTO rate_limits (key, count, first_at, updated_at) VALUES ($1, 1, now(), now())
+           ON CONFLICT (key) DO UPDATE SET first_at = now(), count = rate_limits.count + 1, updated_at = now()`,
+          [PACE_KEY],
+        );
+      });
+    }
+    return task();
   }
 
   private async fetchFromNominatim(q: string, language?: string): Promise<GeocodeResult[]> {

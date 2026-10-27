@@ -17,6 +17,7 @@ import { MemberRole } from '../../common/enums/member-role.enum.js';
  * a user can belong to several POIs.
  */
 @Entity('user_pois')
+@Index('IDX_user_pois_poi', ['poi'])
 @Index(['user', 'poi'], { unique: true })
 export class UserPoi {
   @PrimaryGeneratedColumn('uuid')

@@ -66,6 +66,16 @@ jobs:
 
       - run: npm ci
 
+      # The fingerprint of the native side, baked into the APK. Phones
+      # compare theirs with this one (version.json on the release) to know a
+      # newer APK is out, and over-the-air updates only go to the APK
+      # carrying the same one.
+      - name: Runtime version
+        run: |
+          runtime=$(npx expo-updates runtimeversion:resolve --platform android | node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync(0, "utf8")).runtimeVersion)')
+          echo "RUNTIME_VERSION=$runtime" >> "$GITHUB_ENV"
+          echo "Runtime version: $runtime"
+
       - name: Build
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -78,8 +88,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           sha=$(git rev-parse HEAD)
+          printf '{"runtimeVersion":"%s","commit":"%s","branch":"%s","builtAt":"%s"}\n' \
+            "$RUNTIME_VERSION" "$sha" "${{ inputs.branch }}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$RUNNER_TEMP/version.json"
           gh release delete demo-apk --cleanup-tag --yes || true
-          gh release create demo-apk "$RUNNER_TEMP/infunion.apk" \
+          gh release create demo-apk "$RUNNER_TEMP/infunion.apk" "$RUNNER_TEMP/version.json" \
             --target "$sha" --prerelease \
             --title "Demo APK (${{ inputs.branch }}, $(date -u +'%d %b %Y %H:%M') UTC)" \
             --notes "Built from \`${{ inputs.branch }}\` at ${sha:0:7}. Open this page on the phone and tap infunion.apk to install."
