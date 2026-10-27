@@ -35,8 +35,8 @@ export type Campaign = {
 };
 
 // Where a gift can go from the Donations tab besides the general fund:
-// the Sunday collection, or one of the projects.
-export type DonationProject = { kind: 'collection' } | { kind: 'campaign'; campaign: Campaign };
+// one of the projects.
+export type DonationProject = { kind: 'campaign'; campaign: Campaign };
 
 // One of the giver's own gifts. `receiptUrl` is a signed link to its
 // printable tax receipt, or null when none was asked for.

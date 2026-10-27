@@ -308,5 +308,5 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
 }
 
 function projectKey(project: DonationProject): string {
-  return project.kind === 'campaign' ? project.campaign.id : project.kind;
+  return project.campaign.id;
 }

@@ -79,37 +79,37 @@ const PRODUCT_NAMES: Record<Language, Record<'gift' | 'monthly' | 'collection' |
   [Language.EN]: {
     gift: 'Donation to {name}',
     monthly: 'Monthly donation to {name}',
-    collection: 'Collection — {name}',
+    collection: 'Day-to-day running — {name}',
     intention: 'Mass intention — {name}',
   },
   [Language.FR]: {
     gift: 'Don à {name}',
     monthly: 'Don mensuel à {name}',
-    collection: 'Quête — {name}',
+    collection: 'Fonctionnement — {name}',
     intention: 'Intention de messe — {name}',
   },
   [Language.ES]: {
     gift: 'Donativo a {name}',
     monthly: 'Donativo mensual a {name}',
-    collection: 'Colecta — {name}',
+    collection: 'Día a día — {name}',
     intention: 'Intención de misa — {name}',
   },
   [Language.VA]: {
     gift: 'Donatiu a {name}',
     monthly: 'Donatiu mensual a {name}',
-    collection: 'Col·lecta — {name}',
+    collection: 'Dia a dia — {name}',
     intention: 'Intenció de missa — {name}',
   },
   [Language.GL]: {
     gift: 'Doazón a {name}',
     monthly: 'Doazón mensual a {name}',
-    collection: 'Colecta — {name}',
+    collection: 'Día a día — {name}',
     intention: 'Intención de misa — {name}',
   },
   [Language.PT]: {
     gift: 'Donativo a {name}',
     monthly: 'Donativo mensal a {name}',
-    collection: 'Ofertório — {name}',
+    collection: 'Dia a dia — {name}',
     intention: 'Intenção de missa — {name}',
   },
 };
