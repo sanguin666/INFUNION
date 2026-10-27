@@ -1,16 +1,23 @@
 name: Database backup
 
-# A full copy of the production database every night, kept 30 days in a
-# private Cloudflare R2 bucket (EU jurisdiction), separate from Railway, so
-# a lost or broken database can be restored from outside Railway too.
+# A full copy of the production database every night, kept 30 days outside
+# Railway, so a lost or broken database can be restored from elsewhere too.
+# Two places, picked by which secrets are set:
+#   - no BACKUP_S3_* secrets: an encrypted file attached to the workflow run
+#     (Actions > Database backup > a run > Artifacts). Free, no other account.
+#   - BACKUP_S3_* set: a private Cloudflare R2 bucket (EU jurisdiction).
 #
 # Restore (into an empty database, e.g. a new Railway Postgres):
-#   aws s3 cp s3://$BUCKET/production/<file>.dump . --endpoint-url $ENDPOINT
-#   pg_restore --no-owner --no-acl -d "$NEW_DATABASE_URL" <file>.dump
+#   download the .dump.gpg file (from the run, or with aws s3 cp from R2)
+#   gpg --decrypt --output backup.dump <file>.dump.gpg    (asks for BACKUP_PASSPHRASE)
+#   pg_restore --no-owner --no-acl -d "$NEW_DATABASE_URL" backup.dump
 #
 # Needs these repository secrets (Settings > Secrets and variables > Actions).
-# Until they are set this workflow skips with a warning instead of failing.
+# Until they are set every run fails, so a missing backup never looks green.
 #   PRODUCTION_DATABASE_URL   Railway > Postgres > Variables > DATABASE_PUBLIC_URL
+#   BACKUP_PASSPHRASE         a long random password; keep a copy outside GitHub,
+#                             without it the backups can't be opened
+# Optional, to keep the backups in R2 instead:
 #   BACKUP_S3_ENDPOINT        https://<account id>.eu.r2.cloudflarestorage.com
 #   BACKUP_S3_BUCKET          e.g. infunion-backups (not the uploads bucket)
 #   BACKUP_S3_ACCESS_KEY_ID / BACKUP_S3_SECRET_ACCESS_KEY
@@ -35,6 +42,7 @@ jobs:
     timeout-minutes: 30
     env:
       DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+      PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
       AWS_ACCESS_KEY_ID: ${{ secrets.BACKUP_S3_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_S3_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: auto
@@ -46,13 +54,16 @@ jobs:
       - name: Check the secrets are set
         id: secrets
         run: |
-          if [ -z "$DATABASE_URL" ] || [ -z "$ENDPOINT" ] || [ -z "$BUCKET" ] || [ -z "$AWS_ACCESS_KEY_ID" ]; then
-            echo "::warning::No backup made: add PRODUCTION_DATABASE_URL and the BACKUP_S3_* secrets (see the top of .github/workflows/db-backup.yml)."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
+          if [ -z "$DATABASE_URL" ] || [ -z "$PASSPHRASE" ]; then
+            echo "::error::No backup made: add the PRODUCTION_DATABASE_URL and BACKUP_PASSPHRASE repository secrets (see the top of .github/workflows/db-backup.yml)."
+            exit 1
+          elif [ -n "$ENDPOINT" ] && [ -n "$BUCKET" ] && [ -n "$AWS_ACCESS_KEY_ID" ]; then
+            echo "target=r2" >> "$GITHUB_OUTPUT"
+          else
+            echo "target=github" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Install the Postgres 17 client
-        if: steps.secrets.outputs.skip != 'true'
         # pg_dump must be at least the server's version; 17 dumps 16 and 17.
         run: |
           sudo install -d /usr/share/postgresql-common/pgdg
@@ -61,19 +72,37 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq postgresql-client-17
 
-      - name: Dump and upload
-        if: steps.secrets.outputs.skip != 'true'
+      - name: Dump and encrypt
+        id: dump
         run: |
           set -euo pipefail
           file="infunion-$(date -u +%Y-%m-%dT%H%M%SZ).dump"
           /usr/lib/postgresql/17/bin/pg_dump --format=custom --no-owner --no-acl --dbname="$DATABASE_URL" --file="$file"
           # A dump that can't be listed can't be restored: fail loudly now.
           /usr/lib/postgresql/17/bin/pg_restore --list "$file" > /dev/null
-          aws s3 cp "$file" "s3://$BUCKET/production/$file" --endpoint-url "$ENDPOINT" --only-show-errors
-          echo "Backed up $(du -h "$file" | cut -f1) as production/$file" >> "$GITHUB_STEP_SUMMARY"
+          # The dump holds members' personal data: it never leaves the runner unencrypted.
+          gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 --symmetric --cipher-algo AES256 \
+            --output "$file.gpg" "$file" 3<<<"$PASSPHRASE"
+          rm "$file"
+          echo "file=$file.gpg" >> "$GITHUB_OUTPUT"
+          echo "Backed up $(du -h "$file.gpg" | cut -f1) as $file.gpg (${{ steps.secrets.outputs.target }})" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Remove backups older than ${{ env.KEEP_DAYS }} days
-        if: steps.secrets.outputs.skip != 'true'
+      - name: Keep on GitHub
+        if: steps.secrets.outputs.target == 'github'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.dump.outputs.file }}
+          path: ${{ steps.dump.outputs.file }}
+          retention-days: ${{ env.KEEP_DAYS }}
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Upload to R2
+        if: steps.secrets.outputs.target == 'r2'
+        run: aws s3 cp "${{ steps.dump.outputs.file }}" "s3://$BUCKET/production/${{ steps.dump.outputs.file }}" --endpoint-url "$ENDPOINT" --only-show-errors
+
+      - name: Remove R2 backups older than ${{ env.KEEP_DAYS }} days
+        if: steps.secrets.outputs.target == 'r2'
         run: |
           set -euo pipefail
           cutoff=$(date -u -d "-$KEEP_DAYS days" +%Y-%m-%d)

@@ -97,7 +97,7 @@ export function IntroAnimation({ onDone }: { onDone: () => void }) {
           idPrefix="intro"
         />
         <G opacity={word} transform={`translate(133 ${8 * (1 - word)})`}>
-          <WordmarkArt dot={t >= DOT_IN ? dot : 0} underline={line} />
+          <WordmarkArt themed dot={t >= DOT_IN ? dot : 0} underline={line} />
         </G>
       </Svg>
     </Pressable>
