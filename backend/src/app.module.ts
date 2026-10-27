@@ -28,6 +28,7 @@ import { SuperadminModule } from './superadmin/superadmin.module.js';
 import { PlacesMapModule } from './places-map/places-map.module.js';
 import { MemberMessagesModule } from './member-messages/member-messages.module.js';
 import { PrivacyModule } from './privacy/privacy.module.js';
+import { AppUpdatesModule } from './app-updates/app-updates.module.js';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { PrivacyModule } from './privacy/privacy.module.js';
     PlacesMapModule,
     MemberMessagesModule,
     PrivacyModule,
+    AppUpdatesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

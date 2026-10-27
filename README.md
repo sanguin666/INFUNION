@@ -174,7 +174,13 @@ For showing the app to someone off your network, a standalone build beats Expo G
 
 On the day, just open the app on the phone. Nothing to start, scan or type.
 
-Re-run the build only when the app code changes. Backend changes need nothing rebuilt, as long as the backend URL stays the same.
+Re-run the build only when the native side changes (see below). Backend changes need nothing rebuilt, as long as the backend URL stays the same.
+
+#### Keeping phones up to date
+
+- **Screens and logic** reach phones over the air, with no new APK. When app code lands on `production` (or `staging`), the **App update** workflow (`.github/workflows/app-update.yml`, running `app/scripts/publish-update.mjs`) uploads the new JS to that environment's backend (`backend/src/app-updates`, files under `APP_UPDATES_DIR`, by default `PRIVATE_UPLOADS_DIR/app-updates`). The app checks when it opens and when it comes back to the front, downloads it, and shows "A new version of infunion is ready" with a Restart button; otherwise it switches on the next launch. It can also be run by hand from the Actions tab.
+- **Native changes** (a new native package, a permission, the icon, `app.json`/`eas.json`) need a new APK. Every build has a *runtime version*, a fingerprint of its native side, and an update is only ever offered to the APK with the same one, so new JS can never land on an APK that can't run it. The Demo APK workflow writes that fingerprint to `version.json` on the `demo-apk` release; a phone on another one shows "A new version of the app is available" with a Download button that fetches the APK.
+- One-time setup: pick a long random string and set it as `APP_UPDATES_TOKEN` on the Railway backends (production and staging) and as the repository secret `APP_UPDATES_TOKEN` on GitHub. Without it the workflow skips with a warning.
 
 > **iOS:** the same flow needs a paid Apple Developer account to install on a physical device, so this route is Android-only for now.
 
