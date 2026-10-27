@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { usePoiId } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
+import { getPoi } from '../api/pois';
 import { createEvent, deleteEvent, getEvents, updateEvent, type EventInput } from '../api/events';
 import type { Event, EventCategory, EventException } from '../api/types';
 import { weekdaysOf } from '../schedule';
@@ -14,6 +15,9 @@ import {
 } from '../format';
 
 const CATEGORIES: EventCategory[] = ['mass', 'confession', 'adoration', 'prayer', 'office_hours', 'other'];
+// Masses, confessions and adoration only make sense for a church (Seb,
+// 27 Oct 2026); other places get the rest.
+const CHURCH_ONLY: EventCategory[] = ['mass', 'confession', 'adoration'];
 
 // How often, as the form asks it. "Every day" and "some days" are both a
 // weekly event to the API, one with all seven days.
@@ -221,7 +225,17 @@ function canSave(draft: Draft): boolean {
   return Boolean(draft.title.trim() && draft.startsAt && (draft.repeat !== 'days' || draft.repeatDays.length));
 }
 
-function EventFields({ draft, onChange }: { draft: Draft; onChange: (patch: Partial<Draft>) => void }) {
+function EventFields({
+  draft,
+  onChange,
+  isChurch,
+}: {
+  draft: Draft;
+  onChange: (patch: Partial<Draft>) => void;
+  isChurch: boolean;
+}) {
+  // An event already filed under a church category keeps it on offer.
+  const categories = CATEGORIES.filter((c) => isChurch || !CHURCH_ONLY.includes(c) || c === draft.category);
   const { t, language } = useI18n();
   const repeating = draft.repeat !== 'none';
   const start = draft.startsAt ? new Date(draft.startsAt) : null;
@@ -273,7 +287,7 @@ function EventFields({ draft, onChange }: { draft: Draft; onChange: (patch: Part
       <label>
         {t('events.categoryLabel')}
         <select value={draft.category} onChange={(e) => onChange({ category: e.target.value as EventCategory })}>
-          {CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <option key={category} value={category}>
               {categoryName(category, t)}
             </option>
@@ -470,6 +484,13 @@ export function EventsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<Draft>(EMPTY_DRAFT);
+  const [isChurch, setIsChurch] = useState(false);
+
+  useEffect(() => {
+    getPoi(poiId)
+      .then((poi) => setIsChurch(poi.type === 'church'))
+      .catch(() => setIsChurch(false));
+  }, [poiId]);
 
   function load() {
     getEvents(poiId)
@@ -533,7 +554,7 @@ export function EventsPage() {
     if (editingId === item.id) {
       return (
         <div key={item.id} className="card form">
-          <EventFields draft={editDraft} onChange={(patch) => setEditDraft((d) => ({ ...d, ...patch }))} />
+          <EventFields isChurch={isChurch} draft={editDraft} onChange={(patch) => setEditDraft((d) => ({ ...d, ...patch }))} />
           <div className="card-actions">
             <button
               type="button"
@@ -575,7 +596,7 @@ export function EventsPage() {
       <p className="muted">{t('events.subtitle')}</p>
 
       <form className="form card" onSubmit={handleCreate}>
-        <EventFields draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
+        <EventFields isChurch={isChurch} draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
         <button
           type="submit"
           className="btn btn-primary"

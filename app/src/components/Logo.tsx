@@ -1,4 +1,5 @@
 import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg';
+import { colors } from '../theme/theme';
 import { WORDMARK_HEIGHT, WORDMARK_PARTS, WORDMARK_TRANSFORM, WORDMARK_UNDERLINE, WORDMARK_WIDTH } from './brandArt';
 
 // The infunion logo (Seb, 26 Oct 2026): a purple and a yellow ring linked
@@ -70,14 +71,19 @@ export function LogoMark({ size = 40, onDark = false }: { size?: number; onDark?
  */
 export function WordmarkArt({
   onDark = false,
+  themed = false,
   dot = 1,
   underline = 1,
 }: {
   onDark?: boolean;
+  /** Follow the light or dark theme instead of the fixed brand ink. */
+  themed?: boolean;
   dot?: number;
   underline?: number;
 }) {
-  const fill = { ink: onDark ? '#FFFFFF' : LOGO_INK, purple: onDark ? '#FFFFFF' : LOGO_PURPLE, yellow: LOGO_YELLOW };
+  const ink = themed ? colors.logoInk : LOGO_INK;
+  const fun = themed ? colors.logoFun : LOGO_PURPLE;
+  const fill = { ink: onDark ? '#FFFFFF' : ink, purple: onDark ? '#FFFFFF' : fun, yellow: LOGO_YELLOW };
   return (
     <G transform={WORDMARK_TRANSFORM}>
       {WORDMARK_PARTS.map((part, i) => (
@@ -109,7 +115,7 @@ export function Wordmark({ height = 40, onDark = false }: { height?: number; onD
       viewBox={`0 0 ${WORDMARK_WIDTH} ${WORDMARK_HEIGHT}`}
       accessibilityLabel="infunion"
     >
-      <WordmarkArt onDark={onDark} />
+      <WordmarkArt onDark={onDark} themed />
     </Svg>
   );
 }
@@ -122,7 +128,7 @@ export function Lockup({ height = 48, onDark = false }: { height?: number; onDar
         <Rings onDark={onDark} idPrefix={`lockup${height}`} />
       </G>
       <G transform="translate(133 0)">
-        <WordmarkArt onDark={onDark} />
+        <WordmarkArt onDark={onDark} themed />
       </G>
     </Svg>
   );
