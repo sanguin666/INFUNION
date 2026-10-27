@@ -63,23 +63,23 @@ jobs:
             echo "target=github" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install the Postgres 17 client
-        # pg_dump must be at least the server's version; 17 dumps 16 and 17.
+      - name: Install the Postgres 18 client
+        # pg_dump must be at least the server's version (production runs 18).
         run: |
           sudo install -d /usr/share/postgresql-common/pgdg
           sudo curl -fsSo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
           echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
           sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client-17
+          sudo apt-get install -y -qq postgresql-client-18
 
       - name: Dump and encrypt
         id: dump
         run: |
           set -euo pipefail
           file="infunion-$(date -u +%Y-%m-%dT%H%M%SZ).dump"
-          /usr/lib/postgresql/17/bin/pg_dump --format=custom --no-owner --no-acl --dbname="$DATABASE_URL" --file="$file"
+          /usr/lib/postgresql/18/bin/pg_dump --format=custom --no-owner --no-acl --dbname="$DATABASE_URL" --file="$file"
           # A dump that can't be listed can't be restored: fail loudly now.
-          /usr/lib/postgresql/17/bin/pg_restore --list "$file" > /dev/null
+          /usr/lib/postgresql/18/bin/pg_restore --list "$file" > /dev/null
           # The dump holds members' personal data: it never leaves the runner unencrypted.
           gpg --batch --yes --pinentry-mode loopback --passphrase-fd 3 --symmetric --cipher-algo AES256 \
             --output "$file.gpg" "$file" 3<<<"$PASSPHRASE"
