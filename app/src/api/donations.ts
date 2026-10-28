@@ -32,6 +32,8 @@ export type Campaign = {
   giftCount: number;
   // A picture of what the money is for: prefix it with API_BASE_URL.
   imageUrl: string | null;
+  // Where the money goes, as the office tells it (shares add up to 100).
+  allocation?: { label: string; percent: number }[] | null;
 };
 
 // Where a gift can go from the Donations tab besides the general fund:
@@ -79,6 +81,9 @@ export type MonthlyGift = {
   purpose: DonationPurpose;
   campaign: { id: string; title: string } | null;
   createdAt: string;
+  // What is wrong with its card, if anything: the last charge failed, or
+  // the card runs out before the next one.
+  paymentProblem?: 'failed' | 'card_expiring' | null;
 };
 
 /**
@@ -105,6 +110,20 @@ export function getCampaigns(poiId: string): Promise<Campaign[]> {
 
 export function getMyMonthlyGifts(poiId: string): Promise<MonthlyGift[]> {
   return apiGet<MonthlyGift[]>(`/pois/${encodeURIComponent(poiId)}/donations/mine/monthly`);
+}
+
+/** A Stripe page where the giver puts in a new card for a monthly gift. */
+export function getCardUpdateUrl(poiId: string, donationId: string): Promise<{ url: string }> {
+  return apiPost<{ url: string }>(
+    `/pois/${encodeURIComponent(poiId)}/donations/mine/monthly/${encodeURIComponent(donationId)}/card`,
+  );
+}
+
+/** What the signed-in giver already gave here this year, for the tax line. */
+export function getMyTaxContext(poiId: string): Promise<{ givenThisYear: number; recurrent: boolean }> {
+  return apiGet<{ givenThisYear: number; recurrent: boolean }>(
+    `/pois/${encodeURIComponent(poiId)}/donations/mine/tax`,
+  );
 }
 
 export function stopMonthlyGift(poiId: string, donationId: string): Promise<void> {

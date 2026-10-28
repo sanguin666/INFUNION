@@ -297,6 +297,14 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * One person, whatever kinds they turned off: for what concerns only
+   * them and can't wait, such as their own monthly gift failing.
+   */
+  async notifyUserAlways(userId: string, poiId: string, notification: Composer): Promise<void> {
+    await this.sendToUsers([userId], poiId, notification);
+  }
+
+  /**
    * The same as notifyPoiMembers/notifyUsers, but never throws and never
    * holds up the caller: a notification failing must not fail the news
    * post or reply that triggered it.

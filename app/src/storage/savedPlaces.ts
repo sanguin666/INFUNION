@@ -14,10 +14,21 @@ export type SavedPlace = {
   name: string;
   city: string | null;
   qrCodeToken: string;
+  // What the switcher draws beside the name: the place's logo, or its
+  // initials in its own colour.
+  logoUrl?: string | null;
+  theme?: string;
 };
 
-function toSaved(poi: Poi): SavedPlace {
-  return { id: poi.id, name: poi.name, city: poi.city, qrCodeToken: poi.qrCodeToken };
+export function toSaved(poi: Poi): SavedPlace {
+  return {
+    id: poi.id,
+    name: poi.name,
+    city: poi.city,
+    qrCodeToken: poi.qrCodeToken,
+    logoUrl: poi.logoUrl ?? null,
+    theme: poi.theme,
+  };
 }
 
 function parse(raw: string | null): SavedPlace[] {

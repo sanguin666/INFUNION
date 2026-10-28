@@ -33,6 +33,7 @@ import { getNotificationPreferences } from '../api/notifications';
 import { getPermissionState } from '../notifications/push';
 import { useAuth } from '../auth/AuthContext';
 import { useAppearance, type AppearancePreference } from '../theme/AppearanceContext';
+import { MadeWith } from '../components/MadeWith';
 
 /**
  * Each language written in itself, never translated. Somebody who opened
@@ -377,6 +378,8 @@ export function MoreScreen({
         </AccessibleText>
         <ChevronRightIcon size={22} color={colors.textMuted} />
       </Pressable>
+
+      <MadeWith />
 
       <Modal
         visible={appearanceOpen}

@@ -145,19 +145,73 @@ export const floatingShadow = {
   elevation: 8,
 };
 
+/**
+ * A community's accent (Seb, 28 Oct 2026): the theme its admin picked,
+ * worn on its own pages. Only the accent tokens change, so the page, the
+ * boxes, the text and every contrast stay as they are. Each has the
+ * same split as the default: `primary` for big fills and icons,
+ * `primaryStrong` for small text (lighter in dark mode), `primaryFill`
+ * under white text (dark in both), `primarySoft` for the selected wash.
+ * The names match the backend's PoiTheme and the admin's picker.
+ */
+export type AccentName = 'purple' | 'ocean' | 'forest' | 'terracotta' | 'ruby' | 'teal' | 'graphite';
+
+type Accent = Pick<Colors, 'primary' | 'primaryStrong' | 'primaryFill' | 'primarySoft' | 'focus'>;
+
+function accent(primary: string, strong: string, soft: string, darkStrong: string, darkSoft: string) {
+  return {
+    light: { primary, primaryStrong: strong, primaryFill: strong, primarySoft: soft, focus: primary },
+    dark: { primary, primaryStrong: darkStrong, primaryFill: strong, primarySoft: darkSoft, focus: darkStrong },
+  } satisfies Record<ColorScheme, Accent>;
+}
+
+export const ACCENTS: Record<AccentName, Record<ColorScheme, Accent>> = {
+  purple: {
+    light: {
+      primary: lightColors.primary,
+      primaryStrong: lightColors.primaryStrong,
+      primaryFill: lightColors.primaryFill,
+      primarySoft: lightColors.primarySoft,
+      focus: lightColors.focus,
+    },
+    dark: {
+      primary: darkColors.primary,
+      primaryStrong: darkColors.primaryStrong,
+      primaryFill: darkColors.primaryFill,
+      primarySoft: darkColors.primarySoft,
+      focus: darkColors.focus,
+    },
+  },
+  ocean: accent('#1F6FD1', '#1557A8', '#E3EEFB', '#8DBBF5', '#1C3150'),
+  forest: accent('#2E8B57', '#1E6B41', '#E2F3E9', '#86D3A6', '#1D3A2A'),
+  terracotta: accent('#D2602E', '#A8461C', '#FBEAE1', '#F2A07A', '#43281C'),
+  ruby: accent('#C2185B', '#A0124A', '#FBE4EE', '#F48FB8', '#45182C'),
+  teal: accent('#0F8A8A', '#0B6B6B', '#DDF3F2', '#7FD4D2', '#163B3B'),
+  graphite: accent('#4A5263', '#2F3542', '#E8EAEE', '#C3C9D6', '#2B2F3A'),
+};
+
+export function isAccentName(value: unknown): value is AccentName {
+  return typeof value === 'string' && value in ACCENTS;
+}
+
 let currentScheme: ColorScheme = 'light';
+let currentAccent: AccentName = 'purple';
 let schemeVersion = 0;
 
 export function currentColorScheme(): ColorScheme {
   return currentScheme;
 }
 
-/** Switches every colour token to `scheme`. Cheap when nothing changes. */
-export function applyColorScheme(scheme: ColorScheme) {
-  if (scheme === currentScheme) return;
+/**
+ * Switches every colour token to `scheme`, wearing `accent` (by default
+ * whatever accent is on). Cheap when nothing changes.
+ */
+export function applyColorScheme(scheme: ColorScheme, accentName: AccentName = currentAccent) {
+  if (scheme === currentScheme && accentName === currentAccent) return;
   currentScheme = scheme;
+  currentAccent = accentName;
   schemeVersion += 1;
-  Object.assign(colors, palettes[scheme]);
+  Object.assign(colors, palettes[scheme], ACCENTS[accentName][scheme]);
   cardSurface.backgroundColor = colors.surface;
   cardSurface.borderColor = colors.cardBorder;
   // On a dark page a warm shadow can't be seen; black still lifts a

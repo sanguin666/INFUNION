@@ -38,6 +38,7 @@ import { DEMO_MEMBER_PHONE } from './common/demo/demo-account.js';
 import { publicUrlFor } from './common/upload/multer-storage.js';
 import { fileStore } from './common/storage/file-store.js';
 import { atWallClock, localTime } from './events/occurrences.js';
+import { TaxScheme } from './common/enums/tax-scheme.enum.js';
 
 export const CARMEN_QR_TOKEN = 'DEMO-CARMEN';
 export const CARMEN_ADMIN_EMAIL = 'admin@carmen.example';
@@ -191,6 +192,7 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
         legalTaxId: 'R4600000J',
         legalAddress: 'Plaça de l’Església, 1\n46183 L’Eliana (Valencia)',
         receiptSignatory: 'P. Vicente Martí, sacerdote responsable',
+        taxScheme: TaxScheme.ES_LEY49,
       }),
     );
     console.log(`Created demo POI ${poi.name} (${poi.id})`);

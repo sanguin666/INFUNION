@@ -60,6 +60,23 @@ export class StripeWebhookController {
       }
     }
 
+    // A monthly gift's card needs its giver: the month's charge failed,
+    // or (Stripe's warning a few days ahead) the card runs out first.
+    if (event.type === 'invoice.payment_failed' || event.type === 'invoice.upcoming') {
+      const invoice = event.data.object;
+      const subscription = invoice.parent?.subscription_details?.subscription;
+      const subscriptionId = typeof subscription === 'string' ? subscription : subscription?.id;
+      if (subscriptionId && event.type === 'invoice.payment_failed' && invoice.billing_reason === 'subscription_cycle') {
+        await this.donationsService.markPaymentProblem(subscriptionId, 'failed');
+      }
+      if (subscriptionId && event.type === 'invoice.upcoming') {
+        const chargeAt = new Date((invoice.next_payment_attempt ?? invoice.period_end) * 1000);
+        if (await this.stripeService.cardExpiresBefore(subscriptionId, chargeAt)) {
+          await this.donationsService.markPaymentProblem(subscriptionId, 'card_expiring');
+        }
+      }
+    }
+
     return { received: true };
   }
 }

@@ -68,6 +68,14 @@ function exportPath(poiId: string, year: number): string {
   return `/receipts/${poiId}/${year}/export`;
 }
 
+function giftsPath(poiId: string, year: number): string {
+  return `/receipts/${poiId}/${year}/gifts`;
+}
+
+function modelo182Path(poiId: string, year: number): string {
+  return `/receipts/${poiId}/${year}/modelo182`;
+}
+
 @Controller('pois/:poiId/donations')
 export class DonationsController {
   constructor(
@@ -121,6 +129,26 @@ export class DonationsController {
     await this.donationsService.stopMonthly(poiId, donationId, request.userId);
   }
 
+  // A Stripe page to replace the card a monthly gift is charged on.
+  @Post('mine/monthly/:donationId/card')
+  @UseGuards(JwtAuthGuard)
+  updateCard(
+    @Param('poiId') poiId: string,
+    @Param('donationId') donationId: string,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    const returnUrl = `${returnUrlBase(this.configService, request)}/donations/return?status=card`;
+    return this.donationsService.updateCardUrl(poiId, donationId, request.userId, returnUrl);
+  }
+
+  // What the gift form's "what it really costs you" line needs to know
+  // about the signed-in giver.
+  @Get('mine/tax')
+  @UseGuards(JwtAuthGuard)
+  myTax(@Param('poiId') poiId: string, @Req() request: AuthenticatedRequest) {
+    return this.donationsService.myTaxContext(poiId, request.userId);
+  }
+
   // Every gift the signed-in giver made here, each with a link to its own
   // receipt when they asked for one.
   @Get('mine/gifts')
@@ -170,11 +198,22 @@ export class DonationsController {
     return {
       year,
       exportUrl: this.signedUrls.sign(exportPath(poiId, year)),
+      giftsUrl: this.signedUrls.sign(giftsPath(poiId, year)),
+      modelo182Url: this.signedUrls.sign(modelo182Path(poiId, year)),
       donors: donors.map((donor) => {
         const key = encodeDonorKey(donor.key);
         return { ...donor, key, url: this.signedUrls.sign(receiptPath(poiId, year, key)) };
       }),
     };
+  }
+
+  // What the year's modelo 182 file would hold, and who it leaves out
+  // and why, so the office can fix those before downloading it.
+  @Get('receipts/modelo182')
+  @UseGuards(JwtAuthGuard, PoiAdminGuard)
+  async modelo182Check(@Param('poiId') poiId: string, @Query('year') yearParam?: string) {
+    const { included, total, skipped } = await this.donationsService.modelo182(poiId, parseYear(yearParam));
+    return { included, total, skipped };
   }
 
   // Public: the app polls this while the payer is on Stripe's page.
@@ -321,6 +360,44 @@ export class ReceiptsController {
     response.send(donorsCsv(donors));
   }
 
+  // Every gift of the year, for the accountant.
+  @Get(':poiId/:year/gifts')
+  async gifts(
+    @Param('poiId') poiId: string,
+    @Param('year') yearParam: string,
+    @Query('exp') exp: string | undefined,
+    @Query('sig') sig: string | undefined,
+    @Res() response: Response,
+  ): Promise<void> {
+    const year = parseYear(yearParam);
+    if (!this.signedUrls.verify(giftsPath(poiId, year), exp, sig)) {
+      throw new ForbiddenException('This link has expired');
+    }
+    const csv = await this.donationsService.giftsCsv(poiId, year);
+    response.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    response.setHeader('Content-Disposition', `attachment; filename="gifts-${year}.csv"`);
+    response.send(csv);
+  }
+
+  // The modelo 182 file, in the AEAT's own encoding (ISO-8859-1).
+  @Get(':poiId/:year/modelo182')
+  async modelo182(
+    @Param('poiId') poiId: string,
+    @Param('year') yearParam: string,
+    @Query('exp') exp: string | undefined,
+    @Query('sig') sig: string | undefined,
+    @Res() response: Response,
+  ): Promise<void> {
+    const year = parseYear(yearParam);
+    if (!this.signedUrls.verify(modelo182Path(poiId, year), exp, sig)) {
+      throw new ForbiddenException('This link has expired');
+    }
+    const { content } = await this.donationsService.modelo182(poiId, year);
+    response.setHeader('Content-Type', 'text/plain; charset=iso-8859-1');
+    response.setHeader('Content-Disposition', `attachment; filename="modelo182-${year}.txt"`);
+    response.send(Buffer.from(content, 'latin1'));
+  }
+
   @Get(':poiId/:year/:key')
   @Header('Content-Type', 'text/html; charset=utf-8')
   @Header('Cache-Control', 'private, no-store')
@@ -368,10 +445,13 @@ export class DonationReturnController {
   @Header('Content-Type', 'text/html; charset=utf-8')
   returnPage(@Query('status') status?: string): string {
     const cancelled = status === 'cancelled';
-    const title = cancelled ? 'Payment cancelled' : 'Thank you!';
+    const card = status === 'card';
+    const title = cancelled ? 'Payment cancelled' : card ? 'Card updated' : 'Thank you!';
     const message = cancelled
       ? 'No payment was taken. You can close this page and go back to the app.'
-      : 'Your donation went through. You can close this page and go back to the app.';
+      : card
+        ? 'Your monthly gift will use this card from now on. You can close this page and go back to the app.'
+        : 'Your donation went through. You can close this page and go back to the app.';
     return `<!doctype html>
 <html lang="en">
   <head>
