@@ -361,9 +361,6 @@ export type Translations = {
     nameLabel: string;
     descriptionLabel: string;
     descriptionPlaceholder: string;
-    pictureUrlLabel: string;
-    pictureUrlPlaceholder: string;
-    pictureAlt: string;
     save: string;
     saving: string;
     saveError: string;
@@ -1193,9 +1190,6 @@ const en: Translations = {
     nameLabel: 'Name',
     descriptionLabel: 'Description',
     descriptionPlaceholder: 'A short description of your community.',
-    pictureUrlLabel: 'Picture URL',
-    pictureUrlPlaceholder: 'https://example.com/your-logo.jpg',
-    pictureAlt: 'Community picture',
     save: 'Save',
     saving: 'Saving…',
     saveError: 'Could not save your changes.',
@@ -2025,9 +2019,6 @@ const es: Translations = {
     nameLabel: 'Nombre',
     descriptionLabel: 'Descripción',
     descriptionPlaceholder: 'Una breve descripción de tu comunidad.',
-    pictureUrlLabel: 'URL de la imagen',
-    pictureUrlPlaceholder: 'https://ejemplo.com/tu-logo.jpg',
-    pictureAlt: 'Imagen de la comunidad',
     save: 'Guardar',
     saving: 'Guardando…',
     saveError: 'No se pudieron guardar los cambios.',
@@ -2857,9 +2848,6 @@ const fr: Translations = {
     nameLabel: 'Nom',
     descriptionLabel: 'Description',
     descriptionPlaceholder: 'Une courte description de votre communauté.',
-    pictureUrlLabel: 'URL de la photo',
-    pictureUrlPlaceholder: 'https://exemple.com/votre-logo.jpg',
-    pictureAlt: 'Photo de la communauté',
     save: 'Enregistrer',
     saving: 'Enregistrement…',
     saveError: 'Impossible d’enregistrer les modifications.',
@@ -3689,9 +3677,6 @@ const va: Translations = {
     nameLabel: 'Nom',
     descriptionLabel: 'Descripció',
     descriptionPlaceholder: 'Una breu descripció de la teua comunitat.',
-    pictureUrlLabel: 'URL de la imatge',
-    pictureUrlPlaceholder: 'https://exemple.com/el-teu-logo.jpg',
-    pictureAlt: 'Imatge de la comunitat',
     save: 'Guardar',
     saving: 'Guardant…',
     saveError: 'No s’han pogut guardar els canvis.',
@@ -4521,9 +4506,6 @@ const gl: Translations = {
     nameLabel: 'Nome',
     descriptionLabel: 'Descrición',
     descriptionPlaceholder: 'Unha breve descrición da túa comunidade.',
-    pictureUrlLabel: 'URL da imaxe',
-    pictureUrlPlaceholder: 'https://exemplo.com/o-teu-logo.jpg',
-    pictureAlt: 'Imaxe da comunidade',
     save: 'Gardar',
     saving: 'Gardando…',
     saveError: 'Non se puideron gardar os cambios.',
@@ -5353,9 +5335,6 @@ const pt: Translations = {
     nameLabel: 'Nome',
     descriptionLabel: 'Descrição',
     descriptionPlaceholder: 'Uma breve descrição da sua comunidade.',
-    pictureUrlLabel: 'URL da imagem',
-    pictureUrlPlaceholder: 'https://exemplo.pt/o-seu-logotipo.jpg',
-    pictureAlt: 'Imagem da comunidade',
     save: 'Guardar',
     saving: 'A guardar…',
     saveError: 'Não foi possível guardar as alterações.',
