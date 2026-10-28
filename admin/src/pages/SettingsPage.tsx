@@ -22,7 +22,6 @@ export function SettingsPage() {
   const [languageError, setLanguageError] = useState<string | null>(null);
 
   const [description, setDescription] = useState('');
-  const [pictureUrl, setPictureUrl] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSaved, setProfileSaved] = useState(false);
@@ -35,7 +34,6 @@ export function SettingsPage() {
       setPoi(result);
       setSelectedLanguage(result.language);
       setDescription(result.description ?? '');
-      setPictureUrl(result.pictureUrl ?? '');
     });
   }
 
@@ -61,7 +59,6 @@ export function SettingsPage() {
     try {
       const updated = await updatePoiProfile(poiId, {
         description: description.trim(),
-        pictureUrl: pictureUrl.trim(),
       });
       setPoi(updated);
       setProfileSaved(true);
@@ -96,21 +93,6 @@ export function SettingsPage() {
                 placeholder={t('poiInfo.descriptionPlaceholder')}
               />
             </label>
-            <label>
-              {t('poiInfo.pictureUrlLabel')}
-              <input
-                value={pictureUrl}
-                onChange={(e) => setPictureUrl(e.target.value)}
-                placeholder={t('poiInfo.pictureUrlPlaceholder')}
-              />
-            </label>
-            {pictureUrl.trim() && (
-              <img
-                src={pictureUrl.trim()}
-                alt={t('poiInfo.pictureAlt')}
-                style={{ maxWidth: 160, maxHeight: 160, borderRadius: 8, objectFit: 'cover' }}
-              />
-            )}
             <div className="card-actions">
               <button type="button" className="btn btn-primary" disabled={savingProfile} onClick={saveProfile}>
                 {savingProfile ? t('poiInfo.saving') : t('poiInfo.save')}
