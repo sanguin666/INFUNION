@@ -37,6 +37,7 @@ import { MassIntention, MassIntentionStatus } from './mass-intentions/entities/m
 import { CARMEN_ADMIN_EMAIL, CARMEN_ADMIN_PASSWORD, seedCarmen } from './seed-carmen.js';
 import { seedMap } from './seed-map.js';
 import { ASSOCIATION_ADMIN_EMAIL, ASSOCIATION_ADMIN_PASSWORD, seedAssociation } from './seed-association.js';
+import { TaxScheme } from './common/enums/tax-scheme.enum.js';
 
 /**
  * Seeds two demo POIs with fixed QR tokens, so the app has something real
@@ -646,7 +647,7 @@ async function seedChurchModules({
   // Offerings as a diocese might set them, and who issues the receipts.
   for (const [place, offering, legal] of [
     [stMarys, 20, { legalName: 'St. Mary’s Community Association', legalTaxId: 'W123456789', legalAddress: '1 Church Street\nSpringfield', receiptSignatory: 'Fr. John Miller, priest in charge' }],
-    [holyTrinity, 10, { legalName: 'Comunidad Santísima Trinidad', legalTaxId: 'R2800000A', legalAddress: 'Calle Mayor 1\n28001 Madrid', receiptSignatory: 'P. Luis García, sacerdote responsable' }],
+    [holyTrinity, 10, { legalName: 'Comunidad Santísima Trinidad', legalTaxId: 'R2800000A', legalAddress: 'Calle Mayor 1\n28001 Madrid', receiptSignatory: 'P. Luis García, sacerdote responsable', taxScheme: TaxScheme.ES_LEY49 }],
   ] as const) {
     if (place.massIntentionOffering == null) {
       await pois.update(place.id, { massIntentionOffering: offering, ...legal });

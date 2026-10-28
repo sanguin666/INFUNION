@@ -250,6 +250,13 @@ export type Translations = {
     getReceiptButton: string;
     projectRaised: string;
     projectRaisedNoGoal: string;
+    taxSaving: string;
+    taxSavingMonthly: string;
+    taxNote: string;
+    paymentFailed: string;
+    cardExpiring: string;
+    updateCard: string;
+    allocationTitle: string;
   };
   events: {
     title: string;
@@ -812,6 +819,13 @@ const en: Translations = {
     getReceiptButton: 'Get the receipt',
     projectRaised: '{{raised}} raised of {{goal}}',
     projectRaisedNoGoal: '{{raised}} raised so far',
+    taxSaving: "After your tax return, this gift costs you {{net}}: you get {{saving}} back.",
+    taxSavingMonthly: "Over a year ({{year}}), you get up to {{saving}} back on your tax return.",
+    taxNote: "An estimate for income tax in Spain. To claim it, ask for a tax receipt with your NIF.",
+    paymentFailed: "The last payment didn’t go through.",
+    cardExpiring: "Your card expires before the next payment.",
+    updateCard: "Update my card",
+    allocationTitle: "Where the money goes",
   },
   events: {
     title: 'Events',
@@ -1374,6 +1388,13 @@ const es: Translations = {
     getReceiptButton: 'Obtener el certificado',
     projectRaised: '{{raised}} recaudados de {{goal}}',
     projectRaisedNoGoal: '{{raised}} recaudados hasta ahora',
+    taxSaving: "Con la declaración de la renta, este donativo te cuesta {{net}}: te devuelven {{saving}}.",
+    taxSavingMonthly: "En un año ({{year}}), recuperas hasta {{saving}} en la declaración de la renta.",
+    taxNote: "Estimación para el IRPF en España. Para aplicarla, pide un certificado con tu NIF.",
+    paymentFailed: "El último cobro no se ha podido hacer.",
+    cardExpiring: "Tu tarjeta caduca antes del próximo cobro.",
+    updateCard: "Actualizar mi tarjeta",
+    allocationTitle: "A dónde va el dinero",
   },
   events: {
     title: 'Eventos',
@@ -1936,6 +1957,13 @@ const fr: Translations = {
     getReceiptButton: 'Obtenir le reçu',
     projectRaised: '{{raised}} collectés sur {{goal}}',
     projectRaisedNoGoal: '{{raised}} collectés pour l’instant',
+    taxSaving: "Après votre déclaration d’impôts, ce don vous revient à {{net}} : {{saving}} vous sont rendus.",
+    taxSavingMonthly: "Sur un an ({{year}}), jusqu’à {{saving}} vous sont rendus par votre déclaration d’impôts.",
+    taxNote: "Une estimation pour l’impôt sur le revenu en Espagne. Pour en bénéficier, demandez un reçu fiscal avec votre NIF.",
+    paymentFailed: "Le dernier prélèvement n’est pas passé.",
+    cardExpiring: "Votre carte expire avant le prochain prélèvement.",
+    updateCard: "Mettre à jour ma carte",
+    allocationTitle: "Où va l’argent",
   },
   events: {
     title: 'Événements',
@@ -2498,6 +2526,13 @@ const va: Translations = {
     getReceiptButton: 'Obtindre el certificat',
     projectRaised: '{{raised}} recaptats de {{goal}}',
     projectRaisedNoGoal: '{{raised}} recaptats fins ara',
+    taxSaving: "Amb la declaració de la renda, este donatiu et costa {{net}}: et tornen {{saving}}.",
+    taxSavingMonthly: "En un any ({{year}}), recuperes fins a {{saving}} en la declaració de la renda.",
+    taxNote: "Estimació per a l’IRPF a Espanya. Per a aplicar-la, demana un certificat amb el teu NIF.",
+    paymentFailed: "L’últim cobrament no s’ha pogut fer.",
+    cardExpiring: "La teua targeta caduca abans del pròxim cobrament.",
+    updateCard: "Actualitzar la meua targeta",
+    allocationTitle: "On van els diners",
   },
   events: {
     title: 'Esdeveniments',
@@ -3060,6 +3095,13 @@ const gl: Translations = {
     getReceiptButton: 'Obter o certificado',
     projectRaised: '{{raised}} recadados de {{goal}}',
     projectRaisedNoGoal: '{{raised}} recadados ata agora',
+    taxSaving: "Coa declaración da renda, esta doazón cóstache {{net}}: devólvenche {{saving}}.",
+    taxSavingMonthly: "Nun ano ({{year}}), recuperas ata {{saving}} na declaración da renda.",
+    taxNote: "Estimación para o IRPF en España. Para aplicala, pide un certificado co teu NIF.",
+    paymentFailed: "Non se puido facer o último cobro.",
+    cardExpiring: "A túa tarxeta caduca antes do próximo cobro.",
+    updateCard: "Actualizar a miña tarxeta",
+    allocationTitle: "A onde vai o diñeiro",
   },
   events: {
     title: 'Eventos',
@@ -3623,6 +3665,13 @@ const pt: Translations = {
     getReceiptButton: 'Obter o recibo',
     projectRaised: '{{raised}} angariados de {{goal}}',
     projectRaisedNoGoal: '{{raised}} angariados até agora',
+    taxSaving: "Depois da declaração de impostos, este donativo custa-lhe {{net}}: recupera {{saving}}.",
+    taxSavingMonthly: "Num ano ({{year}}), recupera até {{saving}} na declaração de impostos.",
+    taxNote: "Uma estimativa para o imposto sobre o rendimento em Espanha. Para a aplicar, peça um recibo com o seu NIF.",
+    paymentFailed: "O último pagamento não foi cobrado.",
+    cardExpiring: "O seu cartão expira antes do próximo pagamento.",
+    updateCard: "Atualizar o meu cartão",
+    allocationTitle: "Para onde vai o dinheiro",
   },
   events: {
     title: 'Eventos',

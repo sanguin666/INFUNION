@@ -31,6 +31,7 @@ import { EventCategory, EventRecurrence } from './events/entities/event-kinds.js
 import { DEMO_MEMBER_PHONE } from './common/demo/demo-account.js';
 import * as bcrypt from 'bcryptjs';
 import { CARMEN_TIME_ZONE } from './seed-carmen.js';
+import { TaxScheme } from './common/enums/tax-scheme.enum.js';
 
 export const ASSOCIATION_QR_TOKEN = 'DEMO-CRECER-JUNTOS';
 export const ASSOCIATION_ADMIN_EMAIL = 'admin@crecerjuntos.example';
@@ -115,6 +116,8 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
         legalTaxId: 'G46000000',
         legalAddress: 'Carrer de Rafael Alberti, 8\n46183 L’Eliana (Valencia)',
         receiptSignatory: 'Elena Navarro, presidenta',
+        legalPhone: '961 000 000',
+        taxScheme: TaxScheme.ES_LEY49,
       }),
     );
     console.log(`Created demo association ${poi.name} (${poi.id})`);

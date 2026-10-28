@@ -87,6 +87,42 @@ export class StripeService {
   }
 
   /**
+   * Stripe's own page where a monthly giver replaces their card (the
+   * customer portal; it needs to be switched on once in the Stripe
+   * dashboard, under Settings > Billing > Customer portal).
+   */
+  async cardUpdateUrl(subscriptionId: string, returnUrl: string): Promise<string> {
+    const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
+    const customer = typeof subscription.customer === 'string' ? subscription.customer : subscription.customer.id;
+    const session = await this.stripe.billingPortal.sessions.create({
+      customer,
+      return_url: returnUrl,
+      flow_data: { type: 'payment_method_update' },
+    });
+    return session.url;
+  }
+
+  /**
+   * Whether the card a subscription will next be charged on runs out
+   * before `chargeAt` (Stripe's `invoice.upcoming` tells us when).
+   */
+  async cardExpiresBefore(subscriptionId: string, chargeAt: Date): Promise<boolean> {
+    const subscription = await this.stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ['default_payment_method', 'customer.invoice_settings.default_payment_method'],
+    });
+    const own = subscription.default_payment_method;
+    const customer = subscription.customer;
+    const fallback =
+      typeof customer === 'object' && !customer.deleted ? customer.invoice_settings?.default_payment_method : null;
+    const method = (typeof own === 'object' && own) || (typeof fallback === 'object' && fallback) || null;
+    const card = method?.card;
+    if (!card) return false;
+    // A card is good until the end of its expiry month.
+    const lastDay = new Date(card.exp_year, card.exp_month, 1);
+    return lastDay <= chargeAt;
+  }
+
+  /**
    * Verifies the webhook signature against the raw request body. Returns null
    * when no webhook secret is configured, which is the normal case for the
    * local demo — the app confirms payments by polling instead.

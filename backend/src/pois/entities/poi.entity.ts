@@ -14,6 +14,7 @@ import { PoiType } from '../../common/enums/poi-type.enum.js';
 import { Language } from '../../common/enums/language.enum.js';
 import { BillingInterval } from '../../common/enums/billing-interval.enum.js';
 import { ModuleType } from '../../common/enums/module-type.enum.js';
+import { TaxScheme } from '../../common/enums/tax-scheme.enum.js';
 
 /**
  * A point of interest a user can join: a church today, potentially other
@@ -103,6 +104,17 @@ export class Poi {
 
   @Column('varchar', { name: 'receipt_signatory', nullable: true })
   receiptSignatory?: string | null;
+
+  // What a gift here is worth on the giver's tax return (see TaxScheme):
+  // the receipt's wording, the app's "what it really costs you" line and
+  // the modelo 182 all follow it.
+  @Column({ name: 'tax_scheme', type: 'varchar', default: TaxScheme.NONE })
+  taxScheme!: TaxScheme;
+
+  // A phone the tax office can call about the modelo 182 (with the
+  // signatory as the contact person).
+  @Column('varchar', { name: 'legal_phone', nullable: true })
+  legalPhone?: string | null;
 
   // ---- Module billing (Seb, 30 Sep 2026) ----
   // Monthly or yearly, one choice for every paid module, so one bill.

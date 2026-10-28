@@ -695,6 +695,13 @@ export type Translations = {
     createError: string;
     saveError: string;
     deleteError: string;
+    allocationTitle: string;
+    allocationHint: string;
+    allocationLabel: string;
+    allocationAdd: string;
+    allocationRemove: string;
+    allocationTotal: string;
+    allocationMustBe100: string;
   };
   receipts: {
     title: string;
@@ -720,6 +727,22 @@ export type Translations = {
     giftCountOne: string;
     giftCountMany: string;
     openReceipt: string;
+    taxSchemeLabel: string;
+    taxNone: string;
+    taxLey49: string;
+    taxArt68: string;
+    taxSchemeHint: string;
+    phoneLabel: string;
+    giftsCsv: string;
+    m182Title: string;
+    m182Hint: string;
+    m182Download: string;
+    m182Summary: string;
+    m182Skipped: string;
+    m182NoTaxId: string;
+    m182BadTaxId: string;
+    m182NoProvince: string;
+    m182NeedsLegal: string;
   };
   members: {
     title: string;
@@ -1477,6 +1500,13 @@ const en: Translations = {
     createError: 'Could not start the campaign.',
     saveError: 'Could not save the campaign.',
     deleteError: 'Could not delete the campaign.',
+    allocationTitle: "Where the money goes",
+    allocationHint: "Optional. Members see it on the project’s page. The shares must add up to 100 %.",
+    allocationLabel: "What for",
+    allocationAdd: "Add a line",
+    allocationRemove: "Remove",
+    allocationTotal: "Total: {{n}} %",
+    allocationMustBe100: "The shares must add up to 100 %.",
   },
   receipts: {
     title: 'Tax receipts',
@@ -1502,6 +1532,22 @@ const en: Translations = {
     giftCountOne: '1 gift',
     giftCountMany: '{{n}} gifts',
     openReceipt: 'Open the receipt',
+    taxSchemeLabel: "What a gift is worth on the giver’s tax return",
+    taxNone: "No deduction",
+    taxLey49: "Spain: entity under the Ley 49/2002 (80 % on the first 250 €, then 40 %)",
+    taxArt68: "Spain: foundation or public-utility association outside the Ley 49/2002 (10 %)",
+    taxSchemeHint: "Your legal status decides this; ask your adviser if unsure. The receipts and the gift form in the app follow it.",
+    phoneLabel: "Phone for the tax office",
+    giftsCsv: "Download every gift (CSV)",
+    m182Title: "Modelo 182",
+    m182Hint: "The yearly return of gifts for the Agencia Tributaria, due by 31 January. Download the file, check it in the AEAT’s validator, then present it on the Sede electrónica (“presentación mediante fichero”) with your certificate. Only givers who gave their NIF are in it.",
+    m182Download: "Download the modelo 182 file",
+    m182Summary: "{{n}} givers, {{total}} in total.",
+    m182Skipped: "Left out, to fix before filing:",
+    m182NoTaxId: "no NIF",
+    m182BadTaxId: "the NIF looks wrong",
+    m182NoProvince: "no Spanish postcode",
+    m182NeedsLegal: "Fill in the legal name and tax number above to build the file.",
   },
   members: {
     title: "Members",
@@ -2259,6 +2305,13 @@ const es: Translations = {
     createError: 'No se pudo crear la campaña.',
     saveError: 'No se pudo guardar la campaña.',
     deleteError: 'No se pudo eliminar la campaña.',
+    allocationTitle: "A dónde va el dinero",
+    allocationHint: "Opcional. Los miembros lo ven en la página del proyecto. Los porcentajes deben sumar 100 %.",
+    allocationLabel: "Para qué",
+    allocationAdd: "Añadir una línea",
+    allocationRemove: "Quitar",
+    allocationTotal: "Total: {{n}} %",
+    allocationMustBe100: "Los porcentajes deben sumar 100 %.",
   },
   receipts: {
     title: 'Certificados de donación',
@@ -2284,6 +2337,22 @@ const es: Translations = {
     giftCountOne: '1 donativo',
     giftCountMany: '{{n}} donativos',
     openReceipt: 'Abrir el certificado',
+    taxSchemeLabel: "Qué supone un donativo en la declaración del donante",
+    taxNone: "Sin deducción",
+    taxLey49: "España: entidad acogida a la Ley 49/2002 (80 % de los primeros 250 €, luego 40 %)",
+    taxArt68: "España: fundación o asociación de utilidad pública no acogida a la Ley 49/2002 (10 %)",
+    taxSchemeHint: "Lo decide vuestra situación legal; si tenéis dudas, preguntad a vuestra gestoría. Los certificados y el formulario de donativo de la aplicación lo siguen.",
+    phoneLabel: "Teléfono para Hacienda",
+    giftsCsv: "Descargar todos los donativos (CSV)",
+    m182Title: "Modelo 182",
+    m182Hint: "La declaración anual de donativos para la Agencia Tributaria, antes del 31 de enero. Descargad el fichero, comprobadlo en el validador de la AEAT y presentadlo en la Sede electrónica («presentación mediante fichero») con vuestro certificado. Solo incluye a los donantes que dieron su NIF.",
+    m182Download: "Descargar el fichero del modelo 182",
+    m182Summary: "{{n}} donantes, {{total}} en total.",
+    m182Skipped: "No incluidos, para corregir antes de presentarlo:",
+    m182NoTaxId: "sin NIF",
+    m182BadTaxId: "el NIF no parece correcto",
+    m182NoProvince: "sin código postal español",
+    m182NeedsLegal: "Completad arriba el nombre legal y el NIF para generar el fichero.",
   },
   members: {
     title: "Miembros",
@@ -3041,6 +3110,13 @@ const fr: Translations = {
     createError: 'Impossible de lancer la campagne.',
     saveError: "Impossible d'enregistrer la campagne.",
     deleteError: 'Impossible de supprimer la campagne.',
+    allocationTitle: "Où va l’argent",
+    allocationHint: "Facultatif. Les membres le voient sur la page du projet. Les parts doivent faire 100 % au total.",
+    allocationLabel: "Pour quoi",
+    allocationAdd: "Ajouter une ligne",
+    allocationRemove: "Retirer",
+    allocationTotal: "Total : {{n}} %",
+    allocationMustBe100: "Les parts doivent faire 100 % au total.",
   },
   receipts: {
     title: 'Reçus fiscaux',
@@ -3066,6 +3142,22 @@ const fr: Translations = {
     giftCountOne: '1 don',
     giftCountMany: '{{n}} dons',
     openReceipt: 'Ouvrir le reçu',
+    taxSchemeLabel: "Ce que vaut un don sur la déclaration du donateur",
+    taxNone: "Pas de déduction",
+    taxLey49: "Espagne : entité relevant de la Ley 49/2002 (80 % sur les premiers 250 €, puis 40 %)",
+    taxArt68: "Espagne : fondation ou association d’utilité publique hors Ley 49/2002 (10 %)",
+    taxSchemeHint: "Votre statut juridique en décide ; en cas de doute, demandez à votre comptable. Les reçus et le formulaire de don de l’application le suivent.",
+    phoneLabel: "Téléphone pour l’administration fiscale",
+    giftsCsv: "Télécharger tous les dons (CSV)",
+    m182Title: "Modelo 182",
+    m182Hint: "La déclaration annuelle des dons pour l’Agencia Tributaria espagnole, avant le 31 janvier. Téléchargez le fichier, vérifiez-le avec le validateur de l’AEAT, puis déposez-le sur la Sede electrónica (« presentación mediante fichero ») avec votre certificat. Seuls les donateurs qui ont donné leur NIF y figurent.",
+    m182Download: "Télécharger le fichier du modelo 182",
+    m182Summary: "{{n}} donateurs, {{total}} au total.",
+    m182Skipped: "Non inclus, à corriger avant le dépôt :",
+    m182NoTaxId: "pas de NIF",
+    m182BadTaxId: "le NIF semble faux",
+    m182NoProvince: "pas de code postal espagnol",
+    m182NeedsLegal: "Renseignez plus haut le nom légal et le numéro fiscal pour générer le fichier.",
   },
   members: {
     title: "Membres",
@@ -3823,6 +3915,13 @@ const va: Translations = {
     createError: 'No s’ha pogut crear la campanya.',
     saveError: 'No s’ha pogut guardar la campanya.',
     deleteError: 'No s’ha pogut eliminar la campanya.',
+    allocationTitle: "On va els diners",
+    allocationHint: "Opcional. Els membres ho veuen en la pàgina del projecte. Els percentatges han de sumar 100 %.",
+    allocationLabel: "Per a què",
+    allocationAdd: "Afegir una línia",
+    allocationRemove: "Llevar",
+    allocationTotal: "Total: {{n}} %",
+    allocationMustBe100: "Els percentatges han de sumar 100 %.",
   },
   receipts: {
     title: 'Certificats de donatius',
@@ -3848,6 +3947,22 @@ const va: Translations = {
     giftCountOne: '1 donatiu',
     giftCountMany: '{{n}} donatius',
     openReceipt: 'Obrir el certificat',
+    taxSchemeLabel: "Què suposa un donatiu en la declaració del donant",
+    taxNone: "Sense deducció",
+    taxLey49: "Espanya: entitat acollida a la Llei 49/2002 (80 % dels primers 250 €, després 40 %)",
+    taxArt68: "Espanya: fundació o associació d’utilitat pública no acollida a la Llei 49/2002 (10 %)",
+    taxSchemeHint: "Ho decidix la vostra situació legal; si teniu dubtes, pregunteu a la vostra gestoria. Els certificats i el formulari de donatiu de l’aplicació ho seguixen.",
+    phoneLabel: "Telèfon per a Hisenda",
+    giftsCsv: "Descarregar tots els donatius (CSV)",
+    m182Title: "Model 182",
+    m182Hint: "La declaració anual de donatius per a l’Agència Tributària, abans del 31 de gener. Descarregueu el fitxer, comproveu-lo en el validador de l’AEAT i presenteu-lo en la Seu electrònica («presentación mediante fichero») amb el vostre certificat. Només inclou els donants que van donar el seu NIF.",
+    m182Download: "Descarregar el fitxer del model 182",
+    m182Summary: "{{n}} donants, {{total}} en total.",
+    m182Skipped: "No inclosos, per a corregir abans de presentar-lo:",
+    m182NoTaxId: "sense NIF",
+    m182BadTaxId: "el NIF no pareix correcte",
+    m182NoProvince: "sense codi postal espanyol",
+    m182NeedsLegal: "Completeu dalt el nom legal i el NIF per a generar el fitxer.",
   },
   members: {
     title: "Membres",
@@ -4605,6 +4720,13 @@ const gl: Translations = {
     createError: 'Non se puido crear a campaña.',
     saveError: 'Non se puido gardar a campaña.',
     deleteError: 'Non se puido eliminar a campaña.',
+    allocationTitle: "A onde vai o diñeiro",
+    allocationHint: "Opcional. Os membros véno na páxina do proxecto. As porcentaxes deben sumar 100 %.",
+    allocationLabel: "Para que",
+    allocationAdd: "Engadir unha liña",
+    allocationRemove: "Quitar",
+    allocationTotal: "Total: {{n}} %",
+    allocationMustBe100: "As porcentaxes deben sumar 100 %.",
   },
   receipts: {
     title: 'Certificados de doazón',
@@ -4630,6 +4752,22 @@ const gl: Translations = {
     giftCountOne: '1 doazón',
     giftCountMany: '{{n}} doazóns',
     openReceipt: 'Abrir o certificado',
+    taxSchemeLabel: "Que supón unha doazón na declaración do doador",
+    taxNone: "Sen dedución",
+    taxLey49: "España: entidade acollida á Lei 49/2002 (80 % dos primeiros 250 €, despois 40 %)",
+    taxArt68: "España: fundación ou asociación de utilidade pública non acollida á Lei 49/2002 (10 %)",
+    taxSchemeHint: "Decídeo a vosa situación legal; se tedes dúbidas, preguntade á vosa xestoría. Os certificados e o formulario de doazón da aplicación séguena.",
+    phoneLabel: "Teléfono para Facenda",
+    giftsCsv: "Descargar todas as doazóns (CSV)",
+    m182Title: "Modelo 182",
+    m182Hint: "A declaración anual de doazóns para a Axencia Tributaria, antes do 31 de xaneiro. Descargade o ficheiro, comprobádeo no validador da AEAT e presentádeo na Sede electrónica («presentación mediante fichero») co voso certificado. Só inclúe os doadores que deron o seu NIF.",
+    m182Download: "Descargar o ficheiro do modelo 182",
+    m182Summary: "{{n}} doadores, {{total}} en total.",
+    m182Skipped: "Non incluídos, para corrixir antes de presentalo:",
+    m182NoTaxId: "sen NIF",
+    m182BadTaxId: "o NIF non parece correcto",
+    m182NoProvince: "sen código postal español",
+    m182NeedsLegal: "Completade arriba o nome legal e o NIF para xerar o ficheiro.",
   },
   members: {
     title: "Membros",
@@ -5387,6 +5525,13 @@ const pt: Translations = {
     createError: 'Não foi possível criar a campanha.',
     saveError: 'Não foi possível guardar a campanha.',
     deleteError: 'Não foi possível eliminar a campanha.',
+    allocationTitle: "Para onde vai o dinheiro",
+    allocationHint: "Opcional. Os membros veem-no na página do projeto. As percentagens têm de somar 100 %.",
+    allocationLabel: "Para quê",
+    allocationAdd: "Adicionar uma linha",
+    allocationRemove: "Retirar",
+    allocationTotal: "Total: {{n}} %",
+    allocationMustBe100: "As percentagens têm de somar 100 %.",
   },
   receipts: {
     title: 'Recibos de donativos',
@@ -5412,6 +5557,22 @@ const pt: Translations = {
     giftCountOne: '1 donativo',
     giftCountMany: '{{n}} donativos',
     openReceipt: 'Abrir o recibo',
+    taxSchemeLabel: "O que um donativo vale na declaração do doador",
+    taxNone: "Sem dedução",
+    taxLey49: "Espanha: entidade abrangida pela Ley 49/2002 (80 % dos primeiros 250 €, depois 40 %)",
+    taxArt68: "Espanha: fundação ou associação de utilidade pública fora da Ley 49/2002 (10 %)",
+    taxSchemeHint: "É o vosso estatuto jurídico que o decide; em caso de dúvida, perguntem ao vosso contabilista. Os recibos e o formulário de donativo da aplicação seguem-no.",
+    phoneLabel: "Telefone para a administração fiscal",
+    giftsCsv: "Descarregar todos os donativos (CSV)",
+    m182Title: "Modelo 182",
+    m182Hint: "A declaração anual de donativos para a Agencia Tributaria espanhola, até 31 de janeiro. Descarreguem o ficheiro, verifiquem-no no validador da AEAT e apresentem-no na Sede electrónica («presentación mediante fichero») com o vosso certificado. Só inclui os doadores que indicaram o NIF.",
+    m182Download: "Descarregar o ficheiro do modelo 182",
+    m182Summary: "{{n}} doadores, {{total}} no total.",
+    m182Skipped: "Não incluídos, a corrigir antes de apresentar:",
+    m182NoTaxId: "sem NIF",
+    m182BadTaxId: "o NIF parece errado",
+    m182NoProvince: "sem código postal espanhol",
+    m182NeedsLegal: "Preencham acima o nome legal e o número fiscal para gerar o ficheiro.",
   },
   members: {
     title: "Membros",

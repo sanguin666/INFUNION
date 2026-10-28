@@ -9,8 +9,8 @@ import {
 import type Stripe from 'stripe';
 import { InjectRepository } from '@nestjs/typeorm';
 import { And, In, IsNull, LessThan, MoreThanOrEqual, Repository } from 'typeorm';
-import { Donation, DonationPurpose, DonationStatus } from './entities/donation.entity.js';
-import { DonationCampaign } from './entities/donation-campaign.entity.js';
+import { Donation, DonationPurpose, DonationStatus, type PaymentProblem } from './entities/donation.entity.js';
+import { DonationCampaign, type CampaignAllocationLine } from './entities/donation-campaign.entity.js';
 import { PoisService } from '../pois/pois.service.js';
 import type { Poi } from '../pois/entities/poi.entity.js';
 import type { User } from '../users/entities/user.entity.js';
@@ -19,7 +19,12 @@ import { RequestReceiptDto } from './dto/request-receipt.dto.js';
 import { CreateDonationDto } from './dto/create-donation.dto.js';
 import type { CreateCampaignDto, UpdateCampaignDto } from './dto/campaign.dto.js';
 import { StripeService } from './stripe.service.js';
-import { groupDonors, type ReceiptDonor } from './receipts.js';
+import { giftsCsv, groupDonors, type ReceiptDonor } from './receipts.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
+import { text } from '../notifications/texts.js';
+import { TaxScheme } from '../common/enums/tax-scheme.enum.js';
+import { isRecurrentGiver } from './tax-deduction.js';
+import { modelo182 } from './modelo182.js';
 
 export type PeriodTotal = { total: number; count: number };
 
@@ -45,7 +50,23 @@ export type CampaignView = {
   raised: number;
   giftCount: number;
   imageUrl: string | null;
+  allocation: CampaignAllocationLine[] | null;
 };
+
+/**
+ * A project's split as the office typed it, tidied: blank lines dropped,
+ * shares rounded to one decimal. They must add up to 100, or the page
+ * would tell members something that can't be true.
+ */
+export function cleanAllocation(lines: CampaignAllocationLine[] | null | undefined): CampaignAllocationLine[] | null {
+  const kept = (lines ?? [])
+    .map((line) => ({ label: line.label.trim(), percent: Math.round(line.percent * 10) / 10 }))
+    .filter((line) => line.label && line.percent > 0);
+  if (kept.length === 0) return null;
+  const sum = kept.reduce((total, line) => total + line.percent, 0);
+  if (Math.abs(sum - 100) > 0.05) throw new BadRequestException('The shares must add up to 100 %');
+  return kept;
+}
 
 /** One of a signed-in giver's own gifts, as "My gifts" lists it. */
 export type MyGift = {
@@ -172,6 +193,11 @@ function toDateKey(date: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+/** "12,50 €": the amount a notification names, the same in every language. */
+function formatEuros(amount: number): string {
+  return `${amount.toFixed(2).replace('.', ',').replace(',00', '')} €`;
+}
+
 function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
@@ -187,6 +213,7 @@ export class DonationsService {
     private readonly campaignsRepository: Repository<DonationCampaign>,
     private readonly poisService: PoisService,
     private readonly stripeService: StripeService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async create(poiId: string, dto: CreateDonationDto): Promise<Donation> {
@@ -347,6 +374,11 @@ export class DonationsService {
     if (!first) return;
     const already = await this.donationsRepository.findOne({ where: { stripeInvoiceId: invoiceId } });
     if (already) return;
+    if (first.paymentProblem) {
+      first.paymentProblem = null;
+      first.paymentProblemAt = null;
+      await this.donationsRepository.save(first);
+    }
     await this.donationsRepository.save(
       this.donationsRepository.create({
         poi: first.poi,
@@ -420,6 +452,7 @@ export class DonationsService {
       this.campaignsRepository.create({
         ...dto,
         endsAt: dto.endsAt ? new Date(dto.endsAt) : null,
+        allocation: cleanAllocation(dto.allocation),
         poi,
       }),
     );
@@ -431,6 +464,7 @@ export class DonationsService {
     Object.assign(campaign, {
       ...dto,
       endsAt: dto.endsAt === undefined ? campaign.endsAt : dto.endsAt ? new Date(dto.endsAt) : null,
+      allocation: dto.allocation === undefined ? campaign.allocation : cleanAllocation(dto.allocation),
     });
     await this.campaignsRepository.save(campaign);
     return (await this.withRaised([campaign]))[0];
@@ -476,6 +510,7 @@ export class DonationsService {
       raised: round2(Number(byId.get(campaign.id)?.total ?? 0)),
       giftCount: Number(byId.get(campaign.id)?.count ?? 0),
       imageUrl: campaign.imageUrl ?? null,
+      allocation: campaign.allocation ?? null,
     }));
   }
 
@@ -589,6 +624,142 @@ export class DonationsService {
       relations: { donor: true },
       order: { createdAt: 'ASC' },
     });
+  }
+
+  // ---- Monthly gifts whose card needs the giver ----
+
+  /**
+   * Stripe says a monthly gift's charge failed, or that its card runs out
+   * before the next one. The giver hears it once per problem, in their
+   * own language, whatever notifications they turned off: it is about
+   * their own money, not the community's news.
+   */
+  async markPaymentProblem(subscriptionId: string, problem: PaymentProblem): Promise<void> {
+    const first = await this.donationsRepository.findOne({
+      where: { stripeSubscriptionId: subscriptionId, recurringParentId: IsNull() },
+      relations: { poi: true, donor: true },
+    });
+    if (!first || first.recurringCancelledAt) return;
+    // 'failed' outranks a card that is only about to run out.
+    if (first.paymentProblem === problem || (first.paymentProblem === 'failed' && problem === 'card_expiring')) return;
+    first.paymentProblem = problem;
+    first.paymentProblemAt = new Date();
+    await this.donationsRepository.save(first);
+    if (!first.donor) return;
+    const poi = first.poi;
+    this.notificationsService.fireAndForget(() =>
+      this.notificationsService.notifyUserAlways(first.donor!.id, poi.id, (reader) => ({
+        title: poi.name,
+        body: text(reader.language, problem === 'failed' ? 'monthlyGiftFailed' : 'monthlyGiftCardExpiring', {
+          amount: formatEuros(first.amount),
+        }),
+        data: { screen: 'donations' },
+      })),
+    );
+  }
+
+  /**
+   * A Stripe page where the giver puts in a new card for a monthly gift.
+   * Stripe keeps the card; we never see it.
+   */
+  async updateCardUrl(poiId: string, donationId: string, userId: string, returnUrl: string): Promise<{ url: string }> {
+    const donation = await this.donationsRepository.findOne({
+      where: { id: donationId, poi: { id: poiId }, donor: { id: userId }, recurring: true, recurringParentId: IsNull() },
+    });
+    if (!donation) throw new NotFoundException('Donation not found');
+    if (!donation.stripeSubscriptionId || !this.stripeService.isConfigured) {
+      throw new ServiceUnavailableException('Card payments are not set up');
+    }
+    try {
+      return { url: await this.stripeService.cardUpdateUrl(donation.stripeSubscriptionId, returnUrl) };
+    } catch (error) {
+      this.logger.error(`Stripe card update page failed: ${(error as Error).message}`);
+      throw new ServiceUnavailableException('Could not open the card page');
+    }
+  }
+
+  // ---- The treasurer's files ----
+
+  /**
+   * Every completed gift of a year, one row each, for the community's
+   * accountant: when, how much, infunion's share, what for, and who.
+   */
+  async giftsCsv(poiId: string, year: number): Promise<string> {
+    const gifts = await this.donationsRepository.find({
+      where: {
+        poi: { id: poiId },
+        status: DonationStatus.COMPLETED,
+        createdAt: And(MoreThanOrEqual(new Date(year, 0, 1)), LessThan(new Date(year + 1, 0, 1))),
+      },
+      relations: { campaign: true },
+      order: { createdAt: 'ASC' },
+    });
+    return giftsCsv(gifts);
+  }
+
+  /**
+   * The year's modelo 182 file. Givers are the ones who asked for a
+   * receipt (the only ones whose NIF we have); whether each one is
+   * "recurrent" comes from what they gave the three years before.
+   */
+  async modelo182(poiId: string, year: number) {
+    const poi = await this.poisService.findOne(poiId);
+    if (poi.taxScheme === TaxScheme.NONE) {
+      throw new BadRequestException('This community’s gifts give no tax deduction');
+    }
+    if (!poi.legalTaxId || !poi.legalName) {
+      throw new BadRequestException('Fill in the community’s legal name and NIF first');
+    }
+    const donors = await this.receiptDonors(poiId, year);
+    const earlier = await Promise.all([1, 2, 3].map((back) => this.receiptDonors(poiId, year - back)));
+    const totalsBack = earlier.map((list) => new Map(list.map((donor) => [donor.key, donor.total])));
+    return modelo182(
+      {
+        year,
+        nif: poi.legalTaxId,
+        name: poi.legalName,
+        scheme: poi.taxScheme,
+        phone: poi.legalPhone ?? null,
+        contactName: poi.receiptSignatory?.split(',')[0] ?? null,
+      },
+      donors.map((donor) => ({
+        name: donor.name,
+        taxId: donor.taxId,
+        postalCode: donor.postalCode,
+        total: donor.total,
+        recurrent: isRecurrentGiver({
+          yearMinus1: totalsBack[0].get(donor.key) ?? 0,
+          yearMinus2: totalsBack[1].get(donor.key) ?? 0,
+          yearMinus3: totalsBack[2].get(donor.key) ?? 0,
+        }),
+      })),
+    );
+  }
+
+  /**
+   * What the app needs for a signed-in giver's "what it really costs you"
+   * line: what they already gave here this year, and whether they count
+   * as recurrent. A giver signed out gets the plain estimate.
+   */
+  async myTaxContext(poiId: string, userId: string): Promise<{ givenThisYear: number; recurrent: boolean }> {
+    const year = new Date().getFullYear();
+    const totals = await Promise.all(
+      [0, 1, 2, 3].map(async (back) => {
+        const gifts = await this.donationsRepository.find({
+          where: {
+            poi: { id: poiId },
+            donor: { id: userId },
+            status: DonationStatus.COMPLETED,
+            createdAt: And(MoreThanOrEqual(new Date(year - back, 0, 1)), LessThan(new Date(year - back + 1, 0, 1))),
+          },
+        });
+        return round2(gifts.reduce((sum, gift) => sum + gift.amount, 0));
+      }),
+    );
+    return {
+      givenThisYear: totals[0],
+      recurrent: isRecurrentGiver({ yearMinus1: totals[1], yearMinus2: totals[2], yearMinus3: totals[3] }),
+    };
   }
 
   async findBySessionId(sessionId: string): Promise<Donation | null> {

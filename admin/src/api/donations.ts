@@ -1,5 +1,5 @@
 import { apiDelete, apiGet, apiPatch, apiPost, apiPostForm } from './client';
-import type { Campaign, Donation, DonationStats, ReceiptList } from './types';
+import type { Campaign, CampaignAllocationLine, Donation, DonationStats, Modelo182Check, ReceiptList } from './types';
 
 export function getDonationStats(poiId: string): Promise<DonationStats> {
   return apiGet<DonationStats>(`/pois/${poiId}/donations/stats`);
@@ -17,6 +17,7 @@ export type CampaignInput = {
   goalAmount?: number | null;
   endsAt?: string | null;
   active?: boolean;
+  allocation?: CampaignAllocationLine[] | null;
 };
 
 // Every campaign, the hidden ones too, with what each has raised.
@@ -51,4 +52,9 @@ export function removeCampaignImage(poiId: string, id: string): Promise<Campaign
 
 export function getReceipts(poiId: string, year: number): Promise<ReceiptList> {
   return apiGet<ReceiptList>(`/pois/${poiId}/donations/receipts?year=${year}`);
+}
+
+// What the year's modelo 182 file would hold, and who it leaves out.
+export function getModelo182Check(poiId: string, year: number): Promise<Modelo182Check> {
+  return apiGet<Modelo182Check>(`/pois/${poiId}/donations/receipts/modelo182?year=${year}`);
 }

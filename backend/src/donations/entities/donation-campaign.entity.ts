@@ -16,6 +16,8 @@ const money = {
   from: (value: string | null) => (value === null ? null : Number.parseFloat(value)),
 };
 
+export type CampaignAllocationLine = { label: string; percent: number };
+
 /**
  * A project a community raises money for — the roof, the organ, a
  * pilgrimage — with a goal the app shows progress towards. What has been
@@ -49,6 +51,12 @@ export class DonationCampaign {
   // (a path under /uploads, like every other uploaded image).
   @Column('varchar', { name: 'image_url', nullable: true })
   imageUrl?: string | null;
+
+  // Where the money goes, as the office tells it: up to eight lines whose
+  // shares add up to 100 (the roof 70 %, the gutters 30 %). Shown on the
+  // project's page in the app; null when the office hasn't said.
+  @Column('jsonb', { nullable: true })
+  allocation?: CampaignAllocationLine[] | null;
 
   // Off: hidden from the app, still listed (with its gifts) in the dashboard.
   @Column({ default: true })
