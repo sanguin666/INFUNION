@@ -71,7 +71,9 @@ export class PlacesMapService {
         'poi.name AS name',
         'poi.type AS type',
         'poi.description AS description',
-        'poi.picture_url AS "pictureUrl"',
+        // One picture per place: the logo set in Settings, else the
+        // older picture URL from before logos.
+        'COALESCE(poi.logo_url, poi.picture_url) AS "pictureUrl"',
         'poi.address AS address',
         'poi.city AS city',
         'poi.postal_code AS "postalCode"',
