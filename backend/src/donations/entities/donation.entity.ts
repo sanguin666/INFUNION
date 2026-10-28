@@ -39,6 +39,8 @@ export enum DonationPurpose {
   MASS_INTENTION = 'mass_intention',
 }
 
+export type PaymentProblem = 'failed' | 'card_expiring';
+
 /**
  * A single gift to a POI. Gifts go through Stripe Checkout when the backend
  * has a Stripe key configured (see donations/stripe.service.ts); without one
@@ -122,6 +124,16 @@ export class Donation {
 
   @Column('timestamptz', { name: 'recurring_cancelled_at', nullable: true })
   recurringCancelledAt?: Date | null;
+
+  // On the row that started a monthly gift: what is wrong with its card,
+  // from Stripe ('failed': this month's charge did not go through;
+  // 'card_expiring': the card runs out before the next charge). Cleared
+  // when a month is paid again. The app shows it with a way to fix it.
+  @Column('varchar', { name: 'payment_problem', nullable: true })
+  paymentProblem?: PaymentProblem | null;
+
+  @Column('timestamptz', { name: 'payment_problem_at', nullable: true })
+  paymentProblemAt?: Date | null;
 
   // A tax receipt needs to know who the giver is and where they live
   // (and in Spain, their NIF). Asked only when the giver wants a receipt,

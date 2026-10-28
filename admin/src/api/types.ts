@@ -32,7 +32,19 @@ export type Poi = {
   legalTaxId: string | null;
   legalAddress: string | null;
   receiptSignatory: string | null;
+  // What a gift here is worth on the giver's tax return; see the backend's
+  // TaxScheme. Decides the receipts' wording and the modelo 182.
+  taxScheme: TaxScheme;
+  legalPhone: string | null;
+  // Its look in the app: a logo that replaces infunion's in the header
+  // inside the place (a path on the API), and an accent theme.
+  logoUrl: string | null;
+  theme: PoiThemeName;
 };
+
+export type PoiThemeName = 'purple' | 'ocean' | 'forest' | 'terracotta' | 'ruby' | 'teal' | 'graphite';
+
+export type TaxScheme = 'none' | 'es_ley49' | 'es_art68';
 
 // The sections a POI stacks on its home page in the app, in the order it
 // chose. `text` and `image` carry their own content; the rest pull live
@@ -244,7 +256,11 @@ export type Campaign = {
   giftCount: number;
   // The picture on the project's page in the app, a path on the API.
   imageUrl: string | null;
+  // Where the money goes, shares adding up to 100; null when not said.
+  allocation: CampaignAllocationLine[] | null;
 };
+
+export type CampaignAllocationLine = { label: string; percent: number };
 
 export type ReceiptDonor = {
   key: string;
@@ -266,7 +282,16 @@ export type ReceiptList = {
   year: number;
   // The year's givers as a CSV, signed like the receipts.
   exportUrl: string;
+  // Every gift of the year as a CSV, and the modelo 182 file.
+  giftsUrl: string;
+  modelo182Url: string;
   donors: ReceiptDonor[];
+};
+
+export type Modelo182Check = {
+  included: number;
+  total: number;
+  skipped: { name: string; reason: 'no_tax_id' | 'bad_tax_id' | 'no_province' }[];
 };
 
 export type PeriodTotal = {

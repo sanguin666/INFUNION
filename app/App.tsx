@@ -27,9 +27,10 @@ import {
   setLastActivePoi,
 } from './src/api/auth';
 import { getPoi } from './src/api/pois';
-import { forgetPlace, getSavedPlaces, rememberPlace, type SavedPlace } from './src/storage/savedPlaces';
+import { forgetPlace, getSavedPlaces, rememberPlace, toSaved, type SavedPlace } from './src/storage/savedPlaces';
 import { landingPoi } from './src/landing';
 import { applyColorScheme, colors } from './src/theme/theme';
+import { poiAccent } from './src/theme/poiThemes';
 import { AppearanceProvider, useAppearance } from './src/theme/AppearanceContext';
 import type { Poi } from './src/api/types';
 import type { MapPlace, Origin } from './src/api/placesMap';
@@ -62,12 +63,13 @@ function AppRoutes() {
   // screens stay light whatever the phone or the choice says.
   const { scheme: wanted } = useAppearance();
   const scheme = me ? wanted : 'light';
-  applyColorScheme(scheme);
   const [stack, setStack] = useState<Route[]>([]);
   // Whether the opening route has been worked out for this session. The
   // stack alone can't say: "empty" is also what signing out leaves.
   const [landed, setLanded] = useState(false);
   const current = stack[stack.length - 1];
+  // Inside a place, its own accent; everywhere else infunion's purple.
+  applyColorScheme(scheme, current?.name === 'hub' ? poiAccent(current.poi) : 'purple');
   const { language } = useI18n();
   // The hearts opening plays once per launch, over whatever is loading
   // underneath, so it never holds anything up.
@@ -111,12 +113,7 @@ function AppRoutes() {
     let cancelled = false;
     getSavedPlaces().then((saved) => {
       if (cancelled) return;
-      const fromAccount: SavedPlace[] = (me?.pois ?? []).map((poi) => ({
-        id: poi.id,
-        name: poi.name,
-        city: poi.city,
-        qrCodeToken: poi.qrCodeToken,
-      }));
+      const fromAccount: SavedPlace[] = (me?.pois ?? []).map(toSaved);
       const extra = saved.filter((place) => !fromAccount.some((mine) => mine.id === place.id));
       setPlaces([...fromAccount, ...extra]);
     });

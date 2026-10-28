@@ -8,10 +8,12 @@ import { CheckIcon, ChevronRightIcon, DownloadIcon, HeartIcon } from '../compone
 import { uploadUri } from '../api/client';
 import {
   getCampaigns,
+  getCardUpdateUrl,
   getDonationStatus,
   getDonationsConfig,
   getMyGifts,
   getMyMonthlyGifts,
+  getMyTaxContext,
   requestGiftReceipt,
   startDonationCheckout,
   stopMonthlyGift,
@@ -25,6 +27,7 @@ import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { currencySymbol, formatAmount } from '../utils/currency';
+import { taxSaving } from '../utils/taxDeduction';
 import type { Poi } from '../api/types';
 
 type Props = {
@@ -81,6 +84,10 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
   const [askSubmitting, setAskSubmitting] = useState(false);
   const [stopping, setStopping] = useState<string | null>(null);
   const [confirmingStop, setConfirmingStop] = useState<string | null>(null);
+  const [openingCard, setOpeningCard] = useState<string | null>(null);
+  // What the giver already gave here this year, so the tax line knows how
+  // much of the 80 % band is left. Signed out, the plain estimate.
+  const [taxContext, setTaxContext] = useState<{ givenThisYear: number; recurrent: boolean } | null>(null);
   const [selected, setSelected] = useState<number>(10);
   const [customMode, setCustomMode] = useState(false);
   const [customAmount, setCustomAmount] = useState('');
@@ -122,7 +129,12 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
     getMyGifts(poi.id)
       .then(setGifts)
       .catch(() => {});
-  }, [poi.id, me]);
+    if (poi.taxScheme && poi.taxScheme !== 'none') {
+      getMyTaxContext(poi.id)
+        .then(setTaxContext)
+        .catch(() => {});
+    }
+  }, [poi.id, poi.taxScheme, me]);
 
   useEffect(loadMine, [loadMine]);
 
@@ -208,6 +220,21 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
       setError(true);
     } finally {
       setStopping(null);
+    }
+  }
+
+  // Stripe's own page for a new card; the problem clears once a month is
+  // paid again, so the list is fetched again on the way back.
+  async function updateCard(id: string) {
+    setOpeningCard(id);
+    try {
+      const { url } = await getCardUpdateUrl(poi.id, id);
+      await WebBrowser.openBrowserAsync(url);
+      loadMine();
+    } catch {
+      setError(true);
+    } finally {
+      setOpeningCard(null);
     }
   }
 
@@ -312,6 +339,13 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
   const isProject = project !== null;
   const campaign = project?.kind === 'campaign' ? project.campaign : null;
 
+  // "What it really costs you": a monthly gift is counted over a year.
+  const yearAmount = monthly ? amount * 12 : amount;
+  const saving = taxSaving(poi.taxScheme, yearAmount, {
+    alreadyGiven: taxContext?.givenThisYear,
+    recurrent: taxContext?.recurrent,
+  });
+
   // "5 €, 10 €, 20 €, Other" on one line, then the receipt box: the whole
   // gift fits on one screen, with the button under it.
   const giveForm = (
@@ -377,6 +411,21 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
           <AccessibleText variant="caption" style={styles.monthlyHint}>
             {t('donate.monthlyHint')}
           </AccessibleText>
+        )}
+        {saving > 0 && (
+          <>
+            <FormDivider />
+            <View style={styles.taxRow} accessibilityLiveRegion="polite">
+              <AccessibleText variant="body" color={colors.primaryStrong} style={styles.bold}>
+                {monthly
+                  ? t('donate.taxSavingMonthly', { year: formatted(yearAmount), saving: formatted(saving) })
+                  : t('donate.taxSaving', { net: formatted(Math.max(0, amount - saving)), saving: formatted(saving) })}
+              </AccessibleText>
+              <AccessibleText variant="caption" color={colors.textMuted}>
+                {t('donate.taxNote')}
+              </AccessibleText>
+            </View>
+          </>
         )}
         <FormDivider />
         <CheckboxRow
@@ -444,6 +493,35 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
           {!!description && <AccessibleText variant="body">{description}</AccessibleText>}
         </View>
         <Progress campaign={campaign} formatted={formatted} large />
+        {!!campaign.allocation?.length && (
+          <>
+            <AccessibleText variant="caption" style={styles.sectionLabel}>
+              {t('donate.allocationTitle')}
+            </AccessibleText>
+            <View style={styles.listCard}>
+              {campaign.allocation.map((line, index) => (
+                <View
+                  key={`${line.label}-${index}`}
+                  style={[styles.allocationRow, index > 0 && styles.divider]}
+                  accessible
+                  accessibilityLabel={`${line.label}: ${line.percent} %`}
+                >
+                  <View style={styles.allocationText}>
+                    <AccessibleText variant="body" style={styles.flex}>
+                      {line.label}
+                    </AccessibleText>
+                    <AccessibleText variant="body" style={styles.bold}>
+                      {`${line.percent} %`}
+                    </AccessibleText>
+                  </View>
+                  <View style={styles.allocationTrack}>
+                    <View style={[styles.allocationFill, { width: `${Math.min(100, line.percent)}%` }]} />
+                  </View>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
         {giveForm}
       </>
     );
@@ -497,6 +575,18 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
                     date: new Date(gift.createdAt).toLocaleDateString(intlLocale(language), { month: 'long', year: 'numeric' }),
                   })}
                 </AccessibleText>
+                {!!gift.paymentProblem && (
+                  <>
+                    <AccessibleText variant="body" color={colors.danger} style={styles.bold}>
+                      {t(gift.paymentProblem === 'failed' ? 'donate.paymentFailed' : 'donate.cardExpiring')}
+                    </AccessibleText>
+                    <AccessibleButton
+                      label={openingCard === gift.id ? t('donate.processingButton') : t('donate.updateCard')}
+                      onPress={() => updateCard(gift.id)}
+                      disabled={openingCard === gift.id}
+                    />
+                  </>
+                )}
                 {confirmingStop === gift.id ? (
                   <View style={styles.confirm}>
                     <AccessibleText variant="body" style={styles.bold}>
@@ -899,6 +989,31 @@ const styles = themedStyles(() => ({
   },
   monthlyHint: {
     paddingBottom: spacing.sm,
+  },
+  // The tax line: text on the white card, no box of its own.
+  taxRow: {
+    paddingVertical: spacing.sm,
+    gap: spacing.xs,
+  },
+  allocationRow: {
+    padding: spacing.md,
+    gap: spacing.xs,
+  },
+  allocationText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  allocationTrack: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.cardBorder,
+    overflow: 'hidden',
+  },
+  allocationFill: {
+    height: '100%',
+    borderRadius: 3,
+    backgroundColor: colors.primary,
   },
   checkboxRow: {
     flexDirection: 'row',

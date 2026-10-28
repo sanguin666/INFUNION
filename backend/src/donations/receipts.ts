@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import type { Donation } from './entities/donation.entity.js';
 import type { Poi } from '../pois/entities/poi.entity.js';
 import { intlLocale, Language } from '../common/enums/language.enum.js';
+import { TaxScheme } from '../common/enums/tax-scheme.enum.js';
 
 /**
  * Yearly tax receipts. A community owes each giver who asked for one a
@@ -118,6 +119,47 @@ export function donorsCsv(donors: ReceiptDonor[]): string {
     d.count,
   ]);
   // A BOM so Excel opens the accents right.
+  return '\uFEFF' + [header, ...rows].map((row) => row.map(csvCell).join(';')).join('\r\n') + '\r\n';
+}
+
+const PURPOSE_LABEL: Record<string, string> = {
+  general: 'General',
+  collection: 'Day-to-day running',
+  campaign: 'Project',
+  mass_intention: 'Mass intention',
+};
+
+/**
+ * Every gift of a year, one row each, for the accountant. Same
+ * spreadsheet conventions as donorsCsv: semicolons, a BOM, CRLF.
+ */
+export function giftsCsv(gifts: Donation[]): string {
+  const header = [
+    'Fecha / Date',
+    'Importe / Amount',
+    'Comisión infunion / infunion share',
+    'Destino / Purpose',
+    'Proyecto / Project',
+    'Mensual / Monthly',
+    'Donante / Donor',
+    'NIF',
+    'CP',
+    'Certificado / Receipt',
+    'Pago Stripe / Stripe payment',
+  ];
+  const rows = gifts.map((g) => [
+    g.createdAt.toISOString().slice(0, 10),
+    g.amount.toFixed(2),
+    (g.platformFee ?? 0).toFixed(2),
+    PURPOSE_LABEL[g.purpose] ?? g.purpose,
+    g.campaign?.title ?? null,
+    g.recurring ? 'Sí / Yes' : 'No',
+    g.donorName ?? null,
+    g.donorTaxId ?? null,
+    g.donorPostalCode ?? null,
+    g.wantsReceipt ? 'Sí / Yes' : 'No',
+    g.stripePaymentIntentId ?? g.stripeInvoiceId ?? null,
+  ]);
   return '\uFEFF' + [header, ...rows].map((row) => row.map(csvCell).join(';')).join('\r\n') + '\r\n';
 }
 
@@ -260,6 +302,35 @@ const WORDING: Record<Language, Wording> = {
 };
 
 /**
+ * The Spanish wordings cite the Ley 49/2002 only for a community under
+ * it (TaxScheme). One outside it says what its gifts are worth instead,
+ * so a receipt never promises a deduction the giver won't get.
+ */
+const SPANISH_BASIS: Partial<Record<Language, Record<Exclude<TaxScheme, TaxScheme.ES_LEY49>, string>>> = {
+  [Language.ES]: {
+    [TaxScheme.ES_ART68]:
+      'Donativo a una entidad de las previstas en el artículo 68.3.b) de la Ley 35/2006, del IRPF. El donativo tiene carácter irrevocable.',
+    [TaxScheme.NONE]: 'Justificante de los donativos recibidos.',
+  },
+  [Language.VA]: {
+    [TaxScheme.ES_ART68]:
+      'Donatiu a una entitat de les previstes en l’article 68.3.b) de la Llei 35/2006, de l’IRPF. El donatiu té caràcter irrevocable.',
+    [TaxScheme.NONE]: 'Justificant dels donatius rebuts.',
+  },
+  [Language.GL]: {
+    [TaxScheme.ES_ART68]:
+      'Doazón a unha entidade das previstas no artigo 68.3.b) da Lei 35/2006, do IRPF. A doazón ten carácter irrevogable.',
+    [TaxScheme.NONE]: 'Xustificante das doazóns recibidas.',
+  },
+};
+
+function legalBasis(poi: Poi, w: Wording): string {
+  const scheme = poi.taxScheme ?? TaxScheme.NONE;
+  if (scheme === TaxScheme.ES_LEY49) return w.legalBasis;
+  return SPANISH_BASIS[poi.language]?.[scheme] ?? w.legalBasis;
+}
+
+/**
  * One giver's receipt for one year, as a page to print or save as a PDF.
  * With `gift`, the receipt is for that single gift instead, the one a
  * giver downloads from their list of gifts in the app.
@@ -313,7 +384,7 @@ export function receiptHtml(
     <main>
       <h1>${escapeHtml(title)}</h1>
       <p class="number">${escapeHtml(w.number)} ${number}</p>
-      <p class="legal">${escapeHtml(w.legalBasis)}</p>
+      <p class="legal">${escapeHtml(legalBasis(poi, w))}</p>
       <section>
         <h2>${escapeHtml(w.issuer)}</h2>
         <p><strong>${escapeHtml(issuerName)}</strong><br />

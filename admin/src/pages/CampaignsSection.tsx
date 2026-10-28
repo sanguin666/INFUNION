@@ -11,15 +11,42 @@ import {
   type CampaignInput,
 } from '../api/donations';
 import { API_BASE_URL } from '../api/client';
-import type { Campaign } from '../api/types';
+import type { Campaign, CampaignAllocationLine } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
 import { CURRENCY, endOfDayFromDateInput, formatMoney, toDateInputValue } from '../format';
 
 // `photo` is a picture picked but not sent yet: it goes up once the
 // project exists, since it is stored against the project.
-type Draft = { title: string; description: string; goal: string; endsOn: string; photo: File | null };
+type AllocationDraft = { label: string; percent: string };
 
-const EMPTY_DRAFT: Draft = { title: '', description: '', goal: '', endsOn: '', photo: null };
+type Draft = {
+  title: string;
+  description: string;
+  goal: string;
+  endsOn: string;
+  photo: File | null;
+  allocation: AllocationDraft[];
+};
+
+const EMPTY_DRAFT: Draft = { title: '', description: '', goal: '', endsOn: '', photo: null, allocation: [] };
+
+const MAX_ALLOCATION_LINES = 8;
+
+// The lines worth keeping: a label and a share above zero.
+function allocationLines(draft: Draft): CampaignAllocationLine[] {
+  return draft.allocation
+    .map((line) => ({ label: line.label.trim(), percent: Number(line.percent.replace(',', '.')) }))
+    .filter((line) => line.label && Number.isFinite(line.percent) && line.percent > 0);
+}
+
+function allocationTotal(draft: Draft): number {
+  return Math.round(allocationLines(draft).reduce((sum, line) => sum + line.percent, 0) * 10) / 10;
+}
+
+// No split at all is fine; a split is only fine when it makes 100 %.
+function allocationValid(draft: Draft): boolean {
+  return allocationLines(draft).length === 0 || Math.abs(allocationTotal(draft) - 100) < 0.05;
+}
 
 function draftFrom(campaign: Campaign): Draft {
   return {
@@ -28,6 +55,7 @@ function draftFrom(campaign: Campaign): Draft {
     goal: campaign.goalAmount === null ? '' : String(campaign.goalAmount),
     endsOn: campaign.endsAt ? toDateInputValue(campaign.endsAt) : '',
     photo: null,
+    allocation: (campaign.allocation ?? []).map((line) => ({ label: line.label, percent: String(line.percent) })),
   };
 }
 
@@ -39,6 +67,7 @@ function inputFrom(draft: Draft): CampaignInput {
     description: draft.description.trim() || null,
     goalAmount: draft.goal.trim() && Number.isFinite(goal) && goal > 0 ? goal : null,
     endsAt: draft.endsOn ? endOfDayFromDateInput(draft.endsOn) : null,
+    allocation: allocationLines(draft).length > 0 ? allocationLines(draft) : null,
   };
 }
 
@@ -79,7 +108,73 @@ function CampaignFields({ draft, onChange }: { draft: Draft; onChange: (patch: P
         <input type="file" accept="image/*" onChange={(e) => onChange({ photo: e.target.files?.[0] ?? null })} />
         <span className="field-hint">{t('campaigns.photoHint')}</span>
       </label>
+      <AllocationFields draft={draft} onChange={onChange} />
     </>
+  );
+}
+
+/**
+ * Where the money goes: a few lines of "what for" and a share each. The
+ * total shows as the office types, and turns into a warning until it
+ * makes 100 %.
+ */
+function AllocationFields({ draft, onChange }: { draft: Draft; onChange: (patch: Partial<Draft>) => void }) {
+  const { t } = useI18n();
+  const lines = draft.allocation;
+  const setLine = (index: number, patch: Partial<AllocationDraft>) =>
+    onChange({ allocation: lines.map((line, i) => (i === index ? { ...line, ...patch } : line)) });
+  const total = allocationTotal(draft);
+  return (
+    <fieldset className="allocation">
+      <legend>{t('campaigns.allocationTitle')}</legend>
+      <span className="field-hint">{t('campaigns.allocationHint')}</span>
+      {lines.map((line, index) => (
+        <div key={index} className="allocation-row">
+          <input
+            aria-label={t('campaigns.allocationLabel')}
+            placeholder={t('campaigns.allocationLabel')}
+            maxLength={60}
+            value={line.label}
+            onChange={(e) => setLine(index, { label: e.target.value })}
+          />
+          <input
+            aria-label="%"
+            className="allocation-percent"
+            type="number"
+            min={0}
+            max={100}
+            step="1"
+            inputMode="decimal"
+            value={line.percent}
+            onChange={(e) => setLine(index, { percent: e.target.value })}
+          />
+          <span aria-hidden="true">%</span>
+          <button
+            type="button"
+            className="link-button"
+            onClick={() => onChange({ allocation: lines.filter((_, i) => i !== index) })}
+          >
+            {t('campaigns.allocationRemove')}
+          </button>
+        </div>
+      ))}
+      <div className="allocation-footer">
+        {lines.length < MAX_ALLOCATION_LINES && (
+          <button
+            type="button"
+            className="link-button"
+            onClick={() => onChange({ allocation: [...lines, { label: '', percent: '' }] })}
+          >
+            {t('campaigns.allocationAdd')}
+          </button>
+        )}
+        {allocationLines(draft).length > 0 && (
+          <span className={allocationValid(draft) ? 'muted' : 'error-text'} role="status">
+            {allocationValid(draft) ? t('campaigns.allocationTotal', { n: total }) : `${t('campaigns.allocationTotal', { n: total })} · ${t('campaigns.allocationMustBe100')}`}
+          </span>
+        )}
+      </div>
+    </fieldset>
   );
 }
 
@@ -196,7 +291,7 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
 
       <form key={formKey} className="form card" onSubmit={handleCreate}>
         <CampaignFields draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
-        <button type="submit" className="btn btn-primary" disabled={submitting || !draft.title.trim()}>
+        <button type="submit" className="btn btn-primary" disabled={submitting || !draft.title.trim() || !allocationValid(draft)}>
           {submitting ? t('campaigns.creating') : t('campaigns.create')}
         </button>
       </form>
@@ -217,7 +312,7 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  disabled={!editDraft.title.trim()}
+                  disabled={!editDraft.title.trim() || !allocationValid(editDraft)}
                   onClick={() => saveEdit(campaign.id)}
                 >
                   {t('campaigns.save')}
@@ -268,6 +363,12 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
               >
                 <span style={{ width: `${percent}%` }} />
               </div>
+            )}
+            {campaign.allocation && (
+              <p className="card-meta">
+                {t('campaigns.allocationTitle')}:{' '}
+                {campaign.allocation.map((line) => `${line.label} ${line.percent} %`).join(' · ')}
+              </p>
             )}
             {campaign.endsAt && (
               <p className="card-meta">

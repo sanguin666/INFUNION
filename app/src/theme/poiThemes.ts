@@ -1,5 +1,5 @@
-import { colors } from './theme';
-import type { PoiType } from '../api/types';
+import { colors, isAccentName, type AccentName } from './theme';
+import type { Poi, PoiType } from '../api/types';
 
 /**
  * Per-POI-type visual theme: accent color, soft tint, and wording. This
@@ -28,8 +28,14 @@ const POI_THEMES: Partial<Record<PoiType, () => PoiTheme>> = {
   }),
 };
 
+/** The accent a place picked in the admin, or infunion's purple. */
+export function poiAccent(poi: Pick<Poi, 'theme'>): AccentName {
+  return isAccentName(poi.theme) ? poi.theme : 'purple';
+}
+
 export function getPoiTheme(type: PoiType): PoiTheme {
-  // Every kind wears infunion's coral inside its own pages for now; the map
-  // is where the kinds get their own colours (theme/placeKinds.ts).
+  // The accent tokens already carry the place's own theme (App applies it
+  // on the way in), so every kind reads them; the map is where the kinds
+  // get their own colours (theme/placeKinds.ts).
   return (POI_THEMES[type] ?? POI_THEMES.church!)();
 }

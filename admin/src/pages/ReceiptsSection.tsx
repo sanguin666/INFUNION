@@ -1,24 +1,69 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 import { API_BASE_URL } from '../api/client';
-import { getReceipts } from '../api/donations';
+import { getModelo182Check, getReceipts } from '../api/donations';
 import { getPoi } from '../api/pois';
 import { updateReceiptSettings } from '../api/poiSettings';
-import type { ReceiptList } from '../api/types';
+import type { Modelo182Check, ReceiptList, TaxScheme } from '../api/types';
 import { formatMoney } from '../format';
 
 // Receipts are for a calendar year; the office mostly wants last year's
 // in January and this year's for someone asking mid-year.
 const YEARS_BACK = 5;
 
-type Legal = { legalName: string; legalTaxId: string; legalAddress: string; receiptSignatory: string };
+type Legal = {
+  legalName: string;
+  legalTaxId: string;
+  legalAddress: string;
+  receiptSignatory: string;
+  legalPhone: string;
+  taxScheme: TaxScheme;
+};
 
-const EMPTY_LEGAL: Legal = { legalName: '', legalTaxId: '', legalAddress: '', receiptSignatory: '' };
+const EMPTY_LEGAL: Legal = {
+  legalName: '',
+  legalTaxId: '',
+  legalAddress: '',
+  receiptSignatory: '',
+  legalPhone: '',
+  taxScheme: 'none',
+};
+
+const TAX_SCHEMES: { value: TaxScheme; label: 'receipts.taxNone' | 'receipts.taxLey49' | 'receipts.taxArt68' }[] = [
+  { value: 'none', label: 'receipts.taxNone' },
+  { value: 'es_ley49', label: 'receipts.taxLey49' },
+  { value: 'es_art68', label: 'receipts.taxArt68' },
+];
+
+const SKIP_REASON = {
+  no_tax_id: 'receipts.m182NoTaxId',
+  bad_tax_id: 'receipts.m182BadTaxId',
+  no_province: 'receipts.m182NoProvince',
+} as const;
+
+function legalFrom(poi: {
+  legalName: string | null;
+  legalTaxId: string | null;
+  legalAddress: string | null;
+  receiptSignatory: string | null;
+  legalPhone: string | null;
+  taxScheme: TaxScheme;
+}): Legal {
+  return {
+    legalName: poi.legalName ?? '',
+    legalTaxId: poi.legalTaxId ?? '',
+    legalAddress: poi.legalAddress ?? '',
+    receiptSignatory: poi.receiptSignatory ?? '',
+    legalPhone: poi.legalPhone ?? '',
+    taxScheme: poi.taxScheme ?? 'none',
+  };
+}
 
 /**
- * Yearly tax receipts, on the Donations page: who issues them, and one
- * receipt per giver who asked for one, with the year's list as a CSV for
- * the treasurer. The links are signed and last an hour, so they are
+ * Yearly tax receipts, on the Donations page: who issues them and what a
+ * gift is worth on the giver's tax return, one receipt per giver who
+ * asked for one, the year's lists as CSVs for the treasurer, and in Spain
+ * the modelo 182 file. The links are signed and last an hour, so they are
  * fetched again whenever the year changes.
  */
 export function ReceiptsSection({ poiId }: { poiId: string }) {
@@ -33,6 +78,7 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
   const [savingLegal, setSavingLegal] = useState(false);
   const [legalSaved, setLegalSaved] = useState(false);
   const [legalError, setLegalError] = useState<string | null>(null);
+  const [check, setCheck] = useState<Modelo182Check | null>(null);
 
   useEffect(() => {
     getReceipts(poiId, year)
@@ -43,12 +89,7 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
   useEffect(() => {
     getPoi(poiId)
       .then((poi) => {
-        const loaded = {
-          legalName: poi.legalName ?? '',
-          legalTaxId: poi.legalTaxId ?? '',
-          legalAddress: poi.legalAddress ?? '',
-          receiptSignatory: poi.receiptSignatory ?? '',
-        };
+        const loaded = legalFrom(poi);
         setLegal(loaded);
         setSavedLegal(loaded);
       })
@@ -66,13 +107,10 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
         legalTaxId: legal.legalTaxId.trim(),
         legalAddress: legal.legalAddress.trim(),
         receiptSignatory: legal.receiptSignatory.trim(),
+        legalPhone: legal.legalPhone.trim(),
+        taxScheme: legal.taxScheme,
       });
-      const saved = {
-        legalName: poi.legalName ?? '',
-        legalTaxId: poi.legalTaxId ?? '',
-        legalAddress: poi.legalAddress ?? '',
-        receiptSignatory: poi.receiptSignatory ?? '',
-      };
+      const saved = legalFrom(poi);
       setLegal(saved);
       setSavedLegal(saved);
       setLegalSaved(true);
@@ -82,6 +120,17 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
       setSavingLegal(false);
     }
   }
+
+  // The modelo 182 summary follows the saved settings, not the ones
+  // being typed, since the file is built from what is saved.
+  const canFile = savedLegal.taxScheme !== 'none' && !!savedLegal.legalName && !!savedLegal.legalTaxId;
+  useEffect(() => {
+    setCheck(null);
+    if (!canFile) return;
+    getModelo182Check(poiId, year)
+      .then(setCheck)
+      .catch(() => setCheck(null));
+  }, [poiId, year, canFile, savedLegal]);
 
   const legalDirty =
     !!legal && (Object.keys(EMPTY_LEGAL) as (keyof Legal)[]).some((k) => legal[k].trim() !== savedLegal[k]);
@@ -126,6 +175,30 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
               placeholder={t('receipts.signatoryPlaceholder')}
             />
           </label>
+          <label>
+            {t('receipts.taxSchemeLabel')}
+            <select
+              value={legal.taxScheme}
+              onChange={(e) => setLegal({ ...legal, taxScheme: e.target.value as TaxScheme })}
+            >
+              {TAX_SCHEMES.map((scheme) => (
+                <option key={scheme.value} value={scheme.value}>
+                  {t(scheme.label)}
+                </option>
+              ))}
+            </select>
+            <span className="field-hint">{t('receipts.taxSchemeHint')}</span>
+          </label>
+          {legal.taxScheme !== 'none' && (
+            <label>
+              {t('receipts.phoneLabel')}
+              <input
+                type="tel"
+                value={legal.legalPhone}
+                onChange={(e) => setLegal({ ...legal, legalPhone: e.target.value })}
+              />
+            </label>
+          )}
           <div className="card-actions">
             <button type="button" className="btn btn-primary" disabled={savingLegal || !legalDirty} onClick={saveLegal}>
               {savingLegal ? t('receipts.saving') : t('receipts.save')}
@@ -154,12 +227,61 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
             ))}
           </select>
         </label>
-        {list && list.donors.length > 0 && (
-          <a className="btn" href={`${API_BASE_URL}${list.exportUrl}`} download={`donors-${list.year}.csv`}>
-            {t('receipts.exportCsv')}
-          </a>
-        )}
+        <div className="card-actions" style={{ marginTop: 0 }}>
+          {list && (
+            <a className="btn" href={`${API_BASE_URL}${list.giftsUrl}`} download={`gifts-${list.year}.csv`}>
+              {t('receipts.giftsCsv')}
+            </a>
+          )}
+          {list && list.donors.length > 0 && (
+            <a className="btn" href={`${API_BASE_URL}${list.exportUrl}`} download={`donors-${list.year}.csv`}>
+              {t('receipts.exportCsv')}
+            </a>
+          )}
+        </div>
       </div>
+
+      {/* Spain's yearly return of gifts, for a community whose gifts
+          give a deduction. */}
+      {savedLegal.taxScheme !== 'none' && (
+        <div className="card">
+          <p className="card-title" style={{ margin: 0 }}>
+            {t('receipts.m182Title')} · {year}
+          </p>
+          <p className="muted" style={{ margin: '4px 0 0' }}>
+            {t('receipts.m182Hint')}
+          </p>
+          {!canFile && <p className="muted">{t('receipts.m182NeedsLegal')}</p>}
+          {canFile && check && (
+            <>
+              <p style={{ margin: '8px 0 0' }}>
+                {t(check.included === 1 ? 'receipts.m182SummaryOne' : 'receipts.m182Summary', { n: check.included, total: formatMoney(check.total) })}
+              </p>
+              {check.skipped.length > 0 && (
+                <>
+                  <p className="muted" style={{ margin: '8px 0 0' }}>
+                    {t('receipts.m182Skipped')}
+                  </p>
+                  <ul style={{ margin: '4px 0 0' }}>
+                    {check.skipped.map((skip, i) => (
+                      <li key={i}>
+                        {skip.name || t('receipts.noName')} · {t(SKIP_REASON[skip.reason])}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {list && check.included > 0 && (
+                <div className="card-actions">
+                  <a className="btn btn-primary" href={`${API_BASE_URL}${list.modelo182Url}`} download={`modelo182-${year}.txt`}>
+                    {t('receipts.m182Download')}
+                  </a>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {error && <p className="error-text">{error}</p>}
       {list === null && !error && <p className="muted">{t('receipts.loading')}</p>}

@@ -18,9 +18,19 @@ export type Poi = {
   // admin dashboard. Modules it leaves out fall in behind the ones it
   // listed, in the app's own default order.
   menuOrder: ModuleType[];
+  // What a gift here is worth on the giver's tax return (the backend's
+  // TaxScheme); the gift form's "what it really costs you" line follows it.
+  taxScheme?: TaxScheme;
+  // Its own look in the app (Seb, 28 Oct 2026): a logo that replaces
+  // infunion's in the header inside the place, and the accent its pages
+  // wear (see theme/theme.ts ACCENTS).
+  logoUrl?: string | null;
+  theme?: string;
   createdAt: string;
   updatedAt: string;
 };
+
+export type TaxScheme = 'none' | 'es_ley49' | 'es_art68';
 
 export type ModuleType =
   | 'donations'
