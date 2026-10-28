@@ -107,6 +107,7 @@ export type Translations = {
     appearanceAuto: string;
     appearanceLight: string;
     appearanceDark: string;
+    madeWith: string;
   };
   profile: {
     title: string;
@@ -674,6 +675,7 @@ const en: Translations = {
     appearanceAuto: 'Automatic',
     appearanceLight: 'Light',
     appearanceDark: 'Dark',
+    madeWith: "Made with",
   },
   profile: {
     title: 'Your settings',
@@ -1243,6 +1245,7 @@ const es: Translations = {
     appearanceAuto: 'Automático',
     appearanceLight: 'Claro',
     appearanceDark: 'Oscuro',
+    madeWith: "Hecho con",
   },
   profile: {
     title: 'Tus ajustes',
@@ -1812,6 +1815,7 @@ const fr: Translations = {
     appearanceAuto: 'Automatique',
     appearanceLight: 'Clair',
     appearanceDark: 'Sombre',
+    madeWith: "Réalisé avec",
   },
   profile: {
     title: 'Vos réglages',
@@ -2381,6 +2385,7 @@ const va: Translations = {
     appearanceAuto: 'Automàtic',
     appearanceLight: 'Clar',
     appearanceDark: 'Fosc',
+    madeWith: "Fet amb",
   },
   profile: {
     title: 'La teua configuració',
@@ -2950,6 +2955,7 @@ const gl: Translations = {
     appearanceAuto: 'Automático',
     appearanceLight: 'Claro',
     appearanceDark: 'Escuro',
+    madeWith: "Feito con",
   },
   profile: {
     title: 'Os teus axustes',
@@ -3520,6 +3526,7 @@ const pt: Translations = {
     appearanceAuto: 'Automático',
     appearanceLight: 'Claro',
     appearanceDark: 'Escuro',
+    madeWith: "Feito com",
   },
   profile: {
     title: 'As suas definições',

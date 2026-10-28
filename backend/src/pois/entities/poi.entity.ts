@@ -15,6 +15,7 @@ import { Language } from '../../common/enums/language.enum.js';
 import { BillingInterval } from '../../common/enums/billing-interval.enum.js';
 import { ModuleType } from '../../common/enums/module-type.enum.js';
 import { TaxScheme } from '../../common/enums/tax-scheme.enum.js';
+import { PoiTheme } from '../../common/enums/poi-theme.enum.js';
 
 /**
  * A point of interest a user can join: a church today, potentially other
@@ -54,6 +55,16 @@ export class Poi {
   // messages could be reused for direct uploads later).
   @Column({ name: 'picture_url', nullable: true })
   pictureUrl?: string;
+
+  // The community's own logo, uploaded in the admin (a path under
+  // /uploads). Optional: without one the app's header shows its initials
+  // in its theme colour (Seb chose this placement, 28 Oct 2026).
+  @Column('varchar', { name: 'logo_url', nullable: true })
+  logoUrl?: string | null;
+
+  // The accent its pages wear in the app; see PoiTheme.
+  @Column({ type: 'varchar', default: PoiTheme.PURPLE })
+  theme!: PoiTheme;
 
   // Editable text for the printable onboarding flyer generated on the
   // admin dashboard's "My QR" page — left blank to fall back to a

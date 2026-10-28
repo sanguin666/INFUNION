@@ -703,6 +703,32 @@ export type Translations = {
     allocationTotal: string;
     allocationMustBe100: string;
   };
+  branding: {
+    title: string;
+    subtitle: string;
+    logoLabel: string;
+    logoHint: string;
+    logoAdd: string;
+    logoChange: string;
+    logoRemove: string;
+    logoUploading: string;
+    logoError: string;
+    themeLabel: string;
+    themeHint: string;
+    purple: string;
+    ocean: string;
+    forest: string;
+    terracotta: string;
+    ruby: string;
+    teal: string;
+    graphite: string;
+    save: string;
+    saving: string;
+    saved: string;
+    saveError: string;
+    previewLabel: string;
+    sampleButton: string;
+  };
   receipts: {
     title: string;
     subtitle: string;
@@ -738,6 +764,7 @@ export type Translations = {
     m182Hint: string;
     m182Download: string;
     m182Summary: string;
+    m182SummaryOne: string;
     m182Skipped: string;
     m182NoTaxId: string;
     m182BadTaxId: string;
@@ -1508,6 +1535,32 @@ const en: Translations = {
     allocationTotal: "Total: {{n}} %",
     allocationMustBe100: "The shares must add up to 100 %.",
   },
+  branding: {
+    title: "Your look in the app",
+    subtitle: "While members are in your community, your logo replaces infunion’s in the app’s header. Without a logo, the app shows your initials in your colour.",
+    logoLabel: "Logo",
+    logoHint: "PNG, JPEG or WebP, square, at least 256 × 256 pixels. It is shown in a circle.",
+    logoAdd: "Upload a logo",
+    logoChange: "Change the logo",
+    logoRemove: "Remove the logo",
+    logoUploading: "Uploading…",
+    logoError: "Could not upload the logo. Use a PNG, JPEG or WebP picture under 4 MB.",
+    themeLabel: "Colour",
+    themeHint: "Buttons, the notice banner and the selected tab take this colour. Text and backgrounds stay the same, so everything stays easy to read.",
+    purple: "infunion purple",
+    ocean: "Ocean",
+    forest: "Forest",
+    terracotta: "Terracotta",
+    ruby: "Ruby",
+    teal: "Teal",
+    graphite: "Graphite",
+    save: "Save the colour",
+    saving: "Saving…",
+    saved: "Saved. Members see it the next time they open your community.",
+    saveError: "Could not save your changes.",
+    previewLabel: "How the top of the app looks",
+    sampleButton: "Support us",
+  },
   receipts: {
     title: 'Tax receipts',
     subtitle: 'One receipt a year for each person who asked for one when giving, adding up everything they gave. Open a receipt to print it or save it as a PDF; the links work for an hour.',
@@ -1543,6 +1596,7 @@ const en: Translations = {
     m182Hint: "The yearly return of gifts for the Agencia Tributaria, due by 31 January. Download the file, check it in the AEAT’s validator, then present it on the Sede electrónica (“presentación mediante fichero”) with your certificate. Only givers who gave their NIF are in it.",
     m182Download: "Download the modelo 182 file",
     m182Summary: "{{n}} givers, {{total}} in total.",
+    m182SummaryOne: "1 giver, {{total}} in total.",
     m182Skipped: "Left out, to fix before filing:",
     m182NoTaxId: "no NIF",
     m182BadTaxId: "the NIF looks wrong",
@@ -2313,6 +2367,32 @@ const es: Translations = {
     allocationTotal: "Total: {{n}} %",
     allocationMustBe100: "Los porcentajes deben sumar 100 %.",
   },
+  branding: {
+    title: "Tu imagen en la aplicación",
+    subtitle: "Mientras los miembros están en tu comunidad, tu logotipo sustituye al de infunion en la cabecera de la aplicación. Sin logotipo, la aplicación muestra tus iniciales en tu color.",
+    logoLabel: "Logotipo",
+    logoHint: "PNG, JPEG o WebP, cuadrado, de al menos 256 × 256 píxeles. Se muestra en un círculo.",
+    logoAdd: "Subir un logotipo",
+    logoChange: "Cambiar el logotipo",
+    logoRemove: "Quitar el logotipo",
+    logoUploading: "Subiendo…",
+    logoError: "No se ha podido subir el logotipo. Usa una imagen PNG, JPEG o WebP de menos de 4 MB.",
+    themeLabel: "Color",
+    themeHint: "Los botones, el aviso destacado y la pestaña seleccionada toman este color. Los textos y los fondos no cambian, así todo sigue siendo fácil de leer.",
+    purple: "Morado infunion",
+    ocean: "Océano",
+    forest: "Bosque",
+    terracotta: "Terracota",
+    ruby: "Rubí",
+    teal: "Turquesa",
+    graphite: "Grafito",
+    save: "Guardar el color",
+    saving: "Guardando…",
+    saved: "Guardado. Los miembros lo verán la próxima vez que abran tu comunidad.",
+    saveError: "No se han podido guardar los cambios.",
+    previewLabel: "Así se ve la parte de arriba de la aplicación",
+    sampleButton: "Apóyanos",
+  },
   receipts: {
     title: 'Certificados de donación',
     subtitle: 'Un certificado al año para cada persona que lo pidió al donar, con la suma de todo lo que dio. Abre un certificado para imprimirlo o guardarlo en PDF; los enlaces funcionan durante una hora.',
@@ -2341,18 +2421,19 @@ const es: Translations = {
     taxNone: "Sin deducción",
     taxLey49: "España: entidad acogida a la Ley 49/2002 (80 % de los primeros 250 €, luego 40 %)",
     taxArt68: "España: fundación o asociación de utilidad pública no acogida a la Ley 49/2002 (10 %)",
-    taxSchemeHint: "Lo decide vuestra situación legal; si tenéis dudas, preguntad a vuestra gestoría. Los certificados y el formulario de donativo de la aplicación lo siguen.",
+    taxSchemeHint: "Lo decide tu situación legal; si tienes dudas, pregunta a tu gestoría. Los certificados y el formulario de donativo de la aplicación lo siguen.",
     phoneLabel: "Teléfono para Hacienda",
     giftsCsv: "Descargar todos los donativos (CSV)",
     m182Title: "Modelo 182",
-    m182Hint: "La declaración anual de donativos para la Agencia Tributaria, antes del 31 de enero. Descargad el fichero, comprobadlo en el validador de la AEAT y presentadlo en la Sede electrónica («presentación mediante fichero») con vuestro certificado. Solo incluye a los donantes que dieron su NIF.",
+    m182Hint: "La declaración anual de donativos para la Agencia Tributaria, antes del 31 de enero. Descarga el fichero, compruébalo en el validador de la AEAT y preséntalo en la Sede electrónica («presentación mediante fichero») con tu certificado. Solo incluye a los donantes que dieron su NIF.",
     m182Download: "Descargar el fichero del modelo 182",
     m182Summary: "{{n}} donantes, {{total}} en total.",
+    m182SummaryOne: "1 donante, {{total}} en total.",
     m182Skipped: "No incluidos, para corregir antes de presentarlo:",
     m182NoTaxId: "sin NIF",
     m182BadTaxId: "el NIF no parece correcto",
     m182NoProvince: "sin código postal español",
-    m182NeedsLegal: "Completad arriba el nombre legal y el NIF para generar el fichero.",
+    m182NeedsLegal: "Completa arriba el nombre legal y el NIF para generar el fichero.",
   },
   members: {
     title: "Miembros",
@@ -3118,6 +3199,32 @@ const fr: Translations = {
     allocationTotal: "Total : {{n}} %",
     allocationMustBe100: "Les parts doivent faire 100 % au total.",
   },
+  branding: {
+    title: "Votre image dans l’application",
+    subtitle: "Quand les membres sont dans votre communauté, votre logo remplace celui d’infunion dans l’en-tête de l’application. Sans logo, l’application affiche vos initiales dans votre couleur.",
+    logoLabel: "Logo",
+    logoHint: "PNG, JPEG ou WebP, carré, d’au moins 256 × 256 pixels. Il s’affiche dans un cercle.",
+    logoAdd: "Téléverser un logo",
+    logoChange: "Changer le logo",
+    logoRemove: "Retirer le logo",
+    logoUploading: "Envoi…",
+    logoError: "Impossible d’envoyer le logo. Utilisez une image PNG, JPEG ou WebP de moins de 4 Mo.",
+    themeLabel: "Couleur",
+    themeHint: "Les boutons, le bandeau d’annonce et l’onglet sélectionné prennent cette couleur. Les textes et les fonds ne changent pas, tout reste facile à lire.",
+    purple: "Violet infunion",
+    ocean: "Océan",
+    forest: "Forêt",
+    terracotta: "Terre cuite",
+    ruby: "Rubis",
+    teal: "Turquoise",
+    graphite: "Graphite",
+    save: "Enregistrer la couleur",
+    saving: "Enregistrement…",
+    saved: "Enregistré. Les membres le verront à la prochaine ouverture de votre communauté.",
+    saveError: "Impossible d’enregistrer vos modifications.",
+    previewLabel: "Le haut de l’application",
+    sampleButton: "Nous soutenir",
+  },
   receipts: {
     title: 'Reçus fiscaux',
     subtitle: "Un reçu par an pour chaque personne qui l'a demandé en donnant, avec le total de ses dons. Ouvrez un reçu pour l'imprimer ou l'enregistrer en PDF ; les liens fonctionnent pendant une heure.",
@@ -3153,6 +3260,7 @@ const fr: Translations = {
     m182Hint: "La déclaration annuelle des dons pour l’Agencia Tributaria espagnole, avant le 31 janvier. Téléchargez le fichier, vérifiez-le avec le validateur de l’AEAT, puis déposez-le sur la Sede electrónica (« presentación mediante fichero ») avec votre certificat. Seuls les donateurs qui ont donné leur NIF y figurent.",
     m182Download: "Télécharger le fichier du modelo 182",
     m182Summary: "{{n}} donateurs, {{total}} au total.",
+    m182SummaryOne: "1 donateur, {{total}} au total.",
     m182Skipped: "Non inclus, à corriger avant le dépôt :",
     m182NoTaxId: "pas de NIF",
     m182BadTaxId: "le NIF semble faux",
@@ -3923,6 +4031,32 @@ const va: Translations = {
     allocationTotal: "Total: {{n}} %",
     allocationMustBe100: "Els percentatges han de sumar 100 %.",
   },
+  branding: {
+    title: "La teua imatge en l’aplicació",
+    subtitle: "Mentre els membres estan en la teua comunitat, el teu logotip substituïx el d’infunion en la capçalera de l’aplicació. Sense logotip, l’aplicació mostra les teues inicials en el teu color.",
+    logoLabel: "Logotip",
+    logoHint: "PNG, JPEG o WebP, quadrat, d’almenys 256 × 256 píxels. Es mostra en un cercle.",
+    logoAdd: "Pujar un logotip",
+    logoChange: "Canviar el logotip",
+    logoRemove: "Llevar el logotip",
+    logoUploading: "Pujant…",
+    logoError: "No s’ha pogut pujar el logotip. Usa una imatge PNG, JPEG o WebP de menys de 4 MB.",
+    themeLabel: "Color",
+    themeHint: "Els botons, l’avís destacat i la pestanya seleccionada prenen este color. Els textos i els fons no canvien, així tot continua sent fàcil de llegir.",
+    purple: "Morat infunion",
+    ocean: "Oceà",
+    forest: "Bosc",
+    terracotta: "Terracota",
+    ruby: "Robí",
+    teal: "Turquesa",
+    graphite: "Grafit",
+    save: "Guardar el color",
+    saving: "Guardant…",
+    saved: "Guardat. Els membres ho veuran la pròxima vegada que obrin la teua comunitat.",
+    saveError: "No s’han pogut guardar els canvis.",
+    previewLabel: "Així es veu la part de dalt de l’aplicació",
+    sampleButton: "Dona’ns suport",
+  },
   receipts: {
     title: 'Certificats de donatius',
     subtitle: 'Un certificat a l’any per a cada persona que el va demanar en donar, amb la suma de tot el que va donar. Obri un certificat per a imprimir-lo o guardar-lo en PDF; els enllaços funcionen durant una hora.',
@@ -3951,18 +4085,19 @@ const va: Translations = {
     taxNone: "Sense deducció",
     taxLey49: "Espanya: entitat acollida a la Llei 49/2002 (80 % dels primers 250 €, després 40 %)",
     taxArt68: "Espanya: fundació o associació d’utilitat pública no acollida a la Llei 49/2002 (10 %)",
-    taxSchemeHint: "Ho decidix la vostra situació legal; si teniu dubtes, pregunteu a la vostra gestoria. Els certificats i el formulari de donatiu de l’aplicació ho seguixen.",
+    taxSchemeHint: "Ho decidix la teua situació legal; si tens dubtes, pregunta a la teua gestoria. Els certificats i el formulari de donatiu de l’aplicació ho seguixen.",
     phoneLabel: "Telèfon per a Hisenda",
     giftsCsv: "Descarregar tots els donatius (CSV)",
     m182Title: "Model 182",
-    m182Hint: "La declaració anual de donatius per a l’Agència Tributària, abans del 31 de gener. Descarregueu el fitxer, comproveu-lo en el validador de l’AEAT i presenteu-lo en la Seu electrònica («presentación mediante fichero») amb el vostre certificat. Només inclou els donants que van donar el seu NIF.",
+    m182Hint: "La declaració anual de donatius per a l’Agència Tributària, abans del 31 de gener. Descarrega el fitxer, comprova’l en el validador de l’AEAT i presenta’l en la Seu electrònica («presentación mediante fichero») amb el teu certificat. Només inclou els donants que van donar el seu NIF.",
     m182Download: "Descarregar el fitxer del model 182",
     m182Summary: "{{n}} donants, {{total}} en total.",
+    m182SummaryOne: "1 donant, {{total}} en total.",
     m182Skipped: "No inclosos, per a corregir abans de presentar-lo:",
     m182NoTaxId: "sense NIF",
     m182BadTaxId: "el NIF no pareix correcte",
     m182NoProvince: "sense codi postal espanyol",
-    m182NeedsLegal: "Completeu dalt el nom legal i el NIF per a generar el fitxer.",
+    m182NeedsLegal: "Completa dalt el nom legal i el NIF per a generar el fitxer.",
   },
   members: {
     title: "Membres",
@@ -4728,6 +4863,32 @@ const gl: Translations = {
     allocationTotal: "Total: {{n}} %",
     allocationMustBe100: "As porcentaxes deben sumar 100 %.",
   },
+  branding: {
+    title: "A túa imaxe na aplicación",
+    subtitle: "Mentres os membros están na túa comunidade, o teu logotipo substitúe o de infunion na cabeceira da aplicación. Sen logotipo, a aplicación mostra as túas iniciais na túa cor.",
+    logoLabel: "Logotipo",
+    logoHint: "PNG, JPEG ou WebP, cadrado, de polo menos 256 × 256 píxeles. Móstrase nun círculo.",
+    logoAdd: "Subir un logotipo",
+    logoChange: "Cambiar o logotipo",
+    logoRemove: "Quitar o logotipo",
+    logoUploading: "Subindo…",
+    logoError: "Non se puido subir o logotipo. Usa unha imaxe PNG, JPEG ou WebP de menos de 4 MB.",
+    themeLabel: "Cor",
+    themeHint: "Os botóns, o aviso destacado e a lapela seleccionada toman esta cor. Os textos e os fondos non cambian, así todo segue sendo doado de ler.",
+    purple: "Morado infunion",
+    ocean: "Océano",
+    forest: "Bosque",
+    terracotta: "Terracota",
+    ruby: "Rubí",
+    teal: "Turquesa",
+    graphite: "Grafito",
+    save: "Gardar a cor",
+    saving: "Gardando…",
+    saved: "Gardado. Os membros verano a próxima vez que abran a túa comunidade.",
+    saveError: "Non se puideron gardar os cambios.",
+    previewLabel: "Así se ve a parte de arriba da aplicación",
+    sampleButton: "Apóianos",
+  },
   receipts: {
     title: 'Certificados de doazón',
     subtitle: 'Un certificado ao ano para cada persoa que o pediu ao doar, coa suma de todo o que deu. Abre un certificado para imprimilo ou gardalo en PDF; as ligazóns funcionan durante unha hora.',
@@ -4756,18 +4917,19 @@ const gl: Translations = {
     taxNone: "Sen dedución",
     taxLey49: "España: entidade acollida á Lei 49/2002 (80 % dos primeiros 250 €, despois 40 %)",
     taxArt68: "España: fundación ou asociación de utilidade pública non acollida á Lei 49/2002 (10 %)",
-    taxSchemeHint: "Decídeo a vosa situación legal; se tedes dúbidas, preguntade á vosa xestoría. Os certificados e o formulario de doazón da aplicación séguena.",
+    taxSchemeHint: "Decídeo a túa situación legal; se tes dúbidas, pregunta á túa xestoría. Os certificados e o formulario de doazón da aplicación séguena.",
     phoneLabel: "Teléfono para Facenda",
     giftsCsv: "Descargar todas as doazóns (CSV)",
     m182Title: "Modelo 182",
-    m182Hint: "A declaración anual de doazóns para a Axencia Tributaria, antes do 31 de xaneiro. Descargade o ficheiro, comprobádeo no validador da AEAT e presentádeo na Sede electrónica («presentación mediante fichero») co voso certificado. Só inclúe os doadores que deron o seu NIF.",
+    m182Hint: "A declaración anual de doazóns para a Axencia Tributaria, antes do 31 de xaneiro. Descarga o ficheiro, compróbao no validador da AEAT e preséntao na Sede electrónica («presentación mediante fichero») co teu certificado. Só inclúe os doadores que deron o seu NIF.",
     m182Download: "Descargar o ficheiro do modelo 182",
     m182Summary: "{{n}} doadores, {{total}} en total.",
+    m182SummaryOne: "1 doador, {{total}} en total.",
     m182Skipped: "Non incluídos, para corrixir antes de presentalo:",
     m182NoTaxId: "sen NIF",
     m182BadTaxId: "o NIF non parece correcto",
     m182NoProvince: "sen código postal español",
-    m182NeedsLegal: "Completade arriba o nome legal e o NIF para xerar o ficheiro.",
+    m182NeedsLegal: "Completa arriba o nome legal e o NIF para xerar o ficheiro.",
   },
   members: {
     title: "Membros",
@@ -5533,6 +5695,32 @@ const pt: Translations = {
     allocationTotal: "Total: {{n}} %",
     allocationMustBe100: "As percentagens têm de somar 100 %.",
   },
+  branding: {
+    title: "A sua imagem na aplicação",
+    subtitle: "Enquanto os membros estão na sua comunidade, o seu logótipo substitui o da infunion no cabeçalho da aplicação. Sem logótipo, a aplicação mostra as suas iniciais na sua cor.",
+    logoLabel: "Logótipo",
+    logoHint: "PNG, JPEG ou WebP, quadrado, com pelo menos 256 × 256 píxeis. É mostrado num círculo.",
+    logoAdd: "Carregar um logótipo",
+    logoChange: "Mudar o logótipo",
+    logoRemove: "Retirar o logótipo",
+    logoUploading: "A carregar…",
+    logoError: "Não foi possível carregar o logótipo. Use uma imagem PNG, JPEG ou WebP com menos de 4 MB.",
+    themeLabel: "Cor",
+    themeHint: "Os botões, o aviso em destaque e o separador selecionado ficam com esta cor. Os textos e os fundos não mudam, por isso tudo continua fácil de ler.",
+    purple: "Roxo infunion",
+    ocean: "Oceano",
+    forest: "Floresta",
+    terracotta: "Terracota",
+    ruby: "Rubi",
+    teal: "Turquesa",
+    graphite: "Grafite",
+    save: "Guardar a cor",
+    saving: "A guardar…",
+    saved: "Guardado. Os membros vão vê-lo da próxima vez que abrirem a sua comunidade.",
+    saveError: "Não foi possível guardar as alterações.",
+    previewLabel: "Assim fica o topo da aplicação",
+    sampleButton: "Apoiem-nos",
+  },
   receipts: {
     title: 'Recibos de donativos',
     subtitle: 'Um recibo por ano para cada pessoa que o pediu ao doar, com a soma de tudo o que deu. Abra um recibo para o imprimir ou guardar em PDF; as ligações funcionam durante uma hora.',
@@ -5561,18 +5749,19 @@ const pt: Translations = {
     taxNone: "Sem dedução",
     taxLey49: "Espanha: entidade abrangida pela Ley 49/2002 (80 % dos primeiros 250 €, depois 40 %)",
     taxArt68: "Espanha: fundação ou associação de utilidade pública fora da Ley 49/2002 (10 %)",
-    taxSchemeHint: "É o vosso estatuto jurídico que o decide; em caso de dúvida, perguntem ao vosso contabilista. Os recibos e o formulário de donativo da aplicação seguem-no.",
+    taxSchemeHint: "É o seu estatuto jurídico que o decide; em caso de dúvida, pergunte ao seu contabilista. Os recibos e o formulário de donativo da aplicação seguem-no.",
     phoneLabel: "Telefone para a administração fiscal",
     giftsCsv: "Descarregar todos os donativos (CSV)",
     m182Title: "Modelo 182",
-    m182Hint: "A declaração anual de donativos para a Agencia Tributaria espanhola, até 31 de janeiro. Descarreguem o ficheiro, verifiquem-no no validador da AEAT e apresentem-no na Sede electrónica («presentación mediante fichero») com o vosso certificado. Só inclui os doadores que indicaram o NIF.",
+    m182Hint: "A declaração anual de donativos para a Agencia Tributaria espanhola, até 31 de janeiro. Descarregue o ficheiro, verifique-o no validador da AEAT e apresente-o na Sede electrónica («presentación mediante fichero») com o seu certificado. Só inclui os doadores que indicaram o NIF.",
     m182Download: "Descarregar o ficheiro do modelo 182",
     m182Summary: "{{n}} doadores, {{total}} no total.",
+    m182SummaryOne: "1 doador, {{total}} no total.",
     m182Skipped: "Não incluídos, a corrigir antes de apresentar:",
     m182NoTaxId: "sem NIF",
     m182BadTaxId: "o NIF parece errado",
     m182NoProvince: "sem código postal espanhol",
-    m182NeedsLegal: "Preencham acima o nome legal e o número fiscal para gerar o ficheiro.",
+    m182NeedsLegal: "Preencha acima o nome legal e o número fiscal para gerar o ficheiro.",
   },
   members: {
     title: "Membros",

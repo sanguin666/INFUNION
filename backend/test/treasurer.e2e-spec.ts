@@ -132,3 +132,57 @@ describe('Treasurer tools (e2e)', () => {
     await client(app).get(`/pois/${place.id}/donations/mine/tax`).expect(401);
   });
 });
+
+describe('A community’s own look in the app (e2e)', () => {
+  let app: INestApplication;
+  let adminToken: string;
+  let memberToken: string;
+  let place: { id: string };
+  const as = (token: string) => ({ Authorization: `Bearer ${token}` });
+  // A 1×1 transparent PNG.
+  const png = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+    'base64',
+  );
+
+  beforeAll(async () => {
+    app = await createTestApp();
+  });
+
+  beforeEach(async () => {
+    await resetDatabase(app);
+    ({ token: adminToken } = await signInWithId(app, '+34600800001', 'Admin'));
+    place = await createPlace(app, adminToken, 'Crecer Juntos');
+    ({ token: memberToken } = await signInWithId(app, '+34600800002', 'Ana'));
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('wears infunion purple and no logo until the admin picks its own', async () => {
+    const before = await client(app).get(`/pois/${place.id}`).expect(200);
+    expect(before.body).toMatchObject({ theme: 'purple', logoUrl: null });
+
+    await client(app).patch(`/pois/${place.id}/branding`).set(as(memberToken)).send({ theme: 'forest' }).expect(403);
+    await client(app).patch(`/pois/${place.id}/branding`).set(as(adminToken)).send({ theme: 'neon' }).expect(400);
+    const themed = await client(app).patch(`/pois/${place.id}/branding`).set(as(adminToken)).send({ theme: 'forest' }).expect(200);
+    expect(themed.body.theme).toBe('forest');
+
+    await client(app)
+      .post(`/pois/${place.id}/logo`)
+      .set(as(adminToken))
+      .attach('logo', Buffer.from('<svg/>'), { filename: 'logo.svg', contentType: 'image/svg+xml' })
+      .expect(415);
+    const withLogo = await client(app)
+      .post(`/pois/${place.id}/logo`)
+      .set(as(adminToken))
+      .attach('logo', png, { filename: 'logo.png', contentType: 'image/png' })
+      .expect(201);
+    expect(withLogo.body.logoUrl).toMatch(/^\/uploads\/logos\//);
+    await client(app).get(withLogo.body.logoUrl).expect(200);
+
+    const removed = await client(app).delete(`/pois/${place.id}/logo`).set(as(adminToken)).expect(200);
+    expect(removed.body.logoUrl).toBeNull();
+  });
+});

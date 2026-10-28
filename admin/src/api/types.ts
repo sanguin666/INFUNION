@@ -36,7 +36,13 @@ export type Poi = {
   // TaxScheme. Decides the receipts' wording and the modelo 182.
   taxScheme: TaxScheme;
   legalPhone: string | null;
+  // Its look in the app: a logo that replaces infunion's in the header
+  // inside the place (a path on the API), and an accent theme.
+  logoUrl: string | null;
+  theme: PoiThemeName;
 };
+
+export type PoiThemeName = 'purple' | 'ocean' | 'forest' | 'terracotta' | 'ruby' | 'teal' | 'graphite';
 
 export type TaxScheme = 'none' | 'es_ley49' | 'es_art68';
 

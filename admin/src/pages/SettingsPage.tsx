@@ -8,6 +8,7 @@ import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../
 import type { ActiveModule, Poi } from '../api/types';
 import { MenuOrderCard } from './MenuOrderCard';
 import { LocationCard } from './LocationCard';
+import { BrandingCard } from './BrandingCard';
 
 export function SettingsPage() {
   const poiId = usePoiId();
@@ -120,6 +121,8 @@ export function SettingsPage() {
           </div>
         </div>
       )}
+
+      {poi && <BrandingCard key={`branding-${poi.id}`} poi={poi} onSaved={setPoi} />}
 
       {poi && <LocationCard key={poi.id} poi={poi} onSaved={setPoi} />}
 

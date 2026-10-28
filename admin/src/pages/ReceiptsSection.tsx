@@ -255,7 +255,7 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
           {canFile && check && (
             <>
               <p style={{ margin: '8px 0 0' }}>
-                {t('receipts.m182Summary', { n: check.included, total: formatMoney(check.total) })}
+                {t(check.included === 1 ? 'receipts.m182SummaryOne' : 'receipts.m182Summary', { n: check.included, total: formatMoney(check.total) })}
               </p>
               {check.skipped.length > 0 && (
                 <>

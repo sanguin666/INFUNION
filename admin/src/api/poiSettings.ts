@@ -1,5 +1,5 @@
-import { apiPatch } from './client';
-import type { ModuleType, Poi, SupportedLanguage, TaxScheme } from './types';
+import { apiDelete, apiPatch, apiPostForm } from './client';
+import type { ModuleType, Poi, PoiThemeName, SupportedLanguage, TaxScheme } from './types';
 
 export function updatePoiLanguage(poiId: string, language: SupportedLanguage): Promise<Poi> {
   return apiPatch<Poi>(`/pois/${poiId}/language`, { language });
@@ -29,4 +29,19 @@ export function updateReceiptSettings(
   },
 ): Promise<Poi> {
   return apiPatch<Poi>(`/pois/${poiId}/receipt-settings`, body);
+}
+
+// The place's look in the app: its accent theme, and its logo on its own.
+export function updatePoiBranding(poiId: string, theme: PoiThemeName): Promise<Poi> {
+  return apiPatch<Poi>(`/pois/${poiId}/branding`, { theme });
+}
+
+export function uploadPoiLogo(poiId: string, file: File): Promise<Poi> {
+  const formData = new FormData();
+  formData.append('logo', file);
+  return apiPostForm<Poi>(`/pois/${poiId}/logo`, formData);
+}
+
+export function removePoiLogo(poiId: string): Promise<Poi> {
+  return apiDelete<Poi>(`/pois/${poiId}/logo`);
 }
