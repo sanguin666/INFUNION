@@ -31,6 +31,11 @@ import { EventCategory, EventRecurrence } from './events/entities/event-kinds.js
 import { DEMO_MEMBER_PHONE } from './common/demo/demo-account.js';
 import * as bcrypt from 'bcryptjs';
 import { CARMEN_TIME_ZONE } from './seed-carmen.js';
+import { TaxScheme } from './common/enums/tax-scheme.enum.js';
+import { fileStore } from './common/storage/file-store.js';
+import { publicUrlFor } from './common/upload/multer-storage.js';
+import { PoiTheme } from './common/enums/poi-theme.enum.js';
+import { CRECER_JUNTOS_LOGO_PNG } from './seed-association-logo.js';
 
 export const ASSOCIATION_QR_TOKEN = 'DEMO-CRECER-JUNTOS';
 export const ASSOCIATION_ADMIN_EMAIL = 'admin@crecerjuntos.example';
@@ -115,12 +120,24 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
         legalTaxId: 'G46000000',
         legalAddress: 'Carrer de Rafael Alberti, 8\n46183 L’Eliana (Valencia)',
         receiptSignatory: 'Elena Navarro, presidenta',
+        legalPhone: '961 000 000',
+        taxScheme: TaxScheme.ES_LEY49,
       }),
     );
     console.log(`Created demo association ${poi.name} (${poi.id})`);
   }
   const place = poi;
   const where = { poi: { id: place.id } };
+
+  // Its own look in the app (28 Oct 2026): a logo in the header and the
+  // forest theme. Only set once, so a change made in the admin stays.
+  if (!place.logoUrl) {
+    const key = 'demo/crecer-juntos-logo.png';
+    await fileStore().put('public', key, Buffer.from(CRECER_JUNTOS_LOGO_PNG, 'base64'), 'image/png');
+    place.logoUrl = publicUrlFor('demo', 'crecer-juntos-logo.png');
+    place.theme = PoiTheme.FOREST;
+    await pois.save(place);
+  }
 
   for (const moduleType of [
     ModuleType.EVENTS,
@@ -292,6 +309,16 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
   // ---- Giving ----
 
   let sensoryRoom = await campaigns.findOne({ where: { ...where, title: 'Una sala sensorial para la sede' } });
+  // Where its money goes (28 Oct 2026), for databases seeded before.
+  const SENSORY_ROOM_SPLIT = [
+    { label: 'Luces, sonido y proyector', percent: 45 },
+    { label: 'Colchonetas y texturas', percent: 30 },
+    { label: 'Obra y pintura de la sala', percent: 25 },
+  ];
+  if (sensoryRoom && !sensoryRoom.allocation) {
+    sensoryRoom.allocation = SENSORY_ROOM_SPLIT;
+    await campaigns.save(sensoryRoom);
+  }
   if (!(await campaigns.count({ where }))) {
     const [room, camp] = await campaigns.save([
       campaigns.create({
@@ -301,6 +328,7 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
           'Luces, sonidos y texturas para que los niños se relajen y trabajen la atención. Queremos equipar la sala 3 de la sede.',
         goalAmount: 12000,
         active: true,
+        allocation: SENSORY_ROOM_SPLIT,
       }),
       campaigns.create({
         poi: place,

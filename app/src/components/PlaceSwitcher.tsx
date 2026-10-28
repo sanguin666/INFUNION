@@ -1,7 +1,9 @@
 import { ActivityIndicator, Modal, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccessibleText } from './AccessibleText';
-import { CheckIcon, CloseIcon, PinIcon, PlusIcon } from './icons';
+import { CheckIcon, CloseIcon, PlusIcon } from './icons';
+import { PlaceMark } from './PlaceMark';
+import { MadeWith } from './MadeWith';
 import type { SavedPlace } from '../storage/savedPlaces';
 import { colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { useI18n } from '../i18n/I18nContext';
@@ -78,7 +80,7 @@ export function PlaceSwitcher({
                 onPress={() => (isCurrent ? onClose() : onSelect(place))}
                 style={[styles.row, isCurrent && styles.rowCurrent]}
               >
-                <PinIcon size={26} color={isCurrent ? colors.primaryStrong : colors.textMuted} />
+                <PlaceMark place={place} size={40} />
                 <View style={styles.rowText}>
                   <AccessibleText variant="body" numberOfLines={1} style={styles.rowName}>
                     {place.name}
@@ -111,6 +113,7 @@ export function PlaceSwitcher({
               </AccessibleText>
             </View>
           </Pressable>
+          <MadeWith />
         </ScrollView>
       </View>
     </Modal>

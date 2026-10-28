@@ -14,6 +14,8 @@ import { PoiType } from '../../common/enums/poi-type.enum.js';
 import { Language } from '../../common/enums/language.enum.js';
 import { BillingInterval } from '../../common/enums/billing-interval.enum.js';
 import { ModuleType } from '../../common/enums/module-type.enum.js';
+import { TaxScheme } from '../../common/enums/tax-scheme.enum.js';
+import { PoiTheme } from '../../common/enums/poi-theme.enum.js';
 
 /**
  * A point of interest a user can join: a church today, potentially other
@@ -53,6 +55,16 @@ export class Poi {
   // messages could be reused for direct uploads later).
   @Column({ name: 'picture_url', nullable: true })
   pictureUrl?: string;
+
+  // The community's own logo, uploaded in the admin (a path under
+  // /uploads). Optional: without one the app's header shows its initials
+  // in its theme colour (Seb chose this placement, 28 Oct 2026).
+  @Column('varchar', { name: 'logo_url', nullable: true })
+  logoUrl?: string | null;
+
+  // The accent its pages wear in the app; see PoiTheme.
+  @Column({ type: 'varchar', default: PoiTheme.PURPLE })
+  theme!: PoiTheme;
 
   // Editable text for the printable onboarding flyer generated on the
   // admin dashboard's "My QR" page — left blank to fall back to a
@@ -103,6 +115,17 @@ export class Poi {
 
   @Column('varchar', { name: 'receipt_signatory', nullable: true })
   receiptSignatory?: string | null;
+
+  // What a gift here is worth on the giver's tax return (see TaxScheme):
+  // the receipt's wording, the app's "what it really costs you" line and
+  // the modelo 182 all follow it.
+  @Column({ name: 'tax_scheme', type: 'varchar', default: TaxScheme.NONE })
+  taxScheme!: TaxScheme;
+
+  // A phone the tax office can call about the modelo 182 (with the
+  // signatory as the contact person).
+  @Column('varchar', { name: 'legal_phone', nullable: true })
+  legalPhone?: string | null;
 
   // ---- Module billing (Seb, 30 Sep 2026) ----
   // Monthly or yearly, one choice for every paid module, so one bill.

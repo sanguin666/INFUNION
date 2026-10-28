@@ -5,7 +5,8 @@ import { AccessibleText } from '../components/AccessibleText';
 import { getPoi } from '../api/pois';
 import { useI18n } from '../i18n/I18nContext';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
-import { colors, spacing } from '../theme/theme';
+import { applyColorScheme, colors, spacing } from '../theme/theme';
+import { poiAccent } from '../theme/poiThemes';
 import type { Poi } from '../api/types';
 import { PreviewContext, type PreviewState } from './PreviewContext';
 
@@ -92,6 +93,8 @@ export function PreviewApp({ poiId }: { poiId: string }) {
       </View>
     );
   }
+  // Always light, like the dashboard, in the place's own accent.
+  applyColorScheme('light', poiAccent(poi));
   return (
     <PreviewContext.Provider value={state}>
       <PoiHubScreen

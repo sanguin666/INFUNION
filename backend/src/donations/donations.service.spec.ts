@@ -5,6 +5,7 @@ import { DonationCampaign } from './entities/donation-campaign.entity.js';
 import { DonationsService } from './donations.service.js';
 import { PoisService } from '../pois/pois.service.js';
 import { StripeService } from './stripe.service.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
 
 /**
  * Covers the Stripe checkout flow with the SDK stubbed out — the real round
@@ -54,6 +55,7 @@ describe('DonationsService (Stripe checkout)', () => {
         { provide: getRepositoryToken(DonationCampaign), useValue: {} },
         { provide: PoisService, useValue: { findOne: async () => poi } },
         { provide: StripeService, useValue: stripe },
+        { provide: NotificationsService, useValue: { fireAndForget: () => {}, notifyUserAlways: async () => {} } },
       ],
     }).compile();
 

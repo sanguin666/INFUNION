@@ -20,6 +20,8 @@ const TEXTS = {
     documentAsked: 'The office is asking for a document: {label}',
     messageFrom: '{name}: {body}',
     office: 'The office',
+    monthlyGiftFailed: 'Your monthly gift of {amount} didn’t go through. Open the app to update your card.',
+    monthlyGiftCardExpiring: 'The card for your monthly gift of {amount} expires before the next payment. Open the app to update it.',
   },
   es: {
     live: 'En directo: {title}',
@@ -33,6 +35,8 @@ const TEXTS = {
     documentAsked: 'La oficina te pide un documento: {label}',
     messageFrom: '{name}: {body}',
     office: 'La oficina',
+    monthlyGiftFailed: 'Tu donativo mensual de {amount} no se ha podido cobrar. Abre la aplicación para actualizar tu tarjeta.',
+    monthlyGiftCardExpiring: 'La tarjeta de tu donativo mensual de {amount} caduca antes del próximo cobro. Abre la aplicación para actualizarla.',
   },
   fr: {
     live: 'En direct : {title}',
@@ -46,6 +50,8 @@ const TEXTS = {
     documentAsked: 'L’accueil vous demande un document : {label}',
     messageFrom: '{name} : {body}',
     office: 'L’accueil',
+    monthlyGiftFailed: 'Votre don mensuel de {amount} n’a pas pu être prélevé. Ouvrez l’application pour mettre à jour votre carte.',
+    monthlyGiftCardExpiring: 'La carte de votre don mensuel de {amount} expire avant le prochain prélèvement. Ouvrez l’application pour la mettre à jour.',
   },
   va: {
     live: 'En directe: {title}',
@@ -59,6 +65,8 @@ const TEXTS = {
     documentAsked: 'El despatx et demana un document: {label}',
     messageFrom: '{name}: {body}',
     office: 'El despatx',
+    monthlyGiftFailed: 'El teu donatiu mensual de {amount} no s’ha pogut cobrar. Obri l’aplicació per a actualitzar la teua targeta.',
+    monthlyGiftCardExpiring: 'La targeta del teu donatiu mensual de {amount} caduca abans del pròxim cobrament. Obri l’aplicació per a actualitzar-la.',
   },
   gl: {
     live: 'En directo: {title}',
@@ -72,6 +80,8 @@ const TEXTS = {
     documentAsked: 'O despacho pídeche un documento: {label}',
     messageFrom: '{name}: {body}',
     office: 'O despacho',
+    monthlyGiftFailed: 'Non se puido cobrar a túa doazón mensual de {amount}. Abre a aplicación para actualizar a túa tarxeta.',
+    monthlyGiftCardExpiring: 'A tarxeta da túa doazón mensual de {amount} caduca antes do próximo cobro. Abre a aplicación para actualizala.',
   },
   pt: {
     live: 'Em direto: {title}',
@@ -85,6 +95,8 @@ const TEXTS = {
     documentAsked: 'A secretaria pede-lhe um documento: {label}',
     messageFrom: '{name}: {body}',
     office: 'A secretaria',
+    monthlyGiftFailed: 'Não foi possível cobrar o seu donativo mensal de {amount}. Abra a aplicação para atualizar o seu cartão.',
+    monthlyGiftCardExpiring: 'O cartão do seu donativo mensal de {amount} expira antes do próximo pagamento. Abra a aplicação para o atualizar.',
   },
 } satisfies Record<Language, Record<string, string>>;
 

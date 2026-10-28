@@ -13,9 +13,10 @@ import { StripeWebhookController } from './stripe-webhook.controller.js';
 import { StripeService } from './stripe.service.js';
 import { PoisModule } from '../pois/pois.module.js';
 import { AuthModule } from '../auth/auth.module.js';
+import { NotificationsModule } from '../notifications/notifications.module.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Donation, DonationCampaign]), PoisModule, AuthModule],
+  imports: [TypeOrmModule.forFeature([Donation, DonationCampaign]), PoisModule, AuthModule, NotificationsModule],
   controllers: [
     DonationsController,
     CampaignsController,

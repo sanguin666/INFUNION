@@ -3,6 +3,7 @@ import { Pressable, View } from 'react-native';
 import { Screen } from './Screen';
 import { AccessibleText } from './AccessibleText';
 import { Avatar } from './Avatar';
+import { PlaceMark } from './PlaceMark';
 import {
   BackChevronIcon,
   CalendarIcon,
@@ -15,7 +16,6 @@ import {
   EnvelopeIcon,
   HeartIcon,
   HomeIcon,
-  LogoMark,
   MegaphoneIcon,
   MoreDotsIcon,
   PlayIcon,
@@ -159,7 +159,11 @@ export function PoiShell({
 
   const header = (
     <View style={styles.hero}>
-      <LogoMark size={30} />
+      {/* Inside a place everything is the place's own: its logo, or its
+          initials, where infunion's rings are elsewhere (Seb, 28 Oct
+          2026). infunion stays on the welcome and sign-in screens and in
+          "Made with infunion" under More. */}
+      <PlaceMark place={poi} size={44} />
 
       {/* The name block is the switcher's target. It takes whatever width
           is left over, so the profile circle beside it never gets pushed
