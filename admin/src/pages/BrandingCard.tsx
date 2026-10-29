@@ -3,7 +3,8 @@ import { useI18n } from '../i18n/I18nContext';
 import { API_BASE_URL } from '../api/client';
 import { removePoiLogo, updatePoiBranding, uploadPoiLogo } from '../api/poiSettings';
 import type { Poi, PoiThemeName } from '../api/types';
-import { PLACE_THEMES, placeInitials, placeTheme } from '../placeThemes';
+import { PLACE_THEMES, placeTheme } from '../placeThemes';
+import { LogoMark } from '../components/LogoMark';
 
 /**
  * The community's look in the app, in Settings (Seb, 28 Oct 2026): its
@@ -76,8 +77,8 @@ export function BrandingCard({ poi, onSaved }: { poi: Poi; onSaved: (poi: Poi) =
         {poi.logoUrl ? (
           <img className="branding-mark" src={`${API_BASE_URL}${poi.logoUrl}`} alt="" />
         ) : (
-          <span className="branding-mark branding-initials" style={{ background: colours.strong }}>
-            {placeInitials(poi.name)}
+          <span className="branding-mark branding-infunion">
+            <LogoMark size={40} />
           </span>
         )}
         <span className="branding-name">
