@@ -19,14 +19,3 @@ export const PLACE_THEMES: { name: PoiThemeName; primary: string; strong: string
 export function placeTheme(name: string | null | undefined) {
   return PLACE_THEMES.find((theme) => theme.name === name) ?? PLACE_THEMES[0];
 }
-
-// Words too small to stand for a place in its initials.
-const SMALL_WORDS = new Set(['de', 'del', 'la', 'las', 'el', 'los', 'y', 'e', 'i', 'of', 'the', 'and', 'du', 'des', 'le', 'les', 'da', 'do', 'dos', 'das', 'a', 'o', 'en']);
-
-/** What the app shows without a logo: "Crecer Juntos" → "CJ". Same rule as app/src/components/PlaceMark.tsx. */
-export function placeInitials(name: string): string {
-  const words = name.split(/[\s\-–—'’.]+/).filter(Boolean);
-  const meaningful = words.filter((word) => !SMALL_WORDS.has(word.toLowerCase()));
-  const picked = (meaningful.length > 0 ? meaningful : words).slice(0, 2);
-  return picked.map((word) => [...word][0]?.toUpperCase() ?? '').join('');
-}

@@ -1531,7 +1531,7 @@ const en: Translations = {
   },
   branding: {
     title: "Your look in the app",
-    subtitle: "While members are in your community, your logo replaces infunion’s in the app’s header. Without a logo, the app shows your initials in your colour.",
+    subtitle: "While members are in your community, your logo replaces infunion’s in the app’s header. Without a logo, the app keeps the infunion logo.",
     logoLabel: "Logo",
     logoHint: "PNG, JPEG or WebP, square, at least 256 × 256 pixels. It is shown in a circle.",
     logoAdd: "Upload a logo",
@@ -2360,7 +2360,7 @@ const es: Translations = {
   },
   branding: {
     title: "Tu imagen en la aplicación",
-    subtitle: "Mientras los miembros están en tu comunidad, tu logotipo sustituye al de infunion en la cabecera de la aplicación. Sin logotipo, la aplicación muestra tus iniciales en tu color.",
+    subtitle: "Mientras los miembros están en tu comunidad, tu logotipo sustituye al de infunion en la cabecera de la aplicación. Sin logotipo, la aplicación mantiene el logotipo de infunion.",
     logoLabel: "Logotipo",
     logoHint: "PNG, JPEG o WebP, cuadrado, de al menos 256 × 256 píxeles. Se muestra en un círculo.",
     logoAdd: "Subir un logotipo",
@@ -3189,7 +3189,7 @@ const fr: Translations = {
   },
   branding: {
     title: "Votre image dans l’application",
-    subtitle: "Quand les membres sont dans votre communauté, votre logo remplace celui d’infunion dans l’en-tête de l’application. Sans logo, l’application affiche vos initiales dans votre couleur.",
+    subtitle: "Quand les membres sont dans votre communauté, votre logo remplace celui d’infunion dans l’en-tête de l’application. Sans logo, l’application garde le logo d’infunion.",
     logoLabel: "Logo",
     logoHint: "PNG, JPEG ou WebP, carré, d’au moins 256 × 256 pixels. Il s’affiche dans un cercle.",
     logoAdd: "Téléverser un logo",
@@ -4018,7 +4018,7 @@ const va: Translations = {
   },
   branding: {
     title: "La teua imatge en l’aplicació",
-    subtitle: "Mentre els membres estan en la teua comunitat, el teu logotip substituïx el d’infunion en la capçalera de l’aplicació. Sense logotip, l’aplicació mostra les teues inicials en el teu color.",
+    subtitle: "Mentre els membres estan en la teua comunitat, el teu logotip substituïx el d’infunion en la capçalera de l’aplicació. Sense logotip, l’aplicació manté el logotip d’infunion.",
     logoLabel: "Logotip",
     logoHint: "PNG, JPEG o WebP, quadrat, d’almenys 256 × 256 píxels. Es mostra en un cercle.",
     logoAdd: "Pujar un logotip",
@@ -4847,7 +4847,7 @@ const gl: Translations = {
   },
   branding: {
     title: "A túa imaxe na aplicación",
-    subtitle: "Mentres os membros están na túa comunidade, o teu logotipo substitúe o de infunion na cabeceira da aplicación. Sen logotipo, a aplicación mostra as túas iniciais na túa cor.",
+    subtitle: "Mentres os membros están na túa comunidade, o teu logotipo substitúe o de infunion na cabeceira da aplicación. Sen logotipo, a aplicación mantén o logotipo de infunion.",
     logoLabel: "Logotipo",
     logoHint: "PNG, JPEG ou WebP, cadrado, de polo menos 256 × 256 píxeles. Móstrase nun círculo.",
     logoAdd: "Subir un logotipo",
@@ -5676,7 +5676,7 @@ const pt: Translations = {
   },
   branding: {
     title: "A sua imagem na aplicação",
-    subtitle: "Enquanto os membros estão na sua comunidade, o seu logótipo substitui o da infunion no cabeçalho da aplicação. Sem logótipo, a aplicação mostra as suas iniciais na sua cor.",
+    subtitle: "Enquanto os membros estão na sua comunidade, o seu logótipo substitui o da infunion no cabeçalho da aplicação. Sem logótipo, a aplicação mantém o logótipo da infunion.",
     logoLabel: "Logótipo",
     logoHint: "PNG, JPEG ou WebP, quadrado, com pelo menos 256 × 256 píxeis. É mostrado num círculo.",
     logoAdd: "Carregar um logótipo",

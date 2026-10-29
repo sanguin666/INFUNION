@@ -6,8 +6,9 @@ import { ACCENTS, colors, currentColorScheme, isAccentName, themedStyles } from 
 /**
  * A place's own mark, in a circle (Seb chose this, 28 Oct 2026): its logo
  * when its admin uploaded one, otherwise its initials on its theme colour.
- * Inside a place it stands where infunion's rings used to, in the header;
- * the place switcher shows one beside each place.
+ * The header shows it only for a place with a logo (otherwise infunion's
+ * rings stay, Seb 29 Oct 2026); the place switcher shows one beside each
+ * place, initials included, so places stay easy to tell apart.
  *
  * Purely visual, like Avatar: whatever wraps it carries the label.
  */
