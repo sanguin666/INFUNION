@@ -30,9 +30,14 @@ export type Translations = {
   tabs: {
     label: string;
     settingsInfo: string;
-    settingsLook: string;
+    settingsPersonalise: string;
     settingsPlace: string;
-    settingsMenu: string;
+    previewLabel: string;
+    previewHome: string;
+    previewMore: string;
+    previewBanner: string;
+    save: string;
+    saving: string;
     donationsOverview: string;
     donationsCampaigns: string;
     donationsReceipts: string;
@@ -879,9 +884,14 @@ const en: Translations = {
   tabs: {
     label: "Parts of this page",
     settingsInfo: "Information",
-    settingsLook: "Look",
+    settingsPersonalise: "Personalise",
     settingsPlace: "Address & map",
-    settingsMenu: "App menu",
+    previewLabel: "Live preview",
+    previewHome: "Home",
+    previewMore: "More",
+    previewBanner: "News: open day on Saturday",
+    save: "Save",
+    saving: "Saving…",
     donationsOverview: "Overview",
     donationsCampaigns: "Campaigns",
     donationsReceipts: "Tax receipts",
@@ -1729,9 +1739,14 @@ const es: Translations = {
   tabs: {
     label: "Partes de esta página",
     settingsInfo: "Información",
-    settingsLook: "Imagen",
+    settingsPersonalise: "Personalización",
     settingsPlace: "Dirección y mapa",
-    settingsMenu: "Menú de la aplicación",
+    previewLabel: "Vista previa en directo",
+    previewHome: "Inicio",
+    previewMore: "Más",
+    previewBanner: "Novedad: puertas abiertas el sábado",
+    save: "Guardar",
+    saving: "Guardando…",
     donationsOverview: "Resumen",
     donationsCampaigns: "Campañas",
     donationsReceipts: "Certificados",
@@ -2579,9 +2594,14 @@ const fr: Translations = {
   tabs: {
     label: "Parties de cette page",
     settingsInfo: "Informations",
-    settingsLook: "Image",
+    settingsPersonalise: "Personnalisation",
     settingsPlace: "Adresse et carte",
-    settingsMenu: "Menu de l’application",
+    previewLabel: "Aperçu en direct",
+    previewHome: "Accueil",
+    previewMore: "Plus",
+    previewBanner: "Nouveau : portes ouvertes samedi",
+    save: "Enregistrer",
+    saving: "Enregistrement…",
     donationsOverview: "Vue d’ensemble",
     donationsCampaigns: "Campagnes",
     donationsReceipts: "Reçus fiscaux",
@@ -3429,9 +3449,14 @@ const va: Translations = {
   tabs: {
     label: "Parts d’esta pàgina",
     settingsInfo: "Informació",
-    settingsLook: "Imatge",
+    settingsPersonalise: "Personalització",
     settingsPlace: "Adreça i mapa",
-    settingsMenu: "Menú de l’aplicació",
+    previewLabel: "Vista prèvia en directe",
+    previewHome: "Inici",
+    previewMore: "Més",
+    previewBanner: "Novetat: portes obertes dissabte",
+    save: "Guardar",
+    saving: "Guardant…",
     donationsOverview: "Resum",
     donationsCampaigns: "Campanyes",
     donationsReceipts: "Certificats",
@@ -4279,9 +4304,14 @@ const gl: Translations = {
   tabs: {
     label: "Partes desta páxina",
     settingsInfo: "Información",
-    settingsLook: "Imaxe",
+    settingsPersonalise: "Personalización",
     settingsPlace: "Enderezo e mapa",
-    settingsMenu: "Menú da aplicación",
+    previewLabel: "Vista previa en directo",
+    previewHome: "Inicio",
+    previewMore: "Máis",
+    previewBanner: "Novidade: portas abertas o sábado",
+    save: "Gardar",
+    saving: "Gardando…",
     donationsOverview: "Resumo",
     donationsCampaigns: "Campañas",
     donationsReceipts: "Certificados",
@@ -5129,9 +5159,14 @@ const pt: Translations = {
   tabs: {
     label: "Partes desta página",
     settingsInfo: "Informações",
-    settingsLook: "Imagem",
+    settingsPersonalise: "Personalização",
     settingsPlace: "Morada e mapa",
-    settingsMenu: "Menu da aplicação",
+    previewLabel: "Pré-visualização em direto",
+    previewHome: "Início",
+    previewMore: "Mais",
+    previewBanner: "Novidade: portas abertas no sábado",
+    save: "Guardar",
+    saving: "A guardar…",
     donationsOverview: "Resumo",
     donationsCampaigns: "Campanhas",
     donationsReceipts: "Recibos",

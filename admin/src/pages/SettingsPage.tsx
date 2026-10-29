@@ -6,12 +6,12 @@ import { getPoi } from '../api/pois';
 import { updatePoiLanguage, updatePoiProfile } from '../api/poiSettings';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
 import type { ActiveModule, Poi } from '../api/types';
-import { MenuOrderCard } from './MenuOrderCard';
 import { LocationCard } from './LocationCard';
-import { BrandingCard } from './BrandingCard';
+import { LogoField } from './LogoField';
+import { PersonalisePanel } from './PersonalisePanel';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 
-const TABS = ['info', 'look', 'place', 'menu'] as const;
+const TABS = ['info', 'personalise', 'place'] as const;
 
 export function SettingsPage() {
   const poiId = usePoiId();
@@ -22,8 +22,6 @@ export function SettingsPage() {
 
   const [poi, setPoi] = useState<Poi | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>('en');
-  const [savingLanguage, setSavingLanguage] = useState(false);
-  const [languageError, setLanguageError] = useState<string | null>(null);
 
   const [description, setDescription] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
@@ -43,27 +41,15 @@ export function SettingsPage() {
 
   useEffect(load, [poiId]);
 
-  async function saveLanguage() {
-    setSavingLanguage(true);
-    setLanguageError(null);
-    try {
-      const updated = await updatePoiLanguage(poiId, selectedLanguage);
-      setPoi(updated);
-    } catch {
-      setLanguageError(t('modules.languageSaveError'));
-    } finally {
-      setSavingLanguage(false);
-    }
-  }
-
   async function saveProfile() {
     setSavingProfile(true);
     setProfileError(null);
     setProfileSaved(false);
     try {
-      const updated = await updatePoiProfile(poiId, {
+      let updated = await updatePoiProfile(poiId, {
         description: description.trim(),
       });
+      if (selectedLanguage !== updated.language) updated = await updatePoiLanguage(poiId, selectedLanguage);
       setPoi(updated);
       setProfileSaved(true);
     } catch {
@@ -85,14 +71,12 @@ export function SettingsPage() {
         onChange={setTab}
         tabs={[
           { key: 'info', label: t('tabs.settingsInfo') },
-          { key: 'look', label: t('tabs.settingsLook') },
+          { key: 'personalise', label: t('tabs.settingsPersonalise') },
           { key: 'place', label: t('tabs.settingsPlace') },
-          { key: 'menu', label: t('tabs.settingsMenu') },
         ]}
       />
 
       <TabPanel idPrefix="settings" tabKey="info" current={tab}>
-
         {poi && (
           <div className="card">
             <p className="card-title">{t('poiInfo.title')}</p>
@@ -112,6 +96,21 @@ export function SettingsPage() {
                   placeholder={t('poiInfo.descriptionPlaceholder')}
                 />
               </label>
+              <LogoField poi={poi} onSaved={setPoi} />
+              <label>
+                {t('modules.contentLanguageTitle')}
+                <select
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value as SupportedLanguage)}
+                >
+                  {SUPPORTED_LANGUAGES.map((code) => (
+                    <option key={code} value={code}>
+                      {LANGUAGE_NAMES[code]}
+                    </option>
+                  ))}
+                </select>
+                <span className="field-hint">{t('modules.contentLanguageSubtitle')}</span>
+              </label>
               <div className="card-actions">
                 <button type="button" className="btn btn-primary" disabled={savingProfile} onClick={saveProfile}>
                   {savingProfile ? t('poiInfo.saving') : t('poiInfo.save')}
@@ -122,48 +121,14 @@ export function SettingsPage() {
             </div>
           </div>
         )}
-
-        {poi && (
-          <div className="card">
-            <p className="card-title">{t('modules.contentLanguageTitle')}</p>
-            <p className="muted" style={{ marginTop: 4 }}>
-              {t('modules.contentLanguageSubtitle')}
-            </p>
-            <div className="card-actions">
-              <select value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value as SupportedLanguage)}>
-                {SUPPORTED_LANGUAGES.map((code) => (
-                  <option key={code} value={code}>
-                    {LANGUAGE_NAMES[code]}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                className="btn btn-primary"
-                disabled={savingLanguage || selectedLanguage === poi.language}
-                onClick={saveLanguage}
-              >
-                {savingLanguage ? t('modules.savingLanguage') : t('modules.saveLanguage')}
-              </button>
-            </div>
-            {languageError && <p className="error-text">{languageError}</p>}
-          </div>
-        )}
       </TabPanel>
 
-      <TabPanel idPrefix="settings" tabKey="look" current={tab}>
-        {poi && <BrandingCard key={`branding-${poi.id}`} poi={poi} onSaved={setPoi} />}
+      <TabPanel idPrefix="settings" tabKey="personalise" current={tab}>
+        {poi && modules !== null && <PersonalisePanel poi={poi} modules={modules} onSaved={setPoi} />}
       </TabPanel>
 
       <TabPanel idPrefix="settings" tabKey="place" current={tab}>
         {poi && <LocationCard key={poi.id} poi={poi} onSaved={setPoi} />}
-      </TabPanel>
-
-      <TabPanel idPrefix="settings" tabKey="menu" current={tab}>
-
-        {poi && modules !== null && (
-          <MenuOrderCard poi={poi} modules={modules} onSaved={setPoi} />
-        )}
       </TabPanel>
 
       {error && <p className="error-text">{error}</p>}
