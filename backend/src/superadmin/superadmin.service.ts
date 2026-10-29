@@ -23,6 +23,7 @@ import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
 import { BillingInterval } from '../common/enums/billing-interval.enum.js';
 import { PRICES, isFree } from '../active-modules/billing-rules.js';
+import { moduleFitsPlace, modulesForPlace } from '../active-modules/module-places.js';
 import { SuperadminAccess, type SuperadminIdentity } from '../auth/superadmin-access.service.js';
 import { ErrorTracker } from './error-tracker.js';
 import type { CreateCommunityDto, UpdateCommunityDto } from './dto/superadmin.dto.js';
@@ -138,7 +139,7 @@ export class SuperadminService {
 
     const pois = await this.pois.find();
     const modules = await this.modules.find({ relations: { poi: true } });
-    const live = modules.filter((m) => LIVE.includes(m.status));
+    const live = modules.filter((m) => LIVE.includes(m.status) && moduleFitsPlace(m.moduleType, m.poi.type));
     let monthlyRecurring = 0;
     let paidModules = 0;
     let trialModules = 0;
@@ -294,7 +295,7 @@ export class SuperadminService {
     const modules = await this.modules.find({ where: { poi: { id: In(ids) } }, relations: { poi: true } });
     return pois.map((poi) => {
       const row = counts.find((c) => c.poi_id === poi.id);
-      const mine = modules.filter((m) => m.poi.id === poi.id && LIVE.includes(m.status));
+      const mine = modules.filter((m) => m.poi.id === poi.id && LIVE.includes(m.status) && moduleFitsPlace(m.moduleType, poi.type));
       const trials = mine.filter((m) => m.status === ModuleStatus.TRIAL && !poi.billingComped);
       const paid = mine.filter((m) => m.status === ModuleStatus.ACTIVE && !m.offered && !isFree(m.moduleType) && !poi.billingComped);
       const billing = poi.suspendedAt
@@ -323,7 +324,7 @@ export class SuperadminService {
         admins: row?.admins ?? 0,
         lastAdminLoginAt: row?.last_login ?? null,
         liveModules: mine.length,
-        totalModules: Object.values(ModuleType).length,
+        totalModules: modulesForPlace(poi.type).length,
         paidModules: paid.length,
         offeredModules: mine.filter((m) => m.offered).length,
         nextTrialEnd: nextTrialEnd ?? null,
@@ -365,7 +366,7 @@ export class SuperadminService {
         lastLoginAt: m.user.lastLoginAt ?? null,
       })),
       billing,
-      allModules: Object.values(ModuleType),
+      allModules: modulesForPlace(poi.type),
     };
   }
 

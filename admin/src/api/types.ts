@@ -152,6 +152,8 @@ export type BillingSummary = {
   renewsAt: string | null;
   prices: Record<BillingInterval, number>;
   freeModules: ModuleType[];
+  // The modules this kind of place can have; older APIs leave it out.
+  availableModules?: ModuleType[];
   modules: ActiveModule[];
   invoices: BillingInvoice[];
 };

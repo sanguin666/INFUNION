@@ -230,8 +230,11 @@ export function ModulesPage() {
     );
   }
 
-  const free = MODULES.filter((m) => isFree(m.type));
-  const paid = MODULES.filter((m) => !isFree(m.type));
+  // Only what fits this kind of place: no Mass intentions for an
+  // association (Seb, 29 Oct 2026).
+  const offered = MODULES.filter((m) => !billing.availableModules || billing.availableModules.includes(m.type));
+  const free = offered.filter((m) => isFree(m.type));
+  const paid = offered.filter((m) => !isFree(m.type));
   const latest = billing.invoices[0];
 
   return (
@@ -385,7 +388,7 @@ export function ModulesPage() {
       )}
 
       <h3 className="modules-heading">{billing.comped ? t('billing.allModulesTitle') : t('billing.paidTitle')}</h3>
-      <div className="card card-list">{(billing.comped ? MODULES : paid).map((m) => moduleRow(m.type))}</div>
+      <div className="card card-list">{(billing.comped ? offered : paid).map((m) => moduleRow(m.type))}</div>
     </div>
   );
 }
