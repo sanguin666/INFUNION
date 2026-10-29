@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, LessThanOrEqual, Repository } from 'typeorm';
@@ -175,6 +175,8 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     const event = await this.eventRepository.findOne({ where: { id: eventId }, relations: { poi: true } });
     if (!event) throw new NotFoundException('Event not found');
     await this.findMembership(userId, event.poi.id);
+    // Event reminders are push notifications, which Basic doesn't have.
+    if (!sendsNotifications(event.poi)) throw new ForbiddenException('notifications_not_in_plan');
     // A one-off event has one day anyway.
     const only = repeats(event) ? (onlyDate ?? null) : null;
     await this.reminderRepository.upsert({ user: { id: userId }, event: { id: eventId }, onlyDate: only, nextCheckAt: null }, [
