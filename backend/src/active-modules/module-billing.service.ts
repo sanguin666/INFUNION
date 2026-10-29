@@ -7,6 +7,7 @@ import { Poi } from '../pois/entities/poi.entity.js';
 import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
 import { BillingInterval } from '../common/enums/billing-interval.enum.js';
+import { moduleFitsPlace, modulesForPlace } from './module-places.js';
 import { FREE_MODULES, PRICES, addMonths, isFree, isLive, settle, startPaying } from './billing-rules.js';
 
 export type BillingSummary = {
@@ -16,6 +17,9 @@ export type BillingSummary = {
   renewsAt: string | null;
   prices: Record<BillingInterval, number>;
   freeModules: ModuleType[];
+  // The modules this kind of place can have (Mass intentions only for a
+  // church…), so the Modules page never offers one that does not fit.
+  availableModules: ModuleType[];
   modules: ActiveModule[];
   invoices: BillingInvoice[];
 };
@@ -41,11 +45,21 @@ export class ModuleBillingService {
     private readonly pois: Repository<Poi>,
   ) {}
 
+  // Only the modules that fit the kind of place: one that does not (a row
+  // saved before the rule, or before the place's kind changed) is left
+  // as it is in the database, never shown, settled or billed.
   private async load(poiId: string): Promise<{ poi: Poi; modules: ActiveModule[] }> {
     const poi = await this.pois.findOne({ where: { id: poiId } });
     if (!poi) throw new BadRequestException('Unknown place');
-    const modules = await this.modules.find({ where: { poi: { id: poiId } } });
+    const all = await this.modules.find({ where: { poi: { id: poiId } } });
+    const modules = all.filter((m) => moduleFitsPlace(m.moduleType, poi.type));
     return { poi, modules };
+  }
+
+  private async loadFor(poiId: string, type: ModuleType): Promise<{ poi: Poi; modules: ActiveModule[] }> {
+    const loaded = await this.load(poiId);
+    if (!moduleFitsPlace(type, loaded.poi.type)) throw new BadRequestException('module_not_for_place');
+    return loaded;
   }
 
   private async save(poi: Poi, modules: ActiveModule[], drafts: ReturnType<typeof settle>): Promise<void> {
@@ -92,6 +106,7 @@ export class ModuleBillingService {
       renewsAt: poi.billingRenewsAt ? poi.billingRenewsAt.toISOString() : null,
       prices: PRICES,
       freeModules: [...FREE_MODULES],
+      availableModules: modulesForPlace(poi.type),
       modules,
       invoices,
     };
@@ -103,7 +118,7 @@ export class ModuleBillingService {
    * goes through subscribe instead.
    */
   async start(poiId: string, type: ModuleType, now = new Date()): Promise<BillingSummary> {
-    const { poi, modules } = await this.load(poiId);
+    const { poi, modules } = await this.loadFor(poiId, type);
     settle(poi, modules, now);
     const existing = modules.find((m) => m.moduleType === type);
     if (existing && isLive(existing)) throw new ConflictException('Module already on');
@@ -132,7 +147,7 @@ export class ModuleBillingService {
 
   /** Pays for a paid module straight away (its trial already used). */
   async subscribe(poiId: string, type: ModuleType, now = new Date()): Promise<BillingSummary> {
-    const { poi, modules } = await this.load(poiId);
+    const { poi, modules } = await this.loadFor(poiId, type);
     const drafts = settle(poi, modules, now);
     if (isFree(type) || poi.billingComped) return this.start(poiId, type, now);
     if (!poi.paymentMethodLabel) throw new BadRequestException('payment_method_required');
@@ -179,7 +194,7 @@ export class ModuleBillingService {
    * switched on now, whatever it was, and no renewal ever bills it.
    */
   async offer(poiId: string, type: ModuleType, now = new Date()): Promise<BillingSummary> {
-    const { poi, modules } = await this.load(poiId);
+    const { poi, modules } = await this.loadFor(poiId, type);
     const drafts = settle(poi, modules, now);
     let row = modules.find((m) => m.moduleType === type);
     if (!row) {
@@ -213,7 +228,7 @@ export class ModuleBillingService {
    * end date; a module that is off and unpaid starts a new month from now.
    */
   async extendTrial(poiId: string, type: ModuleType, now = new Date()): Promise<BillingSummary> {
-    const { poi, modules } = await this.load(poiId);
+    const { poi, modules } = await this.loadFor(poiId, type);
     const drafts = settle(poi, modules, now);
     let row = modules.find((m) => m.moduleType === type);
     if (row?.status === ModuleStatus.TRIAL && row.trialEndsAt) {
