@@ -63,6 +63,7 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const textInput = useRef<HTMLInputElement>(null);
+  const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
     getBadges(poiId)
@@ -184,14 +185,21 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
   function startEdit(badge: PoiBadge) {
     setEditingId(badge.id);
     setDraft(draftFrom(badge));
-    // The form sits below the list: take the admin there.
-    textInput.current?.focus();
+    setFormOpen(true);
   }
 
   function resetForm() {
     setEditingId(null);
     setDraft(EMPTY_DRAFT);
+    setFormOpen(false);
   }
+
+  // The form opens below the list: take the admin there. It stays on the
+  // page rather than in a side panel so the phone preview, which shows
+  // the badge as it is typed, stays in view.
+  useEffect(() => {
+    if (formOpen) textInput.current?.focus();
+  }, [formOpen, editingId]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -232,10 +240,7 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
   const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
   return (
-    <section aria-labelledby="badges-heading">
-      <h3 id="badges-heading" style={{ marginTop: 0 }}>
-        {t('badges.title')}
-      </h3>
+    <section aria-label={t('badges.title')}>
 
       {error && <p className="error-text">{error}</p>}
       {badges === null && !error && <p className="muted">{t('badges.loading')}</p>}
@@ -325,77 +330,89 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
             {t('badges.orderNote')}
           </p>
 
-          <h3 id="badge-form-heading">{editingId ? t('badges.editTitle') : t('badges.addTitle')}</h3>
-          <form className="form card" onSubmit={handleSubmit} aria-labelledby="badge-form-heading">
-            <label>
-              <span style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-                <span>{t('badges.textLabel', { n: MAX_TEXT })}</span>
-                <span aria-live="polite">
-                  {draft.text.length}/{MAX_TEXT}
-                </span>
-              </span>
-              <input
-                ref={textInput}
-                value={draft.text}
-                maxLength={MAX_TEXT}
-                onChange={(e) => set({ text: e.target.value })}
-                placeholder={t('badges.textPlaceholder')}
-                required
-              />
-            </label>
-            <div className="form-row">
-              <span id="badge-style-label">{t('badges.styleLabel')}</span>
-              <div className="chips" role="radiogroup" aria-labelledby="badge-style-label">
-                {[false, true].map((important) => (
-                  <button
-                    key={String(important)}
-                    type="button"
-                    role="radio"
-                    aria-checked={draft.important === important}
-                    className={`chip ${draft.important === important ? 'chip-selected' : ''}`}
-                    onClick={() => set({ important })}
+          {!formOpen && (
+            <div className="tab-actions" style={{ justifyContent: 'flex-start' }}>
+              <button type="button" className="btn btn-primary" onClick={() => setFormOpen(true)}>
+                {t('tabs.addMessage')}
+              </button>
+            </div>
+          )}
+
+          {formOpen && (
+            <>
+              <h3 id="badge-form-heading">{editingId ? t('badges.editTitle') : t('badges.addTitle')}</h3>
+              <form className="form card" onSubmit={handleSubmit} aria-labelledby="badge-form-heading">
+                <label>
+                  <span style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                    <span>{t('badges.textLabel', { n: MAX_TEXT })}</span>
+                    <span aria-live="polite">
+                      {draft.text.length}/{MAX_TEXT}
+                    </span>
+                  </span>
+                  <input
+                    ref={textInput}
+                    value={draft.text}
+                    maxLength={MAX_TEXT}
+                    onChange={(e) => set({ text: e.target.value })}
+                    placeholder={t('badges.textPlaceholder')}
+                    required
+                  />
+                </label>
+                <div className="form-row">
+                  <span id="badge-style-label">{t('badges.styleLabel')}</span>
+                  <div className="chips" role="radiogroup" aria-labelledby="badge-style-label">
+                    {[false, true].map((important) => (
+                      <button
+                        key={String(important)}
+                        type="button"
+                        role="radio"
+                        aria-checked={draft.important === important}
+                        className={`chip ${draft.important === important ? 'chip-selected' : ''}`}
+                        onClick={() => set({ important })}
+                      >
+                        {important ? t('badges.styleImportant') : t('badges.styleNormal')}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <label>
+                  {t('badges.linkLabel')}
+                  <select
+                    value={draft.linkModule}
+                    onChange={(e) => set({ linkModule: e.target.value as ModuleType | '' })}
                   >
-                    {important ? t('badges.styleImportant') : t('badges.styleNormal')}
+                    <option value="">{t('badges.linkNone')}</option>
+                    {linkable.map((type) => (
+                      <option key={type} value={type}>
+                        {moduleName(type, t)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  {t('badges.untilLabel')}
+                  <input type="date" value={draft.showUntil} onChange={(e) => set({ showUntil: e.target.value })} />
+                </label>
+                <div className="card-actions">
+                  <button type="submit" className="btn btn-primary" disabled={submitting || !draft.text.trim()}>
+                    {submitting
+                      ? t('badges.saving')
+                      : editingId
+                        ? t('badges.save')
+                        : t('badges.add')}
                   </button>
-                ))}
-              </div>
-            </div>
-            <label>
-              {t('badges.linkLabel')}
-              <select
-                value={draft.linkModule}
-                onChange={(e) => set({ linkModule: e.target.value as ModuleType | '' })}
-              >
-                <option value="">{t('badges.linkNone')}</option>
-                {linkable.map((type) => (
-                  <option key={type} value={type}>
-                    {moduleName(type, t)}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              {t('badges.untilLabel')}
-              <input type="date" value={draft.showUntil} onChange={(e) => set({ showUntil: e.target.value })} />
-            </label>
-            <div className="card-actions">
-              <button type="submit" className="btn btn-primary" disabled={submitting || !draft.text.trim()}>
-                {submitting
-                  ? t('badges.saving')
-                  : editingId
-                    ? t('badges.save')
-                    : t('badges.add')}
-              </button>
-              <button
-                type="button"
-                className="btn"
-                onClick={resetForm}
-                disabled={submitting}
-              >
-                {t('common.cancel')}
-              </button>
-            </div>
-          </form>
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={resetForm}
+                    disabled={submitting}
+                  >
+                    {t('common.cancel')}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
         </>
       )}
     </section>
