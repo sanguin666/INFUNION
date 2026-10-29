@@ -2499,8 +2499,8 @@ label.link-button:focus-within {
 }
 
 .plan-push {
-  background: var(--plan-yellow);
-  color: #1d1a2d;
+  background: var(--color-primary-soft);
+  border: 1.5px solid var(--color-primary);
   border-radius: 14px;
   padding: 12px 14px;
 }
@@ -2519,9 +2519,56 @@ label.link-button:focus-within {
   margin-bottom: 4px !important;
 }
 
+.plan-push-title,
+.plan-push svg {
+  color: var(--color-primary-strong);
+}
+
 .plan-push svg {
   width: 22px;
   height: 22px;
+}
+
+/* "2 months free": white with a purple edge, readable on the lavender card. */
+.plan-save {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-primary-strong);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* A module's name in a plan opens its "Learn more". */
+.plan-module-link {
+  vertical-align: top;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.plan-module-link svg {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: -2px;
+  color: var(--color-primary-strong);
+}
+
+.plan-module-last {
+  white-space: nowrap;
+}
+
+.plan-module-link:hover {
+  color: var(--color-primary-strong);
 }
 
 .plan-modules {
@@ -2649,7 +2696,7 @@ label.link-button:focus-within {
 }
 
 .module-sheet {
-  width: min(760px, calc(100vw - 32px));
+  width: min(900px, calc(100vw - 32px));
   max-height: calc(100vh - 48px);
   padding: 0;
   border: none;
@@ -2666,54 +2713,124 @@ label.link-button:focus-within {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 20px 22px;
-  background: var(--s);
+  padding: 20px 24px;
+  background: var(--color-primary-soft);
+}
+
+.module-sheet-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 14px;
+  background: var(--color-primary-strong);
+  color: #fff;
+}
+
+.module-sheet-icon svg {
+  width: 24px;
+  height: 24px;
 }
 
 .module-sheet-head h2 {
   margin: 0;
   font-size: 22px;
+  outline: none;
 }
 
 .module-sheet-head p {
   margin: 2px 0 0;
 }
 
-.module-sheet-close {
-  margin-left: auto;
+.module-sheet-intro {
+  margin: 0;
+  padding: 20px 24px 0;
+  font-size: 16px;
+  line-height: 1.55;
 }
 
-.module-sheet-shots {
+/* Admin on the left, an arrow, the result in the app on the right. */
+.module-sheet-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 56px minmax(0, 0.62fr);
+  padding: 18px 24px 24px;
+}
+
+.module-sheet-split section {
   display: flex;
-  gap: 12px;
-  padding: 20px 22px 0;
-  align-items: flex-start;
-}
-
-.module-shot {
-  border-radius: 12px;
-  border: 1px solid var(--color-card-border);
+  flex-direction: column;
+  gap: 8px;
   min-width: 0;
 }
 
-.module-shot-app {
-  width: 34%;
-}
-
-.module-shot-admin {
-  width: 66%;
-}
-
-.module-sheet-points {
+.module-sheet-split h3 {
   margin: 0;
-  padding: 16px 22px 22px;
-}
-
-.module-sheet-points dt {
+  font-size: 12px;
   font-weight: 700;
-  margin-top: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary-strong);
 }
 
-.module-sheet-points dd {
-  margin: 2px 0 0;
+.module-sheet-split h3 span {
+  margin-left: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-muted);
+}
+
+.module-sheet-split p {
+  margin: 0 0 6px;
+}
+
+.module-sheet-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-strong);
+}
+
+.module-sheet-arrow svg {
+  width: 38px;
+  height: 38px;
+  padding: 8px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+}
+
+.module-shot {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--color-card-border);
+  box-shadow: 0 6px 20px rgba(29, 26, 45, 0.08);
+}
+
+.module-shot-app {
+  max-width: 240px;
+  align-self: center;
+}
+
+.module-sheet-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--color-card-border);
+}
+
+@media (max-width: 640px) {
+  .module-sheet-split {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .module-sheet-arrow svg {
+    transform: rotate(90deg);
+  }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { usePoiId, useRefreshModules } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale, type Translations } from '../i18n/translations';
@@ -19,7 +19,9 @@ type ModuleInfo = {
   type: ModuleType;
   name: Key<'moduleNames'>;
   description: Key<'billing'>;
-  // One line each for "Learn more": what members get, what the team gets.
+  // "Learn more": what it is in one sentence, then one line each for the
+  // team (admin) and the members (app).
+  intro: Key<'plans'>;
   members: Key<'plans'>;
   team: Key<'plans'>;
   // Its colour on the page (see .module-card in index.css).
@@ -29,16 +31,16 @@ type ModuleInfo = {
 
 // In plan order, then the order an office is likely to want them.
 const MODULES: ModuleInfo[] = [
-  { type: 'events', name: 'moduleNames.events', description: 'billing.descEvents', members: 'plans.evM', team: 'plans.evT', hue: 'events', icon: 'M4 7h16v13H4zM4 7V5h16v2M8 3v4M16 3v4M8 12h3' },
-  { type: 'donations', name: 'moduleNames.donations', description: 'billing.descDonations', members: 'plans.doM', team: 'plans.doT', hue: 'donations', icon: 'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z' },
-  { type: 'announcements', name: 'moduleNames.announcements', description: 'billing.descAnnouncements', members: 'plans.anM', team: 'plans.anT', hue: 'announcements', icon: 'M4 10v4h3l6 4V6L7 10zM17 9a4 4 0 0 1 0 6' },
-  { type: 'requests', name: 'moduleNames.requests', description: 'billing.descRequests', members: 'plans.reM', team: 'plans.reT', hue: 'requests', icon: 'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5' },
-  { type: 'messages', name: 'moduleNames.messages', description: 'billing.descMessages', members: 'plans.meM', team: 'plans.meT', hue: 'messages', icon: 'M4 5h16v11H9l-5 4z' },
-  { type: 'community', name: 'moduleNames.community', description: 'billing.descCommunity', members: 'plans.coM', team: 'plans.coT', hue: 'community', icon: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M21 19a5 5 0 0 0-4-5' },
-  { type: 'livestreams', name: 'moduleNames.livestream', description: 'billing.descLivestreams', members: 'plans.liM', team: 'plans.liT', hue: 'livestreams', icon: 'M3 7h12v10H3zM15 11l6-3v8l-6-3' },
-  { type: 'prayer_requests', name: 'moduleNames.prayerRequests', description: 'billing.descPrayerRequests', members: 'plans.prM', team: 'plans.prT', hue: 'prayer', icon: 'M12 3v6M9 6h6M6 21l3-9h6l3 9' },
-  { type: 'daily_readings', name: 'moduleNames.readings', description: 'billing.descReadings', members: 'plans.rdM', team: 'plans.rdT', hue: 'readings', icon: 'M4 5c3-1 6-1 8 1 2-2 5-2 8-1v14c-3-1-6-1-8 1-2-2-5-2-8-1zM12 6v14' },
-  { type: 'mass_intentions', name: 'moduleNames.massIntentions', description: 'billing.descMassIntentions', members: 'plans.miM', team: 'plans.miT', hue: 'mass', icon: 'M12 3v4M10 5h4M7 21V11l5-3 5 3v10M10 21v-5h4v5' },
+  { type: 'events', name: 'moduleNames.events', description: 'billing.descEvents', intro: 'plans.evI', members: 'plans.evM', team: 'plans.evT', hue: 'events', icon: 'M4 7h16v13H4zM4 7V5h16v2M8 3v4M16 3v4M8 12h3' },
+  { type: 'donations', name: 'moduleNames.donations', description: 'billing.descDonations', intro: 'plans.doI', members: 'plans.doM', team: 'plans.doT', hue: 'donations', icon: 'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z' },
+  { type: 'announcements', name: 'moduleNames.announcements', description: 'billing.descAnnouncements', intro: 'plans.anI', members: 'plans.anM', team: 'plans.anT', hue: 'announcements', icon: 'M4 10v4h3l6 4V6L7 10zM17 9a4 4 0 0 1 0 6' },
+  { type: 'requests', name: 'moduleNames.requests', description: 'billing.descRequests', intro: 'plans.reI', members: 'plans.reM', team: 'plans.reT', hue: 'requests', icon: 'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5' },
+  { type: 'messages', name: 'moduleNames.messages', description: 'billing.descMessages', intro: 'plans.meI', members: 'plans.meM', team: 'plans.meT', hue: 'messages', icon: 'M4 5h16v11H9l-5 4z' },
+  { type: 'community', name: 'moduleNames.community', description: 'billing.descCommunity', intro: 'plans.coI', members: 'plans.coM', team: 'plans.coT', hue: 'community', icon: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M21 19a5 5 0 0 0-4-5' },
+  { type: 'livestreams', name: 'moduleNames.livestream', description: 'billing.descLivestreams', intro: 'plans.liI', members: 'plans.liM', team: 'plans.liT', hue: 'livestreams', icon: 'M3 7h12v10H3zM15 11l6-3v8l-6-3' },
+  { type: 'prayer_requests', name: 'moduleNames.prayerRequests', description: 'billing.descPrayerRequests', intro: 'plans.prI', members: 'plans.prM', team: 'plans.prT', hue: 'prayer', icon: 'M12 3v6M9 6h6M6 21l3-9h6l3 9' },
+  { type: 'daily_readings', name: 'moduleNames.readings', description: 'billing.descReadings', intro: 'plans.rdI', members: 'plans.rdM', team: 'plans.rdT', hue: 'readings', icon: 'M4 5c3-1 6-1 8 1 2-2 5-2 8-1v14c-3-1-6-1-8 1-2-2-5-2-8-1zM12 6v14' },
+  { type: 'mass_intentions', name: 'moduleNames.massIntentions', description: 'billing.descMassIntentions', intro: 'plans.miI', members: 'plans.miM', team: 'plans.miT', hue: 'mass', icon: 'M12 3v4M10 5h4M7 21V11l5-3 5 3v10M10 21v-5h4v5' },
 ];
 
 const PLAN_ORDER: PlanTier[] = ['basic', 'essentials', 'complete'];
@@ -47,6 +49,22 @@ const BLURB: Record<PlanTier, Key<'plans'>> = {
   essentials: 'plans.essentialsBlurb',
   complete: 'plans.completeBlurb',
 };
+// A small "i" in a circle: the module's name opens its "Learn more".
+const INFO = 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01';
+// The name with the "i" glued to its last word, so a wrapped name never
+// leaves the icon alone on a line.
+function withIcon(name: string) {
+  const cut = name.lastIndexOf(' ') + 1;
+  return (
+    <>
+      {name.slice(0, cut)}
+      <span className="plan-module-last">
+        {name.slice(cut)}
+        <Icon path={INFO} />
+      </span>
+    </>
+  );
+}
 const BELL = 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0';
 const DAY_MS = 24 * 60 * 60 * 1000;
 const LIVE = new Set(['trial', 'active']);
@@ -209,7 +227,7 @@ export function ModulesPage() {
             </p>
             <p className="muted plan-monthly">
               {t('plans.orYearly', { price: money(offer.prices.yearly) })}{' '}
-              <span className="plan-pill">{t('plans.twoMonthsFree')}</span>
+              <span className="plan-save">{t('plans.twoMonthsFree')}</span>
             </p>
           </>
         ) : (
@@ -234,7 +252,13 @@ export function ModulesPage() {
         <ul className="plan-modules">
           {offer.adds.map((type) => {
             const info = MODULES.find((m) => m.type === type);
-            return info ? <li key={type}>{t(info.name)}</li> : null;
+            return info ? (
+              <li key={type}>
+                <button type="button" className="plan-module-link" onClick={() => setDetails(info)}>
+                  {withIcon(t(info.name))}
+                </button>
+              </li>
+            ) : null;
           })}
         </ul>
         {tier === 'basic' && <p className="muted plan-nopush">{t('plans.noPush')}</p>}
@@ -268,11 +292,42 @@ export function ModulesPage() {
     );
   }
 
+  // Show or hide a module of the plan, or point at the plan that has it.
+  function moduleAction(info: ModuleInfo, afterwards?: () => void): ReactNode {
+    const row = rowFor(info.type);
+    const allowed = inPlan(info.type);
+    const on = allowed && !!row && LIVE.has(row.status);
+    const busy = pending === info.type;
+    if (!allowed) {
+      if (fixed) return null;
+      return (
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => {
+            afterwards?.();
+            plansRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
+        >
+          {t('plans.switchTo', { plan: planName(planOf(info.type)) })}
+        </button>
+      );
+    }
+    return on ? (
+      <button type="button" className="btn" disabled={busy} onClick={() => run(info.type, () => stopModule(poiId, info.type))}>
+        {t('plans.hide')}
+      </button>
+    ) : (
+      <button type="button" className="btn btn-primary" disabled={busy} onClick={() => run(info.type, () => startModule(poiId, info.type))}>
+        {t('plans.show')}
+      </button>
+    );
+  }
+
   function moduleCard(info: ModuleInfo) {
     const row: ActiveModule | undefined = rowFor(info.type);
     const allowed = inPlan(info.type);
     const on = allowed && !!row && LIVE.has(row.status);
-    const busy = pending === info.type;
     const style = { '--c': `var(--module-${info.hue})`, '--s': `var(--module-${info.hue}-soft)` } as CSSProperties;
     let pill: string;
     if (!allowed) pill = t('plans.inPlan', { plan: planName(planOf(info.type)) });
@@ -292,25 +347,7 @@ export function ModulesPage() {
           <button type="button" className="text-action module-card-more" onClick={() => setDetails(info)}>
             {t('plans.learnMore')}
           </button>
-          {!allowed ? (
-            !fixed && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => plansRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-              >
-                {t('plans.switchTo', { plan: planName(planOf(info.type)) })}
-              </button>
-            )
-          ) : on ? (
-            <button type="button" className="btn" disabled={busy} onClick={() => run(info.type, () => stopModule(poiId, info.type))}>
-              {t('plans.hide')}
-            </button>
-          ) : (
-            <button type="button" className="btn btn-primary" disabled={busy} onClick={() => run(info.type, () => startModule(poiId, info.type))}>
-              {t('plans.show')}
-            </button>
-          )}
+          {moduleAction(info)}
         </div>
       </article>
     );
@@ -481,6 +518,7 @@ export function ModulesPage() {
       <ModuleDetails
         info={details}
         planLabel={details ? t('plans.inPlan', { plan: planName(planOf(details.type)) }) : ''}
+        action={details ? moduleAction(details, () => setDetails(null)) : null}
         onClose={() => setDetails(null)}
       />
     </div>
@@ -488,17 +526,48 @@ export function ModulesPage() {
 
 }
 
-/** "En savoir plus": a module's screenshots and what it brings. */
-function ModuleDetails({ info, planLabel, onClose }: { info: ModuleInfo | null; planLabel: string; onClose: () => void }) {
+/**
+ * "Learn more": what the module is, then what the team does in the admin
+ * and what members get in the app, each with its screenshot
+ * (public/modules/; retake them when those screens change). Always in the
+ * brand's purple, whatever the module's own colour.
+ */
+function ModuleDetails({
+  info,
+  planLabel,
+  action,
+  onClose,
+}: {
+  info: ModuleInfo | null;
+  planLabel: string;
+  action: ReactNode;
+  onClose: () => void;
+}) {
   const { t } = useI18n();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (info && !dialog.open) dialog.showModal();
+    if (info && !dialog.open) {
+      dialog.showModal();
+      // Open on the title, not scrolled down to the first button.
+      dialog.scrollTop = 0;
+      titleRef.current?.focus({ preventScroll: true });
+    }
     if (!info && dialog.open) dialog.close();
   }, [info]);
-  const style = info ? ({ '--c': `var(--module-${info.hue})`, '--s': `var(--module-${info.hue}-soft)` } as CSSProperties) : undefined;
+  const shot = (side: 'admin' | 'app') =>
+    info && (
+      <img
+        className={`module-shot module-shot-${side}`}
+        src={`/modules/${info.type}-${side}.jpg`}
+        alt=""
+        onError={(e) => {
+          e.currentTarget.hidden = true;
+        }}
+      />
+    );
   return (
     <dialog
       ref={dialogRef}
@@ -508,41 +577,48 @@ function ModuleDetails({ info, planLabel, onClose }: { info: ModuleInfo | null; 
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      style={style}
     >
       {info && (
         <div className="module-sheet-body">
           <div className="module-sheet-head">
-            <span className="module-card-icon module-card-icon-on">
+            <span className="module-sheet-icon">
               <Icon path={info.icon} />
             </span>
             <div>
-              <h2>{t(info.name)}</h2>
+              <h2 ref={titleRef} tabIndex={-1}>
+                {t(info.name)}
+              </h2>
               <p className="muted">{planLabel}</p>
             </div>
-            <button type="button" className="btn module-sheet-close" onClick={onClose}>
+          </div>
+          <p className="module-sheet-intro">{t(info.intro)}</p>
+          <div className="module-sheet-split">
+            <section>
+              <h3>
+                {t('plans.inAdmin')}
+                <span>{t('plans.teamGets')}</span>
+              </h3>
+              <p>{t(info.team)}</p>
+              {shot('admin')}
+            </section>
+            <span className="module-sheet-arrow" aria-hidden="true">
+              <Icon path="M5 12h14M13 6l6 6-6 6" />
+            </span>
+            <section>
+              <h3>
+                {t('plans.inApp')}
+                <span>{t('plans.membersGet')}</span>
+              </h3>
+              <p>{t(info.members)}</p>
+              {shot('app')}
+            </section>
+          </div>
+          <div className="module-sheet-foot">
+            <button type="button" className="btn" onClick={onClose}>
               {t('plans.close')}
             </button>
+            {action}
           </div>
-          <div className="module-sheet-shots">
-            {(['app', 'admin'] as const).map((side) => (
-              <img
-                key={side}
-                className={`module-shot module-shot-${side}`}
-                src={`/modules/${info.type}-${side}.jpg`}
-                alt=""
-                onError={(e) => {
-                  e.currentTarget.hidden = true;
-                }}
-              />
-            ))}
-          </div>
-          <dl className="module-sheet-points">
-            <dt>{t('plans.membersGet')}</dt>
-            <dd>{t(info.members)}</dd>
-            <dt>{t('plans.teamGets')}</dt>
-            <dd>{t(info.team)}</dd>
-          </dl>
         </div>
       )}
     </dialog>
