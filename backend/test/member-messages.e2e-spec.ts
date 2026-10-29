@@ -1,4 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { client, createPlace, createTestApp, resetDatabase, signInWithId } from './harness.js';
 import { ExpoPushClient, type PushMessage } from '../src/notifications/expo-push.client.js';
 
@@ -16,12 +17,15 @@ describe('Member messages (e2e)', () => {
   let sent: PushMessage[];
 
   const as = (token: string) => ({ Authorization: `Bearer ${token}` });
-  const turnOn = () =>
-    client(app)
+  // Messages come with the Essentials plan.
+  const turnOn = async () => {
+    await app.get(DataSource).query(`UPDATE pois SET plan = 'essentials' WHERE id = $1`, [place.id]);
+    return client(app)
       .post(`/pois/${place.id}/active-modules`)
       .set(as(admin.token))
       .send({ moduleType: 'messages', status: 'active' })
       .expect(201);
+  };
 
   beforeAll(async () => {
     app = await createTestApp();

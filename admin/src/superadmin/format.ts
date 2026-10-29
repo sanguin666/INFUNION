@@ -72,6 +72,7 @@ export function useSa() {
         return date(iso);
       },
       moduleLabel: (type: string) => (MODULE_KEYS[type] ? t(`moduleNames.${MODULE_KEYS[type]}`) : type),
+      planLabel: (tier: string) => (tier === 'basic' || tier === 'essentials' || tier === 'complete' ? t(`plans.${tier}`) : tier),
       /** A failed call, in words: known server codes are translated. */
       error: (err: unknown) => {
         if (err instanceof ApiError && err.status === 429) return s('errors.too_many');

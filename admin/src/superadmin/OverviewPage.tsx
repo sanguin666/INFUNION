@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { getOverview, type Overview, type WatchItem } from '../api/superadmin';
 import { useSa, type Sa } from './format';
 
-function watchText(item: WatchItem, { s, date, dateTime, moduleLabel }: Sa): { title: string; detail: string } {
+function watchText(item: WatchItem, { s, date, dateTime, moduleLabel, planLabel }: Sa): { title: string; detail: string } {
   const poi = item.poiName ?? '';
   switch (item.kind) {
     case 'trialEnding':
       return {
-        title: s('watch.trialEnding', { poi, module: moduleLabel(item.module ?? '') }),
+        title: item.plan
+          ? s('watch.trialEndingPlan', { poi, plan: planLabel(item.plan) })
+          : s('watch.trialEnding', { poi, module: moduleLabel(item.module ?? '') }),
         detail: s('watch.trialEndingDetail', { days: item.days ?? 0 }),
       };
     case 'requestsWaiting':
@@ -119,7 +121,7 @@ export function SuperadminOverviewPage() {
           <p className="stat-label">{s('overview.mrr')}</p>
           <p className="stat-value">{eur(revenue.monthlyRecurring)}</p>
           <p className="stat-delta stat-delta-neutral">
-            {s('overview.paidModules', { n: revenue.paidModules })}
+            {s('overview.paidPlans', { n: revenue.paidPlans })}
           </p>
         </div>
         <div className="stat-tile">
@@ -147,14 +149,14 @@ export function SuperadminOverviewPage() {
 
       <div className="kpi-row">
         <div className="stat-tile">
-          <p className="stat-label">{s('overview.trials')}</p>
-          <p className="stat-value">{revenue.trialModules}</p>
+          <p className="stat-label">{s('overview.trialPlans')}</p>
+          <p className="stat-value">{revenue.trialPlans}</p>
           <p className="stat-delta stat-delta-neutral">{s('overview.trialsPotential', { amount: eur(revenue.trialPotential) })}</p>
         </div>
         <div className="stat-tile">
           <p className="stat-label">{s('overview.offered')}</p>
           <p className="stat-value">{revenue.offeredModules}</p>
-          <p className="stat-delta stat-delta-neutral">{s('overview.offeredNote')}</p>
+          <p className="stat-delta stat-delta-neutral">{s('overview.offeredPlans', { n: revenue.offeredPlans })}</p>
         </div>
         <div className="stat-tile">
           <p className="stat-label">{s('overview.donations')}</p>

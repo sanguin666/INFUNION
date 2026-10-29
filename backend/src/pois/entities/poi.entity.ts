@@ -13,6 +13,7 @@ import { ActiveModule } from '../../active-modules/entities/active-module.entity
 import { PoiType } from '../../common/enums/poi-type.enum.js';
 import { Language } from '../../common/enums/language.enum.js';
 import { BillingInterval } from '../../common/enums/billing-interval.enum.js';
+import { PlanTier } from '../../common/enums/plan-tier.enum.js';
 import { ModuleType } from '../../common/enums/module-type.enum.js';
 import { TaxScheme } from '../../common/enums/tax-scheme.enum.js';
 import { PoiTheme } from '../../common/enums/poi-theme.enum.js';
@@ -127,10 +128,31 @@ export class Poi {
   @Column('varchar', { name: 'legal_phone', nullable: true })
   legalPhone?: string | null;
 
-  // ---- Module billing (Seb, 30 Sep 2026) ----
-  // Monthly or yearly, one choice for every paid module, so one bill.
-  @Column({ name: 'billing_interval', type: 'enum', enum: BillingInterval, default: BillingInterval.MONTHLY })
+  // ---- Billing (Seb, 30 Sep 2026; plans since 29 Oct 2026) ----
+  // Monthly or yearly; yearly (ten months for twelve) is offered first.
+  @Column({ name: 'billing_interval', type: 'enum', enum: BillingInterval, default: BillingInterval.YEARLY })
   billingInterval!: BillingInterval;
+
+  // The plan, which decides the modules the community can show. See
+  // active-modules/billing-rules.ts.
+  @Column({ type: 'varchar', default: PlanTier.BASIC })
+  plan!: PlanTier;
+
+  // While the plan is a free month: when that month ends.
+  @Column({ name: 'plan_trial_ends_at', type: 'timestamptz', nullable: true })
+  planTrialEndsAt?: Date | null;
+
+  // One free month per community, whichever plan it was on.
+  @Column({ name: 'plan_trial_used', default: false })
+  planTrialUsed!: boolean;
+
+  // A smaller plan chosen while a bigger one is paid; starts on the renewal date.
+  @Column({ name: 'pending_plan', type: 'varchar', nullable: true })
+  pendingPlan?: PlanTier | null;
+
+  // Given by infunion (superadmin): the plan is never billed and never ends.
+  @Column({ name: 'plan_offered', default: false })
+  planOffered!: boolean;
 
   // "Offert": every module on at no charge. Set on the communities that
   // existed before billing, the demos among them; only infunion sets it.
@@ -142,7 +164,7 @@ export class Poi {
   @Column('varchar', { name: 'payment_method_label', nullable: true })
   paymentMethodLabel?: string | null;
 
-  // The one date every paid module renews on. null while nothing is paid.
+  // The paid plan renews on this date. null while nothing is paid.
   @Column({ name: 'billing_renews_at', type: 'timestamptz', nullable: true })
   billingRenewsAt?: Date | null;
 

@@ -137,11 +137,21 @@ export type ActiveModule = {
 
 export type BillingInterval = 'monthly' | 'yearly';
 
+export type PlanTier = 'basic' | 'essentials' | 'complete';
+
 export type BillingInvoice = {
   id: string;
   issuedAt: string;
   amount: number;
-  lines: { moduleType: ModuleType; amount: number; periodStart: string; periodEnd: string }[];
+  // A plan since 29 Oct 2026; a module on older invoices.
+  lines: { plan?: PlanTier; moduleType?: ModuleType; amount: number; periodStart: string; periodEnd: string }[];
+};
+
+export type PlanOffer = {
+  tier: PlanTier;
+  prices: Record<BillingInterval, number>;
+  // The modules this plan adds to the one below, for this kind of place.
+  adds: ModuleType[];
 };
 
 export type BillingSummary = {
@@ -150,8 +160,15 @@ export type BillingSummary = {
   comped: boolean;
   paymentMethod: string | null;
   renewsAt: string | null;
-  prices: Record<BillingInterval, number>;
-  freeModules: ModuleType[];
+  plan: PlanTier;
+  // Given by infunion: never billed.
+  planOffered: boolean;
+  trialEndsAt: string | null;
+  trialUsed: boolean;
+  // A smaller plan chosen for the renewal date.
+  pendingPlan: PlanTier | null;
+  plans: PlanOffer[];
+  availableModules: ModuleType[];
   modules: ActiveModule[];
   invoices: BillingInvoice[];
 };
