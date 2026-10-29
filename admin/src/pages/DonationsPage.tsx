@@ -6,6 +6,9 @@ import type { DailyTotal, Donation, DonationStats } from '../api/types';
 import { CURRENCY } from '../format';
 import { CampaignsSection } from './CampaignsSection';
 import { ReceiptsSection } from './ReceiptsSection';
+import { TabBar, TabPanel, useTab } from '../components/Tabs';
+
+const TABS = ['overview', 'campaigns', 'receipts'] as const;
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -302,6 +305,7 @@ export function DonationsPage() {
   const [stats, setStats] = useState<DonationStats | null>(null);
   const [recent, setRecent] = useState<Donation[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [tab, setTab] = useTab(TABS);
 
   useEffect(() => {
     setStats(null);
@@ -314,34 +318,49 @@ export function DonationsPage() {
       .catch(() => setError(t('donations.loadError')));
   }, [poiId]);
 
-  if (error) {
-    return (
-      <div>
-        <h2>{t('donations.title')}</h2>
-        <p className="error-text">{error}</p>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h2>{t('donations.title')}</h2>
+      <p className="muted">{t('donations.subtitle')}</p>
 
-  if (!stats || !recent) {
-    return (
-      <div>
-        <h2>{t('donations.title')}</h2>
-        <p className="muted">{t('donations.loading')}</p>
-      </div>
-    );
-  }
+      <TabBar
+        idPrefix="donations"
+        label={t('tabs.label')}
+        current={tab}
+        onChange={setTab}
+        tabs={[
+          { key: 'overview', label: t('tabs.donationsOverview') },
+          { key: 'campaigns', label: t('tabs.donationsCampaigns') },
+          { key: 'receipts', label: t('tabs.donationsReceipts') },
+        ]}
+      />
 
+      <TabPanel idPrefix="donations" tabKey="overview" current={tab}>
+        {error && <p className="error-text">{error}</p>}
+        {!error && (!stats || !recent) && <p className="muted">{t('donations.loading')}</p>}
+        {stats && recent && <DonationsOverview stats={stats} recent={recent} />}
+      </TabPanel>
+
+      <TabPanel idPrefix="donations" tabKey="campaigns" current={tab}>
+        <CampaignsSection poiId={poiId} />
+      </TabPanel>
+
+      <TabPanel idPrefix="donations" tabKey="receipts" current={tab}>
+        <ReceiptsSection poiId={poiId} />
+      </TabPanel>
+    </div>
+  );
+}
+
+function DonationsOverview({ stats, recent }: { stats: DonationStats; recent: Donation[] }) {
+  const { t } = useI18n();
   const last12 = stats.dailyTotals.slice(-12);
   const thisMonthAvg = stats.thisMonth.count > 0 ? stats.thisMonth.total / stats.thisMonth.count : 0;
   const lastMonthAvg = stats.lastMonth.count > 0 ? stats.lastMonth.total / stats.lastMonth.count : 0;
   const avgSparkline = last12.map((d) => (d.count > 0 ? d.total / d.count : 0));
 
   return (
-    <div>
-      <h2>{t('donations.title')}</h2>
-      <p className="muted">{t('donations.subtitle')}</p>
-
+    <>
       <div className="kpi-row">
         <StatTile
           label={t('donations.thisWeek')}
@@ -400,8 +419,6 @@ export function DonationsPage() {
         )}
       </div>
 
-      <CampaignsSection poiId={poiId} />
-      <ReceiptsSection poiId={poiId} />
-    </div>
+    </>
   );
 }

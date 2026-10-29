@@ -13,6 +13,8 @@ import {
   toDateInputValue,
   toLocalInputValue,
 } from '../format';
+import { TabBar, TabPanel, useTab } from '../components/Tabs';
+import { SidePanel } from '../components/SidePanel';
 
 const CATEGORIES: EventCategory[] = ['mass', 'confession', 'adoration', 'prayer', 'office_hours', 'other'];
 // Masses, confessions and adoration only make sense for a church (Seb,
@@ -485,6 +487,8 @@ export function EventsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<Draft>(EMPTY_DRAFT);
   const [isChurch, setIsChurch] = useState(false);
+  const [tab, setTab] = useTab(EVENT_TABS);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     getPoi(poiId)
@@ -513,6 +517,9 @@ export function EventsPage() {
       });
       setItems((current) => [...(current ?? []), created].sort((a, b) => a.startsAt.localeCompare(b.startsAt)));
       setDraft(EMPTY_DRAFT);
+      setCreating(false);
+      // Land on the tab where the new event is listed.
+      setTab(created.recurrence !== 'none' ? 'regular' : 'upcoming');
     } catch {
       setError(t('events.createError'));
     } finally {
@@ -588,45 +595,68 @@ export function EventsPage() {
   }
 
   const weekly = items?.filter((e) => e.recurrence !== 'none').sort((a, b) => weekOrder(a) - weekOrder(b)) ?? [];
+  const now = new Date().toISOString();
   const once = items?.filter((e) => e.recurrence === 'none') ?? [];
+  const upcoming = once.filter((e) => (e.endsAt ?? e.startsAt) >= now);
+  const past = once.filter((e) => (e.endsAt ?? e.startsAt) < now).reverse();
 
   return (
     <div>
-      <h2>{t('events.title')}</h2>
-      <p className="muted">{t('events.subtitle')}</p>
-
-      <form className="form card" onSubmit={handleCreate}>
-        <EventFields isChurch={isChurch} draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={submitting || !canSave(draft)}
-        >
-          {submitting ? t('events.scheduling') : t('events.schedule')}
+      <div className="page-head">
+        <div>
+          <h2>{t('events.title')}</h2>
+          <p className="muted">{t('events.subtitle')}</p>
+        </div>
+        <button type="button" className="btn btn-primary" onClick={() => setCreating(true)}>
+          {t('tabs.newEvent')}
         </button>
-      </form>
+      </div>
+
+      <SidePanel open={creating} onClose={() => setCreating(false)} title={t('tabs.newEvent')} closeLabel={t('tabs.close')}>
+        <form className="form card" onSubmit={handleCreate}>
+          <EventFields isChurch={isChurch} draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
+          <button type="submit" className="btn btn-primary" disabled={submitting || !canSave(draft)}>
+            {submitting ? t('events.scheduling') : t('events.schedule')}
+          </button>
+          {error && <p className="error-text">{error}</p>}
+        </form>
+      </SidePanel>
+
+      <TabBar
+        idPrefix="events"
+        label={t('tabs.label')}
+        current={tab}
+        onChange={setTab}
+        tabs={[
+          { key: 'regular', label: t('tabs.eventsRegular'), count: items ? weekly.length : null },
+          { key: 'upcoming', label: t('tabs.eventsUpcoming'), count: items ? upcoming.length : null },
+          { key: 'past', label: t('tabs.eventsPast') },
+        ]}
+      />
 
       {error && <p className="error-text">{error}</p>}
       {items === null && !error && <p className="muted">{t('events.loading')}</p>}
-      {items?.length === 0 && !error && <p className="muted">{t('events.empty')}</p>}
 
-      {weekly.length > 0 && (
-        <>
-          <h3>{t('events.weeklyHeading')}</h3>
-          <p className="muted">{t('events.weeklyHint')}</p>
-          {weekly.map(renderItem)}
-        </>
-      )}
+      <TabPanel idPrefix="events" tabKey="regular" current={tab}>
+        <p className="muted" style={{ marginTop: 0 }}>{t('events.weeklyHint')}</p>
+        {items && weekly.length === 0 && <p className="muted">{t('events.empty')}</p>}
+        {weekly.map(renderItem)}
+      </TabPanel>
 
-      {once.length > 0 && (
-        <>
-          {weekly.length > 0 && <h3>{t('events.onceHeading')}</h3>}
-          {once.map(renderItem)}
-        </>
-      )}
+      <TabPanel idPrefix="events" tabKey="upcoming" current={tab}>
+        {items && upcoming.length === 0 && <p className="muted">{t('tabs.eventsNoUpcoming')}</p>}
+        {upcoming.map(renderItem)}
+      </TabPanel>
+
+      <TabPanel idPrefix="events" tabKey="past" current={tab}>
+        {items && past.length === 0 && <p className="muted">{t('tabs.eventsNoPast')}</p>}
+        {past.map(renderItem)}
+      </TabPanel>
     </div>
   );
 }
+
+const EVENT_TABS = ['regular', 'upcoming', 'past'] as const;
 
 function categoryName(category: EventCategory, t: T): string {
   switch (category) {
