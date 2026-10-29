@@ -6,7 +6,7 @@ import { getCampaigns } from '../api/donations';
 import type { ActiveModule, BadgeKind, Campaign, ModuleType, PoiBadge } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
 import { toDateInputValue } from '../format';
-import { moduleName } from './MenuOrderCard';
+import { moduleName } from './MenuOrder';
 
 // Kept in step with the backend's MAX_BADGE_TEXT.
 const MAX_TEXT = 40;
