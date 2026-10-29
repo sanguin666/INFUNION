@@ -17,6 +17,9 @@ import { DestructiveButton } from '../components/DestructiveButton';
 import { BadgesSection } from './BadgesSection';
 import { PhonePreview } from '../components/PhonePreview';
 import type { PoiBadge } from '../api/types';
+import { TabBar, TabPanel, useTab } from '../components/Tabs';
+
+const HOME_TABS = ['badges', 'sections'] as const;
 
 // Blocks that fill themselves from a module's content. They have nothing
 // to write, only a count, and they need that module switched on.
@@ -65,6 +68,7 @@ export function PoiHomePage() {
   const [justSavedId, setJustSavedId] = useState<string | null>(null);
   // What the phone beside the editor shows: the badges as the badge
   // editor holds them, and which of them are not saved yet.
+  const [tab, setTab] = useTab(HOME_TABS);
   const [previewBadges, setPreviewBadges] = useState<{ badges: PoiBadge[]; drafts: string[] } | null>(null);
 
   const BLOCK_NAMES: Record<PageBlockType, string> = {
@@ -220,160 +224,175 @@ export function PoiHomePage() {
         <h2>{t('homePage.title')}</h2>
         <p className="muted">{t('homePage.subtitle')}</p>
 
-        <BadgesSection
-          poiId={poiId}
-          modules={modules}
-          onPreview={(badges, drafts) => setPreviewBadges({ badges, drafts })}
+        <TabBar
+          idPrefix="home"
+          label={t('tabs.label')}
+          current={tab}
+          onChange={setTab}
+          tabs={[
+            { key: 'badges', label: t('tabs.homeBadges') },
+            { key: 'sections', label: t('tabs.homeSections'), count: blocks?.length ?? null },
+          ]}
         />
 
-        <h3 style={{ marginTop: 32 }}>{t('homePage.sectionsTitle')}</h3>
+        {/* Drawn from the start: the badges feed the phone preview on both tabs. */}
+        <TabPanel idPrefix="home" tabKey="badges" current={tab} eager>
+          <BadgesSection
+            poiId={poiId}
+            modules={modules}
+            onPreview={(badges, drafts) => setPreviewBadges({ badges, drafts })}
+          />
+        </TabPanel>
 
-        {error && <p className="error-text">{error}</p>}
-        {blocks === null && !error && <p className="muted">{t('homePage.loading')}</p>}
+        <TabPanel idPrefix="home" tabKey="sections" current={tab} eager>
 
-        {blocks?.length === 0 && (
-          <div className="card">
-            <p className="muted">{t('homePage.empty')}</p>
-            <div className="card-actions">
-              <button type="button" className="btn btn-primary" onClick={startFromDefault}>
-                {t('homePage.useDefault')}
-              </button>
+          {error && <p className="error-text">{error}</p>}
+          {blocks === null && !error && <p className="muted">{t('homePage.loading')}</p>}
+
+          {blocks?.length === 0 && (
+            <div className="card">
+              <p className="muted">{t('homePage.empty')}</p>
+              <div className="card-actions">
+                <button type="button" className="btn btn-primary" onClick={startFromDefault}>
+                  {t('homePage.useDefault')}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {blocks?.map((block, index) => {
-          const requiredModule = BLOCK_MODULE[block.type];
-          const moduleOff = requiredModule && !isModuleLive(requiredModule);
-          const busy = busyId === block.id;
+          {blocks?.map((block, index) => {
+            const requiredModule = BLOCK_MODULE[block.type];
+            const moduleOff = requiredModule && !isModuleLive(requiredModule);
+            const busy = busyId === block.id;
 
-          return (
-            <div key={block.id} className="card form">
-              <div className="card-actions" style={{ justifyContent: 'space-between', marginTop: 10, marginBottom: 4 }}>
-                <p className="card-title" style={{ margin: 0 }}>
-                  {index + 1}. {BLOCK_NAMES[block.type]}
-                </p>
-                <div style={{ display: 'flex', gap: 8 }}>
+            return (
+              <div key={block.id} className="card form">
+                <div className="card-actions" style={{ justifyContent: 'space-between', marginTop: 10, marginBottom: 4 }}>
+                  <p className="card-title" style={{ margin: 0 }}>
+                    {index + 1}. {BLOCK_NAMES[block.type]}
+                  </p>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button
+                      type="button"
+                      className="btn btn-icon"
+                      onClick={() => move(index, -1)}
+                      disabled={index === 0}
+                      aria-label={t('homePage.moveUp')}
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-icon"
+                      onClick={() => move(index, 1)}
+                      disabled={index === blocks.length - 1}
+                      aria-label={t('homePage.moveDown')}
+                    >
+                      ↓
+                    </button>
+                    <DestructiveButton label={t('homePage.delete')} onConfirm={() => remove(block.id)} />
+                  </div>
+                </div>
+
+                {moduleOff && <p className="error-text">{t('homePage.moduleOffNote')}</p>}
+
+                {block.type === 'image' ? (
+                  <>
+                    {block.imageUrl && (
+                      <img
+                        src={`${API_BASE_URL}${block.imageUrl}`}
+                        alt={block.title ?? ''}
+                        style={{ width: '100%', maxWidth: 420, borderRadius: 12 }}
+                      />
+                    )}
+                    <label>
+                      {t('homePage.imageLabel')}
+                      <input type="file" accept="image/*" onChange={(e) => pickImage(block, e)} disabled={busy} />
+                    </label>
+                    {busy && <p className="muted">{t('homePage.uploading')}</p>}
+                    <label>
+                      {t('homePage.captionLabel')}
+                      <input
+                        value={block.title ?? ''}
+                        onChange={(e) => editLocally(block.id, { title: e.target.value })}
+                      />
+                    </label>
+                  </>
+                ) : (
+                  <>
+                    <label>
+                      {t('homePage.headingLabel')}
+                      <input
+                        value={block.title ?? ''}
+                        onChange={(e) => editLocally(block.id, { title: e.target.value })}
+                      />
+                    </label>
+
+                    {(block.type === 'text' || block.type === 'donate') && (
+                      <label>
+                        {t('homePage.textLabel')}
+                        <textarea
+                          rows={4}
+                          value={block.body ?? ''}
+                          onChange={(e) => editLocally(block.id, { body: e.target.value })}
+                        />
+                      </label>
+                    )}
+
+                    {COUNTED_BLOCKS.has(block.type) && (
+                      <label>
+                        {t('homePage.itemCountLabel')}
+                        <input
+                          type="number"
+                          min={1}
+                          max={10}
+                          value={block.itemCount}
+                          onChange={(e) =>
+                            editLocally(block.id, { itemCount: Math.min(10, Math.max(1, Number(e.target.value) || 1)) })
+                          }
+                        />
+                      </label>
+                    )}
+
+                    {block.type === 'celebration_times' ? (
+                      <p className="muted">{t('homePage.celebrationTimesNote')}</p>
+                    ) : (
+                      block.type !== 'text' &&
+                      block.type !== 'donate' && <p className="muted">{t('homePage.autoNote')}</p>
+                    )}
+                  </>
+                )}
+
+                <div className="card-actions">
                   <button
                     type="button"
-                    className="btn btn-icon"
-                    onClick={() => move(index, -1)}
-                    disabled={index === 0}
-                    aria-label={t('homePage.moveUp')}
+                    className="btn btn-primary"
+                    onClick={() => save(block)}
+                    disabled={busy || !isDirty(block)}
                   >
-                    ↑
+                    {busy ? t('homePage.saving') : t('homePage.save')}
                   </button>
-                  <button
-                    type="button"
-                    className="btn btn-icon"
-                    onClick={() => move(index, 1)}
-                    disabled={index === blocks.length - 1}
-                    aria-label={t('homePage.moveDown')}
-                  >
-                    ↓
-                  </button>
-                  <DestructiveButton label={t('homePage.delete')} onConfirm={() => remove(block.id)} />
+                  {justSavedId === block.id && !isDirty(block) && (
+                    <span className="muted">{t('homePage.saved')}</span>
+                  )}
                 </div>
               </div>
+            );
+          })}
 
-              {moduleOff && <p className="error-text">{t('homePage.moduleOffNote')}</p>}
-
-              {block.type === 'image' ? (
-                <>
-                  {block.imageUrl && (
-                    <img
-                      src={`${API_BASE_URL}${block.imageUrl}`}
-                      alt={block.title ?? ''}
-                      style={{ width: '100%', maxWidth: 420, borderRadius: 12 }}
-                    />
-                  )}
-                  <label>
-                    {t('homePage.imageLabel')}
-                    <input type="file" accept="image/*" onChange={(e) => pickImage(block, e)} disabled={busy} />
-                  </label>
-                  {busy && <p className="muted">{t('homePage.uploading')}</p>}
-                  <label>
-                    {t('homePage.captionLabel')}
-                    <input
-                      value={block.title ?? ''}
-                      onChange={(e) => editLocally(block.id, { title: e.target.value })}
-                    />
-                  </label>
-                </>
-              ) : (
-                <>
-                  <label>
-                    {t('homePage.headingLabel')}
-                    <input
-                      value={block.title ?? ''}
-                      onChange={(e) => editLocally(block.id, { title: e.target.value })}
-                    />
-                  </label>
-
-                  {(block.type === 'text' || block.type === 'donate') && (
-                    <label>
-                      {t('homePage.textLabel')}
-                      <textarea
-                        rows={4}
-                        value={block.body ?? ''}
-                        onChange={(e) => editLocally(block.id, { body: e.target.value })}
-                      />
-                    </label>
-                  )}
-
-                  {COUNTED_BLOCKS.has(block.type) && (
-                    <label>
-                      {t('homePage.itemCountLabel')}
-                      <input
-                        type="number"
-                        min={1}
-                        max={10}
-                        value={block.itemCount}
-                        onChange={(e) =>
-                          editLocally(block.id, { itemCount: Math.min(10, Math.max(1, Number(e.target.value) || 1)) })
-                        }
-                      />
-                    </label>
-                  )}
-
-                  {block.type === 'celebration_times' ? (
-                    <p className="muted">{t('homePage.celebrationTimesNote')}</p>
-                  ) : (
-                    block.type !== 'text' &&
-                    block.type !== 'donate' && <p className="muted">{t('homePage.autoNote')}</p>
-                  )}
-                </>
-              )}
-
-              <div className="card-actions">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => save(block)}
-                  disabled={busy || !isDirty(block)}
-                >
-                  {busy ? t('homePage.saving') : t('homePage.save')}
-                </button>
-                {justSavedId === block.id && !isDirty(block) && (
-                  <span className="muted">{t('homePage.saved')}</span>
-                )}
+          {blocks !== null && (
+            <div className="card">
+              <p className="card-title">{t('homePage.addSection')}</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+                {ADDABLE_BLOCKS.map((type) => (
+                  <button key={type} type="button" className="btn btn-primary" onClick={() => add(type)}>
+                    + {BLOCK_NAMES[type]}
+                  </button>
+                ))}
               </div>
             </div>
-          );
-        })}
-
-        {blocks !== null && (
-          <div className="card">
-            <p className="card-title">{t('homePage.addSection')}</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
-              {ADDABLE_BLOCKS.map((type) => (
-                <button key={type} type="button" className="btn btn-primary" onClick={() => add(type)}>
-                  + {BLOCK_NAMES[type]}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+          )}
+        </TabPanel>
       </div>
       <PhonePreview
         poiId={poiId}
