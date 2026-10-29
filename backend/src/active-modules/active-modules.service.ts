@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ActiveModule } from './entities/active-module.entity.js';
@@ -6,6 +6,7 @@ import { PoisService } from '../pois/pois.service.js';
 import { ActivateModuleDto } from './dto/activate-module.dto.js';
 import { UpdateActiveModuleDto } from './dto/update-active-module.dto.js';
 import { ModuleBillingService } from './module-billing.service.js';
+import { moduleFitsPlace } from './module-places.js';
 
 @Injectable()
 export class ActiveModulesService {
@@ -21,6 +22,9 @@ export class ActiveModulesService {
     dto: ActivateModuleDto,
   ): Promise<ActiveModule> {
     const poi = await this.poisService.findOne(poiId);
+    if (!moduleFitsPlace(dto.moduleType, poi.type)) {
+      throw new BadRequestException('module_not_for_place');
+    }
 
     const existing = await this.activeModuleRepository.findOne({
       where: {

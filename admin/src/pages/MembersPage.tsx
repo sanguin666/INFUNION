@@ -3,7 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useModules, usePoiId, useRefreshModules } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
-import { getBilling, startModule } from '../api/billing';
+import { getBilling, startModule, startPlanTrial } from '../api/billing';
+import type { BillingSummary } from '../api/types';
 import {
   MODULE_OFF,
   exportMemberData,
@@ -56,7 +57,11 @@ export function MembersPage() {
   const [error, setError] = useState<string | null>(null);
   // Whether this place already had its free month, so the offer either
   // starts the trial here or sends the office to Modules.
-  const [trialUsed, setTrialUsed] = useState<boolean | null>(null);
+  // Without Messages: what the button can do (show it, try Essentials, or
+  // go to the plans).
+  const [billing, setBilling] = useState<BillingSummary | null>(null);
+  const trialUsed = billing ? billing.plan !== 'basic' || billing.trialUsed : null;
+  const inPlan = !!billing && billing.plan !== 'basic';
   const [starting, setStarting] = useState(false);
   const offerRef = useRef<HTMLDivElement>(null);
 
@@ -71,19 +76,20 @@ export function MembersPage() {
   useEffect(() => {
     if (modules === null || live) return;
     getBilling(poiId)
-      .then((billing) => setTrialUsed(billing.modules.some((m) => m.moduleType === 'messages')))
-      .catch(() => setTrialUsed(true));
+      .then(setBilling)
+      // Unknown: the button then leads to the Modules page.
+      .catch(() => setBilling({ plan: 'basic', trialUsed: true } as BillingSummary));
   }, [poiId, modules === null, live]);
 
   async function startTrial() {
-    if (trialUsed) {
+    if (trialUsed && !inPlan) {
       navigate('../modules', { relative: 'path' });
       return;
     }
     setStarting(true);
     setError(null);
     try {
-      await startModule(poiId, 'messages');
+      await (inPlan ? startModule(poiId, 'messages') : startPlanTrial(poiId, 'essentials'));
       refreshModules();
     } catch {
       setError(t('members.promoError'));

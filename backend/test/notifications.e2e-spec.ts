@@ -36,6 +36,8 @@ describe('Notifications (e2e)', () => {
     await resetDatabase(app);
     ({ token: adminToken } = await signInWithId(app, '+34600400001', 'Admin'));
     place = await createPlace(app, adminToken, 'San Roque');
+    // Push notifications come with a paid plan; Complete also has Livestream.
+    await setPlan(place.id, 'complete');
     ana = await signInWithId(app, '+34600400002', 'Ana');
     luis = await signInWithId(app, '+34600400003', 'Luis');
     for (const member of [ana, luis]) {
@@ -44,6 +46,9 @@ describe('Notifications (e2e)', () => {
     await client(app).post('/auth/me/push-tokens').set(as(ana.token)).send({ token: anaPhone }).expect(204);
     await client(app).post('/auth/me/push-tokens').set(as(luis.token)).send({ token: luisPhone }).expect(204);
   });
+
+  const setPlan = (poiId: string, plan: string) =>
+    app.get(DataSource).query(`UPDATE pois SET plan = $1 WHERE id = $2`, [plan, poiId]);
 
   // Triggers send without holding up the request that caused them.
   const settle = () => new Promise((resolve) => setTimeout(resolve, 300));
@@ -300,5 +305,23 @@ describe('Notifications (e2e)', () => {
       [anaPhone, 'Live now: Sunday Mass'],
       [luisPhone, 'Live now: Sunday Mass'],
     ]);
+  });
+
+  it('sends nothing and takes no event reminder on the free Basic plan', async () => {
+    await setPlan(place.id, 'basic');
+    const event = await client(app)
+      .post(`/pois/${place.id}/events`)
+      .set(as(adminToken))
+      .send({ title: 'Choir practice', startsAt: new Date(Date.now() + 2 * 3600_000).toISOString(), location: 'Hall' })
+      .expect(201);
+    await client(app).put(`/auth/me/event-reminders/${event.body.id}`).set(as(ana.token)).send({}).expect(403);
+
+    await client(app)
+      .post(`/pois/${place.id}/announcements`)
+      .set(as(adminToken))
+      .send({ title: 'Big news', body: 'Read me', important: true })
+      .expect(201);
+    await settle();
+    expect(sent).toEqual([]);
   });
 });

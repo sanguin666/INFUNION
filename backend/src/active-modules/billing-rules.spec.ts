@@ -2,13 +2,30 @@ import { describe, expect, it } from 'vitest';
 import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
 import { BillingInterval } from '../common/enums/billing-interval.enum.js';
-import { addMonths, isFree, settle, startPaying, type BillingModule, type BillingPoi } from './billing-rules.js';
+import { PlanTier } from '../common/enums/plan-tier.enum.js';
+import {
+  addMonths,
+  alignModules,
+  choosePlan,
+  planIncludes,
+  planPrice,
+  sendsNotifications,
+  settle,
+  startTrial,
+  type BillingModule,
+  type BillingPoi,
+} from './billing-rules.js';
 
 const d = (iso: string) => new Date(`${iso}T09:00:00Z`);
 
 function place(overrides: Partial<BillingPoi> = {}): BillingPoi {
   return {
-    billingInterval: BillingInterval.MONTHLY,
+    plan: PlanTier.BASIC,
+    planTrialEndsAt: null,
+    planTrialUsed: false,
+    pendingPlan: null,
+    planOffered: false,
+    billingInterval: BillingInterval.YEARLY,
     billingComped: false,
     paymentMethodLabel: 'SEPA •••• 4521',
     billingRenewsAt: null,
@@ -16,99 +33,133 @@ function place(overrides: Partial<BillingPoi> = {}): BillingPoi {
   };
 }
 
-function trial(type: ModuleType, endsAt: string): BillingModule {
-  return { moduleType: type, status: ModuleStatus.TRIAL, trialEndsAt: d(endsAt), cancelAtPeriodEnd: false };
-}
-
-describe('billing rules', () => {
-  it('keeps Événements and Dons free, and charges for the rest', () => {
-    expect(isFree(ModuleType.EVENTS)).toBe(true);
-    expect(isFree(ModuleType.DONATIONS)).toBe(true);
-    expect(isFree(ModuleType.REQUESTS)).toBe(false);
+describe('plan rules', () => {
+  it('prices a year at ten months', () => {
+    expect(planPrice(PlanTier.ESSENTIALS, BillingInterval.MONTHLY)).toBe(39);
+    expect(planPrice(PlanTier.ESSENTIALS, BillingInterval.YEARLY)).toBe(390);
+    expect(planPrice(PlanTier.COMPLETE, BillingInterval.YEARLY)).toBe(590);
+    expect(planPrice(PlanTier.BASIC, BillingInterval.YEARLY)).toBe(0);
   });
 
+  it('puts each module in its plan and the plans above', () => {
+    expect(planIncludes(PlanTier.BASIC, ModuleType.EVENTS)).toBe(true);
+    expect(planIncludes(PlanTier.BASIC, ModuleType.ANNOUNCEMENTS)).toBe(false);
+    expect(planIncludes(PlanTier.ESSENTIALS, ModuleType.ANNOUNCEMENTS)).toBe(true);
+    expect(planIncludes(PlanTier.BASIC, ModuleType.MESSAGES)).toBe(false);
+    expect(planIncludes(PlanTier.ESSENTIALS, ModuleType.REQUESTS)).toBe(true);
+    expect(planIncludes(PlanTier.ESSENTIALS, ModuleType.COMMUNITY)).toBe(false);
+    expect(planIncludes(PlanTier.COMPLETE, ModuleType.MASS_INTENTIONS)).toBe(true);
+  });
+
+  it('sends notifications from Essentials up, and for an "Offert" place', () => {
+    expect(sendsNotifications(place())).toBe(false);
+    expect(sendsNotifications(place({ plan: PlanTier.ESSENTIALS }))).toBe(true);
+    expect(sendsNotifications(place({ billingComped: true }))).toBe(true);
+  });
 
   it('keeps the day of the month, or the last day when it is missing', () => {
     expect(addMonths(d('2026-01-31'), 1).toISOString().slice(0, 10)).toBe('2026-02-28');
-    expect(addMonths(d('2026-09-30'), 12).toISOString().slice(0, 10)).toBe('2027-09-30');
   });
 
-  it('leaves a trial alone until its month is over', () => {
-    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
-    expect(settle(place(), modules, d('2026-10-29'))).toEqual([]);
-    expect(modules[0].status).toBe(ModuleStatus.TRIAL);
-  });
-
-  it('turns an ended trial into a paid month when a payment method is on file', () => {
+  it('gives one free month, once', () => {
     const poi = place();
-    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
-    const invoices = settle(poi, modules, d('2026-11-02'));
+    startTrial(poi, PlanTier.COMPLETE, d('2026-10-29'));
+    expect(poi.plan).toBe(PlanTier.COMPLETE);
+    expect(poi.planTrialEndsAt).toEqual(d('2026-11-29'));
+    expect(settle(poi, d('2026-11-20'))).toEqual([]);
+    choosePlan(poi, PlanTier.BASIC, d('2026-11-20'));
+    expect(() => startTrial(poi, PlanTier.ESSENTIALS, d('2026-11-21'))).toThrow('trial_used');
+  });
+
+  it('pays for the plan when the free month ends with a payment method', () => {
+    const poi = place();
+    startTrial(poi, PlanTier.ESSENTIALS, d('2026-10-29'));
+    const invoices = settle(poi, d('2026-12-01'));
     expect(invoices).toHaveLength(1);
-    expect(invoices[0].lines[0].amount).toBe(10);
-    expect(modules[0].status).toBe(ModuleStatus.ACTIVE);
-    expect(poi.billingRenewsAt).toEqual(d('2026-11-30'));
+    expect(invoices[0].lines[0]).toMatchObject({ plan: PlanTier.ESSENTIALS, amount: 390 });
+    expect(poi.planTrialEndsAt).toBeNull();
+    expect(poi.billingRenewsAt).toEqual(d('2027-11-29'));
   });
 
-  it('pauses an ended trial without a payment method', () => {
-    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
-    expect(settle(place({ paymentMethodLabel: null }), modules, d('2026-11-02'))).toEqual([]);
-    expect(modules[0].status).toBe(ModuleStatus.EXPIRED);
+  it('ends on Basic when the free month ends without a payment method', () => {
+    const poi = place({ paymentMethodLabel: null });
+    startTrial(poi, PlanTier.COMPLETE, d('2026-10-29'));
+    expect(settle(poi, d('2026-12-01'))).toEqual([]);
+    expect(poi.plan).toBe(PlanTier.BASIC);
   });
 
-  it('bills a second module pro rata up to the shared renewal date', () => {
-    const poi = place({ billingRenewsAt: d('2026-11-30') });
-    const module: BillingModule = { moduleType: ModuleType.REQUESTS, status: ModuleStatus.EXPIRED, cancelAtPeriodEnd: false };
-    const line = startPaying(poi, module, d('2026-11-15'));
-    // 15 days left of the 31 from 30 Oct to 30 Nov.
-    expect(line.amount).toBe(4.84);
-    expect(module.paidUntil).toEqual(d('2026-11-30'));
+  it('keeps the free month going when moving up during it', () => {
+    const poi = place({ paymentMethodLabel: null });
+    startTrial(poi, PlanTier.ESSENTIALS, d('2026-10-29'));
+    expect(choosePlan(poi, PlanTier.COMPLETE, d('2026-11-05'))).toBeNull();
+    expect(poi.plan).toBe(PlanTier.COMPLETE);
+    expect(poi.planTrialEndsAt).toEqual(d('2026-11-29'));
   });
 
-  it('renews every paid module on one invoice, and stops those the office stopped', () => {
-    const poi = place({ billingRenewsAt: d('2026-11-30') });
+  it('charges a full period when moving up from Basic', () => {
+    const poi = place({ billingInterval: BillingInterval.MONTHLY, planTrialUsed: true });
+    const invoice = choosePlan(poi, PlanTier.ESSENTIALS, d('2026-10-29'));
+    expect(invoice?.lines[0].amount).toBe(39);
+    expect(poi.billingRenewsAt).toEqual(d('2026-11-29'));
+  });
+
+  it('needs a payment method to pay', () => {
+    const poi = place({ paymentMethodLabel: null, planTrialUsed: true });
+    expect(() => choosePlan(poi, PlanTier.ESSENTIALS, d('2026-10-29'))).toThrow('payment_method_required');
+  });
+
+  it('charges the difference, pro rata, when moving up a paid plan', () => {
+    const poi = place({ billingInterval: BillingInterval.MONTHLY, planTrialUsed: true });
+    choosePlan(poi, PlanTier.ESSENTIALS, d('2026-11-01'));
+    // Half of November left: half of the 20 € difference.
+    const invoice = choosePlan(poi, PlanTier.COMPLETE, d('2026-11-16'));
+    expect(invoice?.lines[0].amount).toBe(10);
+    expect(poi.plan).toBe(PlanTier.COMPLETE);
+    expect(poi.billingRenewsAt).toEqual(d('2026-12-01'));
+  });
+
+  it('moves down on the renewal date, and renews at the smaller price', () => {
+    const poi = place({ billingInterval: BillingInterval.MONTHLY, planTrialUsed: true });
+    choosePlan(poi, PlanTier.COMPLETE, d('2026-11-01'));
+    expect(choosePlan(poi, PlanTier.ESSENTIALS, d('2026-11-10'))).toBeNull();
+    expect(poi.plan).toBe(PlanTier.COMPLETE);
+    const invoices = settle(poi, d('2026-12-02'));
+    expect(poi.plan).toBe(PlanTier.ESSENTIALS);
+    expect(invoices[0].lines[0].amount).toBe(39);
+  });
+
+  it('stops paying at the end of the period when Basic is chosen', () => {
+    const poi = place({ planTrialUsed: true });
+    choosePlan(poi, PlanTier.ESSENTIALS, d('2026-11-01'));
+    choosePlan(poi, PlanTier.BASIC, d('2026-12-01'));
+    expect(poi.plan).toBe(PlanTier.ESSENTIALS);
+    expect(settle(poi, d('2027-11-02'))).toEqual([]);
+    expect(poi.plan).toBe(PlanTier.BASIC);
+    expect(poi.billingRenewsAt).toBeNull();
+  });
+
+  it('never bills an offered plan or an "Offert" place', () => {
+    expect(settle(place({ plan: PlanTier.COMPLETE, planOffered: true, billingRenewsAt: d('2026-01-01') }), d('2026-12-01'))).toEqual([]);
+    expect(settle(place({ billingComped: true, billingRenewsAt: d('2026-01-01') }), d('2026-12-01'))).toEqual([]);
+  });
+
+  it('pauses the modules a smaller plan does not have, and brings them back', () => {
+    const poi = place({ plan: PlanTier.ESSENTIALS });
     const modules: BillingModule[] = [
-      { moduleType: ModuleType.REQUESTS, status: ModuleStatus.ACTIVE, paidUntil: d('2026-11-30'), cancelAtPeriodEnd: false },
-      { moduleType: ModuleType.ANNOUNCEMENTS, status: ModuleStatus.ACTIVE, paidUntil: d('2026-11-30'), cancelAtPeriodEnd: false },
-      { moduleType: ModuleType.LIVESTREAMS, status: ModuleStatus.ACTIVE, paidUntil: d('2026-11-30'), cancelAtPeriodEnd: true },
-      { moduleType: ModuleType.EVENTS, status: ModuleStatus.ACTIVE, cancelAtPeriodEnd: false },
+      { moduleType: ModuleType.MESSAGES, status: ModuleStatus.ACTIVE },
+      { moduleType: ModuleType.COMMUNITY, status: ModuleStatus.ACTIVE },
+      { moduleType: ModuleType.LIVESTREAMS, status: ModuleStatus.ACTIVE, offered: true },
+      { moduleType: ModuleType.REQUESTS, status: ModuleStatus.CANCELLED },
     ];
-    const invoices = settle(poi, modules, d('2026-12-01'));
-    expect(invoices).toHaveLength(1);
-    expect(invoices[0].lines.map((l) => l.moduleType)).toEqual([ModuleType.REQUESTS, ModuleType.ANNOUNCEMENTS]);
-    expect(modules[2].status).toBe(ModuleStatus.CANCELLED);
-    expect(modules[3].status).toBe(ModuleStatus.ACTIVE);
-    expect(poi.billingRenewsAt).toEqual(d('2026-12-30'));
-  });
-
-  it('charges 110 for a year', () => {
-    const poi = place({ billingInterval: BillingInterval.YEARLY });
-    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
-    const invoices = settle(poi, modules, d('2026-10-31'));
-    expect(invoices[0].lines[0].amount).toBe(110);
-    expect(poi.billingRenewsAt).toEqual(d('2027-10-30'));
-  });
-
-  it('catches up on several missed months at once', () => {
-    const poi = place({ billingRenewsAt: d('2026-11-30') });
-    const modules: BillingModule[] = [
-      { moduleType: ModuleType.REQUESTS, status: ModuleStatus.ACTIVE, paidUntil: d('2026-11-30'), cancelAtPeriodEnd: false },
-    ];
-    expect(settle(poi, modules, d('2027-02-01'))).toHaveLength(3);
-    expect(poi.billingRenewsAt).toEqual(d('2027-02-28'));
-  });
-
-  it('never touches an offered community', () => {
-    const modules = [trial(ModuleType.ANNOUNCEMENTS, '2026-10-30')];
-    expect(settle(place({ billingComped: true, paymentMethodLabel: null }), modules, d('2027-01-01'))).toEqual([]);
-    expect(modules[0].status).toBe(ModuleStatus.TRIAL);
-  });
-
-  it('never bills or pauses a module infunion offered', () => {
-    const poi = place({ billingRenewsAt: d('2026-11-30'), paymentMethodLabel: null });
-    const modules: BillingModule[] = [
-      { moduleType: ModuleType.REQUESTS, status: ModuleStatus.ACTIVE, paidUntil: null, cancelAtPeriodEnd: false, offered: true },
-    ];
-    expect(settle(poi, modules, d('2027-03-01'))).toEqual([]);
-    expect(modules[0].status).toBe(ModuleStatus.ACTIVE);
+    alignModules(poi, modules);
+    expect(modules.map((m) => m.status)).toEqual([
+      ModuleStatus.ACTIVE,
+      ModuleStatus.EXPIRED,
+      ModuleStatus.ACTIVE,
+      ModuleStatus.CANCELLED,
+    ]);
+    poi.plan = PlanTier.COMPLETE;
+    alignModules(poi, modules);
+    expect(modules[1].status).toBe(ModuleStatus.ACTIVE);
   });
 });

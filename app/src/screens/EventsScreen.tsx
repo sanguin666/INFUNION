@@ -19,7 +19,7 @@ import {
 } from '../utils/schedule';
 import { useI18n } from '../i18n/I18nContext';
 import { colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
-import type { Event, EventCategory, Poi } from '../api/types';
+import { type Event, type EventCategory, type Poi, sendsNotifications } from '../api/types';
 
 type Props = {
   poi: Poi;
@@ -54,8 +54,10 @@ export function EventsScreen({ poi, onWatchLive, onOpenCalendar }: Props) {
   const regular = regularEvents(events ?? [], now);
   const ofCategory = (category: EventCategory) => regular.filter((event) => event.category === category);
 
-  // Signed-in readers only: a bell needs someone to remind.
-  const bells: TimetableBells | undefined = me
+  // Signed-in readers only: a bell needs someone to remind, and a place
+  // whose plan sends notifications.
+  const canBell = !!me && sendsNotifications(poi);
+  const bells: TimetableBells | undefined = canBell
     ? {
         isSectionOn: (category) => ofCategory(category).some((event) => reminders.isEveryTime(event.id)),
         onSectionBell: setBellCategory,
@@ -166,7 +168,7 @@ export function EventsScreen({ poi, onWatchLive, onOpenCalendar }: Props) {
                     detail={event.location}
                     accessibilityLabel={[event.title, time, event.location].filter(Boolean).join(', ')}
                     accessory={
-                      <Pressable
+                      canBell && <Pressable
                         accessibilityRole="button"
                         accessibilityLabel={
                           isNotifying

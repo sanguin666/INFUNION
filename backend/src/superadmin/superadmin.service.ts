@@ -21,8 +21,9 @@ import { ModuleBillingService } from '../active-modules/module-billing.service.j
 import { MemberRole } from '../common/enums/member-role.enum.js';
 import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
-import { BillingInterval } from '../common/enums/billing-interval.enum.js';
-import { PRICES, isFree } from '../active-modules/billing-rules.js';
+import { effectivePlan, isPaying, monthlyEquivalent } from '../active-modules/billing-rules.js';
+import { PlanTier } from '../common/enums/plan-tier.enum.js';
+import { moduleFitsPlace, modulesForPlace } from '../active-modules/module-places.js';
 import { SuperadminAccess, type SuperadminIdentity } from '../auth/superadmin-access.service.js';
 import { ErrorTracker } from './error-tracker.js';
 import type { CreateCommunityDto, UpdateCommunityDto } from './dto/superadmin.dto.js';
@@ -67,6 +68,7 @@ export type WatchItem = {
   poiId?: string;
   poiName?: string;
   module?: string;
+  plan?: PlanTier;
   n?: number;
   days?: number;
   date?: string;
@@ -138,28 +140,17 @@ export class SuperadminService {
 
     const pois = await this.pois.find();
     const modules = await this.modules.find({ relations: { poi: true } });
-    const live = modules.filter((m) => LIVE.includes(m.status));
+    const live = modules.filter((m) => LIVE.includes(m.status) && moduleFitsPlace(m.moduleType, m.poi.type));
     let monthlyRecurring = 0;
-    let paidModules = 0;
-    let trialModules = 0;
-    let offeredModules = 0;
-    const paying = new Set<string>();
-    for (const module of live) {
-      if (module.offered) offeredModules += 1;
-      if (module.poi.billingComped || module.offered || isFree(module.moduleType)) continue;
-      if (module.status === ModuleStatus.TRIAL) {
-        trialModules += 1;
-        continue;
-      }
-      paidModules += 1;
-      paying.add(module.poi.id);
-      if (!module.cancelAtPeriodEnd) {
-        monthlyRecurring +=
-          module.poi.billingInterval === BillingInterval.YEARLY
-            ? PRICES[BillingInterval.YEARLY] / 12
-            : PRICES[BillingInterval.MONTHLY];
-      }
+    let trialPotential = 0;
+    const paying = pois.filter((poi) => isPaying(poi));
+    const trials = pois.filter((poi) => !poi.billingComped && !poi.planOffered && poi.planTrialEndsAt);
+    for (const poi of paying) {
+      // A smaller plan chosen for later is what will recur.
+      monthlyRecurring += monthlyEquivalent(poi.pendingPlan ?? poi.plan, poi.billingInterval);
     }
+    for (const poi of trials) trialPotential += monthlyEquivalent(poi.plan, poi.billingInterval);
+    const offeredModules = live.filter((m) => m.offered).length;
 
     const [members] = await this.data.query(
       `SELECT COUNT(DISTINCT user_id)::int AS total,
@@ -192,9 +183,10 @@ export class SuperadminService {
         lastMonth: revenueLastMonth,
         byMonth: revenueByMonth,
         monthlyRecurring: money(monthlyRecurring),
-        paidModules,
-        trialModules,
-        trialPotential: trialModules * PRICES[BillingInterval.MONTHLY],
+        paidPlans: paying.length,
+        trialPlans: trials.length,
+        trialPotential: money(trialPotential),
+        offeredPlans: pois.filter((p) => p.planOffered).length,
         offeredModules,
         // Nothing is charged yet (no payment provider): what would be.
         demo: true,
@@ -202,7 +194,7 @@ export class SuperadminService {
       communities: {
         total: pois.length,
         comped: pois.filter((p) => p.billingComped).length,
-        paying: paying.size,
+        paying: paying.length,
         suspended: pois.filter((p) => p.suspendedAt).length,
         newThisMonth: pois.filter((p) => p.createdAt >= thisMonth).length,
       },
@@ -223,18 +215,11 @@ export class SuperadminService {
     // Kinds and figures only: the admin words them in Seb's chosen language.
     const items: WatchItem[] = [];
     const soon = new Date(now.getTime() + 7 * DAY);
-    for (const module of live) {
-      if (module.status !== ModuleStatus.TRIAL || !module.trialEndsAt || module.trialEndsAt > soon) continue;
-      if (module.poi.billingComped || module.poi.paymentMethodLabel) continue;
-      const days = Math.max(0, Math.ceil((module.trialEndsAt.getTime() - now.getTime()) / DAY));
-      items.push({
-        level: 'warn',
-        kind: 'trialEnding',
-        poiId: module.poi.id,
-        poiName: module.poi.name,
-        module: module.moduleType,
-        days,
-      });
+    for (const poi of pois) {
+      const ends = poi.planTrialEndsAt;
+      if (!ends || ends > soon || poi.billingComped || poi.planOffered || poi.paymentMethodLabel) continue;
+      const days = Math.max(0, Math.ceil((ends.getTime() - now.getTime()) / DAY));
+      items.push({ level: 'warn', kind: 'trialEnding', poiId: poi.id, poiName: poi.name, plan: poi.plan, days });
     }
     const waiting: { poi_id: string; name: string; count: number; oldest: Date }[] = await this.data.query(
       `SELECT r.poi_id, p.name, COUNT(*)::int AS count, MIN(r.created_at) AS oldest
@@ -294,22 +279,18 @@ export class SuperadminService {
     const modules = await this.modules.find({ where: { poi: { id: In(ids) } }, relations: { poi: true } });
     return pois.map((poi) => {
       const row = counts.find((c) => c.poi_id === poi.id);
-      const mine = modules.filter((m) => m.poi.id === poi.id && LIVE.includes(m.status));
-      const trials = mine.filter((m) => m.status === ModuleStatus.TRIAL && !poi.billingComped);
-      const paid = mine.filter((m) => m.status === ModuleStatus.ACTIVE && !m.offered && !isFree(m.moduleType) && !poi.billingComped);
+      const mine = modules.filter((m) => m.poi.id === poi.id && LIVE.includes(m.status) && moduleFitsPlace(m.moduleType, poi.type));
       const billing = poi.suspendedAt
         ? 'suspended'
         : poi.billingComped
           ? 'comped'
-          : paid.length
-            ? 'paying'
-            : trials.length
+          : poi.planOffered
+            ? 'offered'
+            : poi.planTrialEndsAt
               ? 'trial'
-              : 'free';
-      const nextTrialEnd = trials
-        .map((m) => m.trialEndsAt)
-        .filter((d): d is Date => !!d)
-        .sort((a, b) => a.getTime() - b.getTime())[0];
+              : isPaying(poi)
+                ? 'paying'
+                : 'free';
       return {
         id: poi.id,
         name: poi.name,
@@ -323,14 +304,11 @@ export class SuperadminService {
         admins: row?.admins ?? 0,
         lastAdminLoginAt: row?.last_login ?? null,
         liveModules: mine.length,
-        totalModules: Object.values(ModuleType).length,
-        paidModules: paid.length,
+        totalModules: modulesForPlace(poi.type).length,
+        plan: effectivePlan(poi),
         offeredModules: mine.filter((m) => m.offered).length,
-        nextTrialEnd: nextTrialEnd ?? null,
-        monthly: money(
-          paid.length *
-            (poi.billingInterval === BillingInterval.YEARLY ? PRICES[BillingInterval.YEARLY] / 12 : PRICES[BillingInterval.MONTHLY]),
-        ),
+        nextTrialEnd: poi.planTrialEndsAt ?? null,
+        monthly: money(isPaying(poi) ? monthlyEquivalent(poi.plan, poi.billingInterval) : 0),
       };
     });
   }
@@ -365,7 +343,7 @@ export class SuperadminService {
         lastLoginAt: m.user.lastLoginAt ?? null,
       })),
       billing,
-      allModules: Object.values(ModuleType),
+      allModules: modulesForPlace(poi.type),
     };
   }
 
@@ -374,8 +352,8 @@ export class SuperadminService {
     const poi = await this.pois.save(
       this.pois.create({ ...fields, name: fields.name.trim(), billingComped: !!billingComped, qrCodeToken: randomUUID() }),
     );
-    // Événements is free and on everywhere, as on the demo communities.
-    await this.billing.start(poi.id, ModuleType.EVENTS);
+    // Basic's modules (Événements, Dons, Annonces) are free and on from the start.
+    await this.billing.switchOnPlanModules(poi.id);
     const admin = await this.grantAdmin(poi, adminEmail, adminFirstName);
     await this.log(actor, 'poi.create', poi, { adminEmail: admin.email, comped: !!billingComped });
     return { poi: { id: poi.id, name: poi.name }, admin };
@@ -408,14 +386,22 @@ export class SuperadminService {
     await this.log(actor, 'poi.delete', { id: poiId, name: poi.name }, { memberships: members });
   }
 
-  async moduleAction(actor: Actor, poiId: string, type: ModuleType, action: 'start' | 'stop' | 'offer' | 'unoffer' | 'extend-trial') {
+  async moduleAction(actor: Actor, poiId: string, type: ModuleType, action: 'start' | 'stop' | 'offer' | 'unoffer') {
     const poi = await this.findPoi(poiId);
-    if (action === 'start') await this.billing.start(poiId, type);
-    else if (action === 'stop') await this.billing.stop(poiId, type);
+    if (action === 'start') await this.billing.show(poiId, type);
+    else if (action === 'stop') await this.billing.hide(poiId, type);
     else if (action === 'offer') await this.billing.offer(poiId, type);
-    else if (action === 'unoffer') await this.billing.unoffer(poiId, type);
-    else await this.billing.extendTrial(poiId, type);
+    else await this.billing.unoffer(poiId, type);
     await this.log(actor, `module.${action}`, poi, { module: type });
+    return this.community(poiId);
+  }
+
+  async planAction(actor: Actor, poiId: string, action: 'offer' | 'unoffer' | 'extend-trial', tier?: PlanTier) {
+    const poi = await this.findPoi(poiId);
+    if (action === 'offer') await this.billing.offerPlan(poiId, tier ?? PlanTier.COMPLETE);
+    else if (action === 'unoffer') await this.billing.offerPlan(poiId, null);
+    else await this.billing.extendTrial(poiId, tier ?? PlanTier.COMPLETE);
+    await this.log(actor, `plan.${action}`, poi, { plan: tier ?? null });
     return this.community(poiId);
   }
 

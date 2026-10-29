@@ -5,14 +5,16 @@ import {
   deleteCommunity,
   getCommunity,
   moduleAction,
+  planAction,
   removeAdmin,
   resetAdminPassword,
   setSuspended,
   updateCommunity,
   type CommunityDetail,
   type ModuleAction,
+  type PlanAction,
 } from '../api/superadmin';
-import type { ActiveModule, ModuleType, PoiType, SupportedLanguage } from '../api/types';
+import type { BillingSummary, ModuleType, PlanTier, PoiType, SupportedLanguage } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES } from '../i18n/translations';
 import { useI18n } from '../i18n/I18nContext';
@@ -22,18 +24,16 @@ import { PasswordReveal } from './PasswordReveal';
 
 const LIVE = new Set(['trial', 'active']);
 
-function moduleState({ s, date }: Sa, row: ActiveModule | undefined, comped: boolean, free: boolean): string {
-  if (!row || !LIVE.has(row.status)) {
-    if (row?.status === 'expired') return s('community.statePaused');
-    if (row?.status === 'cancelled') return s('community.stateStopped');
-    return s('community.stateOff');
-  }
-  if (row.offered) return s('community.stateOffered');
-  if (free) return s('community.stateFree');
-  if (comped) return s('community.stateIncluded');
-  if (row.status === 'trial') return s('community.stateTrial', { date: date(row.trialEndsAt) });
-  if (row.cancelAtPeriodEnd) return s('community.stateStops', { date: date(row.paidUntil) });
-  return s('community.statePaid', { date: date(row.paidUntil) });
+const PLANS: PlanTier[] = ['basic', 'essentials', 'complete'];
+
+function planState({ s, date, planLabel }: Sa, billing: BillingSummary): string {
+  if (billing.comped) return s('community.compedHint');
+  const plan = planLabel(billing.plan);
+  if (billing.planOffered) return s('community.planOffered', { plan });
+  if (billing.trialEndsAt) return s('community.planTrial', { plan, date: date(billing.trialEndsAt) });
+  if (billing.plan === 'basic') return s('community.planFree');
+  const pending = billing.pendingPlan ? s('community.planPending', { plan: planLabel(billing.pendingPlan) }) : '';
+  return s('community.planPaid', { plan, date: date(billing.renewsAt) }) + pending;
 }
 
 export function SuperadminCommunityPage() {
@@ -56,7 +56,7 @@ export function SuperadminCommunityPage() {
   const [adminFirstName, setAdminFirstName] = useState('');
   const [confirmName, setConfirmName] = useState('');
   const sa = useSa();
-  const { s, date, ago, money, moduleLabel, error: describe } = sa;
+  const { s, date, ago, money, moduleLabel, planLabel, error: describe } = sa;
 
   function show(detail: CommunityDetail) {
     setData(detail);
@@ -102,9 +102,48 @@ export function SuperadminCommunityPage() {
   const { poi, billing } = data;
   const id = poi.id;
   const rowFor = (type: ModuleType) => billing.modules.find((m) => m.moduleType === type);
-  const isFree = (type: ModuleType) => billing.freeModules.includes(type);
+  const planOf = (type: ModuleType) => billing.plans.find((p) => p.adds.includes(type))?.tier ?? 'complete';
+  const allowed = (type: ModuleType) =>
+    !!rowFor(type)?.offered || PLANS.indexOf(planOf(type)) <= PLANS.indexOf(billing.plan);
   const act = (type: ModuleType, action: ModuleAction, done: string) =>
     run(`${type}:${action}`, () => moduleAction(id, type, action), done);
+  const actPlan = (action: PlanAction, done: string, tier?: PlanTier) =>
+    run(`plan:${action}:${tier ?? ''}`, () => planAction(id, action, tier), done);
+
+  function moduleState(type: ModuleType): string {
+    const row = rowFor(type);
+    if (row?.offered) return s('community.stateOffered');
+    if (!allowed(type)) return s('community.notInPlan');
+    if (row && LIVE.has(row.status)) return t('plans.on');
+    return row ? s('community.stateStopped') : s('community.stateOff');
+  }
+
+  function planActions() {
+    if (billing.comped) return [];
+    const pending = busy?.startsWith('plan:') ?? false;
+    const buttons = [];
+    if (billing.planOffered) {
+      buttons.push(
+        <DestructiveButton key="unoffer" quiet label={s('community.takePlanBack')} disabled={pending} onConfirm={() => actPlan('unoffer', s('community.planUnofferedMsg'))} />,
+      );
+      return buttons;
+    }
+    for (const tier of ['essentials', 'complete'] as PlanTier[]) {
+      buttons.push(
+        <button key={`offer-${tier}`} type="button" className="text-action" disabled={pending} onClick={() => actPlan('offer', s('community.planOfferedMsg', { plan: planLabel(tier) }), tier)}>
+          {s('community.offerPlan', { plan: planLabel(tier) })}
+        </button>,
+      );
+    }
+    if (billing.trialEndsAt || billing.plan === 'basic') {
+      buttons.push(
+        <button key="trial" type="button" className="text-action" disabled={pending} onClick={() => actPlan('extend-trial', s('community.planExtendedMsg'), 'complete')}>
+          {billing.trialEndsAt ? s('community.plusMonth') : s('community.planTrialStart', { plan: planLabel('complete') })}
+        </button>,
+      );
+    }
+    return buttons;
+  }
 
   function saveInfo(event: FormEvent) {
     event.preventDefault();
@@ -125,35 +164,27 @@ export function SuperadminCommunityPage() {
   function moduleActions(type: ModuleType) {
     const row = rowFor(type);
     const live = !!row && LIVE.has(row.status);
-    const free = isFree(type);
     const pending = busy?.startsWith(`${type}:`) ?? false;
     const buttons = [];
-    if (live && row.offered) {
+    if (row?.offered) {
       buttons.push(
         <DestructiveButton key="unoffer" quiet label={s('community.unoffer')} disabled={pending} onConfirm={() => act(type, 'unoffer', s('community.unofferedMsg', { module: moduleLabel(type) }))} />,
       );
-    } else if (!free && !billing.comped) {
+    } else if (!billing.comped && !allowed(type)) {
       buttons.push(
         <button key="offer" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'offer', s('community.offeredMsg', { module: moduleLabel(type) }))}>
           {s('community.offer')}
         </button>,
       );
     }
-    if (!free && !billing.comped && (!live || row.status === 'trial') && !row?.offered) {
-      buttons.push(
-        <button key="trial" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'extend-trial', s('community.extendedMsg', { module: moduleLabel(type) }))}>
-          {live ? s('community.plusMonth') : s('community.trialMonth')}
-        </button>,
-      );
-    }
-    if (!live && (free || billing.comped)) {
+    if (!live && allowed(type)) {
       buttons.push(
         <button key="start" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'start', s('community.startedMsg', { module: moduleLabel(type) }))}>
           {s('community.activate')}
         </button>,
       );
     }
-    if (live && !row.offered && !row.cancelAtPeriodEnd) {
+    if (live && !row.offered) {
       buttons.push(
         <DestructiveButton key="stop" quiet label={s('community.stop')} disabled={pending} onConfirm={() => act(type, 'stop', s('community.stoppedMsg', { module: moduleLabel(type) }))} />,
       );
@@ -248,11 +279,18 @@ export function SuperadminCommunityPage() {
             aria-label={s('community.compedRow')}
           />
         </div>
+        <div className="card-row">
+          <span>
+            <span className="card-title">{s('community.planTitle')}</span>
+            <span className="sa-sub">{planState(sa, billing)}</span>
+          </span>
+          <span className="sa-row-actions">{planActions()}</span>
+        </div>
         {data.allModules.map((type) => (
           <div className="card-row" key={type}>
             <span>
               <span className="card-title">{moduleLabel(type)}</span>
-              <span className="sa-sub">{moduleState(sa, rowFor(type), billing.comped, isFree(type))}</span>
+              <span className="sa-sub">{moduleState(type)}</span>
             </span>
             <span className="sa-row-actions">{moduleActions(type)}</span>
           </div>
@@ -275,7 +313,7 @@ export function SuperadminCommunityPage() {
               <div className="card-row" key={invoice.id}>
                 <span>
                   <span className="card-title">{date(invoice.issuedAt)}</span>
-                  <span className="sa-sub">{invoice.lines.map((line) => moduleLabel(line.moduleType)).join(', ')}</span>
+                  <span className="sa-sub">{invoice.lines.map((line) => (line.plan ? planLabel(line.plan) : moduleLabel(line.moduleType ?? ''))).join(', ')}</span>
                 </span>
                 <strong>{money(invoice.amount)}</strong>
               </div>

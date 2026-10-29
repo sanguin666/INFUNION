@@ -16,6 +16,7 @@ import { NotificationsService } from '../notifications/notifications.service.js'
 import { ActiveModule } from '../active-modules/entities/active-module.entity.js';
 import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
+import { moduleFitsPlace } from '../active-modules/module-places.js';
 import { dayKey, isTimeZone, localTime } from '../events/occurrences.js';
 import { text } from '../notifications/texts.js';
 import { runExclusive } from '../common/locks/run-exclusive.js';
@@ -148,7 +149,9 @@ export class DailyReadingsService implements OnModuleInit, OnModuleDestroy {
       },
       relations: { poi: true },
     });
-    const live = new Set(running.map((m) => m.poi.id));
+    const live = new Set(
+      running.filter((m) => moduleFitsPlace(m.moduleType, m.poi.type)).map((m) => m.poi.id),
+    );
 
     for (const reading of ready) {
       reading.notifiedAt = now;
