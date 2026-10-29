@@ -1109,3 +1109,16 @@ section {
   color: var(--text-muted);
   font-size: 15px;
 }
+
+.price-save {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1.5px solid var(--primary);
+  background: #ffffff;
+  color: var(--primary-dark);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
