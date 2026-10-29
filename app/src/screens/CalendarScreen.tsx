@@ -9,7 +9,7 @@ import { useEventReminders } from '../notifications/useEventReminders';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles, currentColorScheme } from '../theme/theme';
-import type { Event, EventCategory, Poi } from '../api/types';
+import { type Event, type EventCategory, type Poi, sendsNotifications } from '../api/types';
 
 type Props = { poi: Poi };
 
@@ -246,7 +246,7 @@ export function CalendarScreen({ poi }: Props) {
                       )}
                     </View>
                   </View>
-                  {me && o.startsAt > now && (
+                  {me && sendsNotifications(poi) && o.startsAt > now && (
                     <Pressable
                       accessibilityRole="button"
                       accessibilityLabel={

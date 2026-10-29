@@ -10,17 +10,20 @@ import {
 import type { Relation } from 'typeorm';
 import { Poi } from '../../pois/entities/poi.entity.js';
 import { ModuleType } from '../../common/enums/module-type.enum.js';
+import { PlanTier } from '../../common/enums/plan-tier.enum.js';
 
+// Since 29 Oct 2026 a line is for a plan; older ones name a module.
 export type BillingInvoiceLine = {
-  moduleType: ModuleType;
+  plan?: PlanTier;
+  moduleType?: ModuleType;
   amount: number;
   periodStart: string;
   periodEnd: string;
 };
 
 /**
- * What a community was charged for its modules on one date: one invoice
- * per renewal, whatever the number of modules on it. Demo stage: recorded,
+ * What a community was charged on one date: its plan's period, or the
+ * difference when it moved to a bigger plan. Demo stage: recorded,
  * not taken (see ModuleBillingService).
  */
 @Entity('billing_invoices')

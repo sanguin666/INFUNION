@@ -26,6 +26,9 @@ export type Poi = {
   // wear (see theme/theme.ts ACCENTS).
   logoUrl?: string | null;
   theme?: string;
+  // Its plan (Seb, 29 Oct 2026): Basic sends no notifications to phones.
+  plan?: 'basic' | 'essentials' | 'complete';
+  billingComped?: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -180,3 +183,9 @@ export type CommunityComment = {
   message: string;
   createdAt: string;
 };
+
+/** Whether this place sends notifications to phones (Essentials and up). */
+export function sendsNotifications(poi: Pick<Poi, 'plan' | 'billingComped'>): boolean {
+  // An older API sends no plan: notifications as before.
+  return !poi.plan || poi.plan !== 'basic' || !!poi.billingComped;
+}

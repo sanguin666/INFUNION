@@ -34,6 +34,7 @@ import {
   SuperadminCodeDto,
   SuperadminPasswordDto,
   UpdateCommunityDto,
+  SuperadminPlanDto,
 } from './dto/superadmin.dto.js';
 
 type AccountRequest = SuperadminRequest & { superadmin: SuperadminIdentity };
@@ -146,10 +147,22 @@ export class SuperadminController {
     @Req() request: SuperadminRequest,
     @Param('poiId', ParseUUIDPipe) poiId: string,
     @Param('type', new ParseEnumPipe(ModuleType)) type: ModuleType,
-    @Param('action', new ParseEnumPipe({ start: 'start', stop: 'stop', offer: 'offer', unoffer: 'unoffer', extend: 'extend-trial' }))
-    action: 'start' | 'stop' | 'offer' | 'unoffer' | 'extend-trial',
+    @Param('action', new ParseEnumPipe({ start: 'start', stop: 'stop', offer: 'offer', unoffer: 'unoffer' }))
+    action: 'start' | 'stop' | 'offer' | 'unoffer',
   ) {
     return this.service.moduleAction(this.actor(request), poiId, type, action);
+  }
+
+  @Post('pois/:poiId/plan/:action')
+  @HttpCode(200)
+  plan(
+    @Req() request: SuperadminRequest,
+    @Param('poiId', ParseUUIDPipe) poiId: string,
+    @Param('action', new ParseEnumPipe({ offer: 'offer', unoffer: 'unoffer', extend: 'extend-trial' }))
+    action: 'offer' | 'unoffer' | 'extend-trial',
+    @Body() dto: SuperadminPlanDto,
+  ) {
+    return this.service.planAction(this.actor(request), poiId, action, dto.tier);
   }
 
   @Post('pois/:poiId/admins')

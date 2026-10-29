@@ -24,7 +24,7 @@ import {
   PlusIcon,
 } from '../components/icons';
 import { hubMenu, type HubTab } from '../components/PoiShell';
-import type { ActiveModule, ModuleType, Poi } from '../api/types';
+import { type ActiveModule, type ModuleType, type Poi, sendsNotifications } from '../api/types';
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { getPoiTheme } from '../theme/poiThemes';
 import { useI18n } from '../i18n/I18nContext';
@@ -263,27 +263,30 @@ export function MoreScreen({
         </View>
       </Modal>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={
-          notificationsOn === null
-            ? t('notifications.title')
-            : `${t('notifications.title')}: ${notificationsOn ? t('notifications.on') : t('notifications.off')}`
-        }
-        onPress={onOpenNotifications}
-        style={styles.row}
-      >
-        <BellIcon size={26} color={colors.textMuted} />
-        <AccessibleText variant="bodyLarge" style={styles.rowLabelBesideValue} numberOfLines={1}>
-          {t('notifications.title')}
-        </AccessibleText>
-        {notificationsOn !== null && (
-          <AccessibleText variant="body" color={colors.textMuted} style={styles.rowValue} numberOfLines={1}>
-            {notificationsOn ? t('notifications.on') : t('notifications.off')}
+      {/* Basic sends no notifications (Seb, 29 Oct 2026): nothing to set. */}
+      {sendsNotifications(poi) && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={
+            notificationsOn === null
+              ? t('notifications.title')
+              : `${t('notifications.title')}: ${notificationsOn ? t('notifications.on') : t('notifications.off')}`
+          }
+          onPress={onOpenNotifications}
+          style={styles.row}
+        >
+          <BellIcon size={26} color={colors.textMuted} />
+          <AccessibleText variant="bodyLarge" style={styles.rowLabelBesideValue} numberOfLines={1}>
+            {t('notifications.title')}
           </AccessibleText>
-        )}
-        <ChevronRightIcon size={22} color={colors.textMuted} />
-      </Pressable>
+          {notificationsOn !== null && (
+            <AccessibleText variant="body" color={colors.textMuted} style={styles.rowValue} numberOfLines={1}>
+              {notificationsOn ? t('notifications.on') : t('notifications.off')}
+            </AccessibleText>
+          )}
+          <ChevronRightIcon size={22} color={colors.textMuted} />
+        </Pressable>
+      )}
 
       {/* One row carrying the language it is currently set to, rather
           than three abbreviations side by side. The list itself only

@@ -11,6 +11,7 @@ import {
 } from 'class-validator';
 import { PoiType } from '../../common/enums/poi-type.enum.js';
 import { Language } from '../../common/enums/language.enum.js';
+import { PlanTier } from '../../common/enums/plan-tier.enum.js';
 
 export class SuperadminCodeDto {
   @Matches(/^\d{6}$/)
@@ -129,4 +130,11 @@ export class ConfirmNameDto {
   @IsNotEmpty()
   @MaxLength(200)
   confirmName!: string;
+}
+
+/** The plan to give, or to try for a month; Complete when left out. */
+export class SuperadminPlanDto {
+  @IsOptional()
+  @IsEnum(PlanTier)
+  tier?: PlanTier;
 }
