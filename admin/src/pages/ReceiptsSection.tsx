@@ -137,11 +137,8 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
   const years = Array.from({ length: YEARS_BACK + 1 }, (_, i) => thisYear - i);
 
   return (
-    <section aria-labelledby="receipts-heading">
-      <h3 id="receipts-heading" style={{ marginTop: 32 }}>
-        {t('receipts.title')}
-      </h3>
-      <p className="muted">{t('receipts.subtitle')}</p>
+    <section aria-label={t('receipts.title')}>
+      <p className="muted" style={{ marginTop: 0 }}>{t('receipts.subtitle')}</p>
 
       {legal && (
         <div className="card form">

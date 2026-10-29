@@ -13,6 +13,7 @@ import {
 import { API_BASE_URL } from '../api/client';
 import type { Campaign, CampaignAllocationLine } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
+import { SidePanel } from '../components/SidePanel';
 import { CURRENCY, endOfDayFromDateInput, formatMoney, toDateInputValue } from '../format';
 
 // `photo` is a picture picked but not sent yet: it goes up once the
@@ -191,6 +192,7 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<Draft>(EMPTY_DRAFT);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
   // Remounts the new-project form after a save, which is the only way to
   // empty its file picker.
   const [formKey, setFormKey] = useState(0);
@@ -219,6 +221,7 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
       setItems((current) => [created, ...(current ?? [])]);
       setDraft(EMPTY_DRAFT);
       setFormKey((key) => key + 1);
+      setCreating(false);
     } catch {
       setError(t('campaigns.createError'));
     } finally {
@@ -283,18 +286,30 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
   }
 
   return (
-    <section aria-labelledby="campaigns-heading">
-      <h3 id="campaigns-heading" style={{ marginTop: 32 }}>
-        {t('campaigns.title')}
-      </h3>
-      <p className="muted">{t('campaigns.subtitle')}</p>
-
-      <form key={formKey} className="form card" onSubmit={handleCreate}>
-        <CampaignFields draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
-        <button type="submit" className="btn btn-primary" disabled={submitting || !draft.title.trim() || !allocationValid(draft)}>
-          {submitting ? t('campaigns.creating') : t('campaigns.create')}
+    <section aria-label={t('campaigns.title')}>
+      <div className="page-head">
+        <p className="muted" style={{ marginTop: 0, maxWidth: '60ch' }}>
+          {t('campaigns.subtitle')}
+        </p>
+        <button type="button" className="btn btn-primary" onClick={() => setCreating(true)}>
+          {t('tabs.newCampaign')}
         </button>
-      </form>
+      </div>
+
+      <SidePanel
+        open={creating}
+        onClose={() => setCreating(false)}
+        title={t('tabs.newCampaign')}
+        closeLabel={t('tabs.close')}
+      >
+        <form key={formKey} className="form card" onSubmit={handleCreate}>
+          <CampaignFields draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
+          <button type="submit" className="btn btn-primary" disabled={submitting || !draft.title.trim() || !allocationValid(draft)}>
+            {submitting ? t('campaigns.creating') : t('campaigns.create')}
+          </button>
+          {error && <p className="error-text">{error}</p>}
+        </form>
+      </SidePanel>
 
       {error && <p className="error-text">{error}</p>}
       {items === null && !error && <p className="muted">{t('campaigns.loading')}</p>}

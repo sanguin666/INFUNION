@@ -27,6 +27,27 @@ export function intlLocale(language: string): string {
 }
 
 export type Translations = {
+  tabs: {
+    label: string;
+    settingsInfo: string;
+    settingsLook: string;
+    settingsPlace: string;
+    settingsMenu: string;
+    donationsOverview: string;
+    donationsCampaigns: string;
+    donationsReceipts: string;
+    eventsRegular: string;
+    eventsUpcoming: string;
+    eventsPast: string;
+    eventsNoUpcoming: string;
+    eventsNoPast: string;
+    homeBadges: string;
+    homeSections: string;
+    newEvent: string;
+    newCampaign: string;
+    addMessage: string;
+    close: string;
+  };
   common: {
     loading: string;
     yes: string;
@@ -855,6 +876,27 @@ export type Translations = {
 };
 
 const en: Translations = {
+  tabs: {
+    label: "Parts of this page",
+    settingsInfo: "Information",
+    settingsLook: "Look",
+    settingsPlace: "Address & map",
+    settingsMenu: "App menu",
+    donationsOverview: "Overview",
+    donationsCampaigns: "Campaigns",
+    donationsReceipts: "Tax receipts",
+    eventsRegular: "Regular",
+    eventsUpcoming: "Upcoming",
+    eventsPast: "Past",
+    eventsNoUpcoming: "No upcoming one-off events.",
+    eventsNoPast: "No past events.",
+    homeBadges: "Badges",
+    homeSections: "Page sections",
+    newEvent: "+ New event",
+    newCampaign: "+ New campaign",
+    addMessage: "+ Add a message",
+    close: "Close",
+  },
   common: {
     loading: 'Loading…',
     yes: 'Yes',
@@ -1684,6 +1726,27 @@ const en: Translations = {
 };
 
 const es: Translations = {
+  tabs: {
+    label: "Partes de esta página",
+    settingsInfo: "Información",
+    settingsLook: "Imagen",
+    settingsPlace: "Dirección y mapa",
+    settingsMenu: "Menú de la aplicación",
+    donationsOverview: "Resumen",
+    donationsCampaigns: "Campañas",
+    donationsReceipts: "Certificados",
+    eventsRegular: "Habituales",
+    eventsUpcoming: "Próximos",
+    eventsPast: "Pasados",
+    eventsNoUpcoming: "No hay eventos puntuales próximos.",
+    eventsNoPast: "No hay eventos pasados.",
+    homeBadges: "Insignias",
+    homeSections: "Secciones de la página",
+    newEvent: "+ Nuevo evento",
+    newCampaign: "+ Nueva campaña",
+    addMessage: "+ Añadir un mensaje",
+    close: "Cerrar",
+  },
   common: {
     loading: 'Cargando…',
     yes: 'Sí',
@@ -2513,6 +2576,27 @@ const es: Translations = {
 };
 
 const fr: Translations = {
+  tabs: {
+    label: "Parties de cette page",
+    settingsInfo: "Informations",
+    settingsLook: "Image",
+    settingsPlace: "Adresse et carte",
+    settingsMenu: "Menu de l’application",
+    donationsOverview: "Vue d’ensemble",
+    donationsCampaigns: "Campagnes",
+    donationsReceipts: "Reçus fiscaux",
+    eventsRegular: "Réguliers",
+    eventsUpcoming: "À venir",
+    eventsPast: "Passés",
+    eventsNoUpcoming: "Aucun événement ponctuel à venir.",
+    eventsNoPast: "Aucun événement passé.",
+    homeBadges: "Badges",
+    homeSections: "Sections de la page",
+    newEvent: "+ Nouvel événement",
+    newCampaign: "+ Nouvelle campagne",
+    addMessage: "+ Ajouter un message",
+    close: "Fermer",
+  },
   common: {
     loading: 'Chargement…',
     yes: 'Oui',
@@ -3342,6 +3426,27 @@ const fr: Translations = {
 };
 
 const va: Translations = {
+  tabs: {
+    label: "Parts d’esta pàgina",
+    settingsInfo: "Informació",
+    settingsLook: "Imatge",
+    settingsPlace: "Adreça i mapa",
+    settingsMenu: "Menú de l’aplicació",
+    donationsOverview: "Resum",
+    donationsCampaigns: "Campanyes",
+    donationsReceipts: "Certificats",
+    eventsRegular: "Habituals",
+    eventsUpcoming: "Pròxims",
+    eventsPast: "Passats",
+    eventsNoUpcoming: "No hi ha esdeveniments puntuals pròxims.",
+    eventsNoPast: "No hi ha esdeveniments passats.",
+    homeBadges: "Distintius",
+    homeSections: "Seccions de la pàgina",
+    newEvent: "+ Nou esdeveniment",
+    newCampaign: "+ Nova campanya",
+    addMessage: "+ Afegir un missatge",
+    close: "Tancar",
+  },
   common: {
     loading: 'Carregant…',
     yes: 'Sí',
@@ -4171,6 +4276,27 @@ const va: Translations = {
 };
 
 const gl: Translations = {
+  tabs: {
+    label: "Partes desta páxina",
+    settingsInfo: "Información",
+    settingsLook: "Imaxe",
+    settingsPlace: "Enderezo e mapa",
+    settingsMenu: "Menú da aplicación",
+    donationsOverview: "Resumo",
+    donationsCampaigns: "Campañas",
+    donationsReceipts: "Certificados",
+    eventsRegular: "Habituais",
+    eventsUpcoming: "Próximos",
+    eventsPast: "Pasados",
+    eventsNoUpcoming: "Non hai eventos puntuais próximos.",
+    eventsNoPast: "Non hai eventos pasados.",
+    homeBadges: "Insignias",
+    homeSections: "Seccións da páxina",
+    newEvent: "+ Novo evento",
+    newCampaign: "+ Nova campaña",
+    addMessage: "+ Engadir unha mensaxe",
+    close: "Pechar",
+  },
   common: {
     loading: 'Cargando…',
     yes: 'Si',
@@ -5000,6 +5126,27 @@ const gl: Translations = {
 };
 
 const pt: Translations = {
+  tabs: {
+    label: "Partes desta página",
+    settingsInfo: "Informações",
+    settingsLook: "Imagem",
+    settingsPlace: "Morada e mapa",
+    settingsMenu: "Menu da aplicação",
+    donationsOverview: "Resumo",
+    donationsCampaigns: "Campanhas",
+    donationsReceipts: "Recibos",
+    eventsRegular: "Regulares",
+    eventsUpcoming: "Próximos",
+    eventsPast: "Passados",
+    eventsNoUpcoming: "Não há eventos pontuais próximos.",
+    eventsNoPast: "Não há eventos passados.",
+    homeBadges: "Distintivos",
+    homeSections: "Secções da página",
+    newEvent: "+ Novo evento",
+    newCampaign: "+ Nova campanha",
+    addMessage: "+ Adicionar uma mensagem",
+    close: "Fechar",
+  },
   common: {
     loading: 'A carregar…',
     yes: 'Sim',
