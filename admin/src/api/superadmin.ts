@@ -1,5 +1,5 @@
 import { ApiError, apiDelete, apiGet, apiPatch, apiPost, setSuperadminSession, type SuperadminSession } from './client';
-import type { BillingSummary, ModuleType, PoiType, SupportedLanguage } from './types';
+import type { BillingSummary, ModuleType, PlanTier, PoiType, SupportedLanguage } from './types';
 
 // ---- the code step
 
@@ -48,6 +48,7 @@ export type WatchItem = {
   poiId?: string;
   poiName?: string;
   module?: string;
+  plan?: PlanTier;
   n?: number;
   days?: number;
   date?: string;
@@ -62,9 +63,10 @@ export type Overview = {
     lastMonth: number;
     byMonth: { month: string; total: number }[];
     monthlyRecurring: number;
-    paidModules: number;
-    trialModules: number;
+    paidPlans: number;
+    trialPlans: number;
     trialPotential: number;
+    offeredPlans: number;
     offeredModules: number;
     demo: boolean;
   };
@@ -79,7 +81,7 @@ export const getOverview = () => guarded(() => apiGet<Overview>('/superadmin/ove
 
 // ---- communities
 
-export type CommunityBilling = 'comped' | 'paying' | 'trial' | 'free' | 'suspended';
+export type CommunityBilling = 'comped' | 'offered' | 'paying' | 'trial' | 'free' | 'suspended';
 
 export type CommunityRow = {
   id: string;
@@ -95,7 +97,7 @@ export type CommunityRow = {
   lastAdminLoginAt: string | null;
   liveModules: number;
   totalModules: number;
-  paidModules: number;
+  plan: PlanTier;
   offeredModules: number;
   nextTrialEnd: string | null;
   monthly: number;
@@ -157,7 +159,12 @@ export const setSuspended = (poiId: string, suspended: boolean) =>
 export const deleteCommunity = (poiId: string, confirmName: string) =>
   guarded(() => apiPost<{ deleted: true }>(`/superadmin/pois/${poiId}/delete`, { confirmName }));
 
-export type ModuleAction = 'start' | 'stop' | 'offer' | 'unoffer' | 'extend-trial';
+export type ModuleAction = 'start' | 'stop' | 'offer' | 'unoffer';
+
+export type PlanAction = 'offer' | 'unoffer' | 'extend-trial';
+
+export const planAction = (poiId: string, action: PlanAction, tier?: PlanTier) =>
+  guarded(() => apiPost<CommunityDetail>(`/superadmin/pois/${poiId}/plan/${action}`, { tier }));
 
 export const moduleAction = (poiId: string, type: ModuleType, action: ModuleAction) =>
   guarded(() => apiPost<CommunityDetail>(`/superadmin/pois/${poiId}/modules/${type}/${action}`));

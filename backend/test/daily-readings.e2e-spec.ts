@@ -1,4 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { client, createPlace, createTestApp, resetDatabase, signInWithId } from './harness.js';
 import { ExpoPushClient, type PushMessage } from '../src/notifications/expo-push.client.js';
 import { DailyReadingsService } from '../src/daily-readings/daily-readings.service.js';
@@ -39,6 +40,8 @@ describe('Daily readings (e2e)', () => {
     await resetDatabase(app);
     ({ token: adminToken } = await signInWithId(app, '+34600500001', 'Admin'));
     place = await createPlace(app, adminToken, 'San Roque');
+    // Daily readings and their push come with the Complete plan.
+    await app.get(DataSource).query(`UPDATE pois SET plan = 'complete' WHERE id = $1`, [place.id]);
     await client(app)
       .post(`/pois/${place.id}/active-modules`)
       .set(as(adminToken))

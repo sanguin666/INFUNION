@@ -14,11 +14,11 @@ import { PLACE_KINDS } from '../placeKinds';
 import { useSa } from './format';
 import { PasswordReveal } from './PasswordReveal';
 
-const FILTERS: (CommunityBilling | 'all')[] = ['all', 'paying', 'trial', 'comped', 'free', 'suspended'];
+const FILTERS: (CommunityBilling | 'all')[] = ['all', 'paying', 'trial', 'comped', 'offered', 'free', 'suspended'];
 
-function BillingStatus({ row }: { row: Pick<CommunityRow, 'billing' | 'monthly' | 'nextTrialEnd'> }) {
-  const { s, money, date } = useSa();
-  let text = s(`communities.${row.billing}`);
+function BillingStatus({ row }: { row: Pick<CommunityRow, 'billing' | 'monthly' | 'nextTrialEnd' | 'plan'> }) {
+  const { s, money, date, planLabel } = useSa();
+  let text = `${planLabel(row.plan)} · ${s(`communities.${row.billing}`)}`;
   if (row.billing === 'paying') text += ` · ${s('common.perMonth', { amount: money(row.monthly) })}`;
   if (row.billing === 'trial' && row.nextTrialEnd) text += ` · ${s('communities.trialEnd', { date: date(row.nextTrialEnd) })}`;
   return <span className={`sa-status sa-status-${row.billing}`}>{text}</span>;

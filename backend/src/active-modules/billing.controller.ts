@@ -4,9 +4,10 @@ import { SetBillingIntervalDto, SetPaymentMethodDto } from './dto/billing.dto.js
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
 import { ModuleType } from '../common/enums/module-type.enum.js';
+import { PlanTier } from '../common/enums/plan-tier.enum.js';
 
-// The admin's Modules page: what the community has, what it pays, and
-// switching modules on and off under the pricing rules.
+// The admin's Modules page: the community's plan, what it pays, and
+// showing or hiding the modules its plan has.
 @Controller('pois/:poiId/billing')
 @UseGuards(JwtAuthGuard, PoiAdminGuard)
 export class BillingController {
@@ -17,24 +18,26 @@ export class BillingController {
     return this.billing.summary(poiId);
   }
 
-  @Post('modules/:type/start')
-  start(@Param('poiId') poiId: string, @Param('type', new ParseEnumPipe(ModuleType)) type: ModuleType) {
-    return this.billing.start(poiId, type);
+  @Post('plan/:tier/trial')
+  startTrial(@Param('poiId') poiId: string, @Param('tier', new ParseEnumPipe(PlanTier)) tier: PlanTier) {
+    return this.billing.startTrial(poiId, tier);
   }
 
-  @Post('modules/:type/subscribe')
-  subscribe(@Param('poiId') poiId: string, @Param('type', new ParseEnumPipe(ModuleType)) type: ModuleType) {
-    return this.billing.subscribe(poiId, type);
+  @Post('plan/:tier')
+  choosePlan(@Param('poiId') poiId: string, @Param('tier', new ParseEnumPipe(PlanTier)) tier: PlanTier) {
+    return this.billing.choosePlan(poiId, tier);
+  }
+
+  // Show or hide one module of the plan, at no cost. "start"/"stop" are
+  // the names older admins call.
+  @Post('modules/:type/start')
+  show(@Param('poiId') poiId: string, @Param('type', new ParseEnumPipe(ModuleType)) type: ModuleType) {
+    return this.billing.show(poiId, type);
   }
 
   @Post('modules/:type/stop')
-  stop(@Param('poiId') poiId: string, @Param('type', new ParseEnumPipe(ModuleType)) type: ModuleType) {
-    return this.billing.stop(poiId, type);
-  }
-
-  @Post('modules/:type/resume')
-  resume(@Param('poiId') poiId: string, @Param('type', new ParseEnumPipe(ModuleType)) type: ModuleType) {
-    return this.billing.resume(poiId, type);
+  hide(@Param('poiId') poiId: string, @Param('type', new ParseEnumPipe(ModuleType)) type: ModuleType) {
+    return this.billing.hide(poiId, type);
   }
 
   @Put('interval')

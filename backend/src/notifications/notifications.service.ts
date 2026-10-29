@@ -1,10 +1,12 @@
-import { Injectable, Logger, NotFoundException, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, LessThanOrEqual, Repository } from 'typeorm';
 import { PushToken } from './entities/push-token.entity.js';
 import { EventReminder } from './entities/event-reminder.entity.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
+import { Poi } from '../pois/entities/poi.entity.js';
+import { sendsNotifications } from '../active-modules/billing-rules.js';
 import { Event } from '../events/entities/event.entity.js';
 import { Language } from '../common/enums/language.enum.js';
 import { ExpoPushClient, type PushMessage } from './expo-push.client.js';
@@ -91,6 +93,8 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     private readonly reminderRepository: Repository<EventReminder>,
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
+    @InjectRepository(Poi)
+    private readonly poiRepository: Repository<Poi>,
     private readonly expoPush: ExpoPushClient,
     private readonly configService: ConfigService,
   ) {}
@@ -171,6 +175,8 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     const event = await this.eventRepository.findOne({ where: { id: eventId }, relations: { poi: true } });
     if (!event) throw new NotFoundException('Event not found');
     await this.findMembership(userId, event.poi.id);
+    // Event reminders are push notifications, which Basic doesn't have.
+    if (!sendsNotifications(event.poi)) throw new ForbiddenException('notifications_not_in_plan');
     // A one-off event has one day anyway.
     const only = repeats(event) ? (onlyDate ?? null) : null;
     await this.reminderRepository.upsert({ user: { id: userId }, event: { id: eventId }, onlyDate: only, nextCheckAt: null }, [
@@ -301,7 +307,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
    * them and can't wait, such as their own monthly gift failing.
    */
   async notifyUserAlways(userId: string, poiId: string, notification: Composer): Promise<void> {
-    await this.sendToUsers([userId], poiId, notification);
+    await this.sendToUsers([userId], poiId, notification, true);
   }
 
   /**
@@ -313,8 +319,14 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     send().catch((error: Error) => this.logger.warn(`Notification failed: ${error.message}`));
   }
 
-  private async sendToUsers(userIds: string[], poiId: string, notification: Composer): Promise<void> {
+  // Basic has no notifications (Seb, 29 Oct 2026), apart from what only
+  // concerns one person and can't wait (`always`).
+  private async sendToUsers(userIds: string[], poiId: string, notification: Composer, always = false): Promise<void> {
     if (userIds.length === 0 || !this.expoPush.enabled) return;
+    if (!always) {
+      const poi = await this.poiRepository.findOne({ where: { id: poiId }, select: { id: true, plan: true, billingComped: true } });
+      if (!poi || !sendsNotifications(poi)) return;
+    }
     const tokens = await this.tokenRepository.find({ where: { user: { id: In(userIds) } } });
     const messages: PushMessage[] = tokens.map((t) => {
       const written = typeof notification === 'function' ? notification(t) : notification;

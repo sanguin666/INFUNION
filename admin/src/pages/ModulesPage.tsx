@@ -1,43 +1,89 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { usePoiId, useRefreshModules } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale, type Translations } from '../i18n/translations';
 import {
+  choosePlan,
   getBilling,
-  resumeModule,
   setBillingInterval,
   setPaymentMethod,
   startModule,
+  startPlanTrial,
   stopModule,
-  subscribeModule,
 } from '../api/billing';
-import type { ActiveModule, BillingInterval, BillingSummary, ModuleType } from '../api/types';
-import { DestructiveButton } from '../components/DestructiveButton';
+import type { ActiveModule, BillingInterval, BillingSummary, ModuleType, PlanTier } from '../api/types';
 
 type Key<S extends keyof Translations> = `${S}.${Extract<keyof Translations[S], string>}`;
 
-// In the order an office is likely to want them.
-const MODULES: { type: ModuleType; name: Key<'moduleNames'>; description: Key<'billing'> }[] = [
-  { type: 'events', name: 'moduleNames.events', description: 'billing.descEvents' },
-  { type: 'requests', name: 'moduleNames.requests', description: 'billing.descRequests' },
-  { type: 'messages', name: 'moduleNames.messages', description: 'billing.descMessages' },
-  { type: 'donations', name: 'moduleNames.donations', description: 'billing.descDonations' },
-  { type: 'mass_intentions', name: 'moduleNames.massIntentions', description: 'billing.descMassIntentions' },
-  { type: 'announcements', name: 'moduleNames.announcements', description: 'billing.descAnnouncements' },
-  { type: 'daily_readings', name: 'moduleNames.readings', description: 'billing.descReadings' },
-  { type: 'livestreams', name: 'moduleNames.livestream', description: 'billing.descLivestreams' },
-  { type: 'prayer_requests', name: 'moduleNames.prayerRequests', description: 'billing.descPrayerRequests' },
-  { type: 'community', name: 'moduleNames.community', description: 'billing.descCommunity' },
+type ModuleInfo = {
+  type: ModuleType;
+  name: Key<'moduleNames'>;
+  description: Key<'billing'>;
+  // "Learn more": what it is in one sentence, then one line each for the
+  // team (admin) and the members (app).
+  intro: Key<'plans'>;
+  members: Key<'plans'>;
+  team: Key<'plans'>;
+  // Its colour on the page (see .module-card in index.css).
+  hue: string;
+  icon: string;
+};
+
+// In plan order, then the order an office is likely to want them.
+const MODULES: ModuleInfo[] = [
+  { type: 'events', name: 'moduleNames.events', description: 'billing.descEvents', intro: 'plans.evI', members: 'plans.evM', team: 'plans.evT', hue: 'events', icon: 'M4 7h16v13H4zM4 7V5h16v2M8 3v4M16 3v4M8 12h3' },
+  { type: 'donations', name: 'moduleNames.donations', description: 'billing.descDonations', intro: 'plans.doI', members: 'plans.doM', team: 'plans.doT', hue: 'donations', icon: 'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z' },
+  { type: 'announcements', name: 'moduleNames.announcements', description: 'billing.descAnnouncements', intro: 'plans.anI', members: 'plans.anM', team: 'plans.anT', hue: 'announcements', icon: 'M4 10v4h3l6 4V6L7 10zM17 9a4 4 0 0 1 0 6' },
+  { type: 'requests', name: 'moduleNames.requests', description: 'billing.descRequests', intro: 'plans.reI', members: 'plans.reM', team: 'plans.reT', hue: 'requests', icon: 'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5' },
+  { type: 'messages', name: 'moduleNames.messages', description: 'billing.descMessages', intro: 'plans.meI', members: 'plans.meM', team: 'plans.meT', hue: 'messages', icon: 'M4 5h16v11H9l-5 4z' },
+  { type: 'community', name: 'moduleNames.community', description: 'billing.descCommunity', intro: 'plans.coI', members: 'plans.coM', team: 'plans.coT', hue: 'community', icon: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M21 19a5 5 0 0 0-4-5' },
+  { type: 'livestreams', name: 'moduleNames.livestream', description: 'billing.descLivestreams', intro: 'plans.liI', members: 'plans.liM', team: 'plans.liT', hue: 'livestreams', icon: 'M3 7h12v10H3zM15 11l6-3v8l-6-3' },
+  { type: 'prayer_requests', name: 'moduleNames.prayerRequests', description: 'billing.descPrayerRequests', intro: 'plans.prI', members: 'plans.prM', team: 'plans.prT', hue: 'prayer', icon: 'M12 3v6M9 6h6M6 21l3-9h6l3 9' },
+  { type: 'daily_readings', name: 'moduleNames.readings', description: 'billing.descReadings', intro: 'plans.rdI', members: 'plans.rdM', team: 'plans.rdT', hue: 'readings', icon: 'M4 5c3-1 6-1 8 1 2-2 5-2 8-1v14c-3-1-6-1-8 1-2-2-5-2-8-1zM12 6v14' },
+  { type: 'mass_intentions', name: 'moduleNames.massIntentions', description: 'billing.descMassIntentions', intro: 'plans.miI', members: 'plans.miM', team: 'plans.miT', hue: 'mass', icon: 'M12 3v4M10 5h4M7 21V11l5-3 5 3v10M10 21v-5h4v5' },
 ];
 
+const PLAN_ORDER: PlanTier[] = ['basic', 'essentials', 'complete'];
+const BLURB: Record<PlanTier, Key<'plans'>> = {
+  basic: 'plans.basicBlurb',
+  essentials: 'plans.essentialsBlurb',
+  complete: 'plans.completeBlurb',
+};
+// A small "i" in a circle: the module's name opens its "Learn more".
+const INFO = 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01';
+// The name with the "i" glued to its last word, so a wrapped name never
+// leaves the icon alone on a line.
+function withIcon(name: string) {
+  const cut = name.lastIndexOf(' ') + 1;
+  return (
+    <>
+      {name.slice(0, cut)}
+      <span className="plan-module-last">
+        {name.slice(cut)}
+        <Icon path={INFO} />
+      </span>
+    </>
+  );
+}
+const BELL = 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0';
 const DAY_MS = 24 * 60 * 60 * 1000;
 const LIVE = new Set(['trial', 'active']);
 
+function Icon({ path }: { path: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={path} />
+    </svg>
+  );
+}
+
 /**
- * Modules (Seb, 30 Sep 2026): what the community runs and what it pays
- * for it, apart from Paramètres because switching a module on is now a
- * purchase. Événements is free; every other module is tried free for a
- * month, then 10 € a month or 110 € a year, all on one bill.
+ * Plans and modules (Seb, 29 Oct 2026; per-module prices before that).
+ * Three plans, Basic free, Essentials and Complete paid monthly or for a
+ * year at ten months' price; a paid plan can be tried free for a month,
+ * once. The plan opens a set of modules, and each one shows as a coloured
+ * card the office can show or hide in the app at no cost. Push
+ * notifications come with Essentials: Basic is the app alone.
  */
 export function ModulesPage() {
   const poiId = usePoiId();
@@ -50,12 +96,15 @@ export function ModulesPage() {
   const [now] = useState(() => Date.now());
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<string | null>(null);
-  // The row whose "Essayer 1 mois gratuit" is waiting for its answer.
-  const [confirmingTrial, setConfirmingTrial] = useState<ModuleType | null>(null);
+  // The plan whose button is waiting for "Confirmer".
+  const [confirming, setConfirming] = useState<{ tier: PlanTier; trial: boolean } | null>(null);
   const [editingPayment, setEditingPayment] = useState(false);
   const [paymentKind, setPaymentKind] = useState<'sepa' | 'card'>('sepa');
   const [last4, setLast4] = useState('');
   const [showInvoices, setShowInvoices] = useState(false);
+  const [details, setDetails] = useState<ModuleInfo | null>(null);
+  const plansRef = useRef<HTMLDivElement>(null);
+  const paymentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getBilling(poiId)
@@ -67,16 +116,25 @@ export function ModulesPage() {
     new Date(iso).toLocaleDateString(intlLocale(language), { day: 'numeric', month: 'long', year: 'numeric' });
   const money = (amount: number) =>
     amount.toLocaleString(intlLocale(language), { style: 'currency', currency: 'EUR', minimumFractionDigits: amount % 1 ? 2 : 0 });
+  const planName = (tier: PlanTier) => t(`plans.${tier}`);
 
-  async function run(key: string, action: () => Promise<BillingSummary>) {
+  async function run(key: string, action: () => Promise<BillingSummary>): Promise<boolean> {
     setPending(key);
     setError(null);
     try {
       setBilling(await action());
       refreshModules();
+      return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : '';
-      setError(message.includes('payment_method_required') ? t('billing.needsPayment') : t('billing.actionError'));
+      if (message.includes('payment_method_required')) {
+        setError(t('plans.needsPayment'));
+        setEditingPayment(true);
+        paymentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        setError(t('billing.actionError'));
+      }
+      return false;
     } finally {
       setPending(null);
     }
@@ -85,208 +143,287 @@ export function ModulesPage() {
   if (!billing) {
     return (
       <div>
-        <h2>{t('billing.title')}</h2>
+        <h2>{t('plans.title')}</h2>
         {error ? <p className="error-text">{error}</p> : <p className="muted">{t('billing.loading')}</p>}
       </div>
     );
   }
 
   const interval = billing.interval;
-  const unitPrice = billing.prices[interval];
-  const priceLabel = t(interval === 'yearly' ? 'billing.priceYear' : 'billing.priceMonth', { price: money(unitPrice) });
+  const plan = billing.plan;
+  const rank = (tier: PlanTier) => PLAN_ORDER.indexOf(tier);
+  const offerOf = (tier: PlanTier) => billing.plans.find((p) => p.tier === tier)!;
+  const priceOf = (tier: PlanTier, on: BillingInterval = interval) =>
+    `${money(offerOf(tier).prices[on])} ${t(on === 'yearly' ? 'plans.perYear' : 'plans.perMonth')}`;
+  const fixed = billing.comped || billing.planOffered;
+  const paying = !fixed && plan !== 'basic' && !billing.trialEndsAt;
+  const shown = MODULES.filter((m) => billing.availableModules.includes(m.type));
+  const planOf = (type: ModuleType) => billing.plans.find((p) => p.adds.includes(type))?.tier ?? 'complete';
   const rowFor = (type: ModuleType) => billing.modules.find((m) => m.moduleType === type);
-  const isFree = (type: ModuleType) => billing.freeModules.includes(type);
-  // What the next bill will hold: paid modules that carry on, and trials
-  // that will turn into paid ones (only with a payment method).
-  const payingNext = billing.modules.filter(
-    (m) =>
-      !isFree(m.moduleType) &&
-      !m.offered &&
-      ((m.status === 'active' && !m.cancelAtPeriodEnd) || (m.status === 'trial' && billing.paymentMethod)),
-  ).length;
-  const endingTrials = billing.modules.filter(
-    (m) => m.status === 'trial' && m.trialEndsAt && new Date(m.trialEndsAt).getTime() - now < 7 * DAY_MS,
-  );
-  const nameOf = (type: ModuleType) => t(MODULES.find((m) => m.type === type)!.name);
+  const inPlan = (type: ModuleType) => !!rowFor(type)?.offered || rank(planOf(type)) <= rank(plan);
+  const trialDays = billing.trialEndsAt ? Math.max(1, Math.ceil((new Date(billing.trialEndsAt).getTime() - now) / DAY_MS)) : 0;
 
-  function status(type: ModuleType, row: ActiveModule | undefined): { text: string; on: boolean } {
-    const live = !!row && LIVE.has(row.status);
-    // Given by infunion from the superadmin: on, and nothing to pay.
-    if (live && row.offered) return { text: t('billing.offered'), on: true };
-    if (billing!.comped || isFree(type)) {
-      return live
-        ? { text: billing!.comped && !isFree(type) ? t('billing.offered') : t('billing.included'), on: true }
-        : { text: t('billing.notActivated'), on: false };
+  function confirmText(tier: PlanTier, trial: boolean): string {
+    const until = new Date(now);
+    until.setMonth(until.getMonth() + 1);
+    if (trial) return t('plans.confirmTrial', { plan: planName(tier), date: date(until.toISOString()) });
+    if (rank(tier) > rank(plan)) {
+      // A bigger plan during the free month: the month carries on with it.
+      if (billing!.trialEndsAt) return t('plans.confirmTrial', { plan: planName(tier), date: date(billing!.trialEndsAt) });
+      return paying && billing!.renewsAt
+        ? t('plans.confirmUpPaid', { plan: planName(tier), date: date(billing!.renewsAt), price: priceOf(tier) })
+        : t('plans.confirmUpNew', { plan: planName(tier), price: priceOf(tier) });
     }
-    if (!row) return { text: t('billing.notActivated'), on: false };
-    if (row.status === 'trial' && row.trialEndsAt) {
-      const days = Math.max(1, Math.ceil((new Date(row.trialEndsAt).getTime() - now) / DAY_MS));
-      return {
-        text: billing!.paymentMethod
-          ? t('billing.trialLeft', { days, price: priceLabel, date: date(row.trialEndsAt) })
-          : t('billing.trialNeedsPayment', { days, date: date(row.trialEndsAt) }),
-        on: true,
-      };
-    }
-    if (row.status === 'active' && row.cancelAtPeriodEnd && row.paidUntil) {
-      return { text: t('billing.stops', { date: date(row.paidUntil) }), on: true };
-    }
-    if (row.status === 'active') return { text: t('billing.active', { price: priceLabel }), on: true };
-    if (row.status === 'expired') return { text: t('billing.paused'), on: false };
-    return { text: t('billing.stopped'), on: false };
+    return paying && billing!.renewsAt
+      ? t('plans.confirmDown', { current: planName(plan), plan: planName(tier), date: date(billing!.renewsAt) })
+      : t('plans.confirmDownNow', { plan: planName(tier) });
   }
 
-  function actions(type: ModuleType, row: ActiveModule | undefined) {
-    const busy = pending === type;
-    const live = !!row && LIVE.has(row.status);
-    if (live) {
-      if (row.cancelAtPeriodEnd) {
+  function planAction(tier: PlanTier) {
+    if (fixed) return null;
+    if (tier === plan) {
+      if (billing!.pendingPlan) {
         return (
-          <button type="button" className="btn" disabled={busy} onClick={() => run(type, () => resumeModule(poiId, type))}>
-            {t('billing.keep')}
+          <button type="button" className="btn" disabled={!!pending} onClick={() => run('keep', () => choosePlan(poiId, plan))}>
+            {t('plans.keep', { plan: planName(plan) })}
           </button>
         );
       }
-      return (
-        <DestructiveButton
-          label={row.status === 'trial' && !billing!.comped ? t('billing.stopTrial') : t('billing.stop')}
-          disabled={busy}
-          onConfirm={() => run(type, () => stopModule(poiId, type))}
-        />
-      );
+      return <span className="plan-mine">{t('plans.yourPlan')}</span>;
     }
-    if (billing!.comped || isFree(type)) {
-      return (
-        <button type="button" className="btn btn-primary" disabled={busy} onClick={() => run(type, () => startModule(poiId, type))}>
-          {t('billing.activate')}
-        </button>
-      );
+    if (billing!.pendingPlan === tier) {
+      return <span className="muted">{t('plans.pendingNote', { plan: planName(tier), date: date(billing!.renewsAt!) })}</span>;
     }
-    if (!row) {
-      return (
-        <button type="button" className="btn btn-primary" disabled={busy} onClick={() => setConfirmingTrial(type)}>
-          {t('billing.tryFree')}
-        </button>
-      );
-    }
+    const trial = rank(tier) > rank(plan) && plan === 'basic' && !billing!.trialUsed;
+    const up = rank(tier) > rank(plan);
     return (
       <button
         type="button"
-        className="btn btn-primary"
-        disabled={busy}
-        onClick={() => {
-          if (!billing!.paymentMethod) {
-            setError(t('billing.needsPayment'));
-            setEditingPayment(true);
-            return;
-          }
-          run(type, () => subscribeModule(poiId, type));
-        }}
+        className={`btn ${up ? 'btn-primary' : ''}`}
+        disabled={!!pending}
+        onClick={() => setConfirming({ tier, trial })}
       >
-        {t('billing.subscribe', { price: priceLabel })}
+        {trial ? t('plans.tryFree') : t('plans.switchTo', { plan: planName(tier) })}
       </button>
     );
   }
 
-  function moduleRow(type: ModuleType) {
-    const entry = MODULES.find((m) => m.type === type)!;
-    const row = rowFor(type);
-    const { text, on } = status(type, row);
-    const trialEnd = new Date(now);
-    trialEnd.setMonth(trialEnd.getMonth() + 1);
+  function planCard(tier: PlanTier) {
+    const offer = offerOf(tier);
+    const mine = tier === plan;
+    const below = PLAN_ORDER[rank(tier) - 1];
     return (
-      <div key={type} className="card-row module-row">
-        <div className="module-row-main">
-          <div className="module-row-text">
-            <p className="card-title">{t(entry.name)}</p>
-            <p className="muted module-desc">{t(entry.description)}</p>
-            <span className={`badge ${on ? 'badge-active' : ''}`}>{text}</span>
-          </div>
-          {confirmingTrial !== type && <div className="card-actions module-actions">{actions(type, row)}</div>}
+      <article key={tier} className={`card plan-card${mine ? ' plan-card-mine' : ''}${tier === 'essentials' ? ' plan-card-featured' : ''}`}>
+        <div className="plan-card-top">
+          <h3>{planName(tier)}</h3>
+          {tier === 'essentials' && <span className="plan-pill">{t('plans.recommended')}</span>}
         </div>
-        {confirmingTrial === type && (
-          <div className="module-confirm">
-            <p>{t('billing.trialConfirm', { date: date(trialEnd.toISOString()), price: priceLabel })}</p>
-            <div className="card-actions">
-              <button
-                type="button"
-                className="btn btn-primary"
-                autoFocus
-                disabled={pending === type}
-                onClick={() => {
-                  setConfirmingTrial(null);
-                  run(type, () => startModule(poiId, type));
-                }}
-              >
-                {t('billing.startTrial')}
-              </button>
-              <button type="button" className="btn" onClick={() => setConfirmingTrial(null)}>
-                {t('common.cancel')}
-              </button>
-            </div>
+        <p className="muted plan-blurb">{t(BLURB[tier])}</p>
+        {offer.prices.monthly ? (
+          <>
+            <p className="plan-price">
+              <span className="plan-price-big">{money(offer.prices.monthly)}</span>
+              <span className="muted">{t('plans.perMonth')}</span>
+            </p>
+            <p className="muted plan-monthly">
+              {t('plans.orYearly', { price: money(offer.prices.yearly) })}{' '}
+              <span className="plan-save">{t('plans.twoMonthsFree')}</span>
+            </p>
+          </>
+        ) : (
+          <p className="plan-price">
+            <span className="plan-price-big">{t('plans.free')}</span>
+          </p>
+        )}
+        {below ? (
+          <p className="plan-plus">{t('plans.everythingIn', { plan: planName(below) })}</p>
+        ) : (
+          <p className="plan-plus">{t('plans.unlimitedMembers')}</p>
+        )}
+        {tier === 'essentials' && (
+          <div className="plan-push">
+            <p className="plan-push-title">
+              <Icon path={BELL} />
+              {t('plans.pushTitle')}
+            </p>
+            <p>{t('plans.pushBody')}</p>
           </div>
         )}
-      </div>
+        <ul className="plan-modules">
+          {offer.adds.map((type) => {
+            const info = MODULES.find((m) => m.type === type);
+            return info ? (
+              <li key={type}>
+                <button type="button" className="plan-module-link" onClick={() => setDetails(info)}>
+                  {withIcon(t(info.name))}
+                </button>
+              </li>
+            ) : null;
+          })}
+        </ul>
+        {tier === 'basic' && <p className="muted plan-nopush">{t('plans.noPush')}</p>}
+        <div className="plan-card-action">
+          {confirming?.tier === tier ? (
+            <div className="module-confirm">
+              <p>{confirmText(tier, confirming.trial)}</p>
+              <div className="card-actions">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  autoFocus
+                  disabled={!!pending}
+                  onClick={() => {
+                    setConfirming(null);
+                    void run(tier, () => (confirming.trial ? startPlanTrial(poiId, tier) : choosePlan(poiId, tier)));
+                  }}
+                >
+                  {t('plans.confirm')}
+                </button>
+                <button type="button" className="btn" onClick={() => setConfirming(null)}>
+                  {t('common.cancel')}
+                </button>
+              </div>
+            </div>
+          ) : (
+            planAction(tier)
+          )}
+        </div>
+      </article>
     );
   }
 
-  // Only what fits this kind of place: no Mass intentions for an
-  // association (Seb, 29 Oct 2026).
-  const offered = MODULES.filter((m) => !billing.availableModules || billing.availableModules.includes(m.type));
-  const free = offered.filter((m) => isFree(m.type));
-  const paid = offered.filter((m) => !isFree(m.type));
+  // Show or hide a module of the plan, or point at the plan that has it.
+  function moduleAction(info: ModuleInfo, afterwards?: () => void): ReactNode {
+    const row = rowFor(info.type);
+    const allowed = inPlan(info.type);
+    const on = allowed && !!row && LIVE.has(row.status);
+    const busy = pending === info.type;
+    if (!allowed) {
+      if (fixed) return null;
+      return (
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => {
+            afterwards?.();
+            plansRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
+        >
+          {t('plans.switchTo', { plan: planName(planOf(info.type)) })}
+        </button>
+      );
+    }
+    return on ? (
+      <button type="button" className="btn" disabled={busy} onClick={() => run(info.type, () => stopModule(poiId, info.type))}>
+        {t('plans.hide')}
+      </button>
+    ) : (
+      <button type="button" className="btn btn-primary" disabled={busy} onClick={() => run(info.type, () => startModule(poiId, info.type))}>
+        {t('plans.show')}
+      </button>
+    );
+  }
+
+  function moduleCard(info: ModuleInfo) {
+    const row: ActiveModule | undefined = rowFor(info.type);
+    const allowed = inPlan(info.type);
+    const on = allowed && !!row && LIVE.has(row.status);
+    const style = { '--c': `var(--module-${info.hue})`, '--s': `var(--module-${info.hue}-soft)` } as CSSProperties;
+    let pill: string;
+    if (!allowed) pill = t('plans.inPlan', { plan: planName(planOf(info.type)) });
+    else if (row?.offered && !billing!.comped) pill = t('plans.offeredModule');
+    else pill = on ? t('plans.on') : t('plans.hidden');
+    return (
+      <article key={info.type} className={`module-card${on ? ' module-card-on' : ''}${allowed ? '' : ' module-card-locked'}`} style={style}>
+        <div className="module-card-top">
+          <span className="module-card-icon">
+            <Icon path={info.icon} />
+          </span>
+          <span className={`module-card-pill${on ? ' module-card-pill-on' : ''}`}>{pill}</span>
+        </div>
+        <h3>{t(info.name)}</h3>
+        <p className="module-card-desc">{t(info.description)}</p>
+        <div className="module-card-actions">
+          <button type="button" className="text-action module-card-more" onClick={() => setDetails(info)}>
+            {t('plans.learnMore')}
+          </button>
+          {moduleAction(info)}
+        </div>
+      </article>
+    );
+  }
+
   const latest = billing.invoices[0];
+  const lineName = (line: BillingSummary['invoices'][number]['lines'][number]) => {
+    if (line.plan) return planName(line.plan);
+    const info = MODULES.find((m) => m.type === line.moduleType);
+    return info ? t(info.name) : '';
+  };
 
   return (
     <div>
-      <h2>{t('billing.title')}</h2>
-      <p className="muted">{billing.comped ? t('billing.subtitleOffered') : t('billing.subtitle')}</p>
+      <h2>{t('plans.title')}</h2>
+      <p className="muted">{billing.comped ? t('plans.subtitleOffered') : t('plans.subtitle')}</p>
 
       {error && <p className="error-text">{error}</p>}
 
-      {!billing.comped && endingTrials.length > 0 && (
+      {billing.trialEndsAt && !fixed && (
         <div className="card">
-          {endingTrials.map((m) => (
-            <p key={m.id} className="module-alert">
-              {t(billing.paymentMethod ? 'billing.trialEndingPaid' : 'billing.trialEndingUnpaid', {
-                module: nameOf(m.moduleType),
-                date: date(m.trialEndsAt!),
-                price: priceLabel,
-              })}
-            </p>
-          ))}
+          <p className="module-alert">
+            {t('plans.trialLeft', { plan: planName(plan), days: trialDays, date: date(billing.trialEndsAt) })}{' '}
+            {billing.paymentMethod ? t('plans.trialThenPaid', { price: priceOf(plan) }) : t('plans.trialNeedsPayment')}
+          </p>
         </div>
       )}
 
-      {billing.comped ? (
+      {fixed ? (
         <div className="card">
-          <p className="card-title">{t('billing.offeredTitle')}</p>
+          <p className="card-title">{t('plans.offeredTitle')}</p>
           <p className="muted" style={{ marginTop: 4 }}>
-            {t('billing.offeredBody')}
+            {billing.comped ? t('plans.offeredBody') : t('plans.planOfferedBody', { plan: planName(plan) })}
           </p>
         </div>
       ) : (
-        <div className="card">
-          <p className="card-title">{t('billing.subscriptionTitle')}</p>
+        <div className="plan-grid" ref={plansRef}>
+          {PLAN_ORDER.map(planCard)}
+        </div>
+      )}
+
+      <h3 className="modules-heading">{t('plans.inYourPlan')}</h3>
+      <p className="muted">{t('plans.inYourPlanHint')}</p>
+      <div className="module-grid">{shown.filter((m) => inPlan(m.type)).map(moduleCard)}</div>
+
+      {shown.some((m) => !inPlan(m.type)) && (
+        <>
+          <h3 className="modules-heading">{t('plans.withBigger')}</h3>
+          <div className="module-grid">{shown.filter((m) => !inPlan(m.type)).map(moduleCard)}</div>
+        </>
+      )}
+
+      {!fixed && (
+        <div className="card modules-subscription" ref={paymentRef}>
+          <p className="card-title">{t('plans.subscriptionTitle')}</p>
           <div className="billing-figures">
             <div>
-              <p className="billing-figure">{payingNext}</p>
-              <p className="muted">{t('billing.paidModules')}</p>
+              <p className="billing-figure">{planName(plan)}</p>
+              <p className="muted">{t('plans.planLabel')}</p>
             </div>
             <div>
-              <p className="billing-figure">{money(payingNext * unitPrice)}</p>
-              <p className="muted">{t(interval === 'yearly' ? 'billing.perYear' : 'billing.perMonth')}</p>
+              <p className="billing-figure">{plan === 'basic' ? t('plans.free') : priceOf(billing.pendingPlan ?? plan)}</p>
+              <p className="muted">{t('plans.priceLabel')}</p>
             </div>
             <div>
-              <p className="billing-figure">{billing.renewsAt ? date(billing.renewsAt) : '—'}</p>
-              <p className="muted">{t('billing.nextCharge')}</p>
+              <p className="billing-figure">
+                {billing.renewsAt ? date(billing.renewsAt) : billing.trialEndsAt ? date(billing.trialEndsAt) : t('plans.nothingToPay')}
+              </p>
+              <p className="muted">{t('plans.nextCharge')}</p>
             </div>
           </div>
 
           <div className="form">
             <div className="form-row">
-              <span className="form-label">{t('billing.intervalLabel')}</span>
-              {(['monthly', 'yearly'] as BillingInterval[]).map((option) => (
+              <span className="form-label">{t('plans.intervalLabel')}</span>
+              {(['yearly', 'monthly'] as BillingInterval[]).map((option) => (
                 <label key={option} className="radio-row">
                   <input
                     type="radio"
@@ -296,14 +433,12 @@ export function ModulesPage() {
                     onChange={() => run('interval', () => setBillingInterval(poiId, option))}
                   />
                   <span>
-                    <strong>{t(option === 'yearly' ? 'billing.yearly' : 'billing.monthly')}</strong>
-                    {' · '}
-                    {t('billing.perModule', { price: money(billing.prices[option]) })}
-                    {option === 'yearly' && <span className="muted"> · {t('billing.yearlyHint')}</span>}
+                    <strong>{t(option === 'yearly' ? 'plans.yearly' : 'plans.monthly')}</strong>
+                    {option === 'yearly' && <span className="muted"> · {t('plans.yearlyHint')}</span>}
                   </span>
                 </label>
               ))}
-              {billing.renewsAt && <p className="muted module-desc">{t('billing.intervalNote')}</p>}
+              {billing.renewsAt && <p className="muted module-desc">{t('plans.intervalNote')}</p>}
             </div>
 
             <div className="form-row">
@@ -329,7 +464,8 @@ export function ModulesPage() {
                       className="btn btn-primary"
                       disabled={last4.length !== 4 || pending === 'payment'}
                       onClick={() =>
-                        run('payment', () => setPaymentMethod(poiId, paymentKind, last4)).then(() => {
+                        run('payment', () => setPaymentMethod(poiId, paymentKind, last4)).then((ok) => {
+                          if (!ok) return;
                           setEditingPayment(false);
                           setLast4('');
                         })
@@ -367,8 +503,7 @@ export function ModulesPage() {
                   {showInvoices &&
                     billing.invoices.map((invoice) => (
                       <p key={invoice.id} className="muted module-desc">
-                        {date(invoice.issuedAt)} · {money(invoice.amount)} ·{' '}
-                        {invoice.lines.map((line) => nameOf(line.moduleType)).join(', ')}
+                        {date(invoice.issuedAt)} · {money(invoice.amount)} · {invoice.lines.map(lineName).join(', ')}
                       </p>
                     ))}
                 </>
@@ -380,15 +515,112 @@ export function ModulesPage() {
         </div>
       )}
 
-      {!billing.comped && free.length > 0 && (
-        <>
-          <h3 className="modules-heading">{t('billing.includedTitle')}</h3>
-          <div className="card card-list">{free.map((m) => moduleRow(m.type))}</div>
-        </>
-      )}
-
-      <h3 className="modules-heading">{billing.comped ? t('billing.allModulesTitle') : t('billing.paidTitle')}</h3>
-      <div className="card card-list">{(billing.comped ? offered : paid).map((m) => moduleRow(m.type))}</div>
+      <ModuleDetails
+        info={details}
+        planLabel={details ? t('plans.inPlan', { plan: planName(planOf(details.type)) }) : ''}
+        action={details ? moduleAction(details, () => setDetails(null)) : null}
+        onClose={() => setDetails(null)}
+      />
     </div>
+  );
+
+}
+
+/**
+ * "Learn more": what the module is, then what the team does in the admin
+ * and what members get in the app, each with its screenshot
+ * (public/modules/; retake them when those screens change). Always in the
+ * brand's purple, whatever the module's own colour.
+ */
+function ModuleDetails({
+  info,
+  planLabel,
+  action,
+  onClose,
+}: {
+  info: ModuleInfo | null;
+  planLabel: string;
+  action: ReactNode;
+  onClose: () => void;
+}) {
+  const { t } = useI18n();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (info && !dialog.open) {
+      dialog.showModal();
+      // Open on the title, not scrolled down to the first button.
+      dialog.scrollTop = 0;
+      titleRef.current?.focus({ preventScroll: true });
+    }
+    if (!info && dialog.open) dialog.close();
+  }, [info]);
+  const shot = (side: 'admin' | 'app') =>
+    info && (
+      <img
+        className={`module-shot module-shot-${side}`}
+        src={`/modules/${info.type}-${side}.jpg`}
+        alt=""
+        onError={(e) => {
+          e.currentTarget.hidden = true;
+        }}
+      />
+    );
+  return (
+    <dialog
+      ref={dialogRef}
+      className="module-sheet"
+      aria-label={info ? t(info.name) : undefined}
+      onClose={onClose}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      {info && (
+        <div className="module-sheet-body">
+          <div className="module-sheet-head">
+            <span className="module-sheet-icon">
+              <Icon path={info.icon} />
+            </span>
+            <div>
+              <h2 ref={titleRef} tabIndex={-1}>
+                {t(info.name)}
+              </h2>
+              <p className="muted">{planLabel}</p>
+            </div>
+          </div>
+          <p className="module-sheet-intro">{t(info.intro)}</p>
+          <div className="module-sheet-split">
+            <section>
+              <h3>
+                {t('plans.inAdmin')}
+                <span>{t('plans.teamGets')}</span>
+              </h3>
+              <p>{t(info.team)}</p>
+              {shot('admin')}
+            </section>
+            <span className="module-sheet-arrow" aria-hidden="true">
+              <Icon path="M5 12h14M13 6l6 6-6 6" />
+            </span>
+            <section>
+              <h3>
+                {t('plans.inApp')}
+                <span>{t('plans.membersGet')}</span>
+              </h3>
+              <p>{t(info.members)}</p>
+              {shot('app')}
+            </section>
+          </div>
+          <div className="module-sheet-foot">
+            <button type="button" className="btn" onClick={onClose}>
+              {t('plans.close')}
+            </button>
+            {action}
+          </div>
+        </div>
+      )}
+    </dialog>
   );
 }
