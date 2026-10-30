@@ -4,7 +4,7 @@ import { listRegistrations, type RegistrationFilter, type RegistrationRow } from
 import { useI18n } from '../i18n/I18nContext';
 import { useSa } from './format';
 
-const FILTERS: RegistrationFilter[] = ['open', 'approved', 'declined', 'all'];
+const FILTERS: RegistrationFilter[] = ['open', 'approved', 'declined', 'withdrawn', 'all'];
 
 /** Places that registered from the landing (Seb, 30 Oct 2026), oldest waiting first. */
 export function SuperadminRegistrationsPage() {
@@ -24,6 +24,7 @@ export function SuperadminRegistrationsPage() {
   function checksText(row: RegistrationRow): { text: string; level: 'ok' | 'warn' } {
     if (row.status === 'approved') return { text: s('registrations.approved'), level: 'ok' };
     if (row.status === 'declined') return { text: s('registrations.declined'), level: 'warn' };
+    if (row.status === 'withdrawn') return { text: s('registrations.withdrawn'), level: row.poiId ? 'warn' : 'ok' };
     if (row.status === 'question') return { text: s('registrations.question'), level: 'warn' };
     return row.warnings ? { text: s('registrations.warnings', { n: row.warnings }), level: 'warn' } : { text: s('registrations.allClear'), level: 'ok' };
   }
