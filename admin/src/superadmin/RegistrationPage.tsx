@@ -232,6 +232,25 @@ export function SuperadminRegistrationPage() {
         </p>
       )}
 
+      {data.status === 'withdrawn' && (
+        <>
+          <p>
+            {s('registrations.withdrawnOn', { date: date(data.withdrawnAt) })}
+            {data.withdrawReason ? ` ${s('registrations.withdrawnReason')} “${data.withdrawReason}”` : ''}{' '}
+            {data.poiId && <Link to={`../../communities/${data.poiId}`}>{s('registrations.openPlace')}</Link>}
+          </p>
+          {data.poiId && (
+            <div className="card card-list sa-gap" role="status">
+              <div className="card-row">
+                <span className="sa-warning">
+                  <span className="sa-dot sa-dot-warn" aria-hidden="true" /> {s('registrations.withdrawnOpened')}
+                </span>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
       {open && (
         <>
           {!data.claim && (

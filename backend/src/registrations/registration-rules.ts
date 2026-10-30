@@ -17,11 +17,17 @@ export const MAX_REQUESTS_PER_IP_PER_DAY = 3;
 // Declined requests, and the documents of decided ones, are deleted after this.
 export const REGISTRATION_RETENTION_DAYS = 90;
 
+// A place may withdraw from the contract within this many days of its
+// approval, or at any time before it, without giving a reason: Spanish
+// consumer law counts non-profits as consumers (TRLGDCU art. 3 and 102).
+export const WITHDRAWAL_DAYS = 14;
+
 export enum RegistrationStatus {
   PENDING = 'pending',
   QUESTION = 'question',
   APPROVED = 'approved',
   DECLINED = 'declined',
+  WITHDRAWN = 'withdrawn',
 }
 
 export const OPEN_STATUSES = [RegistrationStatus.PENDING, RegistrationStatus.QUESTION];

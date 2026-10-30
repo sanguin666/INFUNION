@@ -6,10 +6,10 @@
   <title>infunion — Registrar mi lugar / Register your place</title>
   <meta name="description" content="Registra tu comunidad en infunion. Register your community on infunion." />
   <meta name="robots" content="noindex" />
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20261030-register" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20261030-withdraw" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/style.css?v=20261030-register" />
+  <link rel="stylesheet" href="assets/style.css?v=20261030-withdraw" />
 </head>
 <body>
   <header class="site-header">
@@ -38,11 +38,11 @@
       <p class="register-lede" data-r="lede"></p>
 
       <ol class="reg-progress" id="reg-progress">
-        <li data-r="step1"></li>
-        <li data-r="step2"></li>
-        <li data-r="step3"></li>
-        <li data-r="step4"></li>
-        <li data-r="step5"></li>
+        <li data-n="1"><span data-r="step1"></span></li>
+        <li data-n="2"><span data-r="step2"></span></li>
+        <li data-n="3"><span data-r="step3"></span></li>
+        <li data-n="4"><span data-r="step4"></span></li>
+        <li data-n="5"><span data-r="step5"></span></li>
       </ol>
 
       <form id="reg-form" novalidate>
@@ -136,6 +136,7 @@
             </label>
           </div>
           <p class="reg-hint" data-r="documentHint"></p>
+          <p class="reg-privacy" data-r-html="privacyNote"></p>
 
           <p class="reg-error" data-error hidden></p>
           <div class="reg-actions">
@@ -191,6 +192,7 @@
           </div>
           <p class="reg-hint" id="reg-dev-code" hidden></p>
           <p class="reg-ok" id="reg-email-ok" hidden></p>
+          <p class="reg-privacy" data-r-html="privacyNote"></p>
 
           <p class="reg-error" data-error hidden></p>
           <div class="reg-actions">
@@ -224,6 +226,16 @@
             <label class="reg-check"><input type="checkbox" id="reg-acceptDpa" name="acceptDpa" required /><span data-r-html="acceptDpa"></span></label>
             <label class="reg-check" id="reg-religious-wrap" hidden><input type="checkbox" id="reg-acceptReligiousData" name="acceptReligiousData" /><span data-r="acceptReligious"></span></label>
             <label class="reg-check"><input type="checkbox" id="reg-authorised" name="authorised" required /><span data-r="authorised"></span></label>
+          </div>
+          <div class="reg-precontract">
+            <strong data-r="pcTitle"></strong>
+            <ul>
+              <li data-r="pc1"></li>
+              <li data-r="pc2"></li>
+              <li data-r="pc3"></li>
+              <li data-r="pc4"></li>
+              <li data-r-html="pc5"></li>
+            </ul>
           </div>
           <div class="reg-box">
             <label class="reg-field reg-sign">
@@ -268,6 +280,7 @@
         <a href="mailto:hello@infunion.app">hello@infunion.app</a>
         <a href="privacy.html" data-r="privacy"></a>
         <a href="terms.html" data-r="terms"></a>
+        <a href="withdraw.html" data-r="withdrawLink"></a>
       </div>
     </div>
     <div class="container">
@@ -275,6 +288,6 @@
     </div>
   </footer>
 
-  <script src="assets/register.js?v=20261030-register"></script>
+  <script src="assets/register.js?v=20261030-withdraw"></script>
 </body>
 </html>

@@ -34,13 +34,22 @@ import {
   PLACE_TERMS_VERSION,
   REGISTRATION_RETENTION_DAYS,
   RegistrationStatus,
+  WITHDRAWAL_DAYS,
   isDisposableEmail,
   isPlausibleTaxId,
   namesLookAlike,
   normalizeTaxId,
   taxIdFitsKind,
 } from './registration-rules.js';
-import { declinedEmail, newRequestEmail, questionEmail, readyEmail, receivedEmail } from './registration-emails.js';
+import {
+  declinedEmail,
+  newRequestEmail,
+  questionEmail,
+  readyEmail,
+  receivedEmail,
+  withdrawalNoticeEmail,
+  withdrawnEmail,
+} from './registration-emails.js';
 
 const EMAIL_TOKEN_AUDIENCE = 'infunion-registration';
 const WORSHIP = [PoiType.CHURCH, PoiType.MOSQUE, PoiType.SYNAGOGUE, PoiType.OTHER_WORSHIP];
@@ -186,6 +195,7 @@ export class RegistrationsService {
         date: now.toISOString().slice(0, 10),
         terms: PLACE_TERMS_VERSION,
         dpa: PLACE_DPA_VERSION,
+        withdrawUrl: this.withdrawUrl(),
       }),
     );
     const superadmin = this.config.get<string>('SUPERADMIN_EMAIL')?.trim();
@@ -226,9 +236,64 @@ export class RegistrationsService {
     await fileStore().remove('private', `registrations/${document.filename}`).catch(() => undefined);
   }
 
+  // ------------------------------------------------------------------ withdrawal
+
+  /**
+   * The request this email may still withdraw from: an open one, or one
+   * approved less than WITHDRAWAL_DAYS ago. The latest, if several.
+   */
+  private async withdrawable(email: string, now = new Date()): Promise<PlaceRegistration | null> {
+    const since = new Date(now.getTime() - WITHDRAWAL_DAYS * DAY_MS);
+    return this.registrations.findOne({
+      where: [
+        { email, status: In(OPEN_STATUSES) },
+        { email, status: RegistrationStatus.APPROVED, decidedAt: MoreThan(since) },
+      ],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async requestWithdrawCode(rawEmail: string, language?: Language) {
+    const email = normalizeEmail(rawEmail);
+    if (!(await this.withdrawable(email))) throw new NotFoundException('nothing_to_withdraw');
+    return this.phoneAuth.requestEmailCode(email, language);
+  }
+
+  /**
+   * The withdrawal itself. Before approval it simply ends the request; after
+   * it, the superadmin closes the place by hand (it may already have
+   * members), within the 2 working days the acknowledgement promises.
+   */
+  async withdraw(rawEmail: string, code: string, reason?: string) {
+    const email = await this.phoneAuth.confirmEmailCode(rawEmail, code);
+    const r = await this.withdrawable(email);
+    if (!r) throw new NotFoundException('nothing_to_withdraw');
+    const opened = r.status === RegistrationStatus.APPROVED;
+    const now = new Date();
+    r.status = RegistrationStatus.WITHDRAWN;
+    r.withdrawnAt = now;
+    r.withdrawReason = reason?.trim() || null;
+    await this.registrations.save(r);
+    await this.send(withdrawnEmail({ ...this.mailFields(r), date: now.toISOString().slice(0, 10), wasOpen: opened }));
+    const superadmin = this.config.get<string>('SUPERADMIN_EMAIL')?.trim();
+    if (superadmin) {
+      await this.send(
+        withdrawalNoticeEmail(superadmin, {
+          placeName: r.placeName,
+          email,
+          reason: r.withdrawReason ?? null,
+          opened,
+          reviewUrl: `${this.dashboardUrl()}/superadmin/registrations/${r.id}`,
+        }),
+      );
+    }
+    this.logger.log(`Withdrawal for ${r.placeName} (${opened ? 'after approval' : 'before approval'})`);
+    return { ok: true, placeName: r.placeName, opened };
+  }
+
   // ------------------------------------------------------------------ superadmin
 
-  async list(status: 'open' | 'approved' | 'declined' | 'all' = 'open') {
+  async list(status: 'open' | 'approved' | 'declined' | 'withdrawn' | 'all' = 'open') {
     await this.sweep();
     const where =
       status === 'open'
@@ -237,7 +302,9 @@ export class RegistrationsService {
           ? { status: RegistrationStatus.APPROVED }
           : status === 'declined'
             ? { status: RegistrationStatus.DECLINED }
-            : {};
+            : status === 'withdrawn'
+              ? { status: RegistrationStatus.WITHDRAWN }
+              : {};
     const rows = await this.registrations.find({ where, order: { createdAt: status === 'open' ? 'ASC' : 'DESC' }, take: 200 });
     return Promise.all(
       rows.map(async (r) => {
@@ -283,6 +350,8 @@ export class RegistrationsService {
       questionedAt: r.questionedAt?.toISOString() ?? null,
       declineReason: r.declineReason ?? null,
       decidedAt: r.decidedAt?.toISOString() ?? null,
+      withdrawnAt: r.withdrawnAt?.toISOString() ?? null,
+      withdrawReason: r.withdrawReason ?? null,
       decidedBy: r.decidedBy ?? null,
       checks: await this.checks(r),
     };
@@ -410,7 +479,7 @@ export class RegistrationsService {
     r.decidedAt = new Date();
     r.decidedBy = decidedBy;
     await this.registrations.save(r);
-    await this.send(readyEmail({ ...this.mailFields(r), dashboardUrl: this.dashboardUrl(), temporaryPassword }));
+    await this.send(readyEmail({ ...this.mailFields(r), dashboardUrl: this.dashboardUrl(), temporaryPassword, withdrawUrl: this.withdrawUrl() }));
   }
 
   private mailFields(r: PlaceRegistration) {
@@ -429,6 +498,12 @@ export class RegistrationsService {
       // A request is never lost because an email didn't go: the superadmin sees it anyway.
       this.logger.warn(`Email to ${message.to} failed: ${(error as Error).message}`);
     }
+  }
+
+  /** The landing's withdrawal page, for the emails: LANDING_URL, else infunion.app. */
+  withdrawUrl(): string {
+    const landing = this.config.get<string>('LANDING_URL')?.trim().replace(/\/$/, '') || 'https://infunion.app';
+    return `${landing}/withdraw.html`;
   }
 
   /**
@@ -455,9 +530,13 @@ export class RegistrationsService {
     const old = await this.registrations.find({
       where: { status: In([RegistrationStatus.APPROVED, RegistrationStatus.DECLINED]), decidedAt: LessThan(before) },
     });
-    for (const r of old) {
+    const withdrawn = await this.registrations.find({
+      where: { status: RegistrationStatus.WITHDRAWN, withdrawnAt: LessThan(before) },
+    });
+    for (const r of [...old, ...withdrawn]) {
       if (r.documentPath) await fileStore().remove('private', r.documentPath).catch(() => undefined);
-      if (r.status === RegistrationStatus.DECLINED) {
+      // A request withdrawn before approval never became a contract: it goes too.
+      if (r.status === RegistrationStatus.DECLINED || (r.status === RegistrationStatus.WITHDRAWN && !r.poiId)) {
         await this.registrations.remove(r);
       } else if (r.documentPath) {
         r.documentPath = null;
