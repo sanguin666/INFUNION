@@ -649,7 +649,8 @@ a.btn {
   row-gap: 0;
 }
 
-.sidebar .picker-row:has(.picker-row-value) > svg {
+.sidebar .picker-row:has(.picker-row-value) > svg,
+.sidebar .picker-row:has(.picker-row-value) > .place-chip {
   grid-row: 1 / span 2;
 }
 
@@ -732,6 +733,51 @@ a.btn {
 
 .sheet-option-selected {
   color: var(--color-primary-strong);
+}
+
+/* ---------- Place switcher (admins of several places, Seb 30 Oct 2026) ---------- */
+
+/* Each place's logo, or its initials on its own colour. */
+.place-chip {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  border: 1px solid var(--color-card-border);
+}
+
+.place-chip-letters {
+  border: none;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.sheet-option-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+/* What members are waiting on in that place: requests, messages. */
+.place-waiting {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  margin: 0 10px;
+  border-radius: 13px;
+  background: #f9b800;
+  color: #1d1a2d;
+  font-size: 14px;
+  font-weight: 800;
+  display: inline-grid;
+  place-items: center;
 }
 
 /* ---------- Tabs and side panel (Seb, 29 Oct 2026) ---------- */
@@ -2197,6 +2243,48 @@ label.link-button:focus-within {
 .sa-notice {
   color: var(--delta-up);
   font-weight: 600;
+}
+
+/* "Already has an account": shown before adding someone as an admin. */
+.sa-known {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius);
+  background: var(--color-primary-soft);
+}
+
+/* An account's places managed, opened under its row. */
+.sa-account {
+  flex-wrap: wrap;
+}
+
+.sa-places {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.sa-places-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sa-places-add {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.sa-places-add select {
+  min-width: 0;
+  flex: 1 1 200px;
 }
 
 .sa-failed {

@@ -76,6 +76,9 @@ export type Translations = {
     appearanceLight: string;
     appearanceDark: string;
     choosePlace: string;
+    placesCount: string;
+    placesWaiting: string;
+    waitingCount: string;
     close: string;
     signOut: string;
     navDonations: string;
@@ -1030,6 +1033,9 @@ const en: Translations = {
     appearanceLight: 'Light',
     appearanceDark: 'Dark',
     choosePlace: 'Choose a place',
+    placesCount: '{{n}} places',
+    placesWaiting: '{{n}} places · something waiting',
+    waitingCount: '{{n}} waiting',
     close: 'Close',
     signOut: 'Sign out',
     navDonations: 'Donations',
@@ -1985,6 +1991,9 @@ const es: Translations = {
     appearanceLight: 'Claro',
     appearanceDark: 'Oscuro',
     choosePlace: 'Elige un lugar',
+    placesCount: '{{n}} lugares',
+    placesWaiting: '{{n}} lugares · hay algo pendiente',
+    waitingCount: '{{n}} pendientes',
     close: 'Cerrar',
     signOut: 'Cerrar sesión',
     navDonations: 'Donaciones',
@@ -2940,6 +2949,9 @@ const fr: Translations = {
     appearanceLight: 'Clair',
     appearanceDark: 'Sombre',
     choosePlace: 'Choisissez un lieu',
+    placesCount: '{{n}} lieux',
+    placesWaiting: '{{n}} lieux · quelque chose attend',
+    waitingCount: '{{n}} en attente',
     close: 'Fermer',
     signOut: 'Se déconnecter',
     navDonations: 'Dons',
@@ -3895,6 +3907,9 @@ const va: Translations = {
     appearanceLight: 'Clar',
     appearanceDark: 'Fosc',
     choosePlace: 'Tria un lloc',
+    placesCount: '{{n}} llocs',
+    placesWaiting: '{{n}} llocs · hi ha alguna cosa pendent',
+    waitingCount: '{{n}} pendents',
     close: 'Tancar',
     signOut: 'Tancar la sessió',
     navDonations: 'Donatius',
@@ -4850,6 +4865,9 @@ const gl: Translations = {
     appearanceLight: 'Claro',
     appearanceDark: 'Escuro',
     choosePlace: 'Escolle un lugar',
+    placesCount: '{{n}} lugares',
+    placesWaiting: '{{n}} lugares · hai algo pendente',
+    waitingCount: '{{n}} pendentes',
     close: 'Pechar',
     signOut: 'Pechar a sesión',
     navDonations: 'Doazóns',
@@ -5805,6 +5823,9 @@ const pt: Translations = {
     appearanceLight: 'Claro',
     appearanceDark: 'Escuro',
     choosePlace: 'Escolha um local',
+    placesCount: '{{n}} locais',
+    placesWaiting: '{{n}} locais · há algo pendente',
+    waitingCount: '{{n}} pendentes',
     close: 'Fechar',
     signOut: 'Terminar sessão',
     navDonations: 'Donativos',

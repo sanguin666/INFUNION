@@ -4,12 +4,14 @@ import {
   addAdmin,
   deleteCommunity,
   getCommunity,
+  lookupAdmin,
   moduleAction,
   planAction,
   removeAdmin,
   resetAdminPassword,
   setSuspended,
   updateCommunity,
+  type AdminLookup,
   type CommunityDetail,
   type ModuleAction,
   type PlanAction,
@@ -57,6 +59,21 @@ export function SuperadminCommunityPage() {
   const [confirmName, setConfirmName] = useState('');
   const sa = useSa();
   const { s, date, ago, money, moduleLabel, planLabel, error: describe } = sa;
+
+  // As the email is typed: is it someone who already runs other places?
+  // They keep their password, so the superadmin knows not to send one.
+  const [existing, setExisting] = useState<{ email: string; found: AdminLookup } | null>(null);
+  useEffect(() => {
+    const email = adminEmail.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    const timer = window.setTimeout(() => {
+      lookupAdmin(email)
+        .then((found) => setExisting({ email, found }))
+        .catch(() => setExisting(null));
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [adminEmail]);
+  const known = existing && existing.email === adminEmail.trim() && existing.found.exists ? existing.found : null;
 
   function show(detail: CommunityDetail) {
     setData(detail);
@@ -308,6 +325,17 @@ export function SuperadminCommunityPage() {
               <span className="sa-sub">
                 {s('community.lastLogin', { email: admin.email ?? '', when: ago(admin.lastLoginAt) })}
               </span>
+              {admin.otherPlaces.length > 0 && (
+                <span className="sa-sub">
+                  {s('community.alsoManages')}
+                  {admin.otherPlaces.map((place, i) => (
+                    <span key={place.id}>
+                      {i > 0 && ', '}
+                      <Link to={`../communities/${place.id}`}>{place.name}</Link>
+                    </span>
+                  ))}
+                </span>
+              )}
             </span>
             <span className="sa-row-actions">
               <DestructiveButton
@@ -342,6 +370,20 @@ export function SuperadminCommunityPage() {
             <input id="sa-add-admin-name" value={adminFirstName} onChange={(e) => setAdminFirstName(e.target.value)} maxLength={100} />
           </label>
         </div>
+        {known && (
+          <p className="sa-known" role="status">
+            <strong>
+              {s('community.existingAccount', {
+                name: [known.firstName, known.lastName].filter(Boolean).join(' ') || adminEmail.trim(),
+              })}
+            </strong>{' '}
+            {known.places.some((p) => p.id === id)
+              ? s('errors.already_admin')
+              : known.places.length
+              ? s('community.existingPlaces', { places: known.places.map((p) => p.name).join(', ') })
+              : s('community.existingNoPlace')}
+          </p>
+        )}
         <div className="card-actions sa-actions">
           <button type="submit" className="btn btn-primary" disabled={busy === 'admin'}>
             {s('community.addAdmin')}

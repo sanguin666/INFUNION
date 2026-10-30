@@ -321,6 +321,7 @@ export class SuperadminService {
       relations: { user: true },
     });
     const memberCount = await this.memberships.count({ where: { poi: { id: poiId }, role: MemberRole.MEMBER } });
+    const elsewhere = await this.adminPlaces(admins.map((m) => m.user.id));
     return {
       poi: {
         id: poi.id,
@@ -341,6 +342,8 @@ export class SuperadminService {
         firstName: m.user.firstName ?? null,
         lastName: m.user.lastName ?? null,
         lastLoginAt: m.user.lastLoginAt ?? null,
+        // The other places this person runs (one priest, three churches).
+        otherPlaces: (elsewhere.get(m.user.id) ?? []).filter((p) => p.id !== poiId),
       })),
       billing,
       allModules: modulesForPlace(poi.type),
@@ -411,16 +414,64 @@ export class SuperadminService {
    * Makes `email` an admin of `poi`, creating the account if needed. The
    * temporary password is returned once, here, and never stored in clear.
    */
+  /** Every place each of these people is admin of, by person. */
+  private async adminPlaces(userIds: string[]): Promise<Map<string, { id: string; name: string }[]>> {
+    const byUser = new Map<string, { id: string; name: string }[]>();
+    if (userIds.length === 0) return byUser;
+    const rows = await this.memberships.find({
+      where: { user: { id: In(userIds) }, role: MemberRole.ADMIN },
+      relations: { user: true, poi: true },
+    });
+    for (const row of rows) {
+      const list = byUser.get(row.user.id) ?? [];
+      list.push({ id: row.poi.id, name: row.poi.name });
+      byUser.set(row.user.id, list);
+    }
+    for (const list of byUser.values()) list.sort((a, b) => a.name.localeCompare(b.name));
+    return byUser;
+  }
+
+  private findByEmail(rawEmail: string): Promise<User | null> {
+    const email = rawEmail.trim().toLowerCase();
+    return this.users.createQueryBuilder('u').where('lower(u.email) = :email', { email }).getOne();
+  }
+
+  /**
+   * Before "Add admin": is this email already someone, and which places do
+   * they run? Lets the superadmin see they keep their password.
+   */
+  async adminLookup(rawEmail: string) {
+    const user = rawEmail.includes('@') ? await this.findByEmail(rawEmail) : null;
+    if (!user || user.isSuperadmin) return { exists: false as const };
+    const places = (await this.adminPlaces([user.id])).get(user.id) ?? [];
+    return {
+      exists: true as const,
+      userId: user.id,
+      firstName: user.firstName ?? null,
+      lastName: user.lastName ?? null,
+      places,
+    };
+  }
+
   private async grantAdmin(poi: Poi, rawEmail: string, firstName?: string) {
     const email = rawEmail.trim().toLowerCase();
-    let user = await this.users.createQueryBuilder('u').where('lower(u.email) = :email', { email }).getOne();
-    let password: string | null = null;
+    const user = await this.findByEmail(email);
     if (!user) {
-      password = temporaryPassword();
-      user = await this.users.save(
+      const password = temporaryPassword();
+      const created = await this.users.save(
         this.users.create({ email, firstName: firstName?.trim() || undefined, passwordHash: await bcrypt.hash(password, 12) }),
       );
+      return this.linkAdmin(poi, created, password);
     }
+    return this.linkAdmin(poi, user, null);
+  }
+
+  /**
+   * Makes an account admin of one more place. An account that never had a
+   * password (it only ever signed in to the app) gets a temporary one, or
+   * it couldn't open the admin.
+   */
+  private async linkAdmin(poi: Poi, user: User, newPassword: string | null) {
     if (user.isSuperadmin) throw new BadRequestException('superadmin_cannot_be_admin');
     const existing = await this.memberships.findOne({ where: { user: { id: user.id }, poi: { id: poi.id } } });
     if (existing) {
@@ -430,7 +481,16 @@ export class SuperadminService {
     } else {
       await this.memberships.save(this.memberships.create({ user: { id: user.id }, poi: { id: poi.id }, role: MemberRole.ADMIN }));
     }
-    return { userId: user.id, email, temporaryPassword: password };
+    let password = newPassword;
+    // password_hash is never loaded by default: ask for it here.
+    const withHash = password
+      ? null
+      : await this.users.createQueryBuilder('u').addSelect('u.passwordHash').where('u.id = :id', { id: user.id }).getOne();
+    if (withHash && !withHash.passwordHash) {
+      password = temporaryPassword();
+      await this.users.update(user.id, { passwordHash: await bcrypt.hash(password, 12) });
+    }
+    return { userId: user.id, email: user.email ?? '', temporaryPassword: password };
   }
 
   async addAdmin(actor: Actor, poiId: string, email: string, firstName?: string) {
@@ -454,6 +514,23 @@ export class SuperadminService {
     await this.memberships.remove(membership);
     await this.log(actor, 'admin.remove', membership.poi, { email: membership.user.email });
     return this.community(poiId);
+  }
+
+  /** From a person's account page: one more place they run. */
+  async addPlaceToUser(actor: Actor, userId: string, poiId: string) {
+    const user = await this.users.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Unknown account');
+    // The admin signs in with an email and a password.
+    if (!user.email) throw new BadRequestException('admin_needs_email');
+    const poi = await this.findPoi(poiId);
+    const admin = await this.linkAdmin(poi, user, null);
+    await this.log(actor, 'admin.add', poi, { email: admin.email, newAccount: false, fromAccount: true });
+    return { admin, account: await this.describeUser(user) };
+  }
+
+  async removePlaceFromUser(actor: Actor, userId: string, poiId: string) {
+    await this.removeAdmin(actor, poiId, userId);
+    return this.user(userId);
   }
 
   async resetAdminPassword(actor: Actor, poiId: string, userId: string) {
