@@ -27,6 +27,8 @@ import { moduleFitsPlace, modulesForPlace } from '../active-modules/module-place
 import { SuperadminAccess, type SuperadminIdentity } from '../auth/superadmin-access.service.js';
 import { ErrorTracker } from './error-tracker.js';
 import type { CreateCommunityDto, UpdateCommunityDto } from './dto/superadmin.dto.js';
+import { RegistrationsService } from '../registrations/registrations.service.js';
+import type { ApproveRegistrationDto } from '../registrations/dto/registration.dto.js';
 
 const DAY = 24 * 60 * 60 * 1000;
 const LIVE = [ModuleStatus.TRIAL, ModuleStatus.ACTIVE];
@@ -90,6 +92,7 @@ export class SuperadminService {
     @InjectRepository(BillingInvoice) private readonly invoices: Repository<BillingInvoice>,
     @InjectRepository(PushToken) private readonly pushTokens: Repository<PushToken>,
     @InjectRepository(AuditLog) private readonly audit: Repository<AuditLog>,
+    private readonly registrations: RegistrationsService,
   ) {}
 
   private log(actor: Actor, action: string, poi?: Pick<Poi, 'id' | 'name'> | null, details: Record<string, unknown> = {}) {
@@ -406,6 +409,75 @@ export class SuperadminService {
     else await this.billing.extendTrial(poiId, tier ?? PlanTier.COMPLETE);
     await this.log(actor, `plan.${action}`, poi, { plan: tier ?? null });
     return this.community(poiId);
+  }
+
+  // ------------------------------------------------------------------ registrations
+
+  /**
+   * Approve on a request from the landing (Seb, 30 Oct 2026): creates the
+   * place exactly as "Add community" does (or links the person to the
+   * place they asked to manage), starts the free month of the plan they
+   * chose, and tells them. Only once the document was checked.
+   */
+  async approveRegistration(actor: Actor, id: string, dto: ApproveRegistrationDto) {
+    const r = await this.registrations.findOpen(id);
+    if (!r.documentCheckedAt) throw new BadRequestException('document_not_checked');
+    let poi: Poi;
+    let admin: { userId: string; email: string; temporaryPassword: string | null };
+    if (r.existingPoiId) {
+      poi = await this.findPoi(r.existingPoiId);
+      admin = await this.grantAdmin(poi, r.email, r.firstName);
+      await this.log(actor, 'admin.add', poi, { email: admin.email, newAccount: !!admin.temporaryPassword, registration: r.id });
+    } else {
+      const paid = RegistrationsService.paidPlan(r);
+      const created = await this.createCommunity(actor, {
+        name: r.placeName,
+        type: dto.type ?? r.type,
+        language: r.language,
+        address: r.address,
+        city: r.city,
+        postalCode: r.postalCode,
+        offeredPlan: dto.offerPlan && paid ? paid : undefined,
+        adminEmail: r.email,
+        adminFirstName: r.firstName,
+      });
+      admin = created.admin;
+      poi = await this.findPoi(created.poi.id);
+      poi.legalName = r.legalName;
+      poi.legalTaxId = r.taxId;
+      poi.legalAddress = `${r.address}, ${r.postalCode} ${r.city}`;
+      poi.legalPhone = r.phone ?? null;
+      poi.billingInterval = r.billingInterval;
+      await this.pois.save(poi);
+      if (paid && !dto.offerPlan) await this.billing.startTrial(poi.id, paid);
+    }
+    const user = await this.users.findOne({ where: { id: admin.userId } });
+    if (user && !user.lastName) await this.users.update(user.id, { lastName: r.lastName });
+    await this.registrations.markApproved(r, poi.id, actor.identity.email, admin.temporaryPassword);
+    await this.log(actor, 'registration.approve', poi, { email: r.email, plan: r.plan, claim: !!r.existingPoiId });
+    return {
+      registration: await this.registrations.detail(id),
+      admin,
+      emailsDelivered: this.registrations.emailsDelivered,
+    };
+  }
+
+  async registrationDocumentChecked(actor: Actor, id: string, checked: boolean) {
+    const r = await this.registrations.markDocumentChecked(id, checked);
+    await this.log(actor, checked ? 'registration.documentChecked' : 'registration.documentUnchecked', null, { place: r.placeName, email: r.email });
+    return this.registrations.detail(id);
+  }
+
+  async questionRegistration(actor: Actor, id: string, message: string) {
+    const r = await this.registrations.askQuestion(id, message);
+    await this.log(actor, 'registration.question', null, { place: r.placeName, email: r.email });
+    return this.registrations.detail(id);
+  }
+
+  async declineRegistration(actor: Actor, id: string, reason: string, block: boolean) {
+    const r = await this.registrations.decline(id, reason, block, actor.identity.email);
+    await this.log(actor, block ? 'registration.block' : 'registration.decline', null, { place: r.placeName, email: r.email, taxId: block ? r.taxId : undefined });
+    return this.registrations.detail(id);
   }
 
   // ------------------------------------------------------------------ admins

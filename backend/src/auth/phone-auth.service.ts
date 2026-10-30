@@ -158,6 +158,16 @@ export class PhoneAuthService {
     return { accessToken: await this.memberToken(user.id) };
   }
 
+  /**
+   * Checks an email code without signing anyone in: the place
+   * registration form uses it to prove the applicant owns the address.
+   */
+  async confirmEmailCode(rawEmail: string, code: string): Promise<string> {
+    const email = normalizeEmail(rawEmail);
+    await this.consumeCode({ email }, code);
+    return email;
+  }
+
   private async issueCode(target: CodeTarget): Promise<string> {
     const now = new Date();
 

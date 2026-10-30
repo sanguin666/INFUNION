@@ -1122,3 +1122,506 @@ section {
   font-weight: 800;
   white-space: nowrap;
 }
+
+/* ---------- Plan buttons and the CTA band's demo link (Seb, 30 Oct 2026) ---------- */
+
+.price-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-card .price-cta {
+  margin-top: auto;
+  align-self: stretch;
+}
+
+.price-card ul + .price-cta {
+  margin-top: 24px;
+}
+
+.cta-band .cta-demo {
+  margin: 18px 0 0;
+  font-size: 15px;
+}
+
+.cta-band .cta-demo a {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ---------- Register your place (register.html) ---------- */
+
+.register {
+  background: var(--surface);
+  padding: 40px 0 72px;
+  min-height: 70vh;
+}
+
+.register .container {
+  max-width: 760px;
+}
+
+.register h1 {
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 900;
+  margin: 8px 0 8px;
+}
+
+.register-lede {
+  color: var(--text-muted);
+  margin: 0 0 24px;
+}
+
+.reg-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+
+.reg-progress li {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #e9e6f2;
+  color: var(--text-muted);
+}
+
+.reg-progress li.done {
+  background: var(--tint);
+  color: var(--primary-dark);
+}
+
+.reg-progress li.on {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.reg-step {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.reg-step h2 {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.reg-box {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.reg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.reg-box > .reg-field:first-child,
+.reg-box > .reg-pair:first-child .reg-field {
+  border-top: 0;
+}
+
+.reg-field > span:first-child {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.reg-field em {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.reg-field input,
+.reg-field select {
+  border: 0;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: transparent;
+  outline: none;
+  min-width: 0;
+  width: 100%;
+}
+
+.reg-field:focus-within {
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.reg-field input[type="file"] {
+  font-size: 15px;
+}
+
+.reg-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  border-top: 1px solid var(--border);
+}
+
+.reg-pair .reg-field {
+  border-top: 0;
+}
+
+.reg-pair .reg-field + .reg-field {
+  border-left: 1px solid var(--border);
+}
+
+.reg-pair-even {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.reg-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.reg-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.reg-kinds {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.reg-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.reg-choice input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reg-choice:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--tint);
+}
+
+.reg-choice:has(input:focus-visible) {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.reg-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.reg-search {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reg-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reg-results li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.reg-results li:first-child {
+  border-top: 0;
+}
+
+.reg-results strong {
+  display: block;
+}
+
+.reg-results small {
+  color: var(--text-muted);
+}
+
+.reg-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--primary-dark);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.reg-claim {
+  background: var(--tint);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reg-code-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.reg-code-row .reg-box {
+  flex: 1 1 180px;
+}
+
+.reg-ok {
+  color: #1f8a5b;
+  font-weight: 800;
+}
+
+.reg-toggle {
+  display: inline-flex;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+  background: #ffffff;
+  align-self: flex-start;
+}
+
+.reg-toggle label {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.reg-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reg-toggle label:has(input:checked) {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.reg-plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.reg-plan {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 16px;
+}
+
+.reg-plan .reg-price {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--primary-dark);
+}
+
+.reg-plan .reg-price small {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.reg-plan ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.reg-reco {
+  position: absolute;
+  top: -11px;
+  right: 10px;
+  background: var(--accent);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.reg-summary {
+  background: var(--tint);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reg-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reg-check {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.reg-check input {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--primary);
+  flex: none;
+}
+
+.reg-check a {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.reg-sign input {
+  font-style: italic;
+  font-size: 19px;
+}
+
+.reg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reg-actions .btn {
+  padding: 11px 22px;
+}
+
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.reg-error {
+  color: #b42318;
+  font-weight: 700;
+  margin: 0;
+}
+
+.reg-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reg-timeline li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.reg-timeline .reg-num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #e9e6f2;
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.reg-timeline .reg-num.done {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.reg-timeline p {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.reg-hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .reg-kinds {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .reg-plans,
+  .reg-pair,
+  .reg-pair-even {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reg-pair .reg-field + .reg-field {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+}
+
+.reg-field.invalid {
+  box-shadow: inset 3px 0 0 #b42318;
+}
+
+/* The steps and notes set their own display; hidden must still win. */
+.register [hidden] {
+  display: none !important;
+}
