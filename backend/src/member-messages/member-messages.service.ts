@@ -27,6 +27,8 @@ export type MemberRow = {
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
+  // Members who sign in by email have one instead of (or as well as) a phone.
+  email: string | null;
   joinedAt: Date;
   // The last message either way, if they have ever been written to.
   lastMessage: { body: string; fromStaff: boolean; createdAt: Date } | null;
@@ -232,6 +234,7 @@ function memberOf(m: UserPoi): Omit<MemberRow, 'lastMessage' | 'unread'> {
     firstName: m.user.firstName ?? null,
     lastName: m.user.lastName ?? null,
     phone: m.user.phone ?? null,
+    email: m.user.email ?? null,
     joinedAt: m.joinedAt,
   };
 }
@@ -242,7 +245,7 @@ function fullName(user: User | null | undefined): string | null {
 }
 
 function displayName(row: MemberRow): string {
-  return [row.firstName, row.lastName].filter(Boolean).join(' ') || row.phone || '';
+  return [row.firstName, row.lastName].filter(Boolean).join(' ') || row.phone || row.email || '';
 }
 
 function isAfter(at: Date, seen: Date | null | undefined): boolean {

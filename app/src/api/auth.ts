@@ -4,9 +4,11 @@ import type { Poi } from './types';
 
 export type RequestCodeResult = {
   expiresInSeconds: number;
-  // Present only when the backend has no SMS provider configured, which is
-  // the normal state on a development machine. The login screen shows it so
-  // the flow can be completed without a real text message arriving.
+  // Where the code went: a text message or an email.
+  channel: 'sms' | 'email';
+  // Present only when the backend has nothing set up to send the code,
+  // which is the normal state on a development machine. The login screen
+  // shows it so the flow can be completed without a real message arriving.
   devCode?: string;
 };
 
@@ -32,17 +34,22 @@ export type Me = {
   pois: Poi[];
 };
 
-export function requestPhoneCode(phone: string): Promise<RequestCodeResult> {
-  return apiPost<RequestCodeResult>('/auth/phone/request-code', { phone });
+/**
+ * Asks for a sign-in code. `login` is whatever was typed in the one field:
+ * an email address or a phone number, the backend tells them apart.
+ * `language` is the one the email is written in.
+ */
+export function requestLoginCode(login: string, language: string): Promise<RequestCodeResult> {
+  return apiPost<RequestCodeResult>('/auth/code/request', { login, language });
 }
 
-export function verifyPhoneCode(
-  phone: string,
+export function verifyLoginCode(
+  login: string,
   code: string,
   firstName?: string,
 ): Promise<{ accessToken: string }> {
-  return apiPost<{ accessToken: string }>('/auth/phone/verify', {
-    phone,
+  return apiPost<{ accessToken: string }>('/auth/code/verify', {
+    login,
     code,
     firstName: firstName?.trim() || undefined,
   });

@@ -13,6 +13,8 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { PhoneVerificationCode } from './entities/phone-verification-code.entity.js';
 import { SmsSender } from './sms/sms-sender.js';
+import { EmailSender } from './email/email-sender.js';
+import { codeEmail } from './email/code-email.js';
 import { UsersService } from '../users/users.service.js';
 import { DEMO_MEMBER_PHONE } from '../common/demo/demo-account.js';
 
@@ -53,10 +55,31 @@ export function normalizePhone(raw: string): string {
   return trimmed.startsWith('+') ? `+${digits}` : digits;
 }
 
+/** Emails reach the same account whatever their case or stray spaces. */
+export function normalizeEmail(raw: string): string {
+  return raw.trim().toLowerCase();
+}
+
+/**
+ * What someone typed in the app's one sign-in field: an email address if
+ * it has an @, a phone number otherwise.
+ */
+export function isEmailLogin(login: string): boolean {
+  return login.includes('@');
+}
+
+// Who a code is for: exactly one of the two, already normalized. Doubles as
+// the `where` that finds that person's codes.
+type CodeTarget = { phone: string } | { email: string };
+
 export type RequestCodeResult = {
   expiresInSeconds: number;
-  // Only ever set when no SMS provider is configured: without it there'd be
-  // no way to log in at all on a development machine. See sms/sms-sender.ts.
+  // How the code was sent, so the app can say "sent to your email" or
+  // "texted to your number".
+  channel: 'sms' | 'email';
+  // Only ever set when nothing is configured to deliver the code: without it
+  // there'd be no way to log in at all on a development machine. See
+  // sms/sms-sender.ts and email/email-sender.ts.
   devCode?: string;
 };
 
@@ -69,36 +92,41 @@ export class PhoneAuthService {
     private readonly jwtService: JwtService,
     private readonly smsSender: SmsSender,
     private readonly configService: ConfigService,
+    private readonly emailSender: EmailSender,
   ) {}
+
+  /** The app's one field: "Email or phone number". */
+  requestLoginCode(login: string, language?: string): Promise<RequestCodeResult> {
+    return isEmailLogin(login)
+      ? this.requestEmailCode(login, language)
+      : this.requestCode(login);
+  }
+
+  verifyLoginCode(login: string, code: string, firstName?: string): Promise<{ accessToken: string }> {
+    return isEmailLogin(login)
+      ? this.verifyEmailCode(login, code, firstName)
+      : this.verifyCode(login, code, firstName);
+  }
 
   async requestCode(rawPhone: string): Promise<RequestCodeResult> {
     const phone = normalizePhone(rawPhone);
-    const now = new Date();
-
-    await this.assertNotThrottled(phone, now);
-
-    // Any code still outstanding for this number stops working now: only
-    // the newest one should ever be accepted, otherwise asking for a fresh
-    // code would widen the window instead of restarting it.
-    await this.codesRepository.update(
-      { phone, consumedAt: IsNull() },
-      { consumedAt: now },
-    );
-
-    const code = String(randomInt(0, 10 ** CODE_LENGTH)).padStart(CODE_LENGTH, '0');
-    await this.codesRepository.save(
-      this.codesRepository.create({
-        phone,
-        codeHash: await bcrypt.hash(code, 10),
-        expiresAt: new Date(now.getTime() + CODE_TTL_SECONDS * 1000),
-      }),
-    );
-
+    const code = await this.issueCode({ phone });
     await this.smsSender.send(phone, `${code} is your infunion code.`);
-
     return {
       expiresInSeconds: CODE_TTL_SECONDS,
-      ...(this.shouldRevealCode() ? { devCode: code } : {}),
+      channel: 'sms',
+      ...(this.shouldRevealCode(this.smsSender.delivers) ? { devCode: code } : {}),
+    };
+  }
+
+  async requestEmailCode(rawEmail: string, language?: string): Promise<RequestCodeResult> {
+    const email = normalizeEmail(rawEmail);
+    const code = await this.issueCode({ email });
+    await this.emailSender.send(codeEmail(email, code, language));
+    return {
+      expiresInSeconds: CODE_TTL_SECONDS,
+      channel: 'email',
+      ...(this.shouldRevealCode(this.emailSender.delivers) ? { devCode: code } : {}),
     };
   }
 
@@ -108,10 +136,58 @@ export class PhoneAuthService {
     firstName?: string,
   ): Promise<{ accessToken: string }> {
     const phone = normalizePhone(rawPhone);
+    await this.consumeCode({ phone }, code);
+    const user = await this.usersService.findOrCreateByPhone(phone, firstName);
+    return { accessToken: await this.memberToken(user.id) };
+  }
+
+  /**
+   * Signing in with an email code. An address that already belongs to an
+   * admin opens that same account: whoever reads the inbox could reset
+   * the password anyway. The superadmin still needs its own second step
+   * (a superadmin token), which no member token ever is.
+   */
+  async verifyEmailCode(
+    rawEmail: string,
+    code: string,
+    firstName?: string,
+  ): Promise<{ accessToken: string }> {
+    const email = normalizeEmail(rawEmail);
+    await this.consumeCode({ email }, code);
+    const user = await this.usersService.findOrCreateByEmail(email, firstName);
+    return { accessToken: await this.memberToken(user.id) };
+  }
+
+  private async issueCode(target: CodeTarget): Promise<string> {
+    const now = new Date();
+
+    await this.assertNotThrottled(target, now);
+
+    // Any code still outstanding for this person stops working now: only
+    // the newest one should ever be accepted, otherwise asking for a fresh
+    // code would widen the window instead of restarting it.
+    await this.codesRepository.update(
+      { ...target, consumedAt: IsNull() },
+      { consumedAt: now },
+    );
+
+    const code = String(randomInt(0, 10 ** CODE_LENGTH)).padStart(CODE_LENGTH, '0');
+    await this.codesRepository.save(
+      this.codesRepository.create({
+        ...target,
+        codeHash: await bcrypt.hash(code, 10),
+        expiresAt: new Date(now.getTime() + CODE_TTL_SECONDS * 1000),
+      }),
+    );
+    return code;
+  }
+
+  /** Accepts `code` for `target` exactly once, or throws. */
+  private async consumeCode(target: CodeTarget, code: string): Promise<void> {
     const now = new Date();
 
     const record = await this.codesRepository.findOne({
-      where: { phone, consumedAt: IsNull(), expiresAt: MoreThan(now) },
+      where: { ...target, consumedAt: IsNull(), expiresAt: MoreThan(now) },
       order: { createdAt: 'DESC' },
     });
     // One message for "never asked", "already used" and "too old": which of
@@ -134,9 +210,6 @@ export class PhoneAuthService {
 
     record.consumedAt = now;
     await this.codesRepository.save(record);
-
-    const user = await this.usersService.findOrCreateByPhone(phone, firstName);
-    return { accessToken: await this.memberToken(user.id) };
   }
 
   /**
@@ -153,12 +226,12 @@ export class PhoneAuthService {
    * called opportunistically when a number asks for a code, which is often
    * enough to keep the table from growing without adding a cron dependency.
    */
-  private async assertNotThrottled(phone: string, now: Date): Promise<void> {
+  private async assertNotThrottled(target: CodeTarget, now: Date): Promise<void> {
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
     await this.codesRepository.delete({ expiresAt: LessThan(oneHourAgo) });
 
     const lastCode = await this.codesRepository.findOne({
-      where: { phone },
+      where: target,
       order: { createdAt: 'DESC' },
     });
     if (lastCode) {
@@ -172,11 +245,13 @@ export class PhoneAuthService {
     }
 
     const recentCount = await this.codesRepository.count({
-      where: { phone, createdAt: MoreThan(oneHourAgo) },
+      where: { ...target, createdAt: MoreThan(oneHourAgo) },
     });
     if (recentCount >= MAX_CODES_PER_HOUR) {
       throw new HttpException(
-        'Too many codes requested for this number. Try again later.',
+        'phone' in target
+          ? 'Too many codes requested for this number. Try again later.'
+          : 'Too many codes requested for this email. Try again later.',
         HttpStatus.TOO_MANY_REQUESTS,
       );
     }
@@ -184,7 +259,10 @@ export class PhoneAuthService {
 
   /** Whether "sign in" goes straight into the demo account (see DEMO_MEMBER_PHONE). */
   demoLoginEnabled(): boolean {
-    return this.configService.get<string>('DEMO_LOGIN') !== 'off' && this.shouldRevealCode();
+    return (
+      this.configService.get<string>('DEMO_LOGIN') !== 'off' &&
+      this.shouldRevealCode(this.smsSender.delivers)
+    );
   }
 
   async demoSignIn(): Promise<{ accessToken: string }> {
@@ -197,9 +275,9 @@ export class PhoneAuthService {
   // sender: handing the code back in the response would make the whole
   // login pointless. The one exception is a demo server that asks for it
   // with DEMO_LOGIN=on, where nobody could sign in otherwise.
-  private shouldRevealCode(): boolean {
+  private shouldRevealCode(delivers: boolean): boolean {
     return (
-      !this.smsSender.delivers &&
+      !delivers &&
       (this.configService.get<string>('NODE_ENV', 'development') !== 'production' ||
         this.configService.get<string>('DEMO_LOGIN') === 'on')
     );

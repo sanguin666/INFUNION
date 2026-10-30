@@ -50,7 +50,7 @@ export function MassIntentionsScreen({ poi }: Props) {
   const [currency, setCurrency] = useState('eur');
   const [intention, setIntention] = useState('');
   const [name, setName] = useState([me?.firstName, me?.lastName].filter(Boolean).join(' '));
-  const [contact, setContact] = useState(me?.phone ?? '');
+  const [contact, setContact] = useState(me?.phone ?? me?.email ?? '');
   const [choice, setChoice] = useState<Choice>(null);
   const [offering, setOffering] = useState(20);
   const [submitting, setSubmitting] = useState(false);

@@ -71,6 +71,21 @@ export class UsersService {
     );
   }
 
+  /**
+   * The same, for someone signing in with an email code. Matches an
+   * existing account whatever the case of the stored address, so an admin
+   * who signs in to the app with their email lands in their own account.
+   */
+  async findOrCreateByEmail(email: string, firstName?: string): Promise<User> {
+    const existing = await this.findByEmail(email);
+    if (existing) {
+      return existing;
+    }
+    return this.usersRepository.save(
+      this.usersRepository.create({ email: email.trim().toLowerCase(), firstName }),
+    );
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
     Object.assign(user, updateUserDto);

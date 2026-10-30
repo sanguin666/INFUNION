@@ -37,10 +37,12 @@ export async function clearStoredToken(): Promise<void> {
 
 const LAST_LOGIN_KEY = 'ansae.last-login.v1';
 
+// `phone` holds whatever was typed to sign in, an email address or a
+// number; the name stays for the sessions stored before email sign-in.
 export type LastLogin = { phone: string; firstName: string };
 
 /**
- * The number and first name last used to sign in on this phone, so after
+ * The email or number and first name last used to sign in on this phone, so after
  * signing out (or a session running out) the form comes back filled in and
  * signing in again is one tap and a code.
  */

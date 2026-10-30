@@ -1,4 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { client, createTestApp, resetDatabase, signIn } from './harness.js';
 
 describe('Phone login (e2e)', () => {
@@ -132,6 +133,94 @@ describe('Phone login (e2e)', () => {
       .get('/auth/me')
       .set('Authorization', 'Bearer not-a-real-token')
       .expect(401);
+  });
+});
+
+describe('Email or phone login (e2e)', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    app = await createTestApp();
+  });
+
+  beforeEach(async () => {
+    await resetDatabase(app);
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  async function signInWith(login: string, firstName?: string) {
+    const requested = await client(app)
+      .post('/auth/code/request')
+      .send({ login, language: 'es' })
+      .expect(201);
+    const verified = await client(app)
+      .post('/auth/code/verify')
+      .send({ login, code: requested.body.devCode, firstName })
+      .expect(201);
+    return { channel: requested.body.channel, token: verified.body.accessToken as string };
+  }
+
+  it('creates an account the first time an email verifies', async () => {
+    const { channel, token } = await signInWith('Lucia@Example.com', 'Lucía');
+    expect(channel).toBe('email');
+
+    const me = await client(app).get('/auth/me').set('Authorization', `Bearer ${token}`).expect(200);
+    expect(me.body.email).toBe('lucia@example.com');
+    expect(me.body.phone).toBeFalsy();
+    expect(me.body.firstName).toBe('Lucía');
+  });
+
+  it('reaches the same account whatever the case of the email', async () => {
+    const first = await signInWith('pablo@example.com');
+    await app.get(DataSource).query(
+      `UPDATE phone_verification_codes SET created_at = NOW() - INTERVAL '2 hours'`,
+    );
+    const second = await signInWith('  PABLO@example.com ');
+
+    const a = await client(app).get('/auth/me').set('Authorization', `Bearer ${first.token}`).expect(200);
+    const b = await client(app).get('/auth/me').set('Authorization', `Bearer ${second.token}`).expect(200);
+    expect(b.body.id).toBe(a.body.id);
+  });
+
+  it('opens an admin’s own account when they sign in with their email', async () => {
+    const dataSource = app.get(DataSource);
+    const [admin] = await dataSource.query(
+      `INSERT INTO users (email, password_hash) VALUES ('Office@Parish.example', 'x') RETURNING id`,
+    );
+    const { token } = await signInWith('office@parish.example');
+    const me = await client(app).get('/auth/me').set('Authorization', `Bearer ${token}`).expect(200);
+    expect(me.body.id).toBe(admin.id);
+  });
+
+  it('still signs in with a phone number through the same field', async () => {
+    const { channel, token } = await signInWith('+34 600 00 00 21', 'Marta');
+    expect(channel).toBe('sms');
+    const me = await client(app).get('/auth/me').set('Authorization', `Bearer ${token}`).expect(200);
+    expect(me.body.phone).toBe('+34600000021');
+  });
+
+  it('keeps email and phone codes apart', async () => {
+    const requested = await client(app)
+      .post('/auth/code/request')
+      .send({ login: 'rosa@example.com' })
+      .expect(201);
+    await client(app)
+      .post('/auth/code/verify')
+      .send({ login: '+34600000022', code: requested.body.devCode })
+      .expect(401);
+  });
+
+  it('makes an email wait before asking for another code', async () => {
+    await client(app).post('/auth/code/request').send({ login: 'eva@example.com' }).expect(201);
+    await client(app).post('/auth/code/request').send({ login: 'eva@example.com' }).expect(429);
+  });
+
+  it('refuses something that is neither', async () => {
+    await client(app).post('/auth/code/request').send({ login: 'not an email' }).expect(400);
+    await client(app).post('/auth/code/request').send({ login: 'eva@nowhere' }).expect(400);
   });
 });
 
