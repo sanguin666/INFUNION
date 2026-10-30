@@ -9,7 +9,8 @@ import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
 import { PrayerRequest } from '../prayer-requests/entities/prayer-request.entity.js';
 import { AuthModule } from '../auth/auth.module.js';
 import { DashboardService } from './dashboard.service.js';
-import { DashboardController } from './dashboard.controller.js';
+import { DashboardController, MyAdminPlacesController } from './dashboard.controller.js';
+import { ActiveModule } from '../active-modules/entities/active-module.entity.js';
 
 @Module({
   imports: [
@@ -21,10 +22,11 @@ import { DashboardController } from './dashboard.controller.js';
       PoiBadge,
       UserPoi,
       PrayerRequest,
+      ActiveModule,
     ]),
     AuthModule,
   ],
-  controllers: [DashboardController],
+  controllers: [DashboardController, MyAdminPlacesController],
   providers: [DashboardService],
 })
 export class DashboardModule {}

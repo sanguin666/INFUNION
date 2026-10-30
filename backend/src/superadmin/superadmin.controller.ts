@@ -170,6 +170,29 @@ export class SuperadminController {
     return this.service.addAdmin(this.actor(request), poiId, dto.email, dto.firstName);
   }
 
+  @Get('admins/lookup')
+  adminLookup(@Query('email') email?: string) {
+    return this.service.adminLookup(typeof email === 'string' ? email.slice(0, 200) : '');
+  }
+
+  @Post('users/:userId/places/:poiId')
+  addPlace(
+    @Req() request: SuperadminRequest,
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('poiId', ParseUUIDPipe) poiId: string,
+  ) {
+    return this.service.addPlaceToUser(this.actor(request), userId, poiId);
+  }
+
+  @Delete('users/:userId/places/:poiId')
+  removePlace(
+    @Req() request: SuperadminRequest,
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('poiId', ParseUUIDPipe) poiId: string,
+  ) {
+    return this.service.removePlaceFromUser(this.actor(request), userId, poiId);
+  }
+
   @Delete('pois/:poiId/admins/:userId')
   removeAdmin(
     @Req() request: SuperadminRequest,
