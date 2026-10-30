@@ -4,6 +4,7 @@ import { Screen } from '../components/Screen';
 import { AccessibleText } from '../components/AccessibleText';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { BackChevronIcon } from '../components/icons';
+import { Lockup } from '../components/Logo';
 import { requestLoginCode, verifyLoginCode } from '../api/auth';
 import { useAuth } from '../auth/AuthContext';
 import { getLastLogin, storeLastLogin } from '../storage/session';
@@ -34,7 +35,6 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
   // An email address or a phone number, as typed.
   const [login, setLogin] = useState('');
   const [channel, setChannel] = useState<'sms' | 'email'>('sms');
-  const [firstName, setFirstName] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,13 +42,14 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
   // hands it back so the flow can be completed on a development machine.
   const [devCode, setDevCode] = useState<string | null>(null);
 
-  // Whoever signed in on this phone before finds their email or number and
-  // name already filled in; anything typed meanwhile is left alone.
+  // Whoever signed in on this phone before finds their email or number
+  // already filled in; anything typed meanwhile is left alone. Sign-in asks
+  // for nothing else (Seb, 30 Oct 2026): the name is set later in the
+  // profile.
   useEffect(() => {
     getLastLogin().then((last) => {
       if (!last) return;
       setLogin((current) => current || last.phone);
-      setFirstName((current) => current || last.firstName);
     });
   }, []);
 
@@ -73,8 +74,8 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
     setBusy(true);
     setError(null);
     try {
-      const { accessToken } = await verifyLoginCode(login.trim(), code.trim(), firstName);
-      await storeLastLogin({ phone: login.trim(), firstName: firstName.trim() });
+      const { accessToken } = await verifyLoginCode(login.trim(), code.trim());
+      await storeLastLogin({ phone: login.trim(), firstName: '' });
       await signIn(accessToken);
       onSignedIn();
     } catch (caught) {
@@ -95,6 +96,12 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
         <BackChevronIcon size={20} color={colors.text} />
         <AccessibleText variant="body">{t('common.back')}</AccessibleText>
       </Pressable>
+
+      {/* The same infunion lockup as the next step (adding a place), so
+          the whole way in looks like one app. */}
+      <View style={styles.brand}>
+        <Lockup height={48} />
+      </View>
 
       <AccessibleText variant="title">{t('signIn.title')}</AccessibleText>
 
@@ -119,14 +126,6 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
             style={styles.input}
           />
 
-          <AccessibleText variant="body">{t('signIn.nameLabel')}</AccessibleText>
-          <TextInput
-            value={firstName}
-            onChangeText={setFirstName}
-            placeholder={t('signIn.namePlaceholder')}
-            autoComplete="given-name"
-            style={styles.input}
-          />
 
           {error && (
             <AccessibleText variant="body" color={colors.danger}>
@@ -197,6 +196,10 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
 }
 
 const styles = themedStyles(() => ({
+  brand: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',

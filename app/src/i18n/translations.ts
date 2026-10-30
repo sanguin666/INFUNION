@@ -39,8 +39,6 @@ export type Translations = {
     loginExplainer: string;
     loginLabel: string;
     loginPlaceholder: string;
-    nameLabel: string;
-    namePlaceholder: string;
     sendCode: string;
     sending: string;
     codeExplainer: string;
@@ -607,9 +605,7 @@ const en: Translations = {
     title: 'Sign in',
     loginExplainer: 'Enter your email or phone number and we’ll send you a 6-digit code. There is no password to remember.',
     loginLabel: 'Email or phone number',
-    loginPlaceholder: 'name@example.com or +34 600 00 00 00',
-    nameLabel: 'Your name (optional)',
-    namePlaceholder: 'Shown next to what you post',
+    loginPlaceholder: 'name@example.com',
     sendCode: 'Send me a code',
     sending: 'Sending…',
     codeExplainer: 'Enter the 6-digit code sent to {{phone}}.',
@@ -1178,9 +1174,7 @@ const es: Translations = {
     title: 'Iniciar sesión',
     loginExplainer: 'Escribe tu correo electrónico o tu número de teléfono y te enviaremos un código de 6 dígitos. No hay contraseña que recordar.',
     loginLabel: 'Correo electrónico o teléfono',
-    loginPlaceholder: 'nombre@ejemplo.com o +34 600 00 00 00',
-    nameLabel: 'Tu nombre (opcional)',
-    namePlaceholder: 'Aparecerá junto a lo que publiques',
+    loginPlaceholder: 'nombre@ejemplo.com',
     sendCode: 'Envíame un código',
     sending: 'Enviando…',
     codeExplainer: 'Escribe el código de 6 dígitos enviado a {{phone}}.',
@@ -1749,9 +1743,7 @@ const fr: Translations = {
     title: 'Se connecter',
     loginExplainer: 'Saisissez votre e-mail ou votre numéro de téléphone et nous vous enverrons un code à 6 chiffres. Aucun mot de passe à retenir.',
     loginLabel: 'E-mail ou numéro de téléphone',
-    loginPlaceholder: 'nom@exemple.fr ou +33 6 00 00 00 00',
-    nameLabel: 'Votre nom (facultatif)',
-    namePlaceholder: 'Affiché à côté de vos publications',
+    loginPlaceholder: 'nom@exemple.fr',
     sendCode: 'Envoyez-moi un code',
     sending: 'Envoi…',
     codeExplainer: 'Saisissez le code à 6 chiffres envoyé au {{phone}}.',
@@ -2320,9 +2312,7 @@ const va: Translations = {
     title: 'Iniciar sessió',
     loginExplainer: 'Escriu el teu correu electrònic o el teu número de telèfon i t’enviarem un codi de 6 xifres. No cal recordar cap contrasenya.',
     loginLabel: 'Correu electrònic o telèfon',
-    loginPlaceholder: 'nom@exemple.com o +34 600 00 00 00',
-    nameLabel: 'El teu nom (opcional)',
-    namePlaceholder: 'Apareixerà al costat del que publiques',
+    loginPlaceholder: 'nom@exemple.com',
     sendCode: 'Envia’m un codi',
     sending: 'Enviant…',
     codeExplainer: 'Escriu el codi de 6 xifres enviat al {{phone}}.',
@@ -2891,9 +2881,7 @@ const gl: Translations = {
     title: 'Iniciar sesión',
     loginExplainer: 'Escribe o teu correo electrónico ou o teu número de teléfono e enviarémosche un código de 6 díxitos. Non hai contrasinal que lembrar.',
     loginLabel: 'Correo electrónico ou teléfono',
-    loginPlaceholder: 'nome@exemplo.com ou +34 600 00 00 00',
-    nameLabel: 'O teu nome (opcional)',
-    namePlaceholder: 'Aparecerá xunto ao que publiques',
+    loginPlaceholder: 'nome@exemplo.com',
     sendCode: 'Envíame un código',
     sending: 'Enviando…',
     codeExplainer: 'Escribe o código de 6 díxitos enviado a {{phone}}.',
@@ -3463,9 +3451,7 @@ const pt: Translations = {
     title: 'Iniciar sessão',
     loginExplainer: 'Escreva o seu email ou o seu número de telemóvel e enviaremos um código de 6 dígitos. Não há palavra-passe para memorizar.',
     loginLabel: 'Email ou número de telemóvel',
-    loginPlaceholder: 'nome@exemplo.pt ou +351 912 345 678',
-    nameLabel: 'O seu nome (opcional)',
-    namePlaceholder: 'Aparecerá junto do que publicar',
+    loginPlaceholder: 'nome@exemplo.pt',
     sendCode: 'Enviar-me um código',
     sending: 'A enviar…',
     codeExplainer: 'Escreva o código de 6 dígitos enviado para {{phone}}.',
