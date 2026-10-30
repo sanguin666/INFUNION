@@ -261,7 +261,7 @@ export const changeSuperadminPassword = (currentPassword: string, newPassword: s
 
 // ---- place requests from the landing (Seb, 30 Oct 2026)
 
-export type RegistrationStatus = 'pending' | 'question' | 'approved' | 'declined';
+export type RegistrationStatus = 'pending' | 'question' | 'approved' | 'declined' | 'withdrawn';
 
 export type RegistrationRow = {
   id: string;
@@ -324,10 +324,12 @@ export type RegistrationDetail = Omit<RegistrationRow, 'warnings'> & {
   declineReason: string | null;
   decidedAt: string | null;
   decidedBy: string | null;
+  withdrawnAt: string | null;
+  withdrawReason: string | null;
   checks: RegistrationCheck[];
 };
 
-export type RegistrationFilter = 'open' | 'approved' | 'declined' | 'all';
+export type RegistrationFilter = 'open' | 'approved' | 'declined' | 'withdrawn' | 'all';
 
 export const listRegistrations = (status: RegistrationFilter) =>
   guarded(() => apiGet<RegistrationRow[]>(`/superadmin/registrations?status=${status}`));
