@@ -18,7 +18,7 @@ type Props = {
  * The first thing anyone sees who is not signed in. Two doors, nothing
  * else: there is nothing to read here and nothing to get wrong.
  *
- * Both doors lead to the same phone-and-code screen — the backend makes
+ * Both doors lead to the same email-or-phone-and-code screen — the backend makes
  * an account on the first code that verifies, so "sign up" and "sign in"
  * differ only in where somebody lands afterwards, and pressing the wrong
  * one costs nothing.

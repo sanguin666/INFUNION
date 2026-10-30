@@ -56,7 +56,7 @@ export class AuthService {
     return {
       id: user.id,
       email: user.email,
-      // Congregants have a phone and no email; admins the other way round.
+      // Members have a phone or an email (or both); admins an email.
       phone: user.phone,
       firstName: user.firstName,
       lastName: user.lastName,

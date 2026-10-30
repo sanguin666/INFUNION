@@ -4,7 +4,7 @@ import { Screen } from '../components/Screen';
 import { AccessibleText } from '../components/AccessibleText';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { BackChevronIcon } from '../components/icons';
-import { requestPhoneCode, verifyPhoneCode } from '../api/auth';
+import { requestLoginCode, verifyLoginCode } from '../api/auth';
 import { useAuth } from '../auth/AuthContext';
 import { getLastLogin, storeLastLogin } from '../storage/session';
 import { useI18n } from '../i18n/I18nContext';
@@ -17,33 +17,37 @@ type Props = {
 };
 
 /**
- * Signing in with a phone number and a 6-digit code. No password: the
- * audience is mostly elderly, and a password is the single thing most
- * likely to stop them using the app at all.
+ * Signing in with an email address or a phone number, and a 6-digit code
+ * sent there. No password: it is the single thing most likely to stop
+ * someone using the app at all.
  *
- * Two steps on one screen rather than two routes, so the number stays
- * visible while the code is typed and "wrong number" is a tap away.
+ * One field for both, rather than a choice first: the backend tells an
+ * email from a number by the @. Two steps on one screen rather than two
+ * routes, so the address stays visible while the code is typed and "wrong
+ * address" is a tap away.
  */
 export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { signIn } = useAuth();
 
-  const [step, setStep] = useState<'phone' | 'code'>('phone');
-  const [phone, setPhone] = useState('');
+  const [step, setStep] = useState<'login' | 'code'>('login');
+  // An email address or a phone number, as typed.
+  const [login, setLogin] = useState('');
+  const [channel, setChannel] = useState<'sms' | 'email'>('sms');
   const [firstName, setFirstName] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Shown only when the backend has no SMS provider — it hands the code
-  // back so the flow can be completed on a development machine.
+  // Shown only when the backend has nothing set up to send the code — it
+  // hands it back so the flow can be completed on a development machine.
   const [devCode, setDevCode] = useState<string | null>(null);
 
-  // Whoever signed in on this phone before finds their number and name
-  // already filled in; anything typed meanwhile is left alone.
+  // Whoever signed in on this phone before finds their email or number and
+  // name already filled in; anything typed meanwhile is left alone.
   useEffect(() => {
     getLastLogin().then((last) => {
       if (!last) return;
-      setPhone((current) => current || last.phone);
+      setLogin((current) => current || last.phone);
       setFirstName((current) => current || last.firstName);
     });
   }, []);
@@ -52,7 +56,9 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
     setBusy(true);
     setError(null);
     try {
-      const result = await requestPhoneCode(phone.trim());
+      const result = await requestLoginCode(login.trim(), language);
+      // An older backend answers without a channel, and only sends SMS.
+      setChannel(result.channel ?? 'sms');
       setDevCode(result.devCode ?? null);
       setStep('code');
       setCode('');
@@ -67,8 +73,8 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
     setBusy(true);
     setError(null);
     try {
-      const { accessToken } = await verifyPhoneCode(phone.trim(), code.trim(), firstName);
-      await storeLastLogin({ phone: phone.trim(), firstName: firstName.trim() });
+      const { accessToken } = await verifyLoginCode(login.trim(), code.trim(), firstName);
+      await storeLastLogin({ phone: login.trim(), firstName: firstName.trim() });
       await signIn(accessToken);
       onSignedIn();
     } catch (caught) {
@@ -92,20 +98,24 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
 
       <AccessibleText variant="title">{t('signIn.title')}</AccessibleText>
 
-      {step === 'phone' ? (
+      {step === 'login' ? (
         <>
           <AccessibleText variant="body" color={colors.textMuted}>
-            {t('signIn.phoneExplainer')}
+            {t('signIn.loginExplainer')}
           </AccessibleText>
 
-          <AccessibleText variant="body">{t('signIn.phoneLabel')}</AccessibleText>
+          <AccessibleText variant="body">{t('signIn.loginLabel')}</AccessibleText>
+          {/* The email keyboard has both the @ and the digits a number
+              needs, so it serves either answer. */}
           <TextInput
-            value={phone}
-            onChangeText={setPhone}
-            placeholder={t('signIn.phonePlaceholder')}
-            keyboardType="phone-pad"
-            autoComplete="tel"
-            textContentType="telephoneNumber"
+            value={login}
+            onChangeText={setLogin}
+            placeholder={t('signIn.loginPlaceholder')}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="username"
+            textContentType="username"
             style={styles.input}
           />
 
@@ -127,13 +137,15 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
           <AccessibleButton
             label={busy ? t('signIn.sending') : t('signIn.sendCode')}
             onPress={sendCode}
-            disabled={busy || phone.trim().length < 6}
+            disabled={busy || login.trim().length < 6}
           />
         </>
       ) : (
         <>
           <AccessibleText variant="body" color={colors.textMuted}>
-            {t('signIn.codeExplainer', { phone: phone.trim() })}
+            {channel === 'email'
+              ? t('signIn.codeExplainerEmail', { email: login.trim() })
+              : t('signIn.codeExplainer', { phone: login.trim() })}
           </AccessibleText>
 
           {devCode && (
@@ -169,10 +181,10 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
           />
 
           <AccessibleButton
-            label={t('signIn.changeNumber')}
+            label={t('signIn.changeLogin')}
             variant="secondary"
             onPress={() => {
-              setStep('phone');
+              setStep('login');
               setError(null);
               setDevCode(null);
             }}

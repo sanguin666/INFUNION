@@ -473,8 +473,9 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
       .getRepository(User)
       .createQueryBuilder('user')
       .select('user.id', 'id')
-      .where('user.phone IS NOT NULL')
-      .andWhere('user.email IS NULL')
+      // Members only: admins sign in with a password, members never do
+      // (phone or email code).
+      .where('user.password_hash IS NULL')
       .andWhere('user.is_superadmin = false')
       .andWhere(
         'COALESCE(user.last_seen_at, user.created_at) < :inactiveSince',
