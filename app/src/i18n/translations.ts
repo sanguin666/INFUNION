@@ -697,7 +697,7 @@ const en: Translations = {
     error: "That didn't save. Please try again.",
   },
   onboarding: {
-    welcome: 'Your community, always close',
+    welcome: 'All your places, in one app',
     signUp: 'Sign up',
     signIn: 'Sign in',
     demoSignIn: 'Demo sign-in (María García)',
@@ -1266,7 +1266,7 @@ const es: Translations = {
     error: 'No se pudo guardar. Inténtalo de nuevo.',
   },
   onboarding: {
-    welcome: 'Tu comunidad, siempre cerca',
+    welcome: 'Todos tus lugares, en una sola app',
     signUp: 'Crear cuenta',
     signIn: 'Iniciar sesión',
     demoSignIn: 'Entrar en la demo (María García)',
@@ -1835,7 +1835,7 @@ const fr: Translations = {
     error: 'L’enregistrement a échoué. Réessayez.',
   },
   onboarding: {
-    welcome: 'Votre communauté, toujours proche',
+    welcome: 'Tous vos lieux, dans une seule app',
     signUp: 'S’inscrire',
     signIn: 'Se connecter',
     demoSignIn: 'Connexion démo (María García)',
@@ -2404,7 +2404,7 @@ const va: Translations = {
     error: 'No s’ha pogut guardar. Torna-ho a provar.',
   },
   onboarding: {
-    welcome: 'La teua comunitat, sempre a prop',
+    welcome: 'Tots els teus llocs, en una sola app',
     signUp: 'Crear un compte',
     signIn: 'Iniciar sessió',
     demoSignIn: 'Entrar en la demo (María García)',
@@ -2973,7 +2973,7 @@ const gl: Translations = {
     error: 'Non se puido gardar. Téntao de novo.',
   },
   onboarding: {
-    welcome: 'A túa comunidade, sempre preto',
+    welcome: 'Todos os teus lugares, nunha soa app',
     signUp: 'Crear conta',
     signIn: 'Iniciar sesión',
     demoSignIn: 'Entrar na demo (María García)',
@@ -3543,7 +3543,7 @@ const pt: Translations = {
     error: 'Não foi possível guardar. Tente novamente.',
   },
   onboarding: {
-    welcome: 'A sua comunidade, sempre perto',
+    welcome: 'Todos os seus locais, numa só app',
     signUp: 'Criar conta',
     signIn: 'Iniciar sessão',
     demoSignIn: 'Entrar na demo (María García)',
