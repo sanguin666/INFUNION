@@ -1172,32 +1172,106 @@ section {
   margin: 0 0 24px;
 }
 
+/* Numbered circles joined by a line (Seb chose A, 30 Oct 2026). */
 .reg-progress {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
   list-style: none;
   padding: 0;
-  margin: 0 0 24px;
+  margin: 0 0 28px;
 }
 
 .reg-progress li {
+  flex: 1;
+  position: relative;
+  text-align: center;
   font-size: 13px;
-  font-weight: 800;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: #e9e6f2;
+  font-weight: 700;
   color: var(--text-muted);
+  min-width: 0;
 }
 
-.reg-progress li.done {
-  background: var(--tint);
-  color: var(--primary-dark);
+.reg-progress li::before {
+  content: attr(data-n);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #d6d1e6;
+  color: var(--text-muted);
+  font-weight: 800;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.reg-progress li::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: calc(-50% + 16px);
+  right: calc(50% + 16px);
+  height: 3px;
+  border-radius: 2px;
+  background: #d6d1e6;
+}
+
+.reg-progress li:first-child::after {
+  display: none;
+}
+
+.reg-progress li.done::before {
+  content: "\2713";
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.reg-progress li.done::after,
+.reg-progress li.on::after {
+  background: var(--primary);
+}
+
+.reg-progress li.on::before {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 0 0 5px var(--tint);
 }
 
 .reg-progress li.on {
-  background: var(--primary);
-  color: #ffffff;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.reg-privacy {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.reg-privacy a,
+.reg-precontract a {
+  color: var(--primary-dark);
+}
+
+.reg-precontract {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.reg-precontract ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.reg-precontract li + li {
+  margin-top: 4px;
 }
 
 .reg-step {

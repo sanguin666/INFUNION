@@ -174,6 +174,24 @@ export class CreateRegistrationDto {
   signedName!: string;
 }
 
+// The 14-day withdrawal: the email the request was sent with, its code.
+export class WithdrawDto {
+  @trimmed()
+  @IsEmail()
+  @MaxLength(200)
+  email!: string;
+
+  @IsString()
+  @Matches(/^\d{6}$/)
+  code!: string;
+
+  @IsOptional()
+  @optional()
+  @IsString()
+  @MaxLength(2000)
+  reason?: string;
+}
+
 // ---- the superadmin's side
 
 export class ApproveRegistrationDto {
@@ -210,6 +228,6 @@ export class DeclineRegistrationDto {
 
 export class RegistrationListQuery {
   @IsOptional()
-  @IsIn(['open', 'approved', 'declined', 'all'])
-  status?: 'open' | 'approved' | 'declined' | 'all';
+  @IsIn(['open', 'approved', 'declined', 'withdrawn', 'all'])
+  status?: 'open' | 'approved' | 'declined' | 'withdrawn' | 'all';
 }

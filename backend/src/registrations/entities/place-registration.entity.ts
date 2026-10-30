@@ -146,4 +146,11 @@ export class PlaceRegistration {
   // The place Approve created (or the existing one it linked).
   @Column('uuid', { name: 'poi_id', nullable: true })
   poiId?: string | null;
+
+  // The 14-day withdrawal (TRLGDCU art. 102: a non-profit is a consumer).
+  @Column({ name: 'withdrawn_at', type: 'timestamptz', nullable: true })
+  withdrawnAt?: Date | null;
+
+  @Column('text', { name: 'withdraw_reason', nullable: true })
+  withdrawReason?: string | null;
 }
