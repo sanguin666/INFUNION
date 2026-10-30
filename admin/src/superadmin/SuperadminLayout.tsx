@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { getSuperadminSession, setSuperadminSession } from '../api/client';
+import { countOpenRegistrations } from '../api/superadmin';
 import { Lockup } from '../components/LogoMark';
 import { AppearancePicker } from '../components/AppearancePicker';
 import { LanguagePicker } from '../components/LanguagePicker';
 import { useSa } from './format';
 import { SuperadminGate } from './SuperadminGate';
 
-const NAV = ['overview', 'communities', 'accounts', 'health', 'journal'];
+const NAV = ['overview', 'registrations', 'communities', 'accounts', 'health', 'journal'];
 
 function SessionClock() {
   const { s } = useSa();
@@ -28,6 +29,15 @@ export function SuperadminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { s } = useSa();
+  // Place requests waiting for a decision, beside their menu entry.
+  const [waiting, setWaiting] = useState(0);
+  const location = useLocation();
+  useEffect(() => {
+    if (!getSuperadminSession()) return;
+    countOpenRegistrations()
+      .then((r) => setWaiting(r.open))
+      .catch(() => setWaiting(0));
+  }, [location.pathname]);
   if (!user) return null;
   if (!user.isSuperadmin) return <Navigate to="/" replace />;
 
@@ -55,6 +65,11 @@ export function SuperadminLayout() {
           {NAV.map((to) => (
             <NavLink key={to} to={to}>
               {s(`nav.${to}`)}
+              {to === 'registrations' && waiting > 0 && (
+                <span className="place-waiting nav-count" aria-label={s('registrations.badge', { n: waiting })}>
+                  {waiting}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>

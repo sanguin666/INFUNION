@@ -15,11 +15,13 @@ import { SuperadminAuthService } from './superadmin-auth.service.js';
 import { SuperadminService } from './superadmin.service.js';
 import { SuperadminBootstrap } from './superadmin-bootstrap.service.js';
 import { ErrorTracker } from './error-tracker.js';
+import { RegistrationsModule } from '../registrations/registrations.module.js';
 
 @Module({
   imports: [
     AuthGuardsModule,
     ActiveModulesModule,
+    RegistrationsModule,
     TypeOrmModule.forFeature([Poi, User, UserPoi, ActiveModule, BillingInvoice, PushToken, AuditLog]),
   ],
   controllers: [SuperadminAuthController, SuperadminController],

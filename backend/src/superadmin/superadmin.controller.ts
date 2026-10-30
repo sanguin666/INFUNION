@@ -36,6 +36,13 @@ import {
   UpdateCommunityDto,
   SuperadminPlanDto,
 } from './dto/superadmin.dto.js';
+import { RegistrationsService } from '../registrations/registrations.service.js';
+import {
+  ApproveRegistrationDto,
+  DeclineRegistrationDto,
+  RegistrationListQuery,
+  RegistrationQuestionDto,
+} from '../registrations/dto/registration.dto.js';
 
 type AccountRequest = SuperadminRequest & { superadmin: SuperadminIdentity };
 
@@ -90,10 +97,56 @@ export class SuperadminController {
   constructor(
     private readonly service: SuperadminService,
     private readonly auth: SuperadminAuthService,
+    private readonly registrations: RegistrationsService,
   ) {}
 
   private actor(request: SuperadminRequest) {
     return { identity: request.superadmin, request };
+  }
+
+  // ---- place requests from the landing (Seb, 30 Oct 2026)
+
+  @Get('registrations')
+  registrationList(@Query() query: RegistrationListQuery) {
+    return this.registrations.list(query.status);
+  }
+
+  @Get('registrations/count')
+  async registrationCount() {
+    return { open: await this.registrations.openCount() };
+  }
+
+  @Get('registrations/:id')
+  registration(@Param('id', ParseUUIDPipe) id: string) {
+    return this.registrations.detail(id);
+  }
+
+  @Post('registrations/:id/document/:state')
+  @HttpCode(200)
+  registrationDocument(
+    @Req() request: SuperadminRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('state', new ParseEnumPipe({ checked: 'checked', unchecked: 'unchecked' })) state: 'checked' | 'unchecked',
+  ) {
+    return this.service.registrationDocumentChecked(this.actor(request), id, state === 'checked');
+  }
+
+  @Post('registrations/:id/approve')
+  @HttpCode(200)
+  approveRegistration(@Req() request: SuperadminRequest, @Param('id', ParseUUIDPipe) id: string, @Body() dto: ApproveRegistrationDto) {
+    return this.service.approveRegistration(this.actor(request), id, dto);
+  }
+
+  @Post('registrations/:id/question')
+  @HttpCode(200)
+  questionRegistration(@Req() request: SuperadminRequest, @Param('id', ParseUUIDPipe) id: string, @Body() dto: RegistrationQuestionDto) {
+    return this.service.questionRegistration(this.actor(request), id, dto.message);
+  }
+
+  @Post('registrations/:id/decline')
+  @HttpCode(200)
+  declineRegistration(@Req() request: SuperadminRequest, @Param('id', ParseUUIDPipe) id: string, @Body() dto: DeclineRegistrationDto) {
+    return this.service.declineRegistration(this.actor(request), id, dto.reason, !!dto.block);
   }
 
   @Get('overview')

@@ -21,13 +21,23 @@ import { runExclusive } from './common/locks/run-exclusive.js';
  * subject to CORS at all, so this is not what keeps the API safe. The
  * guards are.
  */
+// The landing's own addresses, always allowed: its "Register your place"
+// form (Seb, 30 Oct 2026) and its place search call the API from there.
+const LANDING_ORIGINS = [
+  'https://infunion.app',
+  'https://www.infunion.app',
+  'https://infunion-landing.up.railway.app',
+  'https://infunion-landing-staging.up.railway.app',
+];
+
 function corsOrigins(configService: ConfigService): string[] | boolean {
   const configured = configService.get<string>('CORS_ORIGINS');
   if (configured) {
-    return configured
+    const listed = configured
       .split(',')
       .map((origin) => origin.trim())
       .filter(Boolean);
+    return [...new Set([...listed, ...LANDING_ORIGINS])];
   }
   const isProduction =
     configService.get<string>('NODE_ENV', 'development') === 'production';
