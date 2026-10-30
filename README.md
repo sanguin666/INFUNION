@@ -14,7 +14,7 @@ docker-compose.yml   Local PostgreSQL for development
 
 ## Base data model
 
-- `users` — either a congregant (identified by phone number, signing in with a code sent by SMS) or a community admin (identified by email + password, used by the admin dashboard); each has a `language` (`en`/`es`/`fr`) for their own UI
+- `users` — either a member (identified by phone number or email, signing in with a code sent by SMS or email) or a community admin (identified by email + password, used by the admin dashboard); each has a `language` (`en`/`es`/`fr`) for their own UI
 - `pois` — a point of interest a user can join, with a name, `type` (only `church` for now — the name stays generic since other kinds of venues/organizations may be supported later), `language` (the language this POI publishes content in), address, and the QR code token used for onboarding
 - `user_pois` — many-to-many join table: a user can belong to several POIs, with a `role` (`member` or `admin`) per POI — an admin user can manage several churches this way
 - `active_modules` — the product modules subscribed to by a POI (e.g. `donations`, `events`), with subscription status and expiration date
@@ -327,9 +327,15 @@ Three things changed shape rather than just gaining a guard:
 - `User.passwordHash` is now `select: false`, so no query returns it unless it asks by name — only `UsersService.findByEmailForLogin` does.
 - The guards live in `auth/auth-guards.module.ts` rather than `AuthModule`, and `PoiAdminGuard` reads the `user_pois` table directly. `AuthModule` needs `users`, `user-pois` and `pois`, so guards living there made every guarded module's imports circular.
 
-## Congregant login (phone + SMS code)
+## Member login (email or phone + code)
 
-The app signs someone in with a phone number and a 6-digit code — no password, which is deliberate for an audience that mostly doesn't want to manage one.
+The app signs someone in with an email address or a phone number and a 6-digit code — no password. One field, "Email or phone number"; the backend tells them apart by the `@`.
+
+- `POST /auth/code/request` `{ login, language? }` — sends a code to that email or number (`channel: 'email' | 'sms'` in the answer), same limits as below. The email is written in `language` and sent from `EMAIL_FROM` (default `register@infunion.app`).
+- `POST /auth/code/verify` `{ login, code, firstName? }` — returns `{ accessToken }`. An email that already belongs to an admin opens that admin's account (whoever reads the inbox could reset the password anyway); the superadmin still needs its own code.
+- The phone-only endpoints below stay for APKs built before 30 Oct 2026.
+
+**Email sending.** Set `BREVO_API_KEY` (Brevo, EU-hosted, free up to 300 emails a day) and the codes go out by email; `EMAIL_FROM` / `EMAIL_FROM_NAME` set the sender. The sender's domain must be verified in Brevo (SPF, DKIM and DMARC records on infunion.app). Without the key, `ConsoleEmailSender` logs the email and the code comes back as `devCode`, as for SMS.
 
 - `POST /auth/phone/request-code` `{ phone }` — sends a code, valid 10 minutes. One code per number per minute, five per hour, five wrong guesses before the code is burnt. Only a bcrypt hash of the code is stored (`phone_verification_codes`).
 - `POST /auth/phone/verify` `{ phone, code, firstName? }` — returns `{ accessToken }` (the same 7-day JWT the admin dashboard uses). A number that verifies for the first time gets an account right there; `firstName` is only written on that first sign-in.

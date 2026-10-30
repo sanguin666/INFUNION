@@ -7,7 +7,8 @@ import {
 } from 'typeorm';
 
 /**
- * One SMS login code sent to one phone number. Kept in the database rather
+ * One login code sent to one phone number (by SMS) or one email address.
+ * Exactly one of `phone` and `email` is set. Kept in the database rather
  * than in memory so a code stays valid across a backend restart (a dev
  * running `start:dev` restarts on every save) and so several backend
  * instances would agree on it later.
@@ -24,8 +25,13 @@ export class PhoneVerificationCode {
   // phone-auth.service.ts, which normalizes before both writing and reading
   // so "+34 600 00 00 00" and "+34600000000" are the same person.
   @Index()
-  @Column()
-  phone!: string;
+  @Column({ type: 'varchar', nullable: true })
+  phone?: string | null;
+
+  // Trimmed and lower-cased, for the same reason (see normalizeEmail).
+  @Index()
+  @Column({ type: 'varchar', nullable: true })
+  email?: string | null;
 
   @Column({ name: 'code_hash' })
   codeHash!: string;

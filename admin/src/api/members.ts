@@ -5,6 +5,8 @@ export type MemberRow = {
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
+  // Members who sign in by email have one instead of (or as well as) a phone.
+  email: string | null;
   joinedAt: string;
   lastMessage: { body: string; fromStaff: boolean; createdAt: string } | null;
   // The member wrote since the office last opened the conversation.

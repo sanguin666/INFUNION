@@ -280,7 +280,7 @@ type Props = {
 
 /** Whatever name someone has given, for the profile button's label. */
 function displayName(me: Me): string {
-  return [me.firstName, me.lastName].filter(Boolean).join(' ').trim() || (me.phone ?? '');
+  return [me.firstName, me.lastName].filter(Boolean).join(' ').trim() || (me.phone ?? me.email ?? '');
 }
 
 type Described = { icon: (color: string) => ReactNode; label: string };
