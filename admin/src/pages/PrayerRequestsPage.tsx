@@ -37,6 +37,7 @@ export function PrayerRequestsPage() {
       {items === null && !error && <p className="muted">{t('prayerRequests.loading')}</p>}
       {items?.length === 0 && <p className="muted">{t('prayerRequests.empty')}</p>}
 
+      <div className="card-grid">
       {items?.map((item) => (
         <div key={item.id} className="card">
           <p>{item.message}</p>
@@ -49,6 +50,7 @@ export function PrayerRequestsPage() {
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }

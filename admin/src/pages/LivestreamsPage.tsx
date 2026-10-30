@@ -120,6 +120,7 @@ export function LivestreamsPage() {
       {error && <p className="error-text">{error}</p>}
       {items === null && !error && <p className="muted">{t('livestreams.loading')}</p>}
 
+      <div className="card-grid">
       {items?.map((item) => (
         <div key={item.id} className="card">
           <p className="card-title">{item.title}</p>
@@ -144,6 +145,7 @@ export function LivestreamsPage() {
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }

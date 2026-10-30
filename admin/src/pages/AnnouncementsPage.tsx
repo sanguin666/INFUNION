@@ -217,6 +217,7 @@ export function AnnouncementsPage() {
       {error && <p className="error-text">{error}</p>}
       {items === null && !error && <p className="muted">{t('announcements.loading')}</p>}
 
+      <div className="card-grid">
       {items?.map((item) =>
         editingId === item.id ? (
           <div key={item.id} className="card form">
@@ -259,6 +260,7 @@ export function AnnouncementsPage() {
           </div>
         ),
       )}
+      </div>
     </div>
   );
 }
