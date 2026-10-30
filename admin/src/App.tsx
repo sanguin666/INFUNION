@@ -27,6 +27,8 @@ import { SuperadminCommunityPage } from './superadmin/CommunityPage';
 import { SuperadminAccountsPage } from './superadmin/AccountsPage';
 import { SuperadminHealthPage } from './superadmin/HealthPage';
 import { SuperadminJournalPage } from './superadmin/JournalPage';
+import { SuperadminRegistrationsPage } from './superadmin/RegistrationsPage';
+import { SuperadminRegistrationPage } from './superadmin/RegistrationPage';
 
 // Reconciles the UI's language with the account's saved one on login.
 // An explicit choice never gets silently discarded either direction: if
@@ -128,6 +130,8 @@ function AppRoutes() {
       >
         <Route index element={<Navigate to="overview" replace />} />
         <Route path="overview" element={<SuperadminOverviewPage />} />
+        <Route path="registrations" element={<SuperadminRegistrationsPage />} />
+        <Route path="registrations/:id" element={<SuperadminRegistrationPage />} />
         <Route path="communities" element={<SuperadminCommunitiesPage />} />
         <Route path="communities/:poiId" element={<SuperadminCommunityPage />} />
         <Route path="accounts" element={<SuperadminAccountsPage />} />

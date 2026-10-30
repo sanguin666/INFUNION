@@ -32,6 +32,7 @@ import { PublicFilesModule } from './public-files/public-files.module.js';
 import { RateLimitModule } from './common/rate-limit/rate-limit.module.js';
 import { VendorModule } from './vendor/vendor.module.js';
 import { AppUpdatesModule } from './app-updates/app-updates.module.js';
+import { RegistrationsModule } from './registrations/registrations.module.js';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { AppUpdatesModule } from './app-updates/app-updates.module.js';
     RateLimitModule,
     VendorModule,
     AppUpdatesModule,
+    RegistrationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

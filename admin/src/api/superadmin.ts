@@ -258,3 +258,97 @@ export const getJournal = (params: { before?: string; action?: string } = {}) =>
 
 export const changeSuperadminPassword = (currentPassword: string, newPassword: string) =>
   guarded(() => apiPost<{ changed: true }>('/superadmin/me/password', { currentPassword, newPassword }));
+
+// ---- place requests from the landing (Seb, 30 Oct 2026)
+
+export type RegistrationStatus = 'pending' | 'question' | 'approved' | 'declined';
+
+export type RegistrationRow = {
+  id: string;
+  status: RegistrationStatus;
+  placeName: string;
+  type: PoiType;
+  city: string;
+  plan: PlanTier;
+  firstName: string;
+  lastName: string;
+  email: string;
+  claim: boolean;
+  poiId: string | null;
+  createdAt: string;
+  warnings: number;
+};
+
+export type RegistrationCheck = {
+  key:
+    | 'emailConfirmed'
+    | 'taxIdValid'
+    | 'taxIdKind'
+    | 'taxIdUnused'
+    | 'nameUnused'
+    | 'website'
+    | 'firstFromEmail'
+    | 'firstFromIp'
+    | 'firstFromPhone'
+    | 'documentChecked'
+    | 'account';
+  level: 'ok' | 'warn' | 'info';
+  detail?: string;
+  n?: number;
+};
+
+export type RegistrationDetail = Omit<RegistrationRow, 'warnings'> & {
+  address: string;
+  postalCode: string;
+  country: string;
+  language: SupportedLanguage;
+  website: string | null;
+  legalName: string;
+  taxId: string;
+  documentName: string | null;
+  // Relative signed link; the API base goes in front.
+  documentUrl: string | null;
+  documentCheckedAt: string | null;
+  existingPoi: { id: string; name: string; city: string | null } | null;
+  role: string;
+  phone: string | null;
+  billingInterval: 'monthly' | 'yearly';
+  termsVersion: string;
+  dpaVersion: string;
+  religiousDataAgreed: boolean;
+  signedName: string;
+  signedAt: string;
+  ip: string | null;
+  question: string | null;
+  questionedAt: string | null;
+  declineReason: string | null;
+  decidedAt: string | null;
+  decidedBy: string | null;
+  checks: RegistrationCheck[];
+};
+
+export type RegistrationFilter = 'open' | 'approved' | 'declined' | 'all';
+
+export const listRegistrations = (status: RegistrationFilter) =>
+  guarded(() => apiGet<RegistrationRow[]>(`/superadmin/registrations?status=${status}`));
+
+export const countOpenRegistrations = () => guarded(() => apiGet<{ open: number }>('/superadmin/registrations/count'));
+
+export const getRegistration = (id: string) => guarded(() => apiGet<RegistrationDetail>(`/superadmin/registrations/${id}`));
+
+export const setRegistrationDocumentChecked = (id: string, checked: boolean) =>
+  guarded(() => apiPost<RegistrationDetail>(`/superadmin/registrations/${id}/document/${checked ? 'checked' : 'unchecked'}`));
+
+export const approveRegistration = (id: string, body: { type?: PoiType; offerPlan?: boolean }) =>
+  guarded(() =>
+    apiPost<{ registration: RegistrationDetail; admin: NewAdmin; emailsDelivered: boolean }>(
+      `/superadmin/registrations/${id}/approve`,
+      body,
+    ),
+  );
+
+export const questionRegistration = (id: string, message: string) =>
+  guarded(() => apiPost<RegistrationDetail>(`/superadmin/registrations/${id}/question`, { message }));
+
+export const declineRegistration = (id: string, reason: string, block: boolean) =>
+  guarded(() => apiPost<RegistrationDetail>(`/superadmin/registrations/${id}/decline`, { reason, block }));
