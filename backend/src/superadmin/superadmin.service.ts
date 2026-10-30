@@ -449,7 +449,11 @@ export class SuperadminService {
       poi.legalPhone = r.phone ?? null;
       poi.billingInterval = r.billingInterval;
       await this.pois.save(poi);
-      if (paid && !dto.offerPlan) await this.billing.startTrial(poi.id, paid);
+      // The free month only if this organisation (tax ID) never had one;
+      // otherwise the place opens on Basic and chooses its plan in Modules.
+      if (paid && !dto.offerPlan && !(await this.billing.trialTakenBy(r.taxId, poi.id))) {
+        await this.billing.startTrial(poi.id, paid);
+      }
     }
     const user = await this.users.findOne({ where: { id: admin.userId } });
     if (user && !user.lastName) await this.users.update(user.id, { lastName: r.lastName });
