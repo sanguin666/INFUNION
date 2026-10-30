@@ -100,8 +100,12 @@ const styles = themedStyles(() => ({
   wordmark: {
     marginTop: spacing.xs,
   },
+  // The tagline gets the panel's full width, out to its padding, so it
+  // stays on one line in every language.
   welcome: {
     textAlign: 'center',
+    alignSelf: 'stretch',
+    marginHorizontal: -spacing.lg,
   },
   buttons: {
     alignSelf: 'stretch',

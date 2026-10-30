@@ -43,7 +43,9 @@ type Route =
   | { name: 'addPlace' }
   | { name: 'scan' }
   | { name: 'nearby'; origin: Origin | null; query?: string }
-  | { name: 'signIn' }
+  // `signUp` only changes the screen's title: the backend makes an account
+  // on the first code that verifies either way.
+  | { name: 'signIn'; signUp?: boolean }
   | { name: 'hub'; poi: Poi };
 
 /**
@@ -323,7 +325,7 @@ function AppRoutes() {
 
       {ready && !me && current?.name !== 'signIn' && (
         <OnboardingScreen
-          onSignUp={() => push({ name: 'signIn' })}
+          onSignUp={() => push({ name: 'signIn', signUp: true })}
           onSignIn={startSignIn}
           onDemoSignIn={demoAvailable ? startDemoSignIn : undefined}
         />
@@ -333,6 +335,7 @@ function AppRoutes() {
 
       {ready && current?.name === 'signIn' && (
         <PhoneLoginScreen
+          signUp={current.signUp}
           onBack={() => setStack((s) => s.filter((route) => route.name !== 'signIn'))}
           // Where to go next is not this screen's business: signing in
           // changes `me`, and the effect above lands the app.

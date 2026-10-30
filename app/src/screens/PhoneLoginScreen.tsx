@@ -13,6 +13,8 @@ import { ApiError } from '../api/client';
 import { cardSurface, colors, fontSizes, radii, spacing, themedStyles } from '../theme/theme';
 
 type Props = {
+  // Came from "Sign up": same flow, titled "Create your account".
+  signUp?: boolean;
   onBack: () => void;
   onSignedIn: () => void;
 };
@@ -27,7 +29,7 @@ type Props = {
  * routes, so the address stays visible while the code is typed and "wrong
  * address" is a tap away.
  */
-export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
+export function PhoneLoginScreen({ signUp, onBack, onSignedIn }: Props) {
   const { t, language } = useI18n();
   const { signIn } = useAuth();
 
@@ -103,7 +105,7 @@ export function PhoneLoginScreen({ onBack, onSignedIn }: Props) {
         <Lockup height={48} />
       </View>
 
-      <AccessibleText variant="title">{t('signIn.title')}</AccessibleText>
+      <AccessibleText variant="title">{t(signUp ? 'signIn.signUpTitle' : 'signIn.title')}</AccessibleText>
 
       {step === 'login' ? (
         <>
