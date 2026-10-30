@@ -141,6 +141,57 @@ describe('Superadmin (e2e)', () => {
     expect(actions).toEqual(expect.arrayContaining(['superadmin.poi.create', 'superadmin.module.offer', 'admin.login']));
   });
 
+  it('links one admin to several places, from the community and from the account', async () => {
+    const { superToken } = await enrolled();
+    const first = await client(app)
+      .post('/superadmin/pois')
+      .set(as(superToken))
+      .send({ name: 'Santa María', adminEmail: 'padre@parroquias.test', adminFirstName: 'Miguel' })
+      .expect(201);
+    const password = first.body.admin.temporaryPassword as string;
+    const second = await client(app)
+      .post('/superadmin/pois')
+      .set(as(superToken))
+      .send({ name: 'San José', adminEmail: 'ana@sanjose.test' })
+      .expect(201);
+    const secondId = second.body.poi.id as string;
+
+    const unknown = await client(app).get('/superadmin/admins/lookup?email=nobody@x.test').set(as(superToken)).expect(200);
+    expect(unknown.body).toEqual({ exists: false });
+    const lookup = await client(app).get('/superadmin/admins/lookup?email=Padre@Parroquias.test').set(as(superToken)).expect(200);
+    expect(lookup.body).toMatchObject({ exists: true, firstName: 'Miguel', places: [{ name: 'Santa María' }] });
+
+    // Same account, same password: no new one is made.
+    const added = await client(app)
+      .post(`/superadmin/pois/${secondId}/admins`)
+      .set(as(superToken))
+      .send({ email: 'padre@parroquias.test' })
+      .expect(201);
+    expect(added.body.admin.temporaryPassword).toBeNull();
+    const miguel = added.body.community.admins.find((a: { email: string }) => a.email === 'padre@parroquias.test');
+    expect(miguel.otherPlaces).toEqual([{ id: first.body.poi.id, name: 'Santa María' }]);
+
+    const token = await passwordToken('padre@parroquias.test', password);
+    const me = await client(app).get('/auth/me').set(as(token)).expect(200);
+    expect(me.body.adminPois.map((p: { name: string }) => p.name).sort()).toEqual(['San José', 'Santa María']);
+
+    // From the account page: take a place away, give it back.
+    const userId = lookup.body.userId as string;
+    const removed = await client(app).delete(`/superadmin/users/${userId}/places/${secondId}`).set(as(superToken)).expect(200);
+    expect(removed.body.communities.map((c: { name: string }) => c.name)).toEqual(['Santa María']);
+    await client(app).get(`/pois/${secondId}/dashboard`).set(as(token)).expect(403);
+    const back = await client(app).post(`/superadmin/users/${userId}/places/${secondId}`).set(as(superToken)).expect(201);
+    expect(back.body.account.communities.map((c: { name: string }) => c.name).sort()).toEqual(['San José', 'Santa María']);
+    await client(app).get(`/pois/${secondId}/dashboard`).set(as(token)).expect(200);
+    await client(app).post(`/superadmin/users/${userId}/places/${secondId}`).set(as(superToken)).expect(409);
+
+    // An app-only account (phone, no email) can't open the admin.
+    const memberToken = await signIn(app, '+34600700009', 'Rosa');
+    const member = await client(app).get('/auth/me').set(as(memberToken)).expect(200);
+    const refused = await client(app).post(`/superadmin/users/${member.body.id}/places/${secondId}`).set(as(superToken)).expect(400);
+    expect(refused.body.message).toBe('admin_needs_email');
+  });
+
   it('creates a community with a plan offered from the start', async () => {
     const { superToken } = await enrolled();
     const created = await client(app)

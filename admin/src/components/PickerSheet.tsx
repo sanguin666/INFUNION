@@ -6,6 +6,10 @@ export type PickerOption = {
   // Set when the label is written in a language of its own (a language's
   // name in itself), so screen readers pronounce it right.
   lang?: string;
+  // The place switcher shows each place's mark before its name, and a
+  // count of what waits there after it.
+  icon?: ReactNode;
+  badge?: ReactNode;
 };
 
 /**
@@ -70,7 +74,15 @@ export function PickerSheet({
                   onClose();
                 }}
               >
-                <span lang={option.lang}>{option.label}</span>
+                {option.icon ? (
+                  <span className="sheet-option-main">
+                    {option.icon}
+                    <span lang={option.lang}>{option.label}</span>
+                  </span>
+                ) : (
+                  <span lang={option.lang}>{option.label}</span>
+                )}
+                {option.badge}
                 {/* A tick as well as the colour, so the choice is not
                     carried by colour alone. */}
                 {selected && <CheckIcon />}

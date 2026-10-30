@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { I18nProvider, useI18n } from './i18n/I18nContext';
 import { LoginPage } from './pages/LoginPage';
+import { lastPlace } from './layout/placeSwitcher';
 import { DashboardLayout } from './layout/DashboardLayout';
 import { AnnouncementsPage } from './pages/AnnouncementsPage';
 import { EventsPage } from './pages/EventsPage';
@@ -59,7 +60,9 @@ function Home() {
   const { user } = useAuth();
   const { t } = useI18n();
   if (!user) return null;
-  const firstPoi = user.adminPois[0];
+  // An admin of several places opens the one they used last.
+  const remembered = lastPlace();
+  const firstPoi = user.adminPois.find((p) => p.id === remembered) ?? user.adminPois[0];
   if (!firstPoi && user.isSuperadmin) return <Navigate to="/superadmin" replace />;
   if (!firstPoi) {
     return (

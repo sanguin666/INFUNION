@@ -13,6 +13,10 @@ import { PoiBadge } from '../poi-badges/entities/poi-badge.entity.js';
 import { BadgeKind } from '../common/enums/badge-kind.enum.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
 import { PrayerRequest } from '../prayer-requests/entities/prayer-request.entity.js';
+import { ActiveModule } from '../active-modules/entities/active-module.entity.js';
+import { MemberRole } from '../common/enums/member-role.enum.js';
+import { ModuleStatus } from '../common/enums/module-status.enum.js';
+import { ModuleType } from '../common/enums/module-type.enum.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -63,6 +67,9 @@ export type DashboardSummary = {
   prayerRequestsThisWeek: number;
 };
 
+/** For the place switcher: how many things wait on the office there. */
+export type PlaceWaiting = { poiId: string; waiting: number };
+
 function iso(date: Date): string {
   return date.toISOString();
 }
@@ -89,7 +96,60 @@ export class DashboardService {
     @InjectRepository(PoiBadge) private readonly badges: Repository<PoiBadge>,
     @InjectRepository(UserPoi) private readonly memberships: Repository<UserPoi>,
     @InjectRepository(PrayerRequest) private readonly prayers: Repository<PrayerRequest>,
+    @InjectRepository(ActiveModule) private readonly modules: Repository<ActiveModule>,
   ) {}
+
+  /**
+   * Every place this admin runs, with what members are waiting on there:
+   * requests to open or answer, papers to check, unread messages. Only for
+   * modules the place has on, as on its dashboard.
+   */
+  async waitingByPlace(userId: string): Promise<PlaceWaiting[]> {
+    const memberships = await this.memberships.find({
+      where: { user: { id: userId }, role: MemberRole.ADMIN },
+      relations: { poi: true },
+    });
+    const places = memberships.filter((m) => !m.poi.suspendedAt).map((m) => m.poi.id);
+    if (places.length === 0) return [];
+    const live = await this.modules.find({
+      where: {
+        poi: { id: In(places) },
+        moduleType: In([ModuleType.REQUESTS, ModuleType.MESSAGES]),
+        status: In([ModuleStatus.TRIAL, ModuleStatus.ACTIVE]),
+      },
+      relations: { poi: true },
+    });
+    const isLive = (poiId: string, type: ModuleType) =>
+      live.some((m) => m.poi.id === poiId && m.moduleType === type);
+
+    return Promise.all(
+      places.map(async (poiId) => {
+        let waiting = 0;
+        if (isLive(poiId, ModuleType.REQUESTS)) {
+          const summary = await this.summary(poiId);
+          waiting += summary.newRequests.length + summary.awaitingReply.length + summary.documentsToCheck.length;
+        }
+        if (isLive(poiId, ModuleType.MESSAGES)) waiting += await this.unreadConversations(poiId);
+        return { poiId, waiting };
+      }),
+    );
+  }
+
+  /** Conversations where a member wrote last, after the office last looked. */
+  private async unreadConversations(poiId: string): Promise<number> {
+    const rows: { n: string }[] = await this.memberships.query(
+      `SELECT count(*) AS n
+         FROM member_conversations c
+         JOIN LATERAL (
+           SELECT m.from_staff, m.created_at FROM member_messages m
+            WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1
+         ) last ON true
+        WHERE c.poi_id = $1 AND NOT last.from_staff
+          AND (c.staff_seen_at IS NULL OR last.created_at > c.staff_seen_at)`,
+      [poiId],
+    );
+    return Number(rows[0]?.n ?? 0);
+  }
 
   async summary(poiId: string, now = new Date()): Promise<DashboardSummary> {
     const weekAgo = new Date(now.getTime() - 7 * DAY_MS);
