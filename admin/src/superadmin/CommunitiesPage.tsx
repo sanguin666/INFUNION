@@ -7,14 +7,14 @@ import {
   type CommunityRow,
   type NewAdmin,
 } from '../api/superadmin';
-import type { PoiType, SupportedLanguage } from '../api/types';
+import type { PlanTier, PoiType, SupportedLanguage } from '../api/types';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES } from '../i18n/translations';
 import { useI18n } from '../i18n/I18nContext';
 import { PLACE_KINDS } from '../placeKinds';
 import { useSa } from './format';
 import { PasswordReveal } from './PasswordReveal';
 
-const FILTERS: (CommunityBilling | 'all')[] = ['all', 'paying', 'trial', 'comped', 'offered', 'free', 'suspended'];
+const FILTERS: (CommunityBilling | 'all')[] = ['all', 'paying', 'trial', 'offered', 'free', 'suspended'];
 
 function BillingStatus({ row }: { row: Pick<CommunityRow, 'billing' | 'monthly' | 'nextTrialEnd' | 'plan'> }) {
   const { s, money, date, planLabel } = useSa();
@@ -33,10 +33,10 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
   const { t } = useI18n();
   const [adminEmail, setAdminEmail] = useState('');
   const [adminFirstName, setAdminFirstName] = useState('');
-  const [comped, setComped] = useState(false);
+  const [offeredPlan, setOfferedPlan] = useState<PlanTier>('basic');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const { s, error: describe } = useSa();
+  const { s, planLabel, error: describe } = useSa();
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -51,7 +51,7 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
         language,
         adminEmail,
         adminFirstName: adminFirstName || undefined,
-        billingComped: comped,
+        offeredPlan: offeredPlan === 'basic' ? undefined : offeredPlan,
       });
       onCreated(created.poi.id, created.admin);
     } catch (err) {
@@ -105,21 +105,15 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (poiId: string, admin:
           {s('communities.adminFirstName')}
           <input id="sa-new-admin-name" value={adminFirstName} onChange={(e) => setAdminFirstName(e.target.value)} maxLength={100} />
         </label>
-        <div className="form-row sa-switch-row">
-          <span>
-            {s('communities.comped')}
-            <span className="muted sa-hint">{s('communities.compedHint')}</span>
-          </span>
-          <input
-            id="sa-new-comped"
-            type="checkbox"
-            role="switch"
-            className="switch"
-            checked={comped}
-            onChange={(e) => setComped(e.target.checked)}
-            aria-label={s('communities.comped')}
-          />
-        </div>
+        <label>
+          {s('communities.offered')}
+          <select id="sa-new-plan" value={offeredPlan} onChange={(e) => setOfferedPlan(e.target.value as PlanTier)}>
+            <option value="basic">—</option>
+            <option value="essentials">{planLabel('essentials')}</option>
+            <option value="complete">{planLabel('complete')}</option>
+          </select>
+          <span className="muted sa-hint">{s('communities.compedHint')}</span>
+        </label>
       </div>
       {error && <p className="error-text">{error}</p>}
       <div className="card-actions sa-actions">
