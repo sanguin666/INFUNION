@@ -43,6 +43,6 @@ import { PoisModule } from '../pois/pois.module.js';
   ],
   // Re-exported so the modules that already import AuthModule for its
   // guards keep working unchanged.
-  exports: [AuthGuardsModule, UserPoisModule],
+  exports: [AuthGuardsModule, UserPoisModule, PhoneAuthService, EmailSender],
 })
 export class AuthModule {}

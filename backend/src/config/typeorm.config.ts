@@ -27,6 +27,8 @@ import { AuditLog } from '../superadmin/entities/audit-log.entity.js';
 import { MemberConversation } from '../member-messages/entities/member-conversation.entity.js';
 import { MemberMessage } from '../member-messages/entities/member-message.entity.js';
 import { RateLimit } from '../common/rate-limit/rate-limit.entity.js';
+import { PlaceRegistration } from '../registrations/entities/place-registration.entity.js';
+import { RegistrationBlock } from '../registrations/entities/registration-block.entity.js';
 
 // Every entity the app maps. Exported so the metadata check in
 // typeorm.config.spec.ts, and data-source.ts (which the TypeORM CLI loads
@@ -58,6 +60,8 @@ export const ENTITIES = [
   PushToken,
   EventReminder,
   AuditLog,
+  PlaceRegistration,
+  RegistrationBlock,
   MemberConversation,
   MemberMessage,
   RateLimit,

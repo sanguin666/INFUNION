@@ -3067,3 +3067,47 @@ label.link-button:focus-within {
     transform: rotate(90deg);
   }
 }
+
+/* Place requests (Seb, 30 Oct 2026): the waiting count beside the menu
+   entry, and the request page's label / value rows. */
+.sidebar nav a .nav-count {
+  margin-left: auto;
+}
+
+.sa-kv-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) minmax(0, 1fr);
+  gap: 4px 16px;
+  align-items: baseline;
+}
+
+.sa-kv-label {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.sa-kv-value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.sa-check-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.sa-inline-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+@media (max-width: 560px) {
+  .sa-kv-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

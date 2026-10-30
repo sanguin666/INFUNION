@@ -47,7 +47,7 @@ export function foldedNameSql(column: string): string {
 
 const KM_PER_DEGREE = 111.32;
 
-function foldName(text: string): string {
+export function foldName(text: string): string {
   return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/’/g, "'");
 }
 
