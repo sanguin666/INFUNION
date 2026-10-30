@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { User } from './users/entities/user.entity.js';
 import { Poi } from './pois/entities/poi.entity.js';
+import { PlanTier } from './common/enums/plan-tier.enum.js';
 import { UserPoi } from './user-pois/entities/user-poi.entity.js';
 import { ActiveModule } from './active-modules/entities/active-module.entity.js';
 import { Announcement } from './announcements/entities/announcement.entity.js';
@@ -115,7 +116,8 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
         description:
           'Acompañamos a niños y niñas con dificultades de aprendizaje y del desarrollo, y a sus familias: logopedia, deporte adaptado, talleres y un grupo de familias.',
         qrCodeToken: ASSOCIATION_QR_TOKEN,
-        billingComped: true,
+        plan: PlanTier.COMPLETE,
+        planOffered: true,
         legalName: 'Asociación Crecer Juntos',
         legalTaxId: 'G46000000',
         legalAddress: 'Carrer de Rafael Alberti, 8\n46183 L’Eliana (Valencia)',

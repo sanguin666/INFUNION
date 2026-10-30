@@ -122,20 +122,20 @@ export function SuperadminCommunityPage() {
     if (billing.comped) return [];
     const pending = busy?.startsWith('plan:') ?? false;
     const buttons = [];
-    if (billing.planOffered) {
-      buttons.push(
-        <DestructiveButton key="unoffer" quiet label={s('community.takePlanBack')} disabled={pending} onConfirm={() => actPlan('unoffer', s('community.planUnofferedMsg'))} />,
-      );
-      return buttons;
-    }
+    // infunion offers a whole plan, never single modules (Seb, 30 Oct 2026).
     for (const tier of ['essentials', 'complete'] as PlanTier[]) {
+      if (billing.planOffered && billing.plan === tier) continue;
       buttons.push(
         <button key={`offer-${tier}`} type="button" className="text-action" disabled={pending} onClick={() => actPlan('offer', s('community.planOfferedMsg', { plan: planLabel(tier) }), tier)}>
           {s('community.offerPlan', { plan: planLabel(tier) })}
         </button>,
       );
     }
-    if (billing.trialEndsAt || billing.plan === 'basic') {
+    if (billing.planOffered) {
+      buttons.push(
+        <DestructiveButton key="unoffer" quiet label={s('community.takePlanBack')} disabled={pending} onConfirm={() => actPlan('unoffer', s('community.planUnofferedMsg'))} />,
+      );
+    } else if (billing.trialEndsAt || billing.plan === 'basic') {
       buttons.push(
         <button key="trial" type="button" className="text-action" disabled={pending} onClick={() => actPlan('extend-trial', s('community.planExtendedMsg'), 'complete')}>
           {billing.trialEndsAt ? s('community.plusMonth') : s('community.planTrialStart', { plan: planLabel('complete') })}
@@ -169,12 +169,6 @@ export function SuperadminCommunityPage() {
     if (row?.offered) {
       buttons.push(
         <DestructiveButton key="unoffer" quiet label={s('community.unoffer')} disabled={pending} onConfirm={() => act(type, 'unoffer', s('community.unofferedMsg', { module: moduleLabel(type) }))} />,
-      );
-    } else if (!billing.comped && !allowed(type)) {
-      buttons.push(
-        <button key="offer" type="button" className="text-action" disabled={pending} onClick={() => act(type, 'offer', s('community.offeredMsg', { module: moduleLabel(type) }))}>
-          {s('community.offer')}
-        </button>,
       );
     }
     if (!live && allowed(type)) {
@@ -263,24 +257,6 @@ export function SuperadminCommunityPage() {
       <div className="card card-list">
         <div className="card-row">
           <span>
-            <span className="card-title">{s('community.compedRow')}</span>
-            <span className="sa-sub">{s('community.compedHint')}</span>
-          </span>
-          <input
-            id="sa-poi-comped"
-            type="checkbox"
-            role="switch"
-            className="switch"
-            checked={billing.comped}
-            disabled={busy === 'comped'}
-            onChange={(e) =>
-              run('comped', () => updateCommunity(id, { billingComped: e.target.checked }), e.target.checked ? s('community.compedOn') : s('community.compedOff'))
-            }
-            aria-label={s('community.compedRow')}
-          />
-        </div>
-        <div className="card-row">
-          <span>
             <span className="card-title">{s('community.planTitle')}</span>
             <span className="sa-sub">{planState(sa, billing)}</span>
           </span>
@@ -297,7 +273,7 @@ export function SuperadminCommunityPage() {
         ))}
       </div>
       <p className="muted sa-hint">
-        {billing.comped
+        {billing.comped || billing.planOffered
           ? s('community.nothingBilled')
           : s('community.payment', {
               method: billing.paymentMethod ?? s('community.noMethod'),

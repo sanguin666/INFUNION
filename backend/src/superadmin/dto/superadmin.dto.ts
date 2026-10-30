@@ -1,5 +1,4 @@
 import {
-  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -77,9 +76,6 @@ export class UpdateCommunityDto {
   @MaxLength(20)
   postalCode?: string;
 
-  @IsOptional()
-  @IsBoolean()
-  billingComped?: boolean;
 }
 
 export class CreateCommunityDto {
@@ -111,9 +107,10 @@ export class CreateCommunityDto {
   @MaxLength(20)
   postalCode?: string;
 
+  /** A plan infunion offers from the start; none means Basic. */
   @IsOptional()
-  @IsBoolean()
-  billingComped?: boolean;
+  @IsEnum(PlanTier)
+  offeredPlan?: PlanTier;
 
   @IsEmail()
   @MaxLength(200)

@@ -193,7 +193,7 @@ export class SuperadminService {
       },
       communities: {
         total: pois.length,
-        comped: pois.filter((p) => p.billingComped).length,
+        comped: pois.filter((p) => p.billingComped || p.planOffered).length,
         paying: paying.length,
         suspended: pois.filter((p) => p.suspendedAt).length,
         newThisMonth: pois.filter((p) => p.createdAt >= thisMonth).length,
@@ -348,14 +348,15 @@ export class SuperadminService {
   }
 
   async createCommunity(actor: Actor, dto: CreateCommunityDto) {
-    const { adminEmail, adminFirstName, billingComped, ...fields } = dto;
+    const { adminEmail, adminFirstName, offeredPlan, ...fields } = dto;
     const poi = await this.pois.save(
-      this.pois.create({ ...fields, name: fields.name.trim(), billingComped: !!billingComped, qrCodeToken: randomUUID() }),
+      this.pois.create({ ...fields, name: fields.name.trim(), qrCodeToken: randomUUID() }),
     );
     // Basic's modules (Événements, Dons, Annonces) are free and on from the start.
     await this.billing.switchOnPlanModules(poi.id);
+    if (offeredPlan && offeredPlan !== PlanTier.BASIC) await this.billing.offerPlan(poi.id, offeredPlan);
     const admin = await this.grantAdmin(poi, adminEmail, adminFirstName);
-    await this.log(actor, 'poi.create', poi, { adminEmail: admin.email, comped: !!billingComped });
+    await this.log(actor, 'poi.create', poi, { adminEmail: admin.email, offeredPlan: offeredPlan ?? null });
     return { poi: { id: poi.id, name: poi.name }, admin };
   }
 
@@ -365,7 +366,6 @@ export class SuperadminService {
     if (dto.name !== undefined) dto.name = dto.name.trim();
     Object.assign(poi, dto);
     await this.pois.save(poi);
-    if (dto.billingComped === false) await this.billing.settle(poiId);
     await this.log(actor, 'poi.update', poi, { fields: changed });
     return this.community(poiId);
   }

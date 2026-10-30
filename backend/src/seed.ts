@@ -17,6 +17,7 @@ import { ModuleType } from './common/enums/module-type.enum.js';
 import { ModuleStatus } from './common/enums/module-status.enum.js';
 import { LivestreamStatus } from './common/enums/livestream-status.enum.js';
 import { PoiType } from './common/enums/poi-type.enum.js';
+import { PlanTier } from './common/enums/plan-tier.enum.js';
 import { MemberRole } from './common/enums/member-role.enum.js';
 import { Language } from './common/enums/language.enum.js';
 import { PageBlockType } from './common/enums/page-block-type.enum.js';
@@ -450,10 +451,10 @@ async function seed() {
   const association = await seedAssociation(dataSource);
 
   // Module billing (30 Sep 2026): Carmen keeps every module on at no
-  // charge ("Offert"). St. Mary's and Holy Trinity pay like real
+  // charge, as Complete offered by infunion (Seb, 30 Oct 2026). St. Mary's and Holy Trinity pay like real
   // communities (Seb, 1 Oct 2026); a database seeded before that loses
   // their paid modules once, as the DemoCommunitiesPay migration does.
-  await poiRepository.update(carmen.id, { billingComped: true });
+  await poiRepository.update(carmen.id, { plan: PlanTier.COMPLETE, planOffered: true });
   for (const target of [poi, poi2]) {
     if (target.billingComped) {
       await poiRepository.update(target.id, { billingComped: false });

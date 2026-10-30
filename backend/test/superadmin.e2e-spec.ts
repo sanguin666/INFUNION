@@ -141,6 +141,18 @@ describe('Superadmin (e2e)', () => {
     expect(actions).toEqual(expect.arrayContaining(['superadmin.poi.create', 'superadmin.module.offer', 'admin.login']));
   });
 
+  it('creates a community with a plan offered from the start', async () => {
+    const { superToken } = await enrolled();
+    const created = await client(app)
+      .post('/superadmin/pois')
+      .set(as(superToken))
+      .send({ name: 'Santa Ana', adminEmail: 'office@santaana.test', offeredPlan: 'essentials' })
+      .expect(201);
+    const poiId = created.body.poi.id as string;
+    const billing = await client(app).get(`/pois/${poiId}/billing`).set(as(superToken)).expect(200);
+    expect(billing.body).toMatchObject({ plan: 'essentials', planOffered: true, comped: false, invoices: [] });
+  });
+
   it('suspends a community: its admins are out, the directory and its flyer forget it', async () => {
     const { superToken } = await enrolled();
     const officeToken = await signIn(app, '+34600700002', 'Office');
