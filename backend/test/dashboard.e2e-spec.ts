@@ -1,4 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { client, createPlace, createTestApp, resetDatabase, signInWithId } from './harness.js';
 
 /**
@@ -33,6 +34,40 @@ describe('Dashboard summary (e2e)', () => {
   it('is for the place’s staff only', async () => {
     await client(app).get(`/pois/${place.id}/dashboard`).expect(401);
     await client(app).get(`/pois/${place.id}/dashboard`).set(as(memberToken)).expect(403);
+  });
+
+  it('counts what waits in each place the admin runs, for the place switcher', async () => {
+    const other = await createPlace(app, adminToken, 'San Pablo');
+    await client(app).get('/me/admin-places/waiting').expect(401);
+    const waiting = async () =>
+      (await client(app).get('/me/admin-places/waiting').set(as(adminToken)).expect(200)).body as { poiId: string; waiting: number }[];
+    expect((await waiting()).map((w) => w.waiting)).toEqual([0, 0]);
+
+    for (const id of [place.id, other.id]) {
+      await app.get(DataSource).query(`UPDATE pois SET plan = 'essentials' WHERE id = $1`, [id]);
+      for (const moduleType of ['requests', 'messages']) {
+        await client(app).post(`/pois/${id}/active-modules`).set(as(adminToken)).send({ moduleType, status: 'active' }).expect(201);
+      }
+    }
+    await client(app)
+      .post('/auth/me/pois')
+      .set(as(memberToken))
+      .send({ qrCodeToken: other.qrCodeToken, religiousConsent: true })
+      .expect(201);
+    await client(app).post(`/pois/${place.id}/requests`).set(as(memberToken)).send({ type: 'baptism', contactName: 'Ana', details: 'Para mi hija' }).expect(201);
+    await client(app).post(`/pois/${other.id}/messages/mine`).set(as(memberToken)).send({ body: 'Hola' }).expect(201);
+    await client(app).post(`/pois/${other.id}/messages/mine`).set(as(memberToken)).send({ body: '¿Hay misa?' }).expect(201);
+
+    const counts = new Map((await waiting()).map((w) => [w.poiId, w.waiting]));
+    expect(counts.get(place.id)).toBe(1);
+    expect(counts.get(other.id)).toBe(1);
+
+    // The office opens the conversation: nothing waits there any more.
+    const me = await client(app).get('/auth/me').set(as(memberToken)).expect(200);
+    await client(app).get(`/pois/${other.id}/members/${me.body.id}/messages`).set(as(adminToken)).expect(200);
+    expect(new Map((await waiting()).map((w) => [w.poiId, w.waiting])).get(other.id)).toBe(0);
+    // A member gets nothing.
+    expect((await client(app).get('/me/admin-places/waiting').set(as(memberToken)).expect(200)).body).toEqual([]);
   });
 
   it('follows a request from new, to waiting for an answer, to answered', async () => {

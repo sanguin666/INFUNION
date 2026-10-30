@@ -109,6 +109,8 @@ export type CommunityAdmin = {
   firstName: string | null;
   lastName: string | null;
   lastLoginAt: string | null;
+  // The other places this person runs (one priest, three churches).
+  otherPlaces: { id: string; name: string }[];
 };
 
 export type CommunityDetail = {
@@ -172,6 +174,14 @@ export const moduleAction = (poiId: string, type: ModuleType, action: ModuleActi
 export const addAdmin = (poiId: string, email: string, firstName?: string) =>
   guarded(() => apiPost<{ admin: NewAdmin; community: CommunityDetail }>(`/superadmin/pois/${poiId}/admins`, { email, firstName }));
 
+export type AdminLookup =
+  | { exists: false }
+  | { exists: true; userId: string; firstName: string | null; lastName: string | null; places: { id: string; name: string }[] };
+
+/** Before "Add an admin": is this email already someone, and where are they admin? */
+export const lookupAdmin = (email: string) =>
+  guarded(() => apiGet<AdminLookup>(`/superadmin/admins/lookup?email=${encodeURIComponent(email)}`));
+
 export const removeAdmin = (poiId: string, userId: string) =>
   guarded(() => apiDelete<CommunityDetail>(`/superadmin/pois/${poiId}/admins/${userId}`));
 
@@ -196,6 +206,12 @@ export type Account = {
 
 export const searchAccounts = (q: string) =>
   guarded(() => apiGet<Account[]>(`/superadmin/users?q=${encodeURIComponent(q)}`));
+
+export const addPlaceToAccount = (userId: string, poiId: string) =>
+  guarded(() => apiPost<{ admin: NewAdmin; account: Account }>(`/superadmin/users/${userId}/places/${poiId}`));
+
+export const removePlaceFromAccount = (userId: string, poiId: string) =>
+  guarded(() => apiDelete<Account>(`/superadmin/users/${userId}/places/${poiId}`));
 
 export const deleteAccount = (userId: string) => guarded(() => apiDelete<{ deleted: true }>(`/superadmin/users/${userId}`));
 

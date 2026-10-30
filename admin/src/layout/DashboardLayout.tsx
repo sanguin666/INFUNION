@@ -5,7 +5,9 @@ import { useI18n } from '../i18n/I18nContext';
 import { Lockup } from '../components/LogoMark';
 import { LanguagePicker } from '../components/LanguagePicker';
 import { AppearancePicker } from '../components/AppearancePicker';
-import { PickerRow, PickerSheet, PinIcon } from '../components/PickerSheet';
+import { PickerRow, PickerSheet } from '../components/PickerSheet';
+import { PlaceChip } from '../components/PlaceChip';
+import { getWaitingByPlace, rememberPlace } from './placeSwitcher';
 import { getActiveModules } from '../api/activeModules';
 import { getPoi } from '../api/pois';
 import { getSuperadminSession } from '../api/client';
@@ -65,6 +67,20 @@ export function DashboardLayout() {
   // The superadmin opening a community it is not an admin of ("Ouvrir son
   // admin"): its name comes from the public directory.
   const memberPoi = user?.adminPois.find((p) => p.id === poiId);
+  const manyPlaces = (user?.adminPois.length ?? 0) > 1;
+
+  // An admin of several places comes back to the one they used last, and
+  // sees beside each place what members are waiting on there.
+  const [waiting, setWaiting] = useState<Record<string, number>>({});
+  useEffect(() => {
+    if (!memberPoi) return;
+    rememberPlace(memberPoi.id);
+    if (!manyPlaces) return;
+    getWaitingByPlace()
+      .then((rows) => setWaiting(Object.fromEntries(rows.map((r) => [r.poiId, r.waiting]))))
+      .catch(() => setWaiting({}));
+  }, [memberPoi, manyPlaces, location.pathname]);
+  const waitingElsewhere = Object.entries(waiting).some(([id, n]) => id !== poiId && n > 0);
   const [visitedName, setVisitedName] = useState<{ poiId: string; name: string } | null>(null);
   const visiting = !!user?.isSuperadmin && !!poiId && !memberPoi;
   useEffect(() => {
@@ -113,20 +129,36 @@ export function DashboardLayout() {
 
         <hr className="menu-divider" />
 
-        {user.adminPois.length > 1 ? (
+        {manyPlaces ? (
           <div className="poi-switcher">
             <p className="poi-switcher-caption">{t('layout.managing')}</p>
             <PickerRow
-              icon={<PinIcon />}
-              value={currentPoi?.name ?? ''}
-              ariaLabel={`${t('layout.managing')}: ${currentPoi?.name ?? ''}`}
+              icon={memberPoi ? <PlaceChip poi={memberPoi} /> : <span className="place-chip" />}
+              label={currentPoi?.name ?? ''}
+              value={
+                waitingElsewhere
+                  ? t('layout.placesWaiting', { n: user.adminPois.length })
+                  : t('layout.placesCount', { n: user.adminPois.length })
+              }
+              ariaLabel={`${t('layout.managing')}: ${currentPoi?.name ?? ''}. ${t('layout.choosePlace')}`}
               onClick={() => setPoiPickerOpen(true)}
             />
             <PickerSheet
               open={poiPickerOpen}
               onClose={() => setPoiPickerOpen(false)}
               title={t('layout.choosePlace')}
-              options={user.adminPois.map((poi) => ({ key: poi.id, label: poi.name }))}
+              options={[...user.adminPois]
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((poi) => ({
+                  key: poi.id,
+                  label: poi.name,
+                  icon: <PlaceChip poi={poi} size={36} />,
+                  badge: waiting[poi.id] ? (
+                    <span className="place-waiting" aria-label={t('layout.waitingCount', { n: waiting[poi.id] })}>
+                      {waiting[poi.id]}
+                    </span>
+                  ) : undefined,
+                }))}
               selectedKey={poiId ?? ''}
               onChoose={handlePoiChange}
               closeLabel={t('layout.close')}
