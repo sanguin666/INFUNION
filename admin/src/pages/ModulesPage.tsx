@@ -180,7 +180,7 @@ export function ModulesPage() {
   }
 
   function planAction(tier: PlanTier) {
-    if (fixed) return null;
+    if (fixed) return tier === plan ? <span className="plan-mine">{t('plans.yourPlan')}</span> : null;
     if (tier === plan) {
       if (billing!.pendingPlan) {
         return (
@@ -376,18 +376,19 @@ export function ModulesPage() {
         </div>
       )}
 
-      {fixed ? (
+      {fixed && (
         <div className="card">
           <p className="card-title">{t('plans.offeredTitle')}</p>
           <p className="muted" style={{ marginTop: 4 }}>
             {billing.comped ? t('plans.offeredBody') : t('plans.planOfferedBody', { plan: planName(plan) })}
           </p>
         </div>
-      ) : (
-        <div className="plan-grid" ref={plansRef}>
-          {PLAN_ORDER.map(planCard)}
-        </div>
       )}
+      {/* Shown even when infunion offers the plan, so everyone sees the
+          three plans and what each one has; only the buttons go. */}
+      <div className="plan-grid" ref={plansRef}>
+        {PLAN_ORDER.map(planCard)}
+      </div>
 
       <h3 className="modules-heading">{t('plans.inYourPlan')}</h3>
       <p className="muted">{t('plans.inYourPlanHint')}</p>

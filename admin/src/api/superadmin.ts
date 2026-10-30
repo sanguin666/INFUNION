@@ -138,7 +138,7 @@ export type CommunityInput = {
   address?: string;
   city?: string;
   postalCode?: string;
-  billingComped?: boolean;
+  offeredPlan?: PlanTier;
 };
 
 export type NewAdmin = { userId: string; email: string; temporaryPassword: string | null };
