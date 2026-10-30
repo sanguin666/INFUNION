@@ -36,11 +36,10 @@ export type Translations = {
   };
   signIn: {
     title: string;
+    signUpTitle: string;
     loginExplainer: string;
     loginLabel: string;
     loginPlaceholder: string;
-    nameLabel: string;
-    namePlaceholder: string;
     sendCode: string;
     sending: string;
     codeExplainer: string;
@@ -605,11 +604,10 @@ const en: Translations = {
   },
   signIn: {
     title: 'Sign in',
+    signUpTitle: 'Create your account',
     loginExplainer: 'Enter your email or phone number and we’ll send you a 6-digit code. There is no password to remember.',
     loginLabel: 'Email or phone number',
-    loginPlaceholder: 'name@example.com or +34 600 00 00 00',
-    nameLabel: 'Your name (optional)',
-    namePlaceholder: 'Shown next to what you post',
+    loginPlaceholder: 'name@example.com',
     sendCode: 'Send me a code',
     sending: 'Sending…',
     codeExplainer: 'Enter the 6-digit code sent to {{phone}}.',
@@ -701,7 +699,7 @@ const en: Translations = {
     error: "That didn't save. Please try again.",
   },
   onboarding: {
-    welcome: 'Welcome',
+    welcome: 'All your places,\nin one app',
     signUp: 'Sign up',
     signIn: 'Sign in',
     demoSignIn: 'Demo sign-in (María García)',
@@ -1125,7 +1123,7 @@ const en: Translations = {
   },
   privacy: {
     termsTitle: 'Before you start',
-    termsIntro: 'infunion keeps your email or phone number, your name and what you share with your places. Here is how we look after it.',
+    termsIntro: 'infunion keeps your email or phone number and what you share with your places. Here is how we look after it.',
     ageCheck: 'I am 14 or older',
     termsCheck: 'I accept the terms of use and the privacy policy',
     readTerms: 'Read the terms of use',
@@ -1176,11 +1174,10 @@ const es: Translations = {
   },
   signIn: {
     title: 'Iniciar sesión',
+    signUpTitle: 'Crea tu cuenta',
     loginExplainer: 'Escribe tu correo electrónico o tu número de teléfono y te enviaremos un código de 6 dígitos. No hay contraseña que recordar.',
     loginLabel: 'Correo electrónico o teléfono',
-    loginPlaceholder: 'nombre@ejemplo.com o +34 600 00 00 00',
-    nameLabel: 'Tu nombre (opcional)',
-    namePlaceholder: 'Aparecerá junto a lo que publiques',
+    loginPlaceholder: 'nombre@ejemplo.com',
     sendCode: 'Envíame un código',
     sending: 'Enviando…',
     codeExplainer: 'Escribe el código de 6 dígitos enviado a {{phone}}.',
@@ -1272,7 +1269,7 @@ const es: Translations = {
     error: 'No se pudo guardar. Inténtalo de nuevo.',
   },
   onboarding: {
-    welcome: 'Bienvenido',
+    welcome: 'Todos tus lugares,\nen una sola app',
     signUp: 'Crear cuenta',
     signIn: 'Iniciar sesión',
     demoSignIn: 'Entrar en la demo (María García)',
@@ -1696,7 +1693,7 @@ const es: Translations = {
   },
   privacy: {
     termsTitle: 'Antes de empezar',
-    termsIntro: 'infunion guarda tu correo electrónico o tu número de teléfono, tu nombre y lo que compartes con tus lugares. Así lo cuidamos.',
+    termsIntro: 'infunion guarda tu correo electrónico o tu número de teléfono y lo que compartes con tus lugares. Así lo cuidamos.',
     ageCheck: 'Tengo 14 años o más',
     termsCheck: 'Acepto las condiciones de uso y la política de privacidad',
     readTerms: 'Leer las condiciones de uso',
@@ -1747,11 +1744,10 @@ const fr: Translations = {
   },
   signIn: {
     title: 'Se connecter',
+    signUpTitle: 'Créez votre compte',
     loginExplainer: 'Saisissez votre e-mail ou votre numéro de téléphone et nous vous enverrons un code à 6 chiffres. Aucun mot de passe à retenir.',
     loginLabel: 'E-mail ou numéro de téléphone',
-    loginPlaceholder: 'nom@exemple.fr ou +33 6 00 00 00 00',
-    nameLabel: 'Votre nom (facultatif)',
-    namePlaceholder: 'Affiché à côté de vos publications',
+    loginPlaceholder: 'nom@exemple.fr',
     sendCode: 'Envoyez-moi un code',
     sending: 'Envoi…',
     codeExplainer: 'Saisissez le code à 6 chiffres envoyé au {{phone}}.',
@@ -1843,7 +1839,7 @@ const fr: Translations = {
     error: 'L’enregistrement a échoué. Réessayez.',
   },
   onboarding: {
-    welcome: 'Bienvenue',
+    welcome: 'Tous vos lieux,\ndans une seule app',
     signUp: 'S’inscrire',
     signIn: 'Se connecter',
     demoSignIn: 'Connexion démo (María García)',
@@ -2267,7 +2263,7 @@ const fr: Translations = {
   },
   privacy: {
     termsTitle: 'Avant de commencer',
-    termsIntro: 'infunion conserve votre e-mail ou votre numéro de téléphone, votre nom et ce que vous partagez avec vos lieux. Voici comment nous en prenons soin.',
+    termsIntro: 'infunion conserve votre e-mail ou votre numéro de téléphone et ce que vous partagez avec vos lieux. Voici comment nous en prenons soin.',
     ageCheck: 'J’ai 14 ans ou plus',
     termsCheck: 'J’accepte les conditions d’utilisation et la politique de confidentialité',
     readTerms: 'Lire les conditions d’utilisation',
@@ -2318,11 +2314,10 @@ const va: Translations = {
   },
   signIn: {
     title: 'Iniciar sessió',
+    signUpTitle: 'Crea el teu compte',
     loginExplainer: 'Escriu el teu correu electrònic o el teu número de telèfon i t’enviarem un codi de 6 xifres. No cal recordar cap contrasenya.',
     loginLabel: 'Correu electrònic o telèfon',
-    loginPlaceholder: 'nom@exemple.com o +34 600 00 00 00',
-    nameLabel: 'El teu nom (opcional)',
-    namePlaceholder: 'Apareixerà al costat del que publiques',
+    loginPlaceholder: 'nom@exemple.com',
     sendCode: 'Envia’m un codi',
     sending: 'Enviant…',
     codeExplainer: 'Escriu el codi de 6 xifres enviat al {{phone}}.',
@@ -2414,7 +2409,7 @@ const va: Translations = {
     error: 'No s’ha pogut guardar. Torna-ho a provar.',
   },
   onboarding: {
-    welcome: 'Benvingut',
+    welcome: 'Tots els teus llocs,\nen una sola app',
     signUp: 'Crear un compte',
     signIn: 'Iniciar sessió',
     demoSignIn: 'Entrar en la demo (María García)',
@@ -2838,7 +2833,7 @@ const va: Translations = {
   },
   privacy: {
     termsTitle: 'Abans de començar',
-    termsIntro: 'infunion guarda el teu correu electrònic o el teu número de telèfon, el teu nom i el que comparteixes amb els teus llocs. Així ho cuidem.',
+    termsIntro: 'infunion guarda el teu correu electrònic o el teu número de telèfon i el que comparteixes amb els teus llocs. Així ho cuidem.',
     ageCheck: 'Tinc 14 anys o més',
     termsCheck: 'Accepte les condicions d’ús i la política de privacitat',
     readTerms: 'Llegir les condicions d’ús',
@@ -2889,11 +2884,10 @@ const gl: Translations = {
   },
   signIn: {
     title: 'Iniciar sesión',
+    signUpTitle: 'Crea a túa conta',
     loginExplainer: 'Escribe o teu correo electrónico ou o teu número de teléfono e enviarémosche un código de 6 díxitos. Non hai contrasinal que lembrar.',
     loginLabel: 'Correo electrónico ou teléfono',
-    loginPlaceholder: 'nome@exemplo.com ou +34 600 00 00 00',
-    nameLabel: 'O teu nome (opcional)',
-    namePlaceholder: 'Aparecerá xunto ao que publiques',
+    loginPlaceholder: 'nome@exemplo.com',
     sendCode: 'Envíame un código',
     sending: 'Enviando…',
     codeExplainer: 'Escribe o código de 6 díxitos enviado a {{phone}}.',
@@ -2985,7 +2979,7 @@ const gl: Translations = {
     error: 'Non se puido gardar. Téntao de novo.',
   },
   onboarding: {
-    welcome: 'Benvido',
+    welcome: 'Todos os teus lugares,\nnunha soa app',
     signUp: 'Crear conta',
     signIn: 'Iniciar sesión',
     demoSignIn: 'Entrar na demo (María García)',
@@ -3409,7 +3403,7 @@ const gl: Translations = {
   },
   privacy: {
     termsTitle: 'Antes de comezar',
-    termsIntro: 'infunion garda o teu correo electrónico ou o teu número de teléfono, o teu nome e o que compartes cos teus lugares. Así o coidamos.',
+    termsIntro: 'infunion garda o teu correo electrónico ou o teu número de teléfono e o que compartes cos teus lugares. Así o coidamos.',
     ageCheck: 'Teño 14 anos ou máis',
     termsCheck: 'Acepto as condicións de uso e a política de privacidade',
     readTerms: 'Ler as condicións de uso',
@@ -3461,11 +3455,10 @@ const pt: Translations = {
   },
   signIn: {
     title: 'Iniciar sessão',
+    signUpTitle: 'Crie a sua conta',
     loginExplainer: 'Escreva o seu email ou o seu número de telemóvel e enviaremos um código de 6 dígitos. Não há palavra-passe para memorizar.',
     loginLabel: 'Email ou número de telemóvel',
-    loginPlaceholder: 'nome@exemplo.pt ou +351 912 345 678',
-    nameLabel: 'O seu nome (opcional)',
-    namePlaceholder: 'Aparecerá junto do que publicar',
+    loginPlaceholder: 'nome@exemplo.pt',
     sendCode: 'Enviar-me um código',
     sending: 'A enviar…',
     codeExplainer: 'Escreva o código de 6 dígitos enviado para {{phone}}.',
@@ -3557,7 +3550,7 @@ const pt: Translations = {
     error: 'Não foi possível guardar. Tente novamente.',
   },
   onboarding: {
-    welcome: 'Bem-vindo',
+    welcome: 'Todos os seus locais,\nnuma só app',
     signUp: 'Criar conta',
     signIn: 'Iniciar sessão',
     demoSignIn: 'Entrar na demo (María García)',
@@ -3981,7 +3974,7 @@ const pt: Translations = {
   },
   privacy: {
     termsTitle: 'Antes de começar',
-    termsIntro: 'A infunion guarda o seu email ou o seu número de telemóvel, o seu nome e o que partilha com os seus lugares. É assim que cuidamos disso.',
+    termsIntro: 'A infunion guarda o seu email ou o seu número de telemóvel e o que partilha com os seus lugares. É assim que cuidamos disso.',
     ageCheck: 'Tenho 14 anos ou mais',
     termsCheck: 'Aceito os termos de utilização e a política de privacidade',
     readTerms: 'Ler os termos de utilização',

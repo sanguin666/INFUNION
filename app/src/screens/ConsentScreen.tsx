@@ -6,6 +6,7 @@ import { AccessibleText } from '../components/AccessibleText';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { FormCard, FormDivider } from '../components/FormCard';
 import { CheckIcon } from '../components/icons';
+import { Lockup } from '../components/Logo';
 import { acceptTerms } from '../api/auth';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
@@ -43,6 +44,9 @@ export function ConsentScreen() {
 
   return (
     <Screen scroll>
+      <View style={styles.brand}>
+        <Lockup height={48} />
+      </View>
       <AccessibleText variant="title">{t('privacy.termsTitle')}</AccessibleText>
       <AccessibleText variant="body" color={colors.textMuted}>
         {t('privacy.termsIntro')}
@@ -111,6 +115,10 @@ function LinkText({ label, url }: { label: string; url: string }) {
 }
 
 const styles = themedStyles(() => ({
+  brand: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   tickRow: {
     flexDirection: 'row',
     alignItems: 'center',
