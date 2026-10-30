@@ -33,10 +33,7 @@ import { DEMO_MEMBER_PHONE } from './common/demo/demo-account.js';
 import * as bcrypt from 'bcryptjs';
 import { CARMEN_TIME_ZONE } from './seed-carmen.js';
 import { TaxScheme } from './common/enums/tax-scheme.enum.js';
-import { fileStore } from './common/storage/file-store.js';
-import { publicUrlFor } from './common/upload/multer-storage.js';
 import { PoiTheme } from './common/enums/poi-theme.enum.js';
-import { CRECER_JUNTOS_LOGO_PNG } from './seed-association-logo.js';
 
 export const ASSOCIATION_QR_TOKEN = 'DEMO-CRECER-JUNTOS';
 export const ASSOCIATION_ADMIN_EMAIL = 'admin@crecerjuntos.example';
@@ -44,6 +41,9 @@ export const ASSOCIATION_ADMIN_PASSWORD = 'demo1234';
 
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
+
+// The sprout logo earlier seeds set (28-30 Oct 2026).
+const DEMO_LOGO_URL = '/uploads/demo/crecer-juntos-logo.png';
 
 /**
  * The demo association (Seb, 26 Oct 2026): a L'Eliana association that
@@ -124,6 +124,7 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
         receiptSignatory: 'Elena Navarro, presidenta',
         legalPhone: '961 000 000',
         taxScheme: TaxScheme.ES_LEY49,
+        theme: PoiTheme.FOREST,
       }),
     );
     console.log(`Created demo association ${poi.name} (${poi.id})`);
@@ -131,13 +132,12 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
   const place = poi;
   const where = { poi: { id: place.id } };
 
-  // Its own look in the app (28 Oct 2026): a logo in the header and the
-  // forest theme. Only set once, so a change made in the admin stays.
-  if (!place.logoUrl) {
-    const key = 'demo/crecer-juntos-logo.png';
-    await fileStore().put('public', key, Buffer.from(CRECER_JUNTOS_LOGO_PNG, 'base64'), 'image/png');
-    place.logoUrl = publicUrlFor('demo', 'crecer-juntos-logo.png');
-    place.theme = PoiTheme.FOREST;
+  // No logo (Seb, 30 Oct 2026): the sprout the seed used to write went
+  // into the pre-deploy container, which has no volume, so production
+  // showed a blank logo after every deploy. Clear it where it is still set;
+  // a logo uploaded in the admin is left alone.
+  if (place.logoUrl === DEMO_LOGO_URL) {
+    place.logoUrl = null;
     await pois.save(place);
   }
 
