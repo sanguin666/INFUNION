@@ -6,6 +6,9 @@ import { WORDMARK_HEIGHT, WORDMARK_PARTS, WORDMARK_TRANSFORM, WORDMARK_UNDERLINE
 // like a chain, and the lowercase wordmark with "fun" in purple. Fixed
 // brand colours, never themed. Mirrored in admin/src/components/LogoMark.tsx.
 export const LOGO_PURPLE = '#6C4FD9';
+// On a dark background (Seb, 30 Oct 2026) the purple ring and "fun" stay
+// violet, a brighter one so they read on the dark navy.
+export const LOGO_PURPLE_ON_DARK = '#8B6CF2';
 export const LOGO_YELLOW = '#F9B800';
 export const LOGO_INK = '#1D1A2D';
 
@@ -34,7 +37,7 @@ export function Rings({
   onDark?: boolean;
   idPrefix?: string;
 }) {
-  const purple = onDark ? '#FFFFFF' : LOGO_PURPLE;
+  const purple = onDark ? LOGO_PURPLE_ON_DARK : LOGO_PURPLE;
   const yellow = (
     <Path d={LOGO_RING} fill="none" stroke={LOGO_YELLOW} strokeWidth={RING_STROKE} transform={`translate(${yellowX} 35)`} />
   );
@@ -83,7 +86,7 @@ export function WordmarkArt({
 }) {
   const ink = themed ? colors.logoInk : LOGO_INK;
   const fun = themed ? colors.logoFun : LOGO_PURPLE;
-  const fill = { ink: onDark ? '#FFFFFF' : ink, purple: onDark ? '#FFFFFF' : fun, yellow: LOGO_YELLOW };
+  const fill = { ink: onDark ? '#FFFFFF' : ink, purple: onDark ? LOGO_PURPLE_ON_DARK : fun, yellow: LOGO_YELLOW };
   return (
     <G transform={WORDMARK_TRANSFORM}>
       {WORDMARK_PARTS.map((part, i) => (
