@@ -5,6 +5,7 @@ import { useI18n } from '../i18n/I18nContext';
 import { getPoi } from '../api/pois';
 import { updatePoiProfile } from '../api/poiSettings';
 import type { Poi } from '../api/types';
+import { Lockup } from '../components/LogoMark';
 
 // Where the QR code sends a phone's camera — the public landing page's
 // #join section (see the `landing/` site), which explains how to get the
@@ -31,8 +32,10 @@ export function MyQrPage() {
   useEffect(() => {
     getPoi(poiId).then((result) => {
       setPoi(result);
-      setHeadline(result.qrFlyerHeadline ?? '');
-      setSubtext(result.qrFlyerSubtext ?? '');
+      // A place that never wrote its own text starts from the default one,
+      // shown as real text the admin can keep or edit, not as a placeholder.
+      setHeadline(result.qrFlyerHeadline || t('qr.defaultHeadline'));
+      setSubtext(result.qrFlyerSubtext || t('qr.defaultSubtext'));
     });
   }, [poiId]);
 
@@ -87,11 +90,11 @@ export function MyQrPage() {
           />
         </label>
         <div className="card-actions">
-          <button type="button" className="btn btn-primary" disabled={saving} onClick={save}>
-            {saving ? t('qr.saving') : t('qr.save')}
-          </button>
           <button type="button" className="btn btn-primary" onClick={() => window.print()}>
             {t('qr.print')}
+          </button>
+          <button type="button" className="btn" disabled={saving} onClick={save}>
+            {saving ? t('qr.saving') : t('qr.save')}
           </button>
         </div>
         {error && <p className="error-text">{error}</p>}
@@ -105,9 +108,21 @@ export function MyQrPage() {
           {poi.pictureUrl && <img src={poi.pictureUrl} alt={poi.name} className="qr-flyer-logo" />}
           <p className="qr-flyer-poi-name">{poi.name}</p>
           <h1 className="qr-flyer-headline">{displayHeadline}</h1>
+          <p className="qr-flyer-subtext">{displaySubtext}</p>
           {qrDataUrl && <img src={qrDataUrl} alt={t('qr.scanHint')} className="qr-flyer-code" />}
           <p className="qr-flyer-hint">{t('qr.scanHint')}</p>
-          <p className="qr-flyer-subtext">{displaySubtext}</p>
+          <ol className="qr-flyer-steps">
+            {(['qr.step1', 'qr.step2', 'qr.step3'] as const).map((key, index) => (
+              <li key={key}>
+                <span className="qr-flyer-step-number">{index + 1}</span>
+                {t(key)}
+              </li>
+            ))}
+          </ol>
+          <div className="qr-flyer-footer">
+            <span>{t('qr.getTheApp')}</span>
+            <Lockup height={30} />
+          </div>
         </div>
       </div>
     </div>
