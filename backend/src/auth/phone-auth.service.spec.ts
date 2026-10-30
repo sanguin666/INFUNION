@@ -1,4 +1,4 @@
-import { PhoneAuthService, normalizePhone } from './phone-auth.service.js';
+import { PhoneAuthService, isEmailLogin, normalizeEmail, normalizePhone } from './phone-auth.service.js';
 
 /**
  * Normalization decides whether two spellings of a number reach the same
@@ -27,6 +27,17 @@ describe('normalizePhone', () => {
   });
 });
 
+describe('email sign-in', () => {
+  it('tells an email from a phone number by the @', () => {
+    expect(isEmailLogin('ana@example.com')).toBe(true);
+    expect(isEmailLogin('+34 600 11 22 33')).toBe(false);
+  });
+
+  it('reaches the same account whatever the case or spaces', () => {
+    expect(normalizeEmail('  Ana.Garcia@Example.COM ')).toBe('ana.garcia@example.com');
+  });
+});
+
 /**
  * The one-tap demo sign-in: on by default in development, off in
  * production, and DEMO_LOGIN overrides either way so the hosted demo server
@@ -41,6 +52,7 @@ describe('PhoneAuthService.demoLoginEnabled', () => {
       null as never,
       { delivers } as never,
       config as never,
+      { delivers: false } as never,
     );
   }
 

@@ -15,14 +15,14 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  // Login identifier for congregants: phone number + SMS code (not built
-  // yet). Nullable because admin users (see below) don't have one.
+  // Login identifier for members: phone number + SMS code. Nullable
+  // because admins, and members who sign in by email, don't have one.
   @Column({ unique: true, nullable: true })
   phone?: string;
 
-  // Login identifier for POI admins (email + password), used by the
-  // separate admin dashboard. Nullable because congregant users don't
-  // have one.
+  // Login identifier for POI admins (email + password, the admin
+  // dashboard) and for members who sign in with an email code. Nullable
+  // because members who sign in by phone don't have one.
   @Column({ unique: true, nullable: true })
   email?: string;
 

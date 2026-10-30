@@ -20,15 +20,21 @@ type T = ReturnType<typeof useI18n>['t'];
 
 const LIVE = new Set(['trial', 'active']);
 
-function nameOf(member: Pick<MemberRow, 'firstName' | 'lastName' | 'phone'>, t: T): string {
-  return [member.firstName, member.lastName].filter(Boolean).join(' ') || member.phone || t('members.unnamed');
+function nameOf(member: Pick<MemberRow, 'firstName' | 'lastName' | 'phone' | 'email'>, t: T): string {
+  return [member.firstName, member.lastName].filter(Boolean).join(' ') || contactOf(member) || t('members.unnamed');
+}
+
+// How the member signed in: their phone, or their email.
+function contactOf(member: Pick<MemberRow, 'phone' | 'email'>): string | null {
+  return member.phone || member.email || null;
 }
 
 function initials(member: Pick<MemberRow, 'firstName' | 'lastName'>): string {
   return [member.firstName, member.lastName].map((part) => part?.trim()[0] ?? '').join('').toUpperCase() || '·';
 }
 
-// Accents and case aside, so "maria" finds María; digits only for phones.
+// Accents and case aside, so "maria" finds María; digits only for phones;
+// an email by any part of it.
 function fold(value: string): string {
   return value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 }
@@ -37,7 +43,13 @@ function matches(member: MemberRow, query: string): boolean {
   const words = fold(query).split(/\s+/).filter(Boolean);
   const name = fold([member.firstName, member.lastName].filter(Boolean).join(' '));
   const digits = (member.phone ?? '').replace(/\D/g, '');
-  return words.every((word) => name.includes(word) || (/\d/.test(word) && digits.includes(word.replace(/\D/g, ''))));
+  const email = (member.email ?? '').toLowerCase();
+  return words.every(
+    (word) =>
+      name.includes(word) ||
+      (email !== '' && email.includes(word)) ||
+      (/\d/.test(word) && digits.includes(word.replace(/\D/g, ''))),
+  );
 }
 
 /**
@@ -199,7 +211,7 @@ export function MembersPage() {
                     <p className="card-meta member-preview">
                       {live && member.lastMessage
                         ? `${member.lastMessage.fromStaff ? t('members.you', { body: member.lastMessage.body }) : member.lastMessage.body} · ${when(member.lastMessage.createdAt)}`
-                        : [member.phone, t('members.memberSince', { date: date(member.joinedAt) })].filter(Boolean).join(' · ')}
+                        : [contactOf(member), t('members.memberSince', { date: date(member.joinedAt) })].filter(Boolean).join(' · ')}
                     </p>
                   </div>
                   <button type="button" className="text-action" onClick={() => void downloadData(member)}>
@@ -289,7 +301,7 @@ export function MemberConversationPage() {
       {back}
       <h2>{name}</h2>
       <p className="muted">
-        {[member.phone, t('members.memberSince', { date: new Date(member.joinedAt).toLocaleDateString(intlLocale(language), { day: 'numeric', month: 'long' }) })]
+        {[contactOf(member), t('members.memberSince', { date: new Date(member.joinedAt).toLocaleDateString(intlLocale(language), { day: 'numeric', month: 'long' }) })]
           .filter(Boolean)
           .join(' · ')}
       </p>

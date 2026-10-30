@@ -21,6 +21,7 @@ import { PhoneAuthService } from './phone-auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RequestPhoneCodeDto } from './dto/request-phone-code.dto.js';
 import { VerifyPhoneCodeDto } from './dto/verify-phone-code.dto.js';
+import { RequestLoginCodeDto, VerifyLoginCodeDto } from './dto/login-code.dto.js';
 import { UpdateLanguageDto } from '../common/dto/update-language.dto.js';
 import { UpdateProfileDto } from '../common/dto/update-profile.dto.js';
 import { SetLastActivePoiDto } from '../common/dto/set-last-active-poi.dto.js';
@@ -46,9 +47,21 @@ export class AuthController {
     return this.authService.login(dto, request);
   }
 
-  // The congregant app's login: a code by SMS, no password to remember.
-  // Both halves answer the same way whether or not the number has an
-  // account, so neither can be used to find out who is registered.
+  // The member app's login: one field, "Email or phone number", and a
+  // 6-digit code sent there. No password to remember. Both halves answer
+  // the same way whether or not the address or number has an account, so
+  // neither can be used to find out who is registered.
+  @Post('code/request')
+  requestLoginCode(@Body() dto: RequestLoginCodeDto) {
+    return this.phoneAuthService.requestLoginCode(dto.login, dto.language);
+  }
+
+  @Post('code/verify')
+  verifyLoginCode(@Body() dto: VerifyLoginCodeDto) {
+    return this.phoneAuthService.verifyLoginCode(dto.login, dto.code, dto.firstName);
+  }
+
+  // The phone-only login the APKs built before 30 Oct 2026 still call.
   @Post('phone/request-code')
   requestPhoneCode(@Body() dto: RequestPhoneCodeDto) {
     return this.phoneAuthService.requestCode(dto.phone);

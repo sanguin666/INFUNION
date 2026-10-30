@@ -36,18 +36,19 @@ export type Translations = {
   };
   signIn: {
     title: string;
-    phoneExplainer: string;
-    phoneLabel: string;
-    phonePlaceholder: string;
+    loginExplainer: string;
+    loginLabel: string;
+    loginPlaceholder: string;
     nameLabel: string;
     namePlaceholder: string;
     sendCode: string;
     sending: string;
     codeExplainer: string;
+    codeExplainerEmail: string;
     devCodeLabel: string;
     confirm: string;
     checking: string;
-    changeNumber: string;
+    changeLogin: string;
     genericError: string;
     requiredToPost: string;
   };
@@ -604,18 +605,19 @@ const en: Translations = {
   },
   signIn: {
     title: 'Sign in',
-    phoneExplainer: 'Enter your phone number and we’ll text you a 6-digit code. There is no password to remember.',
-    phoneLabel: 'Phone number',
-    phonePlaceholder: '+34 600 00 00 00',
+    loginExplainer: 'Enter your email or phone number and we’ll send you a 6-digit code. There is no password to remember.',
+    loginLabel: 'Email or phone number',
+    loginPlaceholder: 'name@example.com or +34 600 00 00 00',
     nameLabel: 'Your name (optional)',
     namePlaceholder: 'Shown next to what you post',
     sendCode: 'Send me a code',
     sending: 'Sending…',
     codeExplainer: 'Enter the 6-digit code sent to {{phone}}.',
-    devCodeLabel: 'No text message service is set up, so here is your code:',
+    codeExplainerEmail: 'Enter the 6-digit code we emailed to {{email}}. If it doesn’t arrive, look in your spam folder.',
+    devCodeLabel: 'No sending service is set up, so here is your code:',
     confirm: 'Sign in',
     checking: 'Checking…',
-    changeNumber: 'Use a different number',
+    changeLogin: 'Use a different email or number',
     genericError: 'Something went wrong. Please try again.',
     requiredToPost: 'Sign in to post here.',
   },
@@ -1123,7 +1125,7 @@ const en: Translations = {
   },
   privacy: {
     termsTitle: 'Before you start',
-    termsIntro: 'infunion keeps your phone number, your name and what you share with your places. Here is how we look after it.',
+    termsIntro: 'infunion keeps your email or phone number, your name and what you share with your places. Here is how we look after it.',
     ageCheck: 'I am 14 or older',
     termsCheck: 'I accept the terms of use and the privacy policy',
     readTerms: 'Read the terms of use',
@@ -1174,18 +1176,19 @@ const es: Translations = {
   },
   signIn: {
     title: 'Iniciar sesión',
-    phoneExplainer: 'Escribe tu número de teléfono y te enviaremos un código de 6 dígitos por SMS. No hay contraseña que recordar.',
-    phoneLabel: 'Número de teléfono',
-    phonePlaceholder: '+34 600 00 00 00',
+    loginExplainer: 'Escribe tu correo electrónico o tu número de teléfono y te enviaremos un código de 6 dígitos. No hay contraseña que recordar.',
+    loginLabel: 'Correo electrónico o teléfono',
+    loginPlaceholder: 'nombre@ejemplo.com o +34 600 00 00 00',
     nameLabel: 'Tu nombre (opcional)',
     namePlaceholder: 'Aparecerá junto a lo que publiques',
     sendCode: 'Envíame un código',
     sending: 'Enviando…',
     codeExplainer: 'Escribe el código de 6 dígitos enviado a {{phone}}.',
-    devCodeLabel: 'No hay servicio de SMS configurado, así que aquí tienes tu código:',
+    codeExplainerEmail: 'Escribe el código de 6 dígitos que hemos enviado a {{email}}. Si no llega, mira en la carpeta de spam.',
+    devCodeLabel: 'No hay servicio de envío configurado, así que aquí tienes tu código:',
     confirm: 'Entrar',
     checking: 'Comprobando…',
-    changeNumber: 'Usar otro número',
+    changeLogin: 'Usar otro correo o número',
     genericError: 'Algo ha salido mal. Inténtalo de nuevo.',
     requiredToPost: 'Inicia sesión para publicar aquí.',
   },
@@ -1693,7 +1696,7 @@ const es: Translations = {
   },
   privacy: {
     termsTitle: 'Antes de empezar',
-    termsIntro: 'infunion guarda tu número de teléfono, tu nombre y lo que compartes con tus lugares. Así lo cuidamos.',
+    termsIntro: 'infunion guarda tu correo electrónico o tu número de teléfono, tu nombre y lo que compartes con tus lugares. Así lo cuidamos.',
     ageCheck: 'Tengo 14 años o más',
     termsCheck: 'Acepto las condiciones de uso y la política de privacidad',
     readTerms: 'Leer las condiciones de uso',
@@ -1744,18 +1747,19 @@ const fr: Translations = {
   },
   signIn: {
     title: 'Se connecter',
-    phoneExplainer: 'Saisissez votre numéro de téléphone et nous vous enverrons un code à 6 chiffres par SMS. Aucun mot de passe à retenir.',
-    phoneLabel: 'Numéro de téléphone',
-    phonePlaceholder: '+33 6 00 00 00 00',
+    loginExplainer: 'Saisissez votre e-mail ou votre numéro de téléphone et nous vous enverrons un code à 6 chiffres. Aucun mot de passe à retenir.',
+    loginLabel: 'E-mail ou numéro de téléphone',
+    loginPlaceholder: 'nom@exemple.fr ou +33 6 00 00 00 00',
     nameLabel: 'Votre nom (facultatif)',
     namePlaceholder: 'Affiché à côté de vos publications',
     sendCode: 'Envoyez-moi un code',
     sending: 'Envoi…',
     codeExplainer: 'Saisissez le code à 6 chiffres envoyé au {{phone}}.',
-    devCodeLabel: "Aucun service SMS n'est configuré, voici donc votre code :",
+    codeExplainerEmail: 'Saisissez le code à 6 chiffres envoyé à {{email}}. S’il n’arrive pas, regardez dans vos spams.',
+    devCodeLabel: 'Aucun service d’envoi n’est configuré, voici donc votre code :',
     confirm: 'Se connecter',
     checking: 'Vérification…',
-    changeNumber: 'Utiliser un autre numéro',
+    changeLogin: 'Utiliser un autre e-mail ou numéro',
     genericError: "Une erreur s'est produite. Veuillez réessayer.",
     requiredToPost: 'Connectez-vous pour publier ici.',
   },
@@ -2263,7 +2267,7 @@ const fr: Translations = {
   },
   privacy: {
     termsTitle: 'Avant de commencer',
-    termsIntro: 'infunion conserve votre numéro de téléphone, votre nom et ce que vous partagez avec vos lieux. Voici comment nous en prenons soin.',
+    termsIntro: 'infunion conserve votre e-mail ou votre numéro de téléphone, votre nom et ce que vous partagez avec vos lieux. Voici comment nous en prenons soin.',
     ageCheck: 'J’ai 14 ans ou plus',
     termsCheck: 'J’accepte les conditions d’utilisation et la politique de confidentialité',
     readTerms: 'Lire les conditions d’utilisation',
@@ -2314,18 +2318,19 @@ const va: Translations = {
   },
   signIn: {
     title: 'Iniciar sessió',
-    phoneExplainer: 'Escriu el teu número de telèfon i t’enviarem un codi de 6 xifres per SMS. No cal recordar cap contrasenya.',
-    phoneLabel: 'Número de telèfon',
-    phonePlaceholder: '+34 600 00 00 00',
+    loginExplainer: 'Escriu el teu correu electrònic o el teu número de telèfon i t’enviarem un codi de 6 xifres. No cal recordar cap contrasenya.',
+    loginLabel: 'Correu electrònic o telèfon',
+    loginPlaceholder: 'nom@exemple.com o +34 600 00 00 00',
     nameLabel: 'El teu nom (opcional)',
     namePlaceholder: 'Apareixerà al costat del que publiques',
     sendCode: 'Envia’m un codi',
     sending: 'Enviant…',
     codeExplainer: 'Escriu el codi de 6 xifres enviat al {{phone}}.',
-    devCodeLabel: 'No hi ha cap servici d’SMS configurat, així que ací tens el teu codi:',
+    codeExplainerEmail: 'Escriu el codi de 6 xifres que hem enviat a {{email}}. Si no arriba, mira en la carpeta de correu brossa.',
+    devCodeLabel: 'No hi ha cap servici d’enviament configurat, així que ací tens el teu codi:',
     confirm: 'Entrar',
     checking: 'Comprovant…',
-    changeNumber: 'Usar un altre número',
+    changeLogin: 'Usar un altre correu o número',
     genericError: 'Alguna cosa ha eixit malament. Torna-ho a provar.',
     requiredToPost: 'Inicia sessió per a publicar ací.',
   },
@@ -2833,7 +2838,7 @@ const va: Translations = {
   },
   privacy: {
     termsTitle: 'Abans de començar',
-    termsIntro: 'infunion guarda el teu número de telèfon, el teu nom i el que comparteixes amb els teus llocs. Així ho cuidem.',
+    termsIntro: 'infunion guarda el teu correu electrònic o el teu número de telèfon, el teu nom i el que comparteixes amb els teus llocs. Així ho cuidem.',
     ageCheck: 'Tinc 14 anys o més',
     termsCheck: 'Accepte les condicions d’ús i la política de privacitat',
     readTerms: 'Llegir les condicions d’ús',
@@ -2884,18 +2889,19 @@ const gl: Translations = {
   },
   signIn: {
     title: 'Iniciar sesión',
-    phoneExplainer: 'Escribe o teu número de teléfono e enviarémosche un código de 6 díxitos por SMS. Non hai contrasinal que lembrar.',
-    phoneLabel: 'Número de teléfono',
-    phonePlaceholder: '+34 600 00 00 00',
+    loginExplainer: 'Escribe o teu correo electrónico ou o teu número de teléfono e enviarémosche un código de 6 díxitos. Non hai contrasinal que lembrar.',
+    loginLabel: 'Correo electrónico ou teléfono',
+    loginPlaceholder: 'nome@exemplo.com ou +34 600 00 00 00',
     nameLabel: 'O teu nome (opcional)',
     namePlaceholder: 'Aparecerá xunto ao que publiques',
     sendCode: 'Envíame un código',
     sending: 'Enviando…',
     codeExplainer: 'Escribe o código de 6 díxitos enviado a {{phone}}.',
-    devCodeLabel: 'Non hai servizo de SMS configurado, así que aquí tes o teu código:',
+    codeExplainerEmail: 'Escribe o código de 6 díxitos que enviamos a {{email}}. Se non chega, mira no cartafol de spam.',
+    devCodeLabel: 'Non hai servizo de envío configurado, así que aquí tes o teu código:',
     confirm: 'Entrar',
     checking: 'Comprobando…',
-    changeNumber: 'Usar outro número',
+    changeLogin: 'Usar outro correo ou número',
     genericError: 'Algo saíu mal. Téntao de novo.',
     requiredToPost: 'Inicia sesión para publicar aquí.',
   },
@@ -3403,7 +3409,7 @@ const gl: Translations = {
   },
   privacy: {
     termsTitle: 'Antes de comezar',
-    termsIntro: 'infunion garda o teu número de teléfono, o teu nome e o que compartes cos teus lugares. Así o coidamos.',
+    termsIntro: 'infunion garda o teu correo electrónico ou o teu número de teléfono, o teu nome e o que compartes cos teus lugares. Así o coidamos.',
     ageCheck: 'Teño 14 anos ou máis',
     termsCheck: 'Acepto as condicións de uso e a política de privacidade',
     readTerms: 'Ler as condicións de uso',
@@ -3455,18 +3461,19 @@ const pt: Translations = {
   },
   signIn: {
     title: 'Iniciar sessão',
-    phoneExplainer: 'Escreva o seu número de telemóvel e enviaremos um código de 6 dígitos por SMS. Não há palavra-passe para memorizar.',
-    phoneLabel: 'Número de telemóvel',
-    phonePlaceholder: '+351 912 345 678',
+    loginExplainer: 'Escreva o seu email ou o seu número de telemóvel e enviaremos um código de 6 dígitos. Não há palavra-passe para memorizar.',
+    loginLabel: 'Email ou número de telemóvel',
+    loginPlaceholder: 'nome@exemplo.pt ou +351 912 345 678',
     nameLabel: 'O seu nome (opcional)',
     namePlaceholder: 'Aparecerá junto do que publicar',
     sendCode: 'Enviar-me um código',
     sending: 'A enviar…',
     codeExplainer: 'Escreva o código de 6 dígitos enviado para {{phone}}.',
-    devCodeLabel: 'Não há serviço de SMS configurado, por isso aqui tem o seu código:',
+    codeExplainerEmail: 'Escreva o código de 6 dígitos enviado para {{email}}. Se não chegar, veja na pasta de spam.',
+    devCodeLabel: 'Não há serviço de envio configurado, por isso aqui tem o seu código:',
     confirm: 'Entrar',
     checking: 'A verificar…',
-    changeNumber: 'Usar outro número',
+    changeLogin: 'Usar outro email ou número',
     genericError: 'Algo correu mal. Tente novamente.',
     requiredToPost: 'Inicie sessão para publicar aqui.',
   },
@@ -3974,7 +3981,7 @@ const pt: Translations = {
   },
   privacy: {
     termsTitle: 'Antes de começar',
-    termsIntro: 'A infunion guarda o seu número de telemóvel, o seu nome e o que partilha com os seus lugares. É assim que cuidamos disso.',
+    termsIntro: 'A infunion guarda o seu email ou o seu número de telemóvel, o seu nome e o que partilha com os seus lugares. É assim que cuidamos disso.',
     ageCheck: 'Tenho 14 anos ou mais',
     termsCheck: 'Aceito os termos de utilização e a política de privacidade',
     readTerms: 'Ler os termos de utilização',
