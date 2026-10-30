@@ -903,7 +903,7 @@
     });
     data.append("type", chosen("type"));
     data.append("plan", chosen("plan"));
-    data.append("billingInterval", chosen("billingInterval") || "monthly");
+    data.append("billingInterval", chosen("billingInterval") || "yearly");
     data.append("acceptTerms", String($("reg-acceptTerms").checked));
     data.append("acceptDpa", String($("reg-acceptDpa").checked));
     data.append("authorised", String($("reg-authorised").checked));
