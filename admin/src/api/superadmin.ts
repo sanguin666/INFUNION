@@ -285,6 +285,7 @@ export type RegistrationCheck = {
     | 'taxIdValid'
     | 'taxIdKind'
     | 'taxIdUnused'
+    | 'trialUnused'
     | 'nameUnused'
     | 'website'
     | 'firstFromEmail'
