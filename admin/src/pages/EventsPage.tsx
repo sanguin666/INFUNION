@@ -640,17 +640,17 @@ export function EventsPage() {
       <TabPanel idPrefix="events" tabKey="regular" current={tab}>
         <p className="muted" style={{ marginTop: 0 }}>{t('events.weeklyHint')}</p>
         {items && weekly.length === 0 && <p className="muted">{t('events.empty')}</p>}
-        {weekly.map(renderItem)}
+        <div className="card-grid">{weekly.map(renderItem)}</div>
       </TabPanel>
 
       <TabPanel idPrefix="events" tabKey="upcoming" current={tab}>
         {items && upcoming.length === 0 && <p className="muted">{t('tabs.eventsNoUpcoming')}</p>}
-        {upcoming.map(renderItem)}
+        <div className="card-grid">{upcoming.map(renderItem)}</div>
       </TabPanel>
 
       <TabPanel idPrefix="events" tabKey="past" current={tab}>
         {items && past.length === 0 && <p className="muted">{t('tabs.eventsNoPast')}</p>}
-        {past.map(renderItem)}
+        <div className="card-grid">{past.map(renderItem)}</div>
       </TabPanel>
     </div>
   );
