@@ -1,14 +1,16 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { ActiveModule } from './entities/active-module.entity.js';
 import { BillingInvoice } from './entities/billing-invoice.entity.js';
+import { PlanTrial } from './entities/plan-trial.entity.js';
 import { Poi } from '../pois/entities/poi.entity.js';
 import { ModuleType } from '../common/enums/module-type.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
 import { BillingInterval } from '../common/enums/billing-interval.enum.js';
 import { PlanTier } from '../common/enums/plan-tier.enum.js';
 import { moduleFitsPlace, modulesForPlace } from './module-places.js';
+import { normalizeTaxId } from '../registrations/registration-rules.js';
 import {
   PLAN_ORDER,
   addMonths,
@@ -68,7 +70,28 @@ export class ModuleBillingService {
     private readonly invoices: Repository<BillingInvoice>,
     @InjectRepository(Poi)
     private readonly pois: Repository<Poi>,
+    @InjectRepository(PlanTrial)
+    private readonly trials: Repository<PlanTrial>,
   ) {}
+
+  /**
+   * The place another place of the same organisation (same tax ID) had its
+   * free month in, even one deleted since; null if none did.
+   */
+  async trialTakenBy(taxId: string | null | undefined, exceptPoiId?: string): Promise<string | null> {
+    const normalized = taxId ? normalizeTaxId(taxId) : '';
+    if (!normalized) return null;
+    const earlier = await this.trials.findOne({
+      where: exceptPoiId ? { taxId: normalized, poiId: Not(exceptPoiId) } : { taxId: normalized },
+      order: { startedAt: 'ASC' },
+    });
+    return earlier ? earlier.placeName : null;
+  }
+
+  private async recordTrial(poi: Poi): Promise<void> {
+    const taxId = poi.legalTaxId ? normalizeTaxId(poi.legalTaxId) : '';
+    await this.trials.save(this.trials.create({ poiId: poi.id, placeName: poi.name, taxId: taxId || null, plan: poi.plan }));
+  }
 
   // Only the modules that fit the kind of place: one that does not (a row
   // saved before the rule, or before the place's kind changed) is left
@@ -155,7 +178,9 @@ export class ModuleBillingService {
       plan: effectivePlan(poi),
       planOffered: poi.planOffered,
       trialEndsAt: poi.planTrialEndsAt ? poi.planTrialEndsAt.toISOString() : null,
-      trialUsed: poi.planTrialUsed,
+      // Also when another place of the same organisation had it, so the
+      // Modules page offers no free month it would refuse.
+      trialUsed: poi.planTrialUsed || !!(await this.trialTakenBy(poi.legalTaxId, poi.id)),
       pendingPlan: poi.pendingPlan ?? null,
       plans: PLAN_ORDER.map((tier) => ({
         tier,
@@ -182,6 +207,13 @@ export class ModuleBillingService {
   async startTrial(poiId: string, tier: PlanTier, now = new Date()): Promise<BillingSummary> {
     const { poi, modules } = await this.load(poiId);
     const drafts = settle(poi, now);
+    // Once per organisation too: a second place with the same tax ID (or
+    // the same one registered again) has had its free month already.
+    if (!poi.planTrialUsed && (await this.trialTakenBy(poi.legalTaxId, poi.id))) {
+      poi.planTrialUsed = true;
+      await this.save(poi, modules, drafts);
+      throw new ConflictException('trial_used');
+    }
     try {
       startTrial(poi, tier, now);
     } catch (error) {
@@ -189,6 +221,7 @@ export class ModuleBillingService {
     }
     this.addPlanModules(poi, modules);
     await this.save(poi, modules, drafts);
+    await this.recordTrial(poi);
     return this.summary(poiId);
   }
 
@@ -299,6 +332,7 @@ export class ModuleBillingService {
       poi.planTrialUsed = true;
       poi.planTrialEndsAt = addMonths(now, 1);
       this.addPlanModules(poi, modules);
+      await this.recordTrial(poi);
     } else {
       throw new ConflictException('Plan already paid or offered');
     }
