@@ -64,6 +64,30 @@ describe('Module billing (e2e)', () => {
     expect(paid.body.renewsAt).not.toBeNull();
   });
 
+  it('gives one free month per organisation, even after a place is deleted', async () => {
+    const db = app.get(DataSource);
+    await db.query(`UPDATE pois SET legal_tax_id = 'G-98.765.432' WHERE id = $1`, [place.id]);
+    await client(app).post(billing('/plan/complete/trial')).set(as(adminToken)).expect(201);
+
+    // A second place of the same organisation: no free month offered or given.
+    const second = await createPlace(app, adminToken, 'San Roque II');
+    await db.query(`UPDATE pois SET legal_tax_id = 'G98765432' WHERE id = $1`, [second.id]);
+    const summary = await client(app).get(`/pois/${second.id}/billing`).set(as(adminToken)).expect(200);
+    expect(summary.body.trialUsed).toBe(true);
+    await client(app).post(`/pois/${second.id}/billing/plan/essentials/trial`).set(as(adminToken)).expect(409);
+
+    // The first place deleted and registered again: still none.
+    await db.query(`DELETE FROM pois WHERE id = $1`, [place.id]);
+    const third = await createPlace(app, adminToken, 'San Roque III');
+    await db.query(`UPDATE pois SET legal_tax_id = 'G98765432' WHERE id = $1`, [third.id]);
+    await client(app).post(`/pois/${third.id}/billing/plan/essentials/trial`).set(as(adminToken)).expect(409);
+
+    // Another organisation still gets its own.
+    const fourth = await createPlace(app, adminToken, 'Otra');
+    await db.query(`UPDATE pois SET legal_tax_id = 'R1234567C' WHERE id = $1`, [fourth.id]);
+    await client(app).post(`/pois/${fourth.id}/billing/plan/essentials/trial`).set(as(adminToken)).expect(201);
+  });
+
   it('goes back to Basic after a trial with no payment method, for the app too', async () => {
     await client(app).post(billing('/plan/essentials/trial')).set(as(adminToken)).expect(201);
     await app.get(DataSource).query(`UPDATE pois SET plan_trial_ends_at = now() - interval '1 day' WHERE id = $1`, [place.id]);

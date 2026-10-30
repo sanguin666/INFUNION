@@ -5,6 +5,7 @@ import { Poi } from '../pois/entities/poi.entity.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
 import { ActiveModule } from '../active-modules/entities/active-module.entity.js';
 import { BillingInvoice } from '../active-modules/entities/billing-invoice.entity.js';
+import { PlanTrial } from '../active-modules/entities/plan-trial.entity.js';
 import { Announcement } from '../announcements/entities/announcement.entity.js';
 import { Event } from '../events/entities/event.entity.js';
 import { PrayerRequest } from '../prayer-requests/entities/prayer-request.entity.js';
@@ -41,6 +42,7 @@ export const ENTITIES = [
   UserPoi,
   ActiveModule,
   BillingInvoice,
+  PlanTrial,
   Announcement,
   Event,
   PrayerRequest,

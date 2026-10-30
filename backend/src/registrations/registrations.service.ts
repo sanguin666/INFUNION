@@ -21,6 +21,7 @@ import { Language } from '../common/enums/language.enum.js';
 import { PlanTier } from '../common/enums/plan-tier.enum.js';
 import { PoiType } from '../common/enums/poi-type.enum.js';
 import { Poi } from '../pois/entities/poi.entity.js';
+import { PlanTrial } from '../active-modules/entities/plan-trial.entity.js';
 import { User } from '../users/entities/user.entity.js';
 import { signedPrivateFileUrl } from '../private-files/private-files.controller.js';
 import { PlaceRegistration } from './entities/place-registration.entity.js';
@@ -63,6 +64,7 @@ export type RegistrationCheck = {
     | 'taxIdValid'
     | 'taxIdKind'
     | 'taxIdUnused'
+    | 'trialUnused'
     | 'nameUnused'
     | 'website'
     | 'firstFromEmail'
@@ -90,6 +92,7 @@ export class RegistrationsService {
     @InjectRepository(PlaceRegistration) private readonly registrations: Repository<PlaceRegistration>,
     @InjectRepository(RegistrationBlock) private readonly blocks: Repository<RegistrationBlock>,
     @InjectRepository(Poi) private readonly pois: Repository<Poi>,
+    @InjectRepository(PlanTrial) private readonly trials: Repository<PlanTrial>,
     @InjectRepository(User) private readonly users: Repository<User>,
     private readonly phoneAuth: PhoneAuthService,
     private readonly emailSender: EmailSender,
@@ -389,6 +392,15 @@ export class RegistrationsService {
       select: { id: true, name: true },
     });
     checks.push(sameTaxId ? { key: 'taxIdUnused', level: 'warn', detail: sameTaxId.name } : { key: 'taxIdUnused', level: 'ok' });
+
+    // One free month per organisation: a tax ID that had one opens on Basic.
+    if (!r.existingPoiId && RegistrationsService.paidPlan(r)) {
+      const earlier = await this.trials.findOne({
+        where: own ? { taxId: r.taxId, poiId: Not(own) } : { taxId: r.taxId },
+        order: { startedAt: 'ASC' },
+      });
+      checks.push(earlier ? { key: 'trialUnused', level: 'warn', detail: earlier.placeName } : { key: 'trialUnused', level: 'ok' });
+    }
 
     if (!r.existingPoiId) {
       const sameTown = await this.pois
