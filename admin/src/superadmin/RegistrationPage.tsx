@@ -223,7 +223,7 @@ export function SuperadminRegistrationPage() {
       {data.status === 'approved' && (
         <p>
           {s('registrations.approvedOn', { date: date(data.decidedAt), who: data.decidedBy ?? '—' })}{' '}
-          {data.poiId && <Link to={`../../communities/${data.poiId}`}>{s('registrations.openPlace')}</Link>}
+          {data.poiId && <Link to={`/superadmin/communities/${data.poiId}`}>{s('registrations.openPlace')}</Link>}
         </p>
       )}
       {data.status === 'declined' && (
@@ -237,7 +237,7 @@ export function SuperadminRegistrationPage() {
           <p>
             {s('registrations.withdrawnOn', { date: date(data.withdrawnAt) })}
             {data.withdrawReason ? ` ${s('registrations.withdrawnReason')} “${data.withdrawReason}”` : ''}{' '}
-            {data.poiId && <Link to={`../../communities/${data.poiId}`}>{s('registrations.openPlace')}</Link>}
+            {data.poiId && <Link to={`/superadmin/communities/${data.poiId}`}>{s('registrations.openPlace')}</Link>}
           </p>
           {data.poiId && (
             <div className="card card-list sa-gap" role="status">
