@@ -1,4 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
+import sharp from 'sharp';
 import { DataSource } from 'typeorm';
 import { S3FileStore, setFileStore } from '../src/common/storage/file-store.js';
 import { runExclusive } from '../src/common/locks/run-exclusive.js';
@@ -40,10 +41,14 @@ describe('Running as several copies (e2e)', () => {
     const { token } = await signInWithId(app, '+34600900001', 'Admin');
     const place = await createPlace(app, token, 'San Pablo');
 
+    // A real picture: uploads are decoded and re-encoded by sharp now.
+    const photo = await sharp({ create: { width: 8, height: 8, channels: 3, background: '#6C4FD9' } })
+      .jpeg()
+      .toBuffer();
     const uploaded = await client(app)
       .post(`/pois/${place.id}/page-blocks/image`)
       .set(as(token))
-      .attach('image', Buffer.from('fake-jpeg-bytes'), { filename: 'front.jpg', contentType: 'image/jpeg' })
+      .attach('image', photo, { filename: 'front.jpg', contentType: 'image/jpeg' })
       .expect(201);
     const url: string = uploaded.body.url;
     expect(url).toMatch(/^\/uploads\/poi-pages\/[\w-]+\.jpg$/);
@@ -52,10 +57,11 @@ describe('Running as several copies (e2e)', () => {
     const whole = await client(second).get(url).expect(200);
     expect(whole.headers['content-type']).toContain('image/jpeg');
     expect(whole.headers['cache-control']).toContain('immutable');
-    expect(Buffer.from(whole.body).toString()).toBe('fake-jpeg-bytes');
+    const stored = bucket.objects.get(`public${url.replace('/uploads', '')}`)!.body;
+    expect(Buffer.compare(Buffer.from(whole.body), stored)).toBe(0);
 
     const part = await client(second).get(url).set('Range', 'bytes=0-3').expect(206);
-    expect(part.headers['content-range']).toBe('bytes 0-3/15');
+    expect(part.headers['content-range']).toBe(`bytes 0-3/${stored.length}`);
 
     await client(second).get('/uploads/poi-pages/missing.jpg').expect(404);
   });
