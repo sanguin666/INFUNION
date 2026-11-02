@@ -34,7 +34,7 @@ const DOCUMENT_MIME_TYPES = new Set([
   'image/heif',
 ]);
 
-const MAX_DOCUMENT_SIZE_BYTES = 10 * 1024 * 1024; // A phone photo of a page, or a scanned PDF.
+const MAX_DOCUMENT_SIZE_BYTES = 25 * 1024 * 1024; // A full-size phone photo of a page, or a scanned PDF.
 
 /** Multer options for one document: a photo or a PDF, and not a huge one. */
 export function documentUploadOptions(subfolder: string): MulterOptions {
