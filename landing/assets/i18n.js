@@ -875,17 +875,228 @@
     },
   };
 
+  // Audience variants of the same page (Seb, 2 Nov 2026): ?for=worship or
+  // ?for=ngo. Each one only overrides a few texts; a language a variant
+  // does not have yet keeps the general page's texts.
+  var VARIANTS = {
+    "worship": {
+      "es": {
+        "modRequestsTitle": "Solicitudes y citas",
+        "modRequestsDesc": "Inscripciones, citas, certificados y documentos: los miembros presentan su solicitud en la aplicación y siguen su tramitación.",
+        "modDonationsTitle": "Donativos",
+        "modDonationsDesc": "Donativos puntuales o mensuales, campañas con seguimiento del objetivo y certificado fiscal para cada donativo.",
+        "modReadingsTitle": "Lecturas del día",
+        "modReadingsDesc": "Una palabra del día y un texto para leer, publicados cada mañana con una notificación.",
+        "modPrayerTitle": "Peticiones de oración",
+        "modPrayerDesc": "Los miembros comparten sus intenciones y se unen en la oración.",
+        "pricingFree2": "Los módulos Eventos (horarios y agenda) y Donativos",
+        "how2Desc": "El plan Basic es gratuito, con los módulos Eventos y Donativos. Essentials y Complete pueden probarse gratis durante un mes.",
+        "heroEyebrow": "Aplicación para iglesias y lugares de culto",
+        "heroHeadline": "La aplicación de tu comunidad de fe, operativa en un día",
+        "heroSub": "Horarios de celebraciones, solicitudes, donativos, noticias: tus miembros tienen lo esencial en su teléfono. Tu equipo lo administra todo desde un único panel, sin conocimientos técnicos.",
+        "featHeading": "Una oferta pensada para los lugares de culto",
+        "modLivestreamDesc": "Tus celebraciones y encuentros retransmitidos en directo, accesibles desde la aplicación.",
+        "modMassTitle": "Intenciones de misa",
+        "modMassDesc": "Los miembros piden una misa por una persona y dejan su ofrenda en línea; el celebrante tiene el registro para imprimir."
+      },
+      "en": {
+        "modRequestsTitle": "Requests & appointments",
+        "modRequestsDesc": "Sign-ups, appointments, certificates and documents: members submit their request in the app and follow its progress.",
+        "modDonationsTitle": "Donations",
+        "modDonationsDesc": "One-off or monthly gifts, campaigns with goal tracking, and a tax receipt for every gift.",
+        "modReadingsTitle": "Daily readings",
+        "modReadingsDesc": "A word for the day and a text to read, published every morning with a notification.",
+        "modPrayerTitle": "Prayer requests",
+        "modPrayerDesc": "Members share their intentions and join together in prayer.",
+        "pricingFree2": "The Events (schedules and calendar) and Donations modules",
+        "how2Desc": "The Basic plan is free, with the Events and Donations modules. Essentials and Complete can each be tried free for one month.",
+        "heroEyebrow": "An app for churches and places of worship",
+        "heroHeadline": "Your faith community's app, up and running in a day",
+        "heroSub": "Service times, requests, giving, news: your members have the essentials on their phone. Your team manages everything from a single dashboard, with no technical skills required.",
+        "featHeading": "An offer designed for places of worship",
+        "modLivestreamDesc": "Your services and gatherings streamed live, available from the app.",
+        "modMassTitle": "Mass intentions",
+        "modMassDesc": "Members ask for a Mass for someone and leave the offering online; the celebrant gets a printable register."
+      },
+      "fr": {
+        "modRequestsTitle": "Demandes et rendez-vous",
+        "modRequestsDesc": "Inscriptions, rendez-vous, certificats et documents : les membres déposent leur demande dans l'application et en suivent le traitement.",
+        "modDonationsTitle": "Dons",
+        "modDonationsDesc": "Dons ponctuels ou mensuels, campagnes avec suivi de l'objectif et reçu fiscal pour chaque don.",
+        "modReadingsTitle": "Lectures du jour",
+        "modReadingsDesc": "Une parole du jour et un texte à lire, publiés chaque matin avec une notification.",
+        "modPrayerTitle": "Intentions de prière",
+        "modPrayerDesc": "Les membres partagent leurs intentions et s'unissent dans la prière.",
+        "pricingFree2": "Les modules Événements (horaires et agenda) et Dons",
+        "how2Desc": "La formule Basic est gratuite, avec les modules Événements et Dons. Essentials et Complete peuvent chacune être essayées gratuitement pendant un mois.",
+        "heroEyebrow": "Application pour les églises et lieux de culte",
+        "heroHeadline": "L'application de votre communauté de foi, opérationnelle en une journée",
+        "heroSub": "Horaires des célébrations, demandes, dons, actualités : vos membres retrouvent l'essentiel sur leur téléphone. Votre équipe administre l'ensemble depuis un tableau de bord unique, sans compétence technique.",
+        "featHeading": "Une offre pensée pour les lieux de culte",
+        "modLivestreamDesc": "Vos célébrations et rencontres retransmises en direct, accessibles depuis l'application.",
+        "modMassTitle": "Intentions de messe",
+        "modMassDesc": "Les membres demandent une messe pour une personne et laissent leur offrande en ligne ; le célébrant dispose d'un registre imprimable."
+      },
+      "va": {
+        "modRequestsTitle": "Sol·licituds i cites",
+        "modRequestsDesc": "Inscripcions, cites, certificats i documents: els membres presenten la sol·licitud en l'aplicació i en seguixen la tramitació.",
+        "modDonationsTitle": "Donatius",
+        "modDonationsDesc": "Donatius puntuals o mensuals, campanyes amb seguiment de l'objectiu i certificat fiscal per a cada donatiu.",
+        "modReadingsTitle": "Lectures del dia",
+        "modReadingsDesc": "Una paraula del dia i un text per a llegir, publicats cada matí amb una notificació.",
+        "modPrayerTitle": "Peticions d'oració",
+        "modPrayerDesc": "Els membres compartixen les seues intencions i s'unixen en l'oració.",
+        "pricingFree2": "Els mòduls Esdeveniments (horaris i agenda) i Donatius",
+        "how2Desc": "El pla Basic és gratuït, amb els mòduls Esdeveniments i Donatius. Essentials i Complete es poden provar de franc durant un mes.",
+        "heroEyebrow": "Aplicació per a esglésies i llocs de culte",
+        "heroHeadline": "L'aplicació de la teua comunitat de fe, operativa en un dia",
+        "heroSub": "Horaris de celebracions, sol·licituds, donatius, notícies: els teus membres tenen l'essencial al mòbil. El teu equip ho administra tot des d'un únic panell, sense coneixements tècnics.",
+        "featHeading": "Una oferta pensada per als llocs de culte",
+        "modLivestreamDesc": "Les teues celebracions i trobades retransmeses en directe, accessibles des de l'aplicació.",
+        "modMassTitle": "Intencions de missa",
+        "modMassDesc": "Els membres demanen una missa per una persona i deixen la seua ofrena en línia; el celebrant té el registre per a imprimir."
+      },
+      "gl": {
+        "modRequestsTitle": "Solicitudes e citas",
+        "modRequestsDesc": "Inscricións, citas, certificados e documentos: os membros presentan a súa solicitude na aplicación e seguen a súa tramitación.",
+        "modDonationsTitle": "Doazóns",
+        "modDonationsDesc": "Donativos puntuais ou mensuais, campañas con seguimento do obxectivo e certificado fiscal para cada donativo.",
+        "modReadingsTitle": "Lecturas do día",
+        "modReadingsDesc": "Unha palabra do día e un texto para ler, publicados cada mañá cunha notificación.",
+        "modPrayerTitle": "Peticións de oración",
+        "modPrayerDesc": "Os membros comparten as súas intencións e únense na oración.",
+        "pricingFree2": "Os módulos Eventos (horarios e axenda) e Doazóns",
+        "how2Desc": "O plan Basic é gratuíto, cos módulos Eventos e Doazóns. Essentials e Complete pódense probar de balde durante un mes.",
+        "heroEyebrow": "Aplicación para igrexas e lugares de culto",
+        "heroHeadline": "A aplicación da túa comunidade de fe, operativa nun día",
+        "heroSub": "Horarios de celebracións, solicitudes, donativos, novas: os teus membros teñen o esencial no seu teléfono. O teu equipo administrao todo desde un único panel, sen coñecementos técnicos.",
+        "featHeading": "Unha oferta pensada para os lugares de culto",
+        "modLivestreamDesc": "As túas celebracións e encontros retransmitidos en directo, accesibles desde a aplicación.",
+        "modMassTitle": "Intencións de misa",
+        "modMassDesc": "Os membros piden unha misa por unha persoa e deixan a súa ofrenda en liña; o celebrante ten o rexistro para imprimir."
+      },
+      "pt": {
+        "modRequestsTitle": "Pedidos e marcações",
+        "modRequestsDesc": "Inscrições, marcações, certidões e documentos: os membros fazem o pedido na aplicação e acompanham o seu andamento.",
+        "modDonationsTitle": "Donativos",
+        "modDonationsDesc": "Donativos pontuais ou mensais, campanhas com acompanhamento do objetivo e recibo fiscal para cada donativo.",
+        "modReadingsTitle": "Leituras do dia",
+        "modReadingsDesc": "Uma palavra do dia e um texto para ler, publicados todas as manhãs com uma notificação.",
+        "modPrayerTitle": "Pedidos de oração",
+        "modPrayerDesc": "Os membros partilham as suas intenções e unem-se na oração.",
+        "pricingFree2": "Os módulos Eventos (horários e agenda) e Donativos",
+        "how2Desc": "O plano Basic é gratuito, com os módulos Eventos e Donativos. O Essentials e o Complete podem ser experimentados gratuitamente durante um mês.",
+        "heroEyebrow": "Aplicação para igrejas e locais de culto",
+        "heroHeadline": "A aplicação da sua comunidade de fé, operacional num dia",
+        "heroSub": "Horários das celebrações, pedidos, donativos, notícias: os seus membros têm o essencial no telemóvel. A sua equipa gere tudo a partir de um painel único, sem conhecimentos técnicos.",
+        "featHeading": "Uma oferta pensada para os locais de culto",
+        "modLivestreamDesc": "As suas celebrações e encontros transmitidos em direto, acessíveis a partir da aplicação.",
+        "modMassTitle": "Intenções de missa",
+        "modMassDesc": "Os membros pedem uma missa por uma pessoa e deixam a sua oferta online; o celebrante tem o registo para imprimir."
+      }
+    },
+    "ngo": {
+      "es": {
+        "heroEyebrow": "Aplicación para asociaciones y ONG",
+        "heroHeadline": "La aplicación de tu asociación, operativa en un día",
+        "heroSub": "Actividades, inscripciones, cuotas, noticias: tus socios y voluntarios tienen lo esencial en su teléfono. Tu equipo lo administra todo desde un único panel, sin conocimientos técnicos.",
+        "featHeading": "Una oferta pensada para asociaciones y ONG",
+        "why2Title": "Cuotas y aportaciones más regulares",
+        "why2Desc": "Cuotas de socio, aportaciones puntuales o periódicas y campañas con seguimiento del objetivo, con recibo o certificado fiscal de cada pago."
+      },
+      "en": {
+        "heroEyebrow": "An app for associations and NGOs",
+        "heroHeadline": "Your association's app, up and running in a day",
+        "heroSub": "Activities, sign-ups, fees, news: your members and volunteers have the essentials on their phone. Your team manages everything from a single dashboard, with no technical skills required.",
+        "featHeading": "An offer designed for associations and NGOs",
+        "why2Title": "More regular fees and contributions",
+        "why2Desc": "Membership fees, one-off or regular contributions and campaigns with goal tracking, with a receipt or tax certificate for every payment."
+      },
+      "fr": {
+        "heroEyebrow": "Application pour les associations et ONG",
+        "heroHeadline": "L'application de votre association, opérationnelle en une journée",
+        "heroSub": "Activités, inscriptions, cotisations, actualités : vos membres et bénévoles retrouvent l'essentiel sur leur téléphone. Votre équipe administre l'ensemble depuis un tableau de bord unique, sans compétence technique.",
+        "featHeading": "Une offre pensée pour les associations et ONG",
+        "why2Title": "Des cotisations et contributions plus régulières",
+        "why2Desc": "Cotisations, contributions ponctuelles ou régulières et campagnes avec suivi de l'objectif, avec un reçu ou un reçu fiscal pour chaque paiement."
+      },
+      "va": {
+        "heroEyebrow": "Aplicació per a associacions i ONG",
+        "heroHeadline": "L'aplicació de la teua associació, operativa en un dia",
+        "heroSub": "Activitats, inscripcions, quotes, notícies: els teus socis i voluntaris tenen l'essencial al mòbil. El teu equip ho administra tot des d'un únic panell, sense coneixements tècnics.",
+        "featHeading": "Una oferta pensada per a associacions i ONG",
+        "why2Title": "Quotes i aportacions més regulars",
+        "why2Desc": "Quotes de soci, aportacions puntuals o periòdiques i campanyes amb seguiment de l'objectiu, amb rebut o certificat fiscal de cada pagament."
+      },
+      "gl": {
+        "heroEyebrow": "Aplicación para asociacións e ONG",
+        "heroHeadline": "A aplicación da túa asociación, operativa nun día",
+        "heroSub": "Actividades, inscricións, cotas, novas: os teus socios e voluntarios teñen o esencial no seu teléfono. O teu equipo administrao todo desde un único panel, sen coñecementos técnicos.",
+        "featHeading": "Unha oferta pensada para asociacións e ONG",
+        "why2Title": "Cotas e achegas máis regulares",
+        "why2Desc": "Cotas de socio, achegas puntuais ou periódicas e campañas con seguimento do obxectivo, con recibo ou certificado fiscal de cada pagamento."
+      },
+      "pt": {
+        "heroEyebrow": "Aplicação para associações e ONG",
+        "heroHeadline": "A aplicação da sua associação, operacional num dia",
+        "heroSub": "Atividades, inscrições, quotas, notícias: os seus sócios e voluntários têm o essencial no telemóvel. A sua equipa gere tudo a partir de um painel único, sem conhecimentos técnicos.",
+        "featHeading": "Uma oferta pensada para associações e ONG",
+        "why2Title": "Quotas e contribuições mais regulares",
+        "why2Desc": "Quotas de sócio, contribuições pontuais ou periódicas e campanhas com acompanhamento do objetivo, com recibo ou declaração fiscal de cada pagamento."
+      }
+    }
+  };
+
+  var VARIANT = (function () {
+    var m = /[?&]for=([a-z]+)/.exec(window.location.search);
+    return m && VARIANTS[m[1]] ? m[1] : null;
+  })();
+
+  // A module card shows on a variant when the module is offered to at least
+  // one kind of place of that variant (same rule as the app, assets/modules.js).
+  function showModuleCards() {
+    var rules = window.INFUNION_MODULES;
+    if (!rules) return;
+    document.querySelectorAll("[data-module]").forEach(function (el) {
+      var type = el.getAttribute("data-module");
+      var only = rules.onlyFor[type];
+      var show;
+      if (VARIANT) {
+        show = !only || rules.variants[VARIANT].some(function (place) {
+          return only.indexOf(place) !== -1;
+        });
+      } else {
+        show = rules.notOnGeneralPage.indexOf(type) === -1;
+      }
+      el.hidden = !show;
+    });
+  }
+
+  var WORSHIP_SHOTS = ["home", "calendar", "donate", "requests", "admin", "admin-requests", "admin-home"];
   var STORAGE_KEY = "ansae-landing-language";
 
   function applyLang(lang) {
     var t = TRANSLATIONS[lang] || TRANSLATIONS.es;
+    var over = VARIANT && VARIANTS[VARIANT][lang];
+    if (over) {
+      var merged = {};
+      Object.keys(t).forEach(function (k) { merged[k] = t[k]; });
+      Object.keys(over).forEach(function (k) { merged[k] = over[k]; });
+      t = merged;
+    }
+    if (VARIANT) document.documentElement.setAttribute("data-for", VARIANT);
+    showModuleCards();
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var key = el.getAttribute("data-i18n");
       if (t[key] !== undefined) el.textContent = t[key];
     });
     // Real app screenshots, taken in each language (assets/screens/<lang>/).
     document.querySelectorAll("[data-shot]").forEach(function (el) {
-      el.src = "assets/screens/" + lang + "/" + el.getAttribute("data-shot") + ".webp?v=20261026-offer";
+      var shot = el.getAttribute("data-shot");
+      // The worship variant shows the Carmen demo (a church), the others the
+      // Crecer Juntos association; shots without a worship copy stay shared.
+      var folder = VARIANT === "worship" && WORSHIP_SHOTS.indexOf(shot) !== -1 ? "/worship/" : "/";
+      el.src = "assets/screens/" + lang + folder + shot + ".webp?v=20261102-variants";
     });
     document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-alt");
