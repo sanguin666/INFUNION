@@ -13,6 +13,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { PhoneVerificationCode } from './entities/phone-verification-code.entity.js';
 import { SmsSender } from './sms/sms-sender.js';
+import { codeSms } from './sms/code-sms.js';
 import { EmailSender } from './email/email-sender.js';
 import { codeEmail } from './email/code-email.js';
 import { UsersService } from '../users/users.service.js';
@@ -99,7 +100,7 @@ export class PhoneAuthService {
   requestLoginCode(login: string, language?: string): Promise<RequestCodeResult> {
     return isEmailLogin(login)
       ? this.requestEmailCode(login, language)
-      : this.requestCode(login);
+      : this.requestCode(login, language);
   }
 
   verifyLoginCode(login: string, code: string, firstName?: string): Promise<{ accessToken: string }> {
@@ -108,10 +109,10 @@ export class PhoneAuthService {
       : this.verifyCode(login, code, firstName);
   }
 
-  async requestCode(rawPhone: string): Promise<RequestCodeResult> {
+  async requestCode(rawPhone: string, language?: string): Promise<RequestCodeResult> {
     const phone = normalizePhone(rawPhone);
     const code = await this.issueCode({ phone });
-    await this.smsSender.send(phone, `${code} is your infunion code.`);
+    await this.smsSender.send(phone, codeSms(code, language));
     return {
       expiresInSeconds: CODE_TTL_SECONDS,
       channel: 'sms',

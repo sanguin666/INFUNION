@@ -5,7 +5,7 @@ import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
 import { PhoneAuthService } from './phone-auth.service.js';
 import { PhoneVerificationCode } from './entities/phone-verification-code.entity.js';
-import { ConsoleSmsSender, SmsSender } from './sms/sms-sender.js';
+import { BrevoSmsSender, ConsoleSmsSender, SmsSender } from './sms/sms-sender.js';
 import { BrevoEmailSender, ConsoleEmailSender, EmailSender } from './email/email-sender.js';
 import { AuthGuardsModule } from './auth-guards.module.js';
 import { UsersModule } from '../users/users.module.js';
@@ -27,9 +27,16 @@ import { PoisModule } from '../pois/pois.module.js';
   providers: [
     AuthService,
     PhoneAuthService,
-    // Swap this provider for a Twilio-backed SmsSender to send real codes;
-    // nothing else in the login flow needs to change.
-    { provide: SmsSender, useClass: ConsoleSmsSender },
+    // Real SMS through Brevo once SMS_PROVIDER=brevo (and BREVO_API_KEY) are
+    // set; the log otherwise, with the code shown on screen on demo servers.
+    {
+      provide: SmsSender,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) =>
+        config.get<string>('SMS_PROVIDER') === 'brevo' && config.get<string>('BREVO_API_KEY')
+          ? new BrevoSmsSender(config)
+          : new ConsoleSmsSender(),
+    },
     // Real emails once BREVO_API_KEY is set; the log otherwise, with the
     // code shown on screen as for SMS.
     {
