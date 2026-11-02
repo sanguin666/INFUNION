@@ -19,10 +19,10 @@ import { UpdateMenuOrderDto } from '../common/dto/update-menu-order.dto.js';
 import { UpdateReceiptSettingsDto } from '../common/dto/update-receipt-settings.dto.js';
 import { UpdatePoiLocationDto } from '../places-map/dto/update-poi-location.dto.js';
 import { UpdatePoiBrandingDto } from '../common/dto/update-poi-branding.dto.js';
-import { localDiskStorage, publicUrlFor } from '../common/upload/multer-storage.js';
+import { publicUrlFor } from '../common/upload/multer-storage.js';
+import { MAX_PICTURE_UPLOAD_BYTES, pictureStorage, SMALL_PICTURE_SIDE } from '../common/upload/image-storage.js';
 
 const LOGOS = 'logos';
-const MAX_LOGO_BYTES = 4 * 1024 * 1024;
 // Pictures a phone can draw: React Native's Image has no SVG.
 const LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
@@ -77,8 +77,8 @@ export class PoiSettingsController {
   @UseGuards(JwtAuthGuard, PoiAdminGuard)
   @UseInterceptors(
     FileInterceptor('logo', {
-      storage: localDiskStorage(LOGOS),
-      limits: { fileSize: MAX_LOGO_BYTES },
+      storage: pictureStorage(LOGOS, SMALL_PICTURE_SIDE),
+      limits: { fileSize: MAX_PICTURE_UPLOAD_BYTES },
       fileFilter: (_req, file, callback) => {
         if (!LOGO_TYPES.includes(file.mimetype)) {
           callback(new UnsupportedMediaTypeException('The logo must be a PNG, JPEG or WebP picture'), false);

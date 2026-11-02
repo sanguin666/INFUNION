@@ -139,8 +139,11 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
     try {
       applyMe(await uploadMyAvatar(picked.uri));
       setSaved(true);
-    } catch {
-      setError(t('profile.error'));
+    } catch (uploadError) {
+      // The server's status, when it answered, so a screenshot of the
+      // message is enough to tell "too large" from "server down".
+      const status = uploadError instanceof ApiError ? uploadError.status : undefined;
+      setError(status ? `${t('profile.pictureError')} (${status})` : t('profile.error'));
     } finally {
       setBusy(null);
     }
