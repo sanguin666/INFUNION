@@ -605,7 +605,7 @@ const en: Translations = {
     signOutButton: 'Sign out',
     signedInAs: 'Signed in as {{name}}',
     closingTitle: "This community is leaving infunion on {{date}}.",
-    closingBody: "Download your tax receipts from Donations before then. After that date, you can join another community or delete your account in your profile.",
+    closingBody: "Download your tax receipts before then. After that date, you can join another community or delete your account in your profile.",
   },
   signIn: {
     title: 'Sign in',
@@ -1178,7 +1178,7 @@ const es: Translations = {
     signOutButton: 'Cerrar sesión',
     signedInAs: 'Sesión iniciada como {{name}}',
     closingTitle: "Esta comunidad deja infunion el {{date}}.",
-    closingBody: "Descarga antes tus certificados de donativos desde Donativos. Después de esa fecha, puedes unirte a otra comunidad o borrar tu cuenta desde tu perfil.",
+    closingBody: "Descarga antes tus certificados de donativos. Después de esa fecha, puedes unirte a otra comunidad o borrar tu cuenta desde tu perfil.",
   },
   signIn: {
     title: 'Iniciar sesión',
@@ -1751,7 +1751,7 @@ const fr: Translations = {
     signOutButton: 'Se déconnecter',
     signedInAs: 'Connecté en tant que {{name}}',
     closingTitle: "Cette communauté quitte infunion le {{date}}.",
-    closingBody: "Téléchargez vos reçus fiscaux depuis Dons avant cette date. Ensuite, vous pourrez rejoindre une autre communauté ou supprimer votre compte depuis votre profil.",
+    closingBody: "Téléchargez vos reçus fiscaux avant cette date. Ensuite, vous pourrez rejoindre une autre communauté ou supprimer votre compte depuis votre profil.",
   },
   signIn: {
     title: 'Se connecter',
@@ -2324,7 +2324,7 @@ const va: Translations = {
     signOutButton: 'Tancar la sessió',
     signedInAs: 'Sessió iniciada com a {{name}}',
     closingTitle: "Esta comunitat deixa infunion el {{date}}.",
-    closingBody: "Descarrega abans els teus certificats de donatius des de Donatius. Després d'eixa data, pots unir-te a una altra comunitat o esborrar el teu compte des del teu perfil.",
+    closingBody: "Descarrega abans els teus certificats de donatius. Després d'eixa data, pots unir-te a una altra comunitat o esborrar el teu compte des del teu perfil.",
   },
   signIn: {
     title: 'Iniciar sessió',
@@ -2897,7 +2897,7 @@ const gl: Translations = {
     signOutButton: 'Pechar a sesión',
     signedInAs: 'Sesión iniciada como {{name}}',
     closingTitle: "Esta comunidade deixa infunion o {{date}}.",
-    closingBody: "Descarga antes os teus certificados de doazóns desde Doazóns. Despois desa data, podes unirte a outra comunidade ou borrar a túa conta desde o teu perfil.",
+    closingBody: "Descarga antes os teus certificados de doazóns. Despois desa data, podes unirte a outra comunidade ou borrar a túa conta desde o teu perfil.",
   },
   signIn: {
     title: 'Iniciar sesión',
@@ -3471,7 +3471,7 @@ const pt: Translations = {
     signOutButton: 'Terminar sessão',
     signedInAs: 'Sessão iniciada como {{name}}',
     closingTitle: "Esta comunidade vai sair do infunion a {{date}}.",
-    closingBody: "Descarregue antes os seus recibos em Donativos. Depois dessa data, pode juntar-se a outra comunidade ou apagar a sua conta no seu perfil.",
+    closingBody: "Descarregue antes os seus recibos. Depois dessa data, pode juntar-se a outra comunidade ou apagar a sua conta no seu perfil.",
   },
   signIn: {
     title: 'Iniciar sessão',

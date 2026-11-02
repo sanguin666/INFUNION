@@ -728,9 +728,9 @@ export class PlaceClosureService implements OnModuleInit, OnModuleDestroy {
         name: `gifts/${year}/donors.csv`,
         data: donorsCsv(donors),
       });
-      for (const donor of donors) {
+      for (const [index, donor] of donors.entries()) {
         entries.push({
-          name: `gifts/${year}/receipts/${safeName(donor.name || 'donor')}-${donor.key.slice(-8).replace(/[^\w-]/g, '')}.html`,
+          name: `gifts/${year}/receipts/${String(index + 1).padStart(3, '0')}-${safeName(donor.name || 'donor')}.html`,
           data: receiptHtml(poi, donor, year, this.stripe.currency),
         });
       }

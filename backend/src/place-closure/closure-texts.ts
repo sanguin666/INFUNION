@@ -9,7 +9,7 @@ const TEXTS = {
   en: {
     pushClosingTitle: '{place} is leaving infunion',
     pushClosingBody:
-      'The community closes its space on {date}. Download your tax receipts from My gifts before then.',
+      'The community closes its space on {date}. Download your tax receipts before then.',
     pushStaysTitle: '{place} is staying',
     pushStaysBody:
       'The community is staying on infunion. Monthly gifts that were stopped need to be started again.',
@@ -38,7 +38,7 @@ const TEXTS = {
   es: {
     pushClosingTitle: '{place} deja infunion',
     pushClosingBody:
-      'La comunidad cierra su espacio el {date}. Descarga antes tus certificados de donativos desde Mis donativos.',
+      'La comunidad cierra su espacio el {date}. Descarga antes tus certificados de donativos.',
     pushStaysTitle: '{place} se queda',
     pushStaysBody:
       'La comunidad se queda en infunion. Los donativos mensuales que se pararon hay que volver a empezarlos.',
@@ -67,7 +67,7 @@ const TEXTS = {
   fr: {
     pushClosingTitle: '{place} quitte infunion',
     pushClosingBody:
-      'La communauté ferme son espace le {date}. Téléchargez vos reçus fiscaux depuis Mes dons avant cette date.',
+      'La communauté ferme son espace le {date}. Téléchargez vos reçus fiscaux avant cette date.',
     pushStaysTitle: '{place} reste',
     pushStaysBody:
       'La communauté reste sur infunion. Les dons mensuels arrêtés doivent être relancés.',
@@ -96,7 +96,7 @@ const TEXTS = {
   va: {
     pushClosingTitle: '{place} deixa infunion',
     pushClosingBody:
-      'La comunitat tanca el seu espai el {date}. Descarrega abans els teus certificats de donatius des de Els meus donatius.',
+      'La comunitat tanca el seu espai el {date}. Descarrega abans els teus certificats de donatius.',
     pushStaysTitle: '{place} es queda',
     pushStaysBody:
       'La comunitat es queda a infunion. Els donatius mensuals que es van parar cal tornar-los a començar.',
@@ -125,7 +125,7 @@ const TEXTS = {
   gl: {
     pushClosingTitle: '{place} deixa infunion',
     pushClosingBody:
-      'A comunidade pecha o seu espazo o {date}. Descarga antes os teus certificados de doazóns desde As miñas doazóns.',
+      'A comunidade pecha o seu espazo o {date}. Descarga antes os teus certificados de doazóns.',
     pushStaysTitle: '{place} queda',
     pushStaysBody:
       'A comunidade queda en infunion. As doazóns mensuais que se pararon hai que volver comezalas.',
@@ -153,7 +153,7 @@ const TEXTS = {
   pt: {
     pushClosingTitle: '{place} vai sair do infunion',
     pushClosingBody:
-      'A comunidade fecha o seu espaço a {date}. Descarregue antes os seus recibos de donativos em Os meus donativos.',
+      'A comunidade fecha o seu espaço a {date}. Descarregue antes os seus recibos de donativos.',
     pushStaysTitle: '{place} vai ficar',
     pushStaysBody:
       'A comunidade fica no infunion. Os donativos mensais que foram parados têm de ser iniciados de novo.',
