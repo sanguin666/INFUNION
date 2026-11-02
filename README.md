@@ -140,13 +140,13 @@ Nothing skips a step: `staging` only ever receives what is on `dev`, and `produc
 
 For showing the app to someone off your network, a standalone build beats Expo Go: the JavaScript ships inside the APK, so there's no Metro dev server, no QR code and no Expo Go login involved. The only thing that still has to be reachable is the backend.
 
-1. The APK talks to the backend hosted on [Railway](https://railway.com) (EU West), at `https://infunion-api.up.railway.app`. That URL is in the `preview` profile's `env` block in `app/eas.json`, and the over-the-air update address in `app/app.json`, which are baked into the build. Once the `api.infunion.app` custom domain is live on the `infunion-api` service, switch both to it (before the store release), so the host can later change without a new APK. Railway redeploys it on every push to `production`, so this PC doesn't need to be on. See "Environments" below.
+1. The APK talks to the backend hosted on [Railway](https://railway.com) (EU West), at `https://api.infunion.app` (a custom domain on the `infunion-api` service; DNS at IONOS, see "Domains" below). That URL is in the `env` blocks in `app/eas.json`, and in the over-the-air update address in `app/app.json`, which are baked into the build, so the host can change later without a new APK. The service's own address, `https://infunion-api.up.railway.app`, keeps working for older APKs. Railway redeploys it on every push to `production`, so this PC doesn't need to be on. See "Environments" below.
 
    The Railway service builds from the `backend/` folder (Root Directory `/backend`), with build command `npm run build`, pre-deploy command `npx typeorm migration:run -d dist/data-source.js && node dist/seed.js`, start command `npm run start:prod`, a PostgreSQL database in the same project, and a volume mounted at `/data` for uploads. Its variables are `NODE_ENV=production`, `DEMO_LOGIN=on`, `JWT_SECRET`, `DB_HOST`/`DB_PORT`/`DB_USERNAME`/`DB_PASSWORD`/`DB_NAME` taken from the database's `PGHOST`/`PGPORT`/`PGUSER`/`PGPASSWORD`/`PGDATABASE`, `UPLOADS_DIR=/data/uploads` and `PRIVATE_UPLOADS_DIR=/data/private`.
 
-   The admin dashboard is a second Railway service in the same project, at `https://infunion-admin.up.railway.app`: Root Directory `/admin`, no build or start command (Railway serves the Vite build itself), and the variables `VITE_API_URL=https://infunion-api.up.railway.app` and `VITE_DONATION_CURRENCY=EUR`, which are read at build time. The backend's `CORS_ORIGINS` lists the admin's address and `http://localhost:5173`.
+   The admin dashboard is a second Railway service in the same project, at `https://infunion-admin.up.railway.app`: Root Directory `/admin`, no build or start command (Railway serves the Vite build itself), and the variables `VITE_API_URL=https://api.infunion.app` and `VITE_DONATION_CURRENCY=EUR`, which are read at build time. The backend's `CORS_ORIGINS` lists the admin's address and `http://localhost:5173`.
 
-   The app's web version, which the admin's phone preview shows, is a third Railway service at `https://infunion-app.up.railway.app`: Root Directory `/app`, no build or start command (`npm run build` runs `expo export --platform web`, and Railway serves the result), and `EXPO_PUBLIC_API_URL=https://infunion-api.up.railway.app`. The admin's `VITE_APP_PREVIEW_URL` points at it, and the backend's `CORS_ORIGINS` lists it too.
+   The app's web version, which the admin's phone preview shows, is a third Railway service at `https://infunion-app.up.railway.app`: Root Directory `/app`, no build or start command (`npm run build` runs `expo export --platform web`, and Railway serves the result), and `EXPO_PUBLIC_API_URL=https://api.infunion.app`. The admin's `VITE_APP_PREVIEW_URL` points at it, and the backend's `CORS_ORIGINS` lists it too.
 
 2. To demo against this PC instead, `start-demo.bat` still exposes the local backend through ngrok. Put its `NGROK_DOMAIN` URL back in `app/eas.json` and rebuild.
 3. Build and install:
@@ -406,6 +406,23 @@ Copies × `DB_POOL_SIZE` (default 10) must stay under Postgres's `max_connection
 **Backups**: `.github/workflows/db-backup.yml` dumps the production database every night to a separate R2 bucket and keeps 30 days. The secrets it needs, and how to restore, are at the top of the file.
 
 **Regions**: a region (Europe, Americas, Asia) is a complete copy of the backend with its own database and bucket; `REGION` names it in `/health`. See the scaling plan for when to open one.
+
+## Domains
+
+`infunion.app` is registered at IONOS, which also hosts its DNS. Each Railway service has a custom domain (a CNAME plus a `_railway-verify` TXT record in IONOS):
+
+| Address | Railway service |
+| --- | --- |
+| `www.infunion.app` | infunion-landing |
+| `admin.infunion.app` | infunion-admin |
+| `web.infunion.app` | infunion-app (web build, admin phone preview) |
+| `api.infunion.app` | infunion-api |
+
+The bare `infunion.app` is an IONOS HTTP redirect to `https://www.infunion.app` (IONOS's free wildcard certificate). A CNAME can't sit on the bare domain without blocking the mail TXT records. When editing that redirect, leave "also for www subdomains" unticked: it replaces the `www` CNAME with IONOS's own records.
+
+Production variables that follow: `CORS_ORIGINS` and `ADMIN_URL=https://admin.infunion.app` on infunion-api, `VITE_API_URL` and `VITE_APP_PREVIEW_URL=https://web.infunion.app` on infunion-admin, `EXPO_PUBLIC_API_URL` on infunion-app. The old `*.up.railway.app` addresses keep working.
+
+Mail: `hello@` and `register@infunion.app` are IONOS forwards to the team Gmail; the IONOS MX/SPF/DKIM records stay. Sign-in code emails go out through Brevo (add `include:spf.brevo.com` to the one existing SPF record, never a second one).
 
 ## Marketing landing page
 

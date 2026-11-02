@@ -145,7 +145,7 @@
       return "http://" + (host || "localhost") + ":3000";
     }
     if (host.indexOf("-staging") !== -1) return "https://infunion-api-staging.up.railway.app";
-    return "https://infunion-api.up.railway.app";
+    return "https://api.infunion.app";
   }
 
   function $(id) {
