@@ -31,11 +31,13 @@
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS",
-        "android.permission.FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
         "android.permission.CAMERA",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "blockedPermissions": [
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
       ]
     },
     "web": {
@@ -52,7 +54,8 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow infunion to access your microphone to record a voice message."
+          "microphonePermission": "Allow infunion to access your microphone to record a voice message.",
+          "enableBackgroundPlayback": false
         }
       ],
       [
