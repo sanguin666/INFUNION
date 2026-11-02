@@ -337,6 +337,8 @@ The app signs someone in with an email address or a phone number and a 6-digit c
 
 **Email sending.** Set `BREVO_API_KEY` (Brevo, EU-hosted, free up to 300 emails a day) and the codes go out by email; `EMAIL_FROM` / `EMAIL_FROM_NAME` set the sender. The sender's domain must be verified in Brevo (SPF, DKIM and DMARC records on infunion.app). Without the key, `ConsoleEmailSender` logs the email and the code comes back as `devCode`, as for SMS.
 
+**SMS sending.** Also through Brevo (same account and key, prepaid SMS credits): set `SMS_PROVIDER=brevo` as well as `BREVO_API_KEY`, and the codes go out by SMS in the app's language, from `SMS_SENDER` (default `infunion`). Without `SMS_PROVIDER=brevo`, `ConsoleSmsSender` logs the SMS and the code comes back as `devCode` on demo servers.
+
 - `POST /auth/phone/request-code` `{ phone }` — sends a code, valid 10 minutes. One code per number per minute, five per hour, five wrong guesses before the code is burnt. Only a bcrypt hash of the code is stored (`phone_verification_codes`).
 - `POST /auth/phone/verify` `{ phone, code, firstName? }` — returns `{ accessToken }` (the same 7-day JWT the admin dashboard uses). A number that verifies for the first time gets an account right there; `firstName` is only written on that first sign-in.
 - `GET /auth/me` now also returns `phone` and `pois` (every place the person belongs to), so "my places" follows the account instead of the device.
