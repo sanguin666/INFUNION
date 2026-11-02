@@ -1717,3 +1717,40 @@ html[data-for="worship"] .only-worship { display: inline; }
 html[data-for="worship"] .not-worship { display: none; }
 
 .feature-card[hidden] { display: none; }
+
+/* ---------- Big screens (1440 px and up) ----------
+   Desktop review, 2 Nov 2026: on a 1920 screen the page sat in a 1,080 px
+   column and the hero screenshots were too small to read. Wider column,
+   a bigger hero picture and title. */
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1240px;
+  }
+
+  .hero {
+    padding-top: 80px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 5fr 7fr;
+    gap: 56px;
+    padding-bottom: 72px;
+  }
+
+  .hero h1 {
+    font-size: 50px;
+  }
+
+  .hero p {
+    font-size: 19px;
+    max-width: 520px;
+  }
+
+  .hero-visual {
+    padding-left: 96px;
+  }
+
+  .hero-visual .hero-phone {
+    width: 210px;
+  }
+}

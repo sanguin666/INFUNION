@@ -213,6 +213,39 @@ a {
   font-weight: 700;
 }
 
+/* The page menu takes whatever height is left and scrolls on its own,
+   so Language, Appearance and Sign out stay pinned at the bottom even on
+   a 768 px tall laptop (desktop review, 2 Nov 2026). */
+.sidebar .sidebar-nav {
+  flex: 1 1 auto;
+  min-height: 120px;
+  overflow-y: auto;
+  margin: 0 -6px;
+  padding: 0 6px;
+}
+
+/* Laptops: tighter rows so most of the menu fits without scrolling. */
+@media (max-height: 900px) {
+  .sidebar {
+    padding: 16px 16px 12px;
+    gap: 10px;
+  }
+  .sidebar nav a {
+    min-height: 38px;
+  }
+  .sidebar-footer {
+    gap: 4px;
+  }
+  .sidebar-footer .picker-row {
+    min-height: 46px;
+  }
+  .sidebar-footer .btn {
+    min-height: 40px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+}
+
 .sidebar-footer {
   margin-top: auto;
   display: flex;
@@ -223,7 +256,10 @@ a {
 .main {
   flex: 1;
   min-width: 0;
-  padding: 40px 48px;
+  padding: 40px clamp(24px, 3vw, 48px);
+  /* Centred in the space beside the menu once a screen is wider than
+     the cap, rather than hugging the left (desktop review, 2 Nov 2026). */
+  margin-inline: auto;
   /* Room for wide screens (Seb, 30 Oct 2026: the content looked
      squeezed into the left half of his PC screen). Running text keeps
      a readable line length below. */
@@ -277,6 +313,14 @@ a {
 
 .card-grid > .card.form {
   grid-column: 1 / -1;
+}
+
+/* Buttons on the cards of a list (Edit, Delete) are a size down, so a
+   screen of cards reads as content, not as a wall of buttons. */
+.card-grid > .card:not(.form) .btn {
+  min-height: 40px;
+  padding: 6px 16px;
+  font-size: 16px;
 }
 
 /* Forms keep a comfortable width: one field per row reads badly once
@@ -1674,8 +1718,31 @@ a.btn {
   text-align: center;
 }
 
+/* Laptops (1200-1439 px): a smaller phone, so it can stay beside the
+   editor instead of dropping under it (desktop review, 2 Nov 2026). */
+@media (max-width: 1439px) {
+  .page-with-preview {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+  }
+
+  .phone-frame {
+    width: 296px;
+    border-width: 6px;
+    border-radius: 30px;
+  }
+
+  .phone-frame iframe {
+    --phone-scale: calc(284 / 390);
+  }
+
+  .phone-preview-hint {
+    max-width: 296px;
+  }
+}
+
 /* Not enough width for both: the phone goes under the editor. */
-@media (max-width: 1320px) {
+@media (max-width: 1199px) {
   .page-with-preview {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1939,9 +2006,12 @@ label.link-button:focus-within {
 /* Out of sight but still reachable by keyboard and screen readers: the
    file picker behind a "Add a photo" label. */
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
+  /* !important: form rules such as `.form input { width: 100% }` are more
+     specific and made the hidden logo picker 1,280 px wide, which scrolled
+     Settings sideways. */
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
   margin: -1px;
   padding: 0;
   overflow: hidden;

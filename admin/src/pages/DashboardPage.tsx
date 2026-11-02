@@ -164,7 +164,7 @@ export function DashboardPage() {
     getCampaigns(poiId).then(setCampaigns).catch(() => setCampaigns([]));
   }, [poiId, givingLive]);
 
-  const locale = language === 'en' ? 'en-GB' : intlLocale(language);
+  const locale = intlLocale(language);
   const dayTime = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   const formatWhen = (iso: string) => dayTime.format(new Date(iso));
   const today = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());

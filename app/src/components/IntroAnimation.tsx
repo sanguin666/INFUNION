@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Easing, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
+import { AccessibilityInfo, Easing, Pressable, StyleSheet } from 'react-native';
+import { useFrameDimensions } from '../web/desktopFrame';
 import Svg, { G } from 'react-native-svg';
 import { Rings, WordmarkArt } from './Logo';
 import { colors } from '../theme/theme';
@@ -38,7 +39,7 @@ function progress(t: number, from: number, to: number) {
 export function IntroAnimation({ onDone }: { onDone: () => void }) {
   const [t, setT] = useState(0);
   const finished = useRef(false);
-  const { width } = useWindowDimensions();
+  const { width } = useFrameDimensions();
 
   function finish() {
     if (finished.current) return;
