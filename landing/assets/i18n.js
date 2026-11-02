@@ -875,10 +875,58 @@
     },
   };
 
+  // Audience variants of the same page (Seb, 2 Nov 2026): ?for=worship or
+  // ?for=ngo. Each one only overrides a few texts; a language a variant
+  // does not have yet keeps the general page's texts.
+  var VARIANTS = {
+    "worship": {
+      "es": {
+        "heroEyebrow": "Aplicación para iglesias y lugares de culto",
+        "heroHeadline": "La aplicación de tu comunidad de fe, operativa en un día",
+        "heroSub": "Horarios de celebraciones, solicitudes, donativos, noticias: tus miembros tienen lo esencial en su teléfono. Tu equipo lo administra todo desde un único panel, sin conocimientos técnicos.",
+        "featHeading": "Una oferta pensada para los lugares de culto",
+        "modRequestsTitle": "Solicitudes y citas",
+        "modRequestsDesc": "Inscripciones, citas, certificados y documentos: los miembros presentan su solicitud en la aplicación y siguen su tramitación.",
+        "modDonationsTitle": "Donativos",
+        "modDonationsDesc": "Donativos puntuales o mensuales, campañas con seguimiento del objetivo y certificado fiscal de cada donativo.",
+        "modReadingsTitle": "Lecturas del día",
+        "modReadingsDesc": "Una palabra del día y los textos para leer, publicados cada mañana con una notificación.",
+        "modLivestreamDesc": "Tus celebraciones y encuentros retransmitidos en directo, accesibles desde la aplicación.",
+        "modPrayerTitle": "Peticiones de oración",
+        "modPrayerDesc": "Los miembros comparten sus intenciones y se unen en la oración.",
+        "pricingFree2": "Los módulos Eventos (horarios y agenda) y Donativos",
+        "how2Desc": "El plan Basic es gratuito, con los módulos Eventos y Donativos. Essentials y Complete pueden probarse gratis durante un mes."
+      }
+    },
+    "ngo": {
+      "es": {
+        "heroEyebrow": "Aplicación para asociaciones y ONG",
+        "heroHeadline": "La aplicación de tu asociación, operativa en un día",
+        "heroSub": "Actividades, inscripciones, cuotas, noticias: tus socios y voluntarios tienen lo esencial en su teléfono. Tu equipo lo administra todo desde un único panel, sin conocimientos técnicos.",
+        "featHeading": "Una oferta pensada para asociaciones y ONG",
+        "why2Title": "Cuotas y aportaciones más regulares",
+        "why2Desc": "Cuotas de socio, aportaciones puntuales o periódicas y campañas con seguimiento del objetivo, con recibo o certificado fiscal de cada pago."
+      }
+    }
+  };
+
+  var VARIANT = (function () {
+    var m = /[?&]for=([a-z]+)/.exec(window.location.search);
+    return m && VARIANTS[m[1]] ? m[1] : null;
+  })();
+
   var STORAGE_KEY = "ansae-landing-language";
 
   function applyLang(lang) {
     var t = TRANSLATIONS[lang] || TRANSLATIONS.es;
+    var over = VARIANT && VARIANTS[VARIANT][lang];
+    if (over) {
+      var merged = {};
+      Object.keys(t).forEach(function (k) { merged[k] = t[k]; });
+      Object.keys(over).forEach(function (k) { merged[k] = over[k]; });
+      t = merged;
+    }
+    if (VARIANT) document.documentElement.setAttribute("data-for", VARIANT);
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var key = el.getAttribute("data-i18n");
       if (t[key] !== undefined) el.textContent = t[key];

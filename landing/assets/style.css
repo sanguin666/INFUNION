@@ -1699,3 +1699,8 @@ section {
 .register [hidden] {
   display: none !important;
 }
+
+/* Audience variants (?for=worship / ?for=ngo): swap a few module icons. */
+.only-worship { display: none; }
+html[data-for="worship"] .only-worship { display: inline; }
+html[data-for="worship"] .not-worship { display: none; }
