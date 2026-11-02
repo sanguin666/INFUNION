@@ -31,6 +31,7 @@ import { forgetPlace, getSavedPlaces, rememberPlace, toSaved, type SavedPlace } 
 import { landingPoi } from './src/landing';
 import { applyColorScheme, colors } from './src/theme/theme';
 import { poiAccent } from './src/theme/poiThemes';
+import { installDesktopFrame } from './src/web/desktopFrame';
 import { AppearanceProvider, useAppearance } from './src/theme/AppearanceContext';
 import type { Poi } from './src/api/types';
 import type { MapPlace, Origin } from './src/api/placesMap';
@@ -418,6 +419,8 @@ function AppRoutes() {
 
 // AuthProvider has to sit above anything calling useAuth, so the routes
 // live in their own component rather than in App itself.
+installDesktopFrame();
+
 export default function App() {
   // Inside the dashboard's phone frame, the app shows one place and
   // nothing else: no welcome, no sign-in.

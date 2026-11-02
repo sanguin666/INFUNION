@@ -1,4 +1,5 @@
-import { ImageBackground, useWindowDimensions, View } from 'react-native';
+import { ImageBackground, View } from 'react-native';
+import { useFrameDimensions } from '../web/desktopFrame';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { AccessibleText } from '../components/AccessibleText';
@@ -29,7 +30,7 @@ type Props = {
 export function OnboardingScreen({ onSignUp, onSignIn, onDemoSignIn }: Props) {
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
+  const { width, height } = useFrameDimensions();
 
   return (
     /* The illustration is the screen, edge to edge and under the status
