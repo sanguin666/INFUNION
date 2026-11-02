@@ -5,8 +5,11 @@ name: App update
 # switches to the new version on the next launch (see backend/src/app-updates
 # and app/scripts/publish-update.mjs).
 #
-# Runs by itself whenever app code reaches `staging` or `production`, each to
-# its own backend. Phones only take an update made for their exact native
+# Runs by itself whenever app code reaches `production`. There is no Railway
+# staging environment yet (Seb, 2 Nov 2026), so a push to `staging` would
+# wait 10 minutes for infunion-api-staging and fail: staging only publishes
+# when run by hand. Add `staging` back to the branches below once that
+# environment exists. Phones only take an update made for their exact native
 # build, so a change that needs a new APK (a new native package, a
 # permission, the icon) reaches nobody until that APK is installed; the app
 # then shows "New version available" (it compares with the demo-apk release).
@@ -17,7 +20,7 @@ name: App update
 
 on:
   push:
-    branches: [staging, production]
+    branches: [production]
     paths: ['app/**', '.github/workflows/app-update.yml']
   workflow_dispatch:
     inputs:
