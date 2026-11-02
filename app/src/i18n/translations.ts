@@ -1144,7 +1144,7 @@ const en: Translations = {
     deleteExplainer: 'Your account, your places, your requests, messages and posts are deleted for good. Gifts stay with the communities, which must keep them by law.',
     deleteConfirm: 'Delete for good',
     deleteError: 'Couldn’t delete your account. Please try again.',
-    deleteManager: 'You manage a place, so this account can’t be deleted here. Write to hello@infunion.app.',
+    deleteManager: 'You manage a place, so this account can’t be deleted here. Write to privacy@infunion.app.',
   },
   appUpdate: {
     ready: 'A new version of infunion is ready.',
@@ -1714,7 +1714,7 @@ const es: Translations = {
     deleteExplainer: 'Tu cuenta, tus lugares, tus solicitudes, mensajes y publicaciones se eliminan para siempre. Los donativos se quedan en las comunidades, que deben conservarlos por ley.',
     deleteConfirm: 'Eliminar para siempre',
     deleteError: 'No se pudo eliminar tu cuenta. Inténtalo de nuevo.',
-    deleteManager: 'Gestionas un lugar, así que esta cuenta no se puede eliminar aquí. Escribe a hello@infunion.app.',
+    deleteManager: 'Gestionas un lugar, así que esta cuenta no se puede eliminar aquí. Escribe a privacy@infunion.app.',
   },
   appUpdate: {
     ready: 'Hay una nueva versión de infunion lista.',
@@ -2284,7 +2284,7 @@ const fr: Translations = {
     deleteExplainer: 'Votre compte, vos lieux, vos demandes, messages et publications sont supprimés définitivement. Les dons restent aux communautés, qui doivent les conserver selon la loi.',
     deleteConfirm: 'Supprimer définitivement',
     deleteError: 'Impossible de supprimer votre compte. Veuillez réessayer.',
-    deleteManager: 'Vous gérez un lieu : ce compte ne peut pas être supprimé ici. Écrivez à hello@infunion.app.',
+    deleteManager: 'Vous gérez un lieu : ce compte ne peut pas être supprimé ici. Écrivez à privacy@infunion.app.',
   },
   appUpdate: {
     ready: 'Une nouvelle version d’infunion est prête.',
@@ -2854,7 +2854,7 @@ const va: Translations = {
     deleteExplainer: 'El teu compte, els teus llocs, les teues sol·licituds, missatges i publicacions s’eliminen per sempre. Els donatius es queden a les comunitats, que han de conservar-los per llei.',
     deleteConfirm: 'Eliminar per sempre',
     deleteError: 'No s’ha pogut eliminar el teu compte. Torna-ho a provar.',
-    deleteManager: 'Gestiones un lloc, per això este compte no es pot eliminar ací. Escriu a hello@infunion.app.',
+    deleteManager: 'Gestiones un lloc, per això este compte no es pot eliminar ací. Escriu a privacy@infunion.app.',
   },
   appUpdate: {
     ready: 'Hi ha una nova versió d’infunion a punt.',
@@ -3424,7 +3424,7 @@ const gl: Translations = {
     deleteExplainer: 'A túa conta, os teus lugares, as túas solicitudes, mensaxes e publicacións elimínanse para sempre. Os donativos quedan nas comunidades, que deben conservalos por lei.',
     deleteConfirm: 'Eliminar para sempre',
     deleteError: 'Non se puido eliminar a túa conta. Téntao de novo.',
-    deleteManager: 'Xestionas un lugar, así que esta conta non se pode eliminar aquí. Escribe a hello@infunion.app.',
+    deleteManager: 'Xestionas un lugar, así que esta conta non se pode eliminar aquí. Escribe a privacy@infunion.app.',
   },
   appUpdate: {
     ready: 'Hai unha nova versión de infunion lista.',
@@ -3995,7 +3995,7 @@ const pt: Translations = {
     deleteExplainer: 'A sua conta, os seus lugares, os seus pedidos, mensagens e publicações são eliminados para sempre. Os donativos ficam com as comunidades, que os devem conservar por lei.',
     deleteConfirm: 'Eliminar para sempre',
     deleteError: 'Não foi possível eliminar a sua conta. Tente novamente.',
-    deleteManager: 'Gere um lugar, por isso esta conta não pode ser eliminada aqui. Escreva para hello@infunion.app.',
+    deleteManager: 'Gere um lugar, por isso esta conta não pode ser eliminada aqui. Escreva para privacy@infunion.app.',
   },
   appUpdate: {
     ready: 'Está pronta uma nova versão da infunion.',

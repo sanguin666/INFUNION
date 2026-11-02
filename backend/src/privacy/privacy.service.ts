@@ -311,7 +311,7 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
     if (!user) throw new NotFoundException('No such person');
     if (user.email || user.isSuperadmin) {
       throw new ConflictException(
-        'Office accounts are closed by infunion. Write to hello@infunion.app.',
+        'Office accounts are closed by infunion. Write to privacy@infunion.app.',
       );
     }
     const runs = await this.dataSource.getRepository(UserPoi).count({
