@@ -186,12 +186,19 @@ export class SuperadminController {
     return this.service.setSuspended(this.actor(request), poiId, false);
   }
 
-  // The community's name, typed again, so a slip of the mouse deletes nothing.
-  @Post('pois/:poiId/delete')
+  // Close now. The community's name, typed again, so a slip of the mouse
+  // closes nothing. Was "delete": it erased gifts and invoices too.
+  @Post('pois/:poiId/close')
   @HttpCode(200)
-  async remove(@Req() request: SuperadminRequest, @Param('poiId', ParseUUIDPipe) poiId: string, @Body() dto: ConfirmNameDto) {
-    await this.service.deleteCommunity(this.actor(request), poiId, dto.confirmName);
-    return { deleted: true };
+  async close(@Req() request: SuperadminRequest, @Param('poiId', ParseUUIDPipe) poiId: string, @Body() dto: ConfirmNameDto) {
+    await this.service.closeCommunity(this.actor(request), poiId, dto.confirmName);
+    return { closed: true };
+  }
+
+  @Post('pois/:poiId/keep')
+  @HttpCode(200)
+  keep(@Req() request: SuperadminRequest, @Param('poiId', ParseUUIDPipe) poiId: string) {
+    return this.service.cancelClosing(this.actor(request), poiId);
   }
 
   @Post('pois/:poiId/modules/:type/:action')

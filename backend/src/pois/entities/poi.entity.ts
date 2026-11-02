@@ -174,6 +174,27 @@ export class Poi {
   @Column({ name: 'suspended_at', type: 'timestamptz', nullable: true })
   suspendedAt?: Date | null;
 
+  // The place's own admins closing its account (Seb, 2 Nov 2026; see
+  // place-closure). Asked: hidden from the map, search and QR, no new
+  // gifts, members still read, any admin can take it back until
+  // closesAt. Closed: content and member links erased, only this row (a
+  // shell with the legal identity) and the records the law keeps remain.
+  @Column({ name: 'closing_requested_at', type: 'timestamptz', nullable: true })
+  closingRequestedAt?: Date | null;
+
+  @Column({ name: 'closes_at', type: 'timestamptz', nullable: true })
+  closesAt?: Date | null;
+
+  @Column({ name: 'closed_at', type: 'timestamptz', nullable: true })
+  closedAt?: Date | null;
+
+  // Who asked, as a name: the account may be gone before the record is.
+  @Column('varchar', { name: 'closing_requested_by', nullable: true })
+  closingRequestedBy?: string | null;
+
+  @Column('varchar', { name: 'closing_reason', nullable: true })
+  closingReason?: string | null;
+
   @Column({ nullable: true })
   address?: string;
 

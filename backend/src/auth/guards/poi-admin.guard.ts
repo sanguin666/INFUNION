@@ -46,6 +46,7 @@ export class PoiAdminGuard implements CanActivate {
     });
     if (membership) {
       if (membership.poi.suspendedAt) throw new ForbiddenException('community_suspended');
+      if (membership.poi.closedAt) throw new ForbiddenException('community_closed');
       return true;
     }
     // "Ouvrir son admin" from the superadmin: only with a superadmin token

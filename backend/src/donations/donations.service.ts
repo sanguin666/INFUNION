@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   Logger,
   NotFoundException,
@@ -234,6 +235,10 @@ export class DonationsService {
     options: CheckoutOptions = {},
   ): Promise<CheckoutResult> {
     const poi = await this.poisService.findOne(poiId);
+    // A place closing its account takes no more gifts (place-closure).
+    if (poi.closingRequestedAt || poi.closedAt) {
+      throw new ConflictException('This community is closing and no longer takes gifts');
+    }
     const purpose = options.purpose ?? dto.purpose ?? DonationPurpose.GENERAL;
     const recurring = dto.recurring === true;
 
@@ -434,6 +439,30 @@ export class DonationsService {
     }
     donation.recurringCancelledAt = new Date();
     await this.donationsRepository.save(donation);
+  }
+
+  /**
+   * Stops every monthly gift still running at a place, when the place
+   * closes its account. Best effort with Stripe: a subscription Stripe
+   * refuses to cancel is logged and still marked stopped here, so it
+   * never shows as running; the superadmin finishes it in Stripe.
+   */
+  async stopAllMonthly(poiId: string): Promise<number> {
+    const running = await this.donationsRepository.find({
+      where: { poi: { id: poiId }, recurring: true, recurringParentId: IsNull(), recurringCancelledAt: IsNull() },
+    });
+    for (const donation of running) {
+      if (donation.stripeSubscriptionId && this.stripeService.isConfigured) {
+        try {
+          await this.stripeService.cancelSubscription(donation.stripeSubscriptionId);
+        } catch (error) {
+          this.logger.error(`Stripe cancel failed for ${donation.id}: ${(error as Error).message}`);
+        }
+      }
+      donation.recurringCancelledAt = new Date();
+      await this.donationsRepository.save(donation);
+    }
+    return running.length;
   }
 
   // ---- Campaigns ----

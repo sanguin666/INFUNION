@@ -32,7 +32,9 @@ export class BillingInvoice {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => Poi, { onDelete: 'CASCADE' })
+  // RESTRICT: infunion's own invoices are kept six years (Código de
+  // Comercio art. 30), so deleting a place never takes them with it.
+  @ManyToOne(() => Poi, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'poi_id' })
   poi!: Relation<Poi>;
 
