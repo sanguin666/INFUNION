@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppState, Linking, Pressable, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccessibleText } from '../components/AccessibleText';
 import { AccessibleButton } from '../components/AccessibleButton';
 import * as Updates from 'expo-updates';
@@ -13,7 +12,8 @@ import { APK_URL, fetchNewUpdate, newApkAvailable, restartIntoUpdate, updatesAct
 const CHECK_EVERY_MS = 30 * 60 * 1000;
 
 /**
- * A floating card at the top of the screen when the app is out of date:
+ * A card in the middle of the screen, over a dimmed background, when the
+ * app is out of date (Seb, 2 Nov 2026: centred, not at the top):
  * "Restart" once a new version has downloaded, "Download" when only a new
  * APK can bring it. "Later" hides it until the next launch.
  */
@@ -24,7 +24,6 @@ export function UpdateBanner() {
 
 function Banner() {
   const { t } = useI18n();
-  const insets = useSafeAreaInsets();
   // Also true when the check expo-updates makes by itself at launch found
   // something, not only after the checks below.
   const { isUpdatePending } = Updates.useUpdates();
@@ -55,45 +54,59 @@ function Banner() {
   if (!offer || dismissed) return null;
 
   return (
-    <View style={[styles.card, { top: insets.top + spacing.sm }]} accessibilityLiveRegion="polite">
-      <AccessibleText variant="body" style={styles.text}>
-        {offer === 'restart' ? t('appUpdate.ready') : t('appUpdate.newApk')}
-      </AccessibleText>
-      <View style={styles.actions}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('appUpdate.later')}
-          hitSlop={spacing.sm}
-          onPress={() => setDismissed(true)}
-          style={styles.later}
-        >
-          <AccessibleText variant="body" color={colors.textMuted}>
-            {t('appUpdate.later')}
-          </AccessibleText>
-        </Pressable>
-        <AccessibleButton
-          label={offer === 'restart' ? t('appUpdate.restart') : t('appUpdate.download')}
-          onPress={() => {
-            if (offer === 'restart') {
-              void restartIntoUpdate();
-            } else {
-              void Linking.openURL(APK_URL);
-              setDismissed(true);
-            }
-          }}
-        />
+    <View style={styles.backdrop}>
+      <View style={styles.card} accessibilityViewIsModal accessibilityLiveRegion="polite">
+        <AccessibleText variant="body" style={styles.text}>
+          {offer === 'restart' ? t('appUpdate.ready') : t('appUpdate.newApk')}
+        </AccessibleText>
+        <View style={styles.actions}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('appUpdate.later')}
+            hitSlop={spacing.sm}
+            onPress={() => setDismissed(true)}
+            style={styles.later}
+          >
+            <AccessibleText variant="body" color={colors.textMuted}>
+              {t('appUpdate.later')}
+            </AccessibleText>
+          </Pressable>
+          <AccessibleButton
+            label={offer === 'restart' ? t('appUpdate.restart') : t('appUpdate.download')}
+            onPress={() => {
+              if (offer === 'restart') {
+                void restartIntoUpdate();
+              } else {
+                void Linking.openURL(APK_URL);
+                setDismissed(true);
+              }
+            }}
+          />
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = themedStyles(() => ({
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(29, 26, 45, 0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
+    zIndex: 100,
+    elevation: 100,
+  },
   card: {
     ...cardSurface,
     ...floatingShadow,
-    position: 'absolute',
-    left: spacing.md,
-    right: spacing.md,
+    width: '100%',
+    maxWidth: 420,
     borderRadius: radii.lg,
     padding: spacing.md,
     gap: spacing.sm,
