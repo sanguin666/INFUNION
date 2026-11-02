@@ -17,12 +17,12 @@ import { PoiPageService } from './poi-page.service.js';
 import { CreatePageBlockDto } from './dto/create-page-block.dto.js';
 import { UpdatePageBlockDto } from './dto/update-page-block.dto.js';
 import { ReorderPageBlocksDto } from './dto/reorder-page-blocks.dto.js';
-import { localDiskStorage, publicUrlFor } from '../common/upload/multer-storage.js';
+import { publicUrlFor } from '../common/upload/multer-storage.js';
+import { LARGE_PICTURE_SIDE, MAX_PICTURE_UPLOAD_BYTES, pictureStorage } from '../common/upload/image-storage.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
 
 const UPLOAD_SUBFOLDER = 'poi-pages';
-const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB — a photo straight off a phone.
 
 @Controller('pois/:poiId/page-blocks')
 export class PoiPageController {
@@ -47,8 +47,8 @@ export class PoiPageController {
   @UseGuards(JwtAuthGuard, PoiAdminGuard)
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: localDiskStorage(UPLOAD_SUBFOLDER),
-      limits: { fileSize: MAX_IMAGE_SIZE_BYTES },
+      storage: pictureStorage(UPLOAD_SUBFOLDER, LARGE_PICTURE_SIDE),
+      limits: { fileSize: MAX_PICTURE_UPLOAD_BYTES },
       fileFilter: (_req, file, callback) => {
         if (!file.mimetype.startsWith('image/')) {
           callback(new UnsupportedMediaTypeException('File must be an image'), false);

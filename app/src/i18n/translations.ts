@@ -128,6 +128,7 @@ export type Translations = {
     signedOutExplainer: string;
     laterLabel: string;
     permissionDenied: string;
+    pictureError: string;
     error: string;
   };
   onboarding: {
@@ -696,6 +697,7 @@ const en: Translations = {
     signedOutExplainer: 'Sign in to set your name and your picture.',
     laterLabel: 'More settings are coming here later.',
     permissionDenied: 'infunion needs permission to open your photos. You can allow it in your phone settings.',
+    pictureError: 'Your picture couldn’t be saved. Please try another photo.',
     error: "That didn't save. Please try again.",
   },
   onboarding: {
@@ -1266,6 +1268,7 @@ const es: Translations = {
     signedOutExplainer: 'Inicia sesión para poner tu nombre y tu foto.',
     laterLabel: 'Aquí habrá más ajustes más adelante.',
     permissionDenied: 'infunion necesita permiso para abrir tus fotos. Puedes darlo en los ajustes del teléfono.',
+    pictureError: 'No se ha podido guardar tu foto. Prueba con otra.',
     error: 'No se pudo guardar. Inténtalo de nuevo.',
   },
   onboarding: {
@@ -1836,6 +1839,7 @@ const fr: Translations = {
     signedOutExplainer: 'Connectez-vous pour indiquer votre nom et votre photo.',
     laterLabel: 'D’autres réglages arriveront ici plus tard.',
     permissionDenied: 'infunion a besoin d’accéder à vos photos. Vous pouvez l’autoriser dans les réglages du téléphone.',
+    pictureError: 'Votre photo n’a pas pu être enregistrée. Essayez avec une autre.',
     error: 'L’enregistrement a échoué. Réessayez.',
   },
   onboarding: {
@@ -2406,6 +2410,7 @@ const va: Translations = {
     signedOutExplainer: 'Inicia sessió per a posar el teu nom i la teua foto.',
     laterLabel: 'Ací hi haurà més opcions més avant.',
     permissionDenied: 'infunion necessita permís per a obrir les teues fotos. Pots donar-lo en la configuració del telèfon.',
+    pictureError: 'No s’ha pogut guardar la teua foto. Prova amb una altra.',
     error: 'No s’ha pogut guardar. Torna-ho a provar.',
   },
   onboarding: {
@@ -2976,6 +2981,7 @@ const gl: Translations = {
     signedOutExplainer: 'Inicia sesión para pór o teu nome e a túa foto.',
     laterLabel: 'Aquí haberá máis axustes máis adiante.',
     permissionDenied: 'infunion precisa permiso para abrir as túas fotos. Podes dalo nos axustes do teléfono.',
+    pictureError: 'Non se puido gardar a túa foto. Proba con outra.',
     error: 'Non se puido gardar. Téntao de novo.',
   },
   onboarding: {
@@ -3547,6 +3553,7 @@ const pt: Translations = {
     signedOutExplainer: 'Inicie sessão para indicar o seu nome e a sua fotografia.',
     laterLabel: 'Aqui haverá mais definições mais tarde.',
     permissionDenied: 'A infunion precisa de autorização para abrir as suas fotografias. Pode dá-la nas definições do telemóvel.',
+    pictureError: 'Não foi possível guardar a sua fotografia. Experimente outra.',
     error: 'Não foi possível guardar. Tente novamente.',
   },
   onboarding: {
