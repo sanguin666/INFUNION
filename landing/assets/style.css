@@ -1704,3 +1704,5 @@ section {
 .only-worship { display: none; }
 html[data-for="worship"] .only-worship { display: inline; }
 html[data-for="worship"] .not-worship { display: none; }
+
+.feature-card[hidden] { display: none; }
