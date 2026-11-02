@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 // Expo inlines any EXPO_PUBLIC_* variable at build time (see app/.env.example).
 // Defaults to localhost, which only works for the web target or a simulator
 // on the same machine as the backend — a physical phone in Expo Go needs
@@ -133,8 +135,49 @@ export async function apiDelete(path: string): Promise<void> {
   await request<void>(path, { method: 'DELETE' });
 }
 
-// No Content-Type header here — fetch sets the multipart boundary itself
-// when the body is a FormData instance.
+// No Content-Type header here — fetch (or XMLHttpRequest) sets the
+// multipart boundary itself when the body is a FormData instance.
 export function apiPostForm<T>(path: string, formData: FormData): Promise<T> {
-  return request<T>(path, { method: 'POST', body: formData });
+  if (Platform.OS === 'web') return request<T>(path, { method: 'POST', body: formData });
+  return postFormNative<T>(path, formData);
+}
+
+/**
+ * On a phone, files go up through React Native's own XMLHttpRequest.
+ * The global fetch is Expo's (expo/fetch), and it refuses the
+ * {uri, name, type} file parts React Native's FormData is built from
+ * ("Unsupported FormDataPart implementation"), so every photo, voice
+ * message and attachment failed before leaving the phone. XMLHttpRequest
+ * still streams those parts from the file itself.
+ */
+function postFormNative<T>(path: string, formData: FormData): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API_BASE_URL}${path}`);
+    if (authToken) xhr.setRequestHeader('Authorization', `Bearer ${authToken}`);
+    xhr.onerror = () => reject(new ApiError("Couldn't reach the server. Check your connection."));
+    xhr.ontimeout = xhr.onerror;
+    xhr.onload = () => {
+      const status = xhr.status;
+      const text = typeof xhr.responseText === 'string' ? xhr.responseText : '';
+      if (status === 401 && authToken) onUnauthorized?.();
+      if (status < 200 || status >= 300) {
+        if (status === 404) return reject(new ApiError("We couldn't find that.", undefined, 404));
+        let serverMessage: string | null = null;
+        try {
+          const body = JSON.parse(text) as { message?: string | string[] };
+          serverMessage = (Array.isArray(body.message) ? body.message[0] : body.message) ?? null;
+        } catch {
+          serverMessage = null;
+        }
+        return reject(new ApiError(serverMessage ?? 'Something went wrong. Please try again.', undefined, status));
+      }
+      try {
+        resolve(text ? (JSON.parse(text) as T) : (undefined as T));
+      } catch (error) {
+        reject(new ApiError('Something went wrong. Please try again.', error, status));
+      }
+    };
+    xhr.send(formData);
+  });
 }
