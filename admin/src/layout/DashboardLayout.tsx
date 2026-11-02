@@ -179,7 +179,7 @@ export function DashboardLayout() {
           </>
         )}
 
-        <nav>
+        <nav className="sidebar-nav">
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to}>
               {t(item.label)}
