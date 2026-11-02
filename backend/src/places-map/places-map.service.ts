@@ -89,6 +89,7 @@ export class PlacesMapService {
       // Left off: suspended places, the ones that asked not to be shown,
       // and those nobody has placed on the map yet (unless searched by name).
       .where('poi.suspended_at IS NULL')
+      .andWhere('poi.closing_requested_at IS NULL AND poi.closed_at IS NULL')
       .andWhere('poi.map_visible = true')
       .limit(query.limit ?? (near ? 50 : 500));
 

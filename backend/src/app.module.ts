@@ -28,6 +28,7 @@ import { SuperadminModule } from './superadmin/superadmin.module.js';
 import { PlacesMapModule } from './places-map/places-map.module.js';
 import { MemberMessagesModule } from './member-messages/member-messages.module.js';
 import { PrivacyModule } from './privacy/privacy.module.js';
+import { PlaceClosureModule } from './place-closure/place-closure.module.js';
 import { PublicFilesModule } from './public-files/public-files.module.js';
 import { RateLimitModule } from './common/rate-limit/rate-limit.module.js';
 import { VendorModule } from './vendor/vendor.module.js';
@@ -66,6 +67,7 @@ import { RegistrationsModule } from './registrations/registrations.module.js';
     PlacesMapModule,
     MemberMessagesModule,
     PrivacyModule,
+    PlaceClosureModule,
     PublicFilesModule,
     RateLimitModule,
     VendorModule,

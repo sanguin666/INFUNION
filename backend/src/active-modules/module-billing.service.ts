@@ -152,6 +152,9 @@ export class ModuleBillingService {
   async settle(poiId: string, now = new Date()): Promise<ActiveModule[]> {
     if (!(await this.pois.exists({ where: { id: poiId } }))) return [];
     const { poi, modules } = await this.load(poiId);
+    // A place closing its account renews nothing: its plan runs to the
+    // closing date (and catches up if the closing is taken back).
+    if (poi.closingRequestedAt || poi.closedAt) return modules;
     const before = JSON.stringify([poi, modules]);
     const drafts = settle(poi, now);
     alignModules(poi, modules);

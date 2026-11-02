@@ -27,6 +27,7 @@ import { moduleFitsPlace, modulesForPlace } from '../active-modules/module-place
 import { SuperadminAccess, type SuperadminIdentity } from '../auth/superadmin-access.service.js';
 import { ErrorTracker } from './error-tracker.js';
 import type { CreateCommunityDto, UpdateCommunityDto } from './dto/superadmin.dto.js';
+import { PlaceClosureService } from '../place-closure/place-closure.service.js';
 import { RegistrationsService } from '../registrations/registrations.service.js';
 import type { ApproveRegistrationDto } from '../registrations/dto/registration.dto.js';
 
@@ -66,7 +67,7 @@ type Actor = { identity: SuperadminIdentity; request: Request };
  */
 export type WatchItem = {
   level: 'warn' | 'alert' | 'ok';
-  kind: 'trialEnding' | 'requestsWaiting' | 'adminQuiet' | 'suspended' | 'demoLogin' | 'errors' | 'ok';
+  kind: 'trialEnding' | 'requestsWaiting' | 'adminQuiet' | 'suspended' | 'closing' | 'demoLogin' | 'errors' | 'ok';
   poiId?: string;
   poiName?: string;
   module?: string;
@@ -93,6 +94,7 @@ export class SuperadminService {
     @InjectRepository(PushToken) private readonly pushTokens: Repository<PushToken>,
     @InjectRepository(AuditLog) private readonly audit: Repository<AuditLog>,
     private readonly registrations: RegistrationsService,
+    private readonly closure: PlaceClosureService,
   ) {}
 
   private log(actor: Actor, action: string, poi?: Pick<Poi, 'id' | 'name'> | null, details: Record<string, unknown> = {}) {
@@ -220,7 +222,7 @@ export class SuperadminService {
     const soon = new Date(now.getTime() + 7 * DAY);
     for (const poi of pois) {
       const ends = poi.planTrialEndsAt;
-      if (!ends || ends > soon || poi.billingComped || poi.planOffered || poi.paymentMethodLabel) continue;
+      if (!ends || ends > soon || poi.billingComped || poi.planOffered || poi.paymentMethodLabel || poi.closingRequestedAt) continue;
       const days = Math.max(0, Math.ceil((ends.getTime() - now.getTime()) / DAY));
       items.push({ level: 'warn', kind: 'trialEnding', poiId: poi.id, poiName: poi.name, plan: poi.plan, days });
     }
@@ -240,13 +242,16 @@ export class SuperadminService {
          FROM pois p
          LEFT JOIN user_pois m ON m.poi_id = p.id AND m.role = 'admin'
          LEFT JOIN users u ON u.id = m.user_id
-        WHERE p.suspended_at IS NULL
+        WHERE p.suspended_at IS NULL AND p.closed_at IS NULL
         GROUP BY p.id, p.name
        HAVING MAX(u.last_login_at) IS NULL OR MAX(u.last_login_at) < $1`,
       [new Date(now.getTime() - 30 * DAY)],
     );
     for (const row of quiet) {
       items.push({ level: 'warn', kind: 'adminQuiet', poiId: row.id, poiName: row.name, never: !row.last });
+    }
+    for (const poi of pois.filter((p) => p.closingRequestedAt && !p.closedAt)) {
+      items.push({ level: 'warn', kind: 'closing', poiId: poi.id, poiName: poi.name, date: poi.closesAt!.toISOString() });
     }
     for (const poi of pois.filter((p) => p.suspendedAt)) {
       items.push({ level: 'warn', kind: 'suspended', poiId: poi.id, poiName: poi.name, date: poi.suspendedAt!.toISOString() });
@@ -283,7 +288,11 @@ export class SuperadminService {
     return pois.map((poi) => {
       const row = counts.find((c) => c.poi_id === poi.id);
       const mine = modules.filter((m) => m.poi.id === poi.id && LIVE.includes(m.status) && moduleFitsPlace(m.moduleType, poi.type));
-      const billing = poi.suspendedAt
+      const billing = poi.closedAt
+        ? 'closed'
+        : poi.closingRequestedAt
+          ? 'closing'
+          : poi.suspendedAt
         ? 'suspended'
         : poi.billingComped
           ? 'comped'
@@ -302,6 +311,8 @@ export class SuperadminService {
         language: poi.language,
         createdAt: poi.createdAt,
         suspendedAt: poi.suspendedAt ?? null,
+        closesAt: poi.closesAt ?? null,
+        closedAt: poi.closedAt ?? null,
         billing,
         members: row?.members ?? 0,
         admins: row?.admins ?? 0,
@@ -337,6 +348,11 @@ export class SuperadminService {
         qrCodeToken: poi.qrCodeToken,
         createdAt: poi.createdAt,
         suspendedAt: poi.suspendedAt ?? null,
+        closingRequestedAt: poi.closingRequestedAt ?? null,
+        closingRequestedBy: poi.closingRequestedBy ?? null,
+        closingReason: poi.closingReason ?? null,
+        closesAt: poi.closesAt ?? null,
+        closedAt: poi.closedAt ?? null,
       },
       memberCount,
       admins: admins.map((m) => ({
@@ -384,12 +400,19 @@ export class SuperadminService {
     return this.community(poiId);
   }
 
-  async deleteCommunity(actor: Actor, poiId: string, confirmName: string) {
+  // Close now: the same erasure as a place's own closing, without the
+  // thirty days. Gifts, receipts and invoices stay (see place-closure).
+  async closeCommunity(actor: Actor, poiId: string, confirmName: string) {
     const poi = await this.findPoi(poiId);
-    if (confirmName.trim() !== poi.name.trim()) throw new BadRequestException('name_mismatch');
     const members = await this.memberships.count({ where: { poi: { id: poiId } } });
-    await this.pois.remove(poi);
-    await this.log(actor, 'poi.delete', { id: poiId, name: poi.name }, { memberships: members });
+    await this.closure.closeNow(poiId, confirmName, { userId: actor.identity.userId, email: actor.identity.email });
+    await this.log(actor, 'poi.close', { id: poiId, name: poi.name }, { memberships: members });
+  }
+
+  // Taking back a place's own closing request, before its date.
+  async cancelClosing(actor: Actor, poiId: string) {
+    await this.closure.cancel(poiId, actor.identity.userId);
+    return this.community(poiId);
   }
 
   async moduleAction(actor: Actor, poiId: string, type: ModuleType, action: 'start' | 'stop' | 'offer' | 'unoffer') {
