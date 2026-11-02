@@ -407,8 +407,8 @@ function AppRoutes() {
         onDecline={() => consentPoi && declineToJoin(consentPoi)}
       />
 
-      {/* Over everything but the opening animation. */}
-      <UpdateBanner />
+      {/* Over everything, once the opening animation is over. */}
+      <UpdateBanner hidden={!introDone} />
 
       {!introDone && <IntroAnimation onDone={() => setIntroDone(true)} />}
 
