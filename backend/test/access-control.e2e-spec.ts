@@ -58,7 +58,8 @@ describe('Access control (e2e)', () => {
         .send({ name: 'Nope', type: 'church' })
         .expect(404);
       await client(app).patch(`/pois/${place.id}`).send({ name: 'Nope' }).expect(401);
-      await client(app).delete(`/pois/${place.id}`).expect(401);
+      // No outright delete: a place is closed through its Settings › Account.
+      await client(app).delete(`/pois/${place.id}`).expect(404);
     });
 
     it('makes whoever creates a place its admin', async () => {
@@ -77,8 +78,9 @@ describe('Access control (e2e)', () => {
         .expect(403);
 
       await client(app)
-        .delete(`/pois/${place.id}`)
+        .post(`/pois/${place.id}/closure`)
         .set('Authorization', `Bearer ${visitorToken}`)
+        .send({ confirmName: 'x', authority: true })
         .expect(403);
     });
 

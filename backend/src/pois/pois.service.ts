@@ -46,9 +46,12 @@ export class PoisService {
     return poi;
   }
 
-  // The public directory: a suspended community is left out of it.
+  // The public directory: a suspended, closing or closed community is
+  // left out of it.
   findAll(): Promise<Poi[]> {
-    return this.poisRepository.find({ where: { suspendedAt: IsNull() } });
+    return this.poisRepository.find({
+      where: { suspendedAt: IsNull(), closingRequestedAt: IsNull(), closedAt: IsNull() },
+    });
   }
 
   async findOne(id: string): Promise<Poi> {
@@ -63,8 +66,9 @@ export class PoisService {
     const poi = await this.poisRepository.findOne({
       where: { qrCodeToken },
     });
-    // Nobody joins a suspended community: its flyer reads as unknown.
-    if (!poi || poi.suspendedAt) {
+    // Nobody joins a suspended, closing or closed community: its flyer
+    // reads as unknown.
+    if (!poi || poi.suspendedAt || poi.closingRequestedAt || poi.closedAt) {
       throw new NotFoundException('Unknown QR code');
     }
     return poi;
@@ -77,10 +81,5 @@ export class PoisService {
     const poi = await this.findOne(id);
     Object.assign(poi, updatePoiDto);
     return this.poisRepository.save(poi);
-  }
-
-  async remove(id: string): Promise<void> {
-    const poi = await this.findOne(id);
-    await this.poisRepository.remove(poi);
   }
 }

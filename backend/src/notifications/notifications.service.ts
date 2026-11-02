@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, LessThanOrEqual, Repository } from 'typeorm';
 import { PushToken } from './entities/push-token.entity.js';
 import { EventReminder } from './entities/event-reminder.entity.js';
+import { MemberRole } from '../common/enums/member-role.enum.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
 import { Poi } from '../pois/entities/poi.entity.js';
 import { sendsNotifications } from '../active-modules/billing-rules.js';
@@ -308,6 +309,23 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
    */
   async notifyUserAlways(userId: string, poiId: string, notification: Composer): Promise<void> {
     await this.sendToUsers([userId], poiId, notification, true);
+  }
+
+  /**
+   * Every member of a place, whatever they turned off and whatever the
+   * plan: for news about the place itself, such as it closing its account.
+   */
+  async notifyEveryMember(poiId: string, notification: Composer): Promise<void> {
+    const memberships = await this.membershipRepository.find({
+      where: { poi: { id: poiId }, role: MemberRole.MEMBER },
+      relations: { user: true },
+    });
+    await this.sendToUsers(
+      memberships.map((m) => m.user.id),
+      poiId,
+      notification,
+      true,
+    );
   }
 
   /**

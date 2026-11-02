@@ -55,7 +55,9 @@ export class Donation {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => Poi, { onDelete: 'CASCADE' })
+  // RESTRICT, not CASCADE: gifts are tax records the law says to keep, so
+  // deleting a place never takes them with it (see place-closure).
+  @ManyToOne(() => Poi, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'poi_id' })
   poi!: Relation<Poi>;
 

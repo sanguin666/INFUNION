@@ -16,12 +16,14 @@ import { SuperadminService } from './superadmin.service.js';
 import { SuperadminBootstrap } from './superadmin-bootstrap.service.js';
 import { ErrorTracker } from './error-tracker.js';
 import { RegistrationsModule } from '../registrations/registrations.module.js';
+import { PlaceClosureModule } from '../place-closure/place-closure.module.js';
 
 @Module({
   imports: [
     AuthGuardsModule,
     ActiveModulesModule,
     RegistrationsModule,
+    PlaceClosureModule,
     TypeOrmModule.forFeature([Poi, User, UserPoi, ActiveModule, BillingInvoice, PushToken, AuditLog]),
   ],
   controllers: [SuperadminAuthController, SuperadminController],
