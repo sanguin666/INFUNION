@@ -21,6 +21,10 @@ export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
  * uses Catalan's, and Portuguese is the European one.
  */
 export function intlLocale(language: string): string {
+  // British English: 24-hour times and day-month dates, as the rest of
+  // the dashboard and the European places it serves (desktop review,
+  // 2 Nov 2026: Events showed "06:30 PM" beside the dashboard's "18:30").
+  if (language === 'en') return 'en-GB';
   if (language === 'va') return 'ca-ES';
   if (language === 'pt') return 'pt-PT';
   return language;
