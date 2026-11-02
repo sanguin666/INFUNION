@@ -209,6 +209,7 @@ export class RegistrationsService {
           city: saved.city,
           plan: saved.plan,
           email,
+          document: saved.documentName ?? null,
           reviewUrl: `${this.dashboardUrl()}/superadmin/registrations/${saved.id}`,
         }),
       );
