@@ -3,7 +3,7 @@
  * Sends the app's JS to our own backend as an over-the-air update, so
  * phones get new screens without a new APK (see backend/src/app-updates).
  *
- *   EXPO_PUBLIC_API_URL=https://infunion-api.up.railway.app \
+ *   EXPO_PUBLIC_API_URL=https://api.infunion.app \
  *   APP_UPDATES_TOKEN=... node scripts/publish-update.mjs
  *
  * Run from app/. It exports the Android bundle, works out the runtime
