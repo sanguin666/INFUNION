@@ -10,6 +10,7 @@ import { PlaceChip } from '../components/PlaceChip';
 import { getWaitingByPlace, rememberPlace } from './placeSwitcher';
 import { getActiveModules } from '../api/activeModules';
 import { getPoi } from '../api/pois';
+import { ClosingBanner } from './ClosingBanner';
 import { getSuperadminSession } from '../api/client';
 import type { ActiveModule, ModuleType } from '../api/types';
 import type { Translations } from '../i18n/translations';
@@ -204,6 +205,7 @@ export function DashboardLayout() {
             <NavLink to={`/superadmin/communities/${poiId}`}>{sa('nav.backToSuperadmin')}</NavLink>
           </p>
         )}
+        {poiId && <ClosingBanner poiId={poiId} />}
         <Outlet context={{ poiId: poiId!, modules, refreshModules } satisfies DashboardContext} />
       </main>
     </div>

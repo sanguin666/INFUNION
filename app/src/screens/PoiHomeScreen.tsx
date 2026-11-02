@@ -160,9 +160,26 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
   // The badges come first, above everything the page holds.
   const tiles = badgeTiles(badges, { events, campaigns, isLive, now: new Date(), language, t });
   const top = <BadgeTiles tiles={tiles} drafts={drafts} onOpen={onSelectTab} />;
+  // The place is closing its account: members are told when, and what to
+  // keep before then (their tax receipts).
+  const closing = poi.closesAt ? (
+    <View style={styles.closing} accessibilityRole="alert">
+      <AccessibleText variant="body" color={colors.primaryStrong} style={styles.blockTitle}>
+        {t('home.closingTitle', {
+          date: new Date(poi.closesAt).toLocaleDateString(CLOSING_LOCALES[language] ?? language, {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }),
+        })}
+      </AccessibleText>
+      <AccessibleText variant="body">{t('home.closingBody')}</AccessibleText>
+    </View>
+  ) : null;
 
   return (
     <>
+      {closing}
       {top}
       {visible.map((block) => {
         const drawn = renderBlock(block);
@@ -237,7 +254,15 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
   }
 }
 
+const CLOSING_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
+
 const styles = themedStyles(() => ({
+  closing: {
+    gap: spacing.xs,
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.primarySoft,
+  },
   draft: {
     borderWidth: 2,
     borderStyle: 'dashed',

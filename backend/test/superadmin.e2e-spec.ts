@@ -220,13 +220,16 @@ describe('Superadmin (e2e)', () => {
     await client(app).get(`/pois/${place.id}/dashboard`).set(as(officeToken)).expect(200);
   });
 
-  it('deletes a community only when its name is typed again', async () => {
+  it('closes a community only when its name is typed again, keeping the place as a shell', async () => {
     const { superToken } = await enrolled();
     const officeToken = await signIn(app, '+34600700003', 'Office');
     const place = await createPlace(app, officeToken, 'San Juan');
-    await client(app).post(`/superadmin/pois/${place.id}/delete`).set(as(superToken)).send({ confirmName: 'San Juna' }).expect(400);
-    await client(app).post(`/superadmin/pois/${place.id}/delete`).set(as(superToken)).send({ confirmName: 'San Juan' }).expect(200);
-    await client(app).get(`/pois/${place.id}`).expect(404);
+    await client(app).post(`/superadmin/pois/${place.id}/close`).set(as(superToken)).send({ confirmName: 'San Juna' }).expect(400);
+    await client(app).post(`/superadmin/pois/${place.id}/close`).set(as(superToken)).send({ confirmName: 'San Juan' }).expect(200);
+    const shell = await client(app).get(`/pois/${place.id}`).expect(200);
+    expect(shell.body.closedAt).toBeTruthy();
+    await client(app).get(`/pois/qr/${place.qrCodeToken}`).expect(404);
+    await client(app).get(`/pois/${place.id}/dashboard`).set(as(officeToken)).expect(403);
   });
 
   it('counts the month revenue from the module invoices', async () => {

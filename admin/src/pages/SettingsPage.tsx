@@ -7,11 +7,12 @@ import { updatePoiLanguage, updatePoiProfile } from '../api/poiSettings';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
 import type { ActiveModule, Poi } from '../api/types';
 import { LocationCard } from './LocationCard';
+import { AccountPanel } from './AccountPanel';
 import { LogoField } from './LogoField';
 import { PersonalisePanel } from './PersonalisePanel';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 
-const TABS = ['info', 'personalise', 'place'] as const;
+const TABS = ['info', 'personalise', 'place', 'account'] as const;
 
 export function SettingsPage() {
   const poiId = usePoiId();
@@ -73,6 +74,7 @@ export function SettingsPage() {
           { key: 'info', label: t('tabs.settingsInfo') },
           { key: 'personalise', label: t('tabs.settingsPersonalise') },
           { key: 'place', label: t('tabs.settingsPlace') },
+          { key: 'account', label: t('tabs.settingsAccount') },
         ]}
       />
 
@@ -129,6 +131,10 @@ export function SettingsPage() {
 
       <TabPanel idPrefix="settings" tabKey="place" current={tab}>
         {poi && <LocationCard key={poi.id} poi={poi} onSaved={setPoi} />}
+      </TabPanel>
+
+      <TabPanel idPrefix="settings" tabKey="account" current={tab}>
+        {poi && <AccountPanel key={poi.id} poi={poi} />}
       </TabPanel>
 
       {error && <p className="error-text">{error}</p>}

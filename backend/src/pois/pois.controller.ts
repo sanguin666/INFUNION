@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -44,9 +43,6 @@ export class PoisController {
     return this.poisService.update(poiId, updatePoiDto);
   }
 
-  @Delete(':poiId')
-  @UseGuards(JwtAuthGuard, PoiAdminGuard)
-  remove(@Param('poiId') poiId: string) {
-    return this.poisService.remove(poiId);
-  }
+  // No DELETE: a place is closed through place-closure (grace period,
+  // export, the records the law keeps), never deleted outright.
 }

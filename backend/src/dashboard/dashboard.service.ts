@@ -109,7 +109,7 @@ export class DashboardService {
       where: { user: { id: userId }, role: MemberRole.ADMIN },
       relations: { poi: true },
     });
-    const places = memberships.filter((m) => !m.poi.suspendedAt).map((m) => m.poi.id);
+    const places = memberships.filter((m) => !m.poi.suspendedAt && !m.poi.closedAt).map((m) => m.poi.id);
     if (places.length === 0) return [];
     const live = await this.modules.find({
       where: {

@@ -44,7 +44,7 @@ async function guarded<T>(call: () => Promise<T>): Promise<T> {
 /** One line of "To watch": a kind plus its figures, worded by the admin in its own language. */
 export type WatchItem = {
   level: 'warn' | 'alert' | 'ok';
-  kind: 'trialEnding' | 'requestsWaiting' | 'adminQuiet' | 'suspended' | 'demoLogin' | 'errors' | 'ok';
+  kind: 'trialEnding' | 'requestsWaiting' | 'adminQuiet' | 'suspended' | 'closing' | 'demoLogin' | 'errors' | 'ok';
   poiId?: string;
   poiName?: string;
   module?: string;
@@ -81,7 +81,7 @@ export const getOverview = () => guarded(() => apiGet<Overview>('/superadmin/ove
 
 // ---- communities
 
-export type CommunityBilling = 'comped' | 'offered' | 'paying' | 'trial' | 'free' | 'suspended';
+export type CommunityBilling = 'comped' | 'offered' | 'paying' | 'trial' | 'free' | 'suspended' | 'closing' | 'closed';
 
 export type CommunityRow = {
   id: string;
@@ -91,6 +91,8 @@ export type CommunityRow = {
   language: SupportedLanguage;
   createdAt: string;
   suspendedAt: string | null;
+  closesAt: string | null;
+  closedAt: string | null;
   billing: CommunityBilling;
   members: number;
   admins: number;
@@ -125,6 +127,12 @@ export type CommunityDetail = {
     qrCodeToken: string;
     createdAt: string;
     suspendedAt: string | null;
+    // A community closing its own account (Settings › Account), or closed.
+    closingRequestedAt: string | null;
+    closingRequestedBy: string | null;
+    closingReason: string | null;
+    closesAt: string | null;
+    closedAt: string | null;
   };
   memberCount: number;
   admins: CommunityAdmin[];
@@ -158,8 +166,13 @@ export const updateCommunity = (poiId: string, body: CommunityInput) =>
 export const setSuspended = (poiId: string, suspended: boolean) =>
   guarded(() => apiPost<CommunityDetail>(`/superadmin/pois/${poiId}/${suspended ? 'suspend' : 'unsuspend'}`));
 
-export const deleteCommunity = (poiId: string, confirmName: string) =>
-  guarded(() => apiPost<{ deleted: true }>(`/superadmin/pois/${poiId}/delete`, { confirmName }));
+// Close now: the same erasure as a community's own closing, today.
+export const closeCommunity = (poiId: string, confirmName: string) =>
+  guarded(() => apiPost<{ closed: true }>(`/superadmin/pois/${poiId}/close`, { confirmName }));
+
+// Takes back a community's own closing request, before its date.
+export const keepCommunity = (poiId: string) =>
+  guarded(() => apiPost<CommunityDetail>(`/superadmin/pois/${poiId}/keep`));
 
 export type ModuleAction = 'start' | 'stop' | 'offer' | 'unoffer';
 

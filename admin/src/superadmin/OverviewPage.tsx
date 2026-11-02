@@ -22,6 +22,8 @@ function watchText(item: WatchItem, { s, date, dateTime, moduleLabel, planLabel 
       return { title: s('watch.adminQuiet', { poi }), detail: s(item.never ? 'watch.adminQuietNever' : 'watch.adminQuietOld') };
     case 'suspended':
       return { title: s('watch.suspended', { poi }), detail: s('watch.suspendedDetail', { date: date(item.date) }) };
+    case 'closing':
+      return { title: s('watch.closing', { poi }), detail: s('watch.closingDetail', { date: date(item.date) }) };
     case 'demoLogin':
       return { title: s('watch.demoLogin'), detail: s('watch.demoLoginDetail') };
     case 'errors':
