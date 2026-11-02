@@ -29,6 +29,9 @@ export type Poi = {
   // Its plan (Seb, 29 Oct 2026): Basic sends no notifications to phones.
   plan?: 'basic' | 'essentials' | 'complete';
   billingComped?: boolean;
+  // Set while the place's admins are closing its account (Seb, 2 Nov
+  // 2026): the date its content and member list are erased.
+  closesAt?: string | null;
   createdAt: string;
   updatedAt: string;
 };
