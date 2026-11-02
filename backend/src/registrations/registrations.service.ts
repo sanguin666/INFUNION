@@ -201,7 +201,7 @@ export class RegistrationsService {
         withdrawUrl: this.withdrawUrl(),
       }),
     );
-    const superadmin = this.config.get<string>('SUPERADMIN_EMAIL')?.trim();
+    const superadmin = this.notifyEmail();
     if (superadmin) {
       await this.send(
         newRequestEmail(superadmin, {
@@ -279,7 +279,7 @@ export class RegistrationsService {
     r.withdrawReason = reason?.trim() || null;
     await this.registrations.save(r);
     await this.send(withdrawnEmail({ ...this.mailFields(r), date: now.toISOString().slice(0, 10), wasOpen: opened }));
-    const superadmin = this.config.get<string>('SUPERADMIN_EMAIL')?.trim();
+    const superadmin = this.notifyEmail();
     if (superadmin) {
       await this.send(
         withdrawalNoticeEmail(superadmin, {
@@ -511,6 +511,18 @@ export class RegistrationsService {
       // A request is never lost because an email didn't go: the superadmin sees it anyway.
       this.logger.warn(`Email to ${message.to} failed: ${(error as Error).message}`);
     }
+  }
+
+  /**
+   * Where infunion's own notices (new request, withdrawal) go: our shared
+   * register@infunion.app inbox, not the superadmin's personal sign-in
+   * address (Seb, 2 Nov 2026). REGISTRATIONS_NOTIFY_EMAIL overrides it;
+   * set it to "off" to send none.
+   */
+  notifyEmail(): string | null {
+    const configured = this.config.get<string>('REGISTRATIONS_NOTIFY_EMAIL')?.trim();
+    if (configured?.toLowerCase() === 'off') return null;
+    return configured || 'register@infunion.app';
   }
 
   /** The landing's withdrawal page, for the emails: LANDING_URL, else infunion.app. */
