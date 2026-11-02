@@ -14,7 +14,7 @@ import { PLACE_KINDS } from '../placeKinds';
 import { useSa } from './format';
 import { PasswordReveal } from './PasswordReveal';
 
-const FILTERS: (CommunityBilling | 'all')[] = ['all', 'paying', 'trial', 'offered', 'free', 'suspended'];
+const FILTERS: (CommunityBilling | 'all')[] = ['all', 'paying', 'trial', 'offered', 'free', 'suspended', 'closing', 'closed'];
 
 function BillingStatus({ row }: { row: Pick<CommunityRow, 'billing' | 'monthly' | 'nextTrialEnd' | 'plan'> }) {
   const { s, money, date, planLabel } = useSa();

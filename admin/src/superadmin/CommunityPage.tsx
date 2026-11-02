@@ -2,7 +2,8 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   addAdmin,
-  deleteCommunity,
+  closeCommunity,
+  keepCommunity,
   getCommunity,
   lookupAdmin,
   moduleAction,
@@ -217,6 +218,16 @@ export function SuperadminCommunityPage() {
         {poi.suspendedAt && (
           <strong className="sa-status sa-status-suspended"> · {s('community.suspendedSince', { date: date(poi.suspendedAt) })}</strong>
         )}
+        {poi.closedAt ? (
+          <strong className="sa-status sa-status-suspended"> · {s('community.closedSince', { date: date(poi.closedAt) })}</strong>
+        ) : (
+          poi.closesAt && (
+            <strong className="sa-status sa-status-suspended">
+              {' '}
+              · {s('community.closingSince', { date: date(poi.closesAt), name: poi.closingRequestedBy ?? '—' })}
+            </strong>
+          )
+        )}
       </p>
 
       {error && <p className="error-text" role="alert">{error}</p>}
@@ -406,6 +417,17 @@ export function SuperadminCommunityPage() {
             <DestructiveButton label={s('community.suspend')} disabled={busy === 'suspend'} onConfirm={() => run('suspend', () => setSuspended(id, true), s('community.suspendedMsg'))} />
           )}
         </div>
+        {poi.closesAt && !poi.closedAt && (
+          <div className="card-row">
+            <span>
+              <span className="card-title">{s('community.closingSince', { date: date(poi.closesAt), name: poi.closingRequestedBy ?? '—' })}</span>
+            </span>
+            <button type="button" className="btn btn-primary" disabled={busy === 'keep'} onClick={() => run('keep', () => keepCommunity(id), s('community.keptMsg'))}>
+              {s('community.keep')}
+            </button>
+          </div>
+        )}
+        {!poi.closedAt && (
         <div className="card-row sa-delete-row">
           <span>
             <span className="card-title">{s('community.deleteTitle')}</span>
@@ -424,12 +446,13 @@ export function SuperadminCommunityPage() {
             disabled={confirmName.trim() !== poi.name.trim() || busy === 'delete'}
             onConfirm={() =>
               run('delete', async () => {
-                await deleteCommunity(id, confirmName);
+                await closeCommunity(id, confirmName);
                 navigate('..', { replace: true });
               })
             }
           />
         </div>
+        )}
       </div>
     </div>
   );
