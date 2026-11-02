@@ -185,7 +185,7 @@ const TEXTS: Record<Language, Texts> = {
 type Fields = Record<string, string>;
 
 // Where people answer: the sending address is not read.
-const CONTACT = 'hello@infunion.app';
+const CONTACT = 'support@infunion.app';
 
 function fill(text: string, fields: Fields): string {
   return text.replace(/\{\{(\w+)\}\}/g, (match, key: string) => fields[key] ?? match);
