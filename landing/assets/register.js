@@ -797,7 +797,7 @@
     var stepEl = document.querySelector('[data-step="' + n + '"]');
     var ok = true;
     stepEl.querySelectorAll("input, select").forEach(function (input) {
-      var field = input.closest(".reg-field");
+      var field = input.closest(".reg-field, .reg-check");
       var bad = !input.checkValidity();
       if (field) field.classList.toggle("invalid", bad);
       if (bad && ok) {
@@ -966,6 +966,12 @@
       input.addEventListener("change", function () {
         renderPlans();
         renderSummary();
+      });
+    });
+    // A ticked box clears its red flag straight away.
+    document.querySelectorAll('.reg-check input[type="checkbox"]').forEach(function (input) {
+      input.addEventListener("change", function () {
+        if (input.checked) input.closest(".reg-check").classList.remove("invalid");
       });
     });
     document.querySelectorAll("[data-next]").forEach(function (button) {

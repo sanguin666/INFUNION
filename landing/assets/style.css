@@ -1695,6 +1695,17 @@ section {
   box-shadow: inset 3px 0 0 #b42318;
 }
 
+/* An unticked required box: red label and a red ring round the box. */
+.reg-check.invalid {
+  color: #b42318;
+}
+
+.reg-check.invalid input {
+  outline: 2px solid #b42318;
+  outline-offset: 1px;
+  border-radius: 3px;
+}
+
 /* The steps and notes set their own display; hidden must still win. */
 .register [hidden] {
   display: none !important;
