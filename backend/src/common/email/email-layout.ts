@@ -53,7 +53,7 @@ export function escapeHtml(text: string): string {
 
 /** A heading at the top of the content. */
 export function emailHeading(text: string): string {
-  return `<p style="margin:0 0 6px;font-size:22px;line-height:1.3;font-weight:bold;color:${EMAIL_COLORS.ink}">${escapeHtml(text)}</p>`;
+  return `<p style="margin:0 0 14px;font-size:22px;line-height:1.3;font-weight:bold;color:${EMAIL_COLORS.ink}">${escapeHtml(text)}</p>`;
 }
 
 /** A paragraph of plain text (escaped; line breaks kept). */
@@ -64,6 +64,88 @@ export function emailParagraph(
   const color = options.muted ? EMAIL_COLORS.muted : EMAIL_COLORS.ink;
   const size = options.small ? 14 : 16;
   return `<p style="margin:0 0 16px;font-size:${size}px;line-height:1.6;color:${color}">${escapeHtml(text).replace(/\n/g, '<br>')}</p>`;
+}
+
+export type EmailLink = { label: string; url: string };
+
+/** An inline link in the brand purple. */
+export function emailLink(link: EmailLink): string {
+  return `<a href="${escapeHtml(link.url)}" style="color:${EMAIL_COLORS.purple};text-decoration:underline">${escapeHtml(link.label)}</a>`;
+}
+
+/**
+ * A paragraph whose `{{key}}` fields are filled: `fields` as escaped text,
+ * `links` as inline links. Returns the HTML and the plain-text version.
+ */
+export function emailRichParagraph(
+  template: string,
+  fields: Record<string, string>,
+  links: Record<string, EmailLink> = {},
+  options: { muted?: boolean; small?: boolean } = {},
+): { html: string; text: string } {
+  const color = options.muted ? EMAIL_COLORS.muted : EMAIL_COLORS.ink;
+  const size = options.small ? 14 : 16;
+  const parts = template.split(/(\{\{\w+\}\})/);
+  let html = '';
+  let text = '';
+  for (const part of parts) {
+    const key = /^\{\{(\w+)\}\}$/.exec(part)?.[1];
+    if (key && links[key]) {
+      html += emailLink(links[key]);
+      text += links[key].label;
+    } else if (key && fields[key] !== undefined) {
+      html += escapeHtml(fields[key]);
+      text += fields[key];
+    } else {
+      html += escapeHtml(part);
+      text += part;
+    }
+  }
+  return {
+    html: `<p style="margin:0 0 16px;font-size:${size}px;line-height:1.6;color:${color}">${html.replace(/\n/g, '<br>')}</p>`,
+    text,
+  };
+}
+
+/** Someone's own words (a question, a reason) in a lavender box with a purple edge. */
+export function emailQuote(text: string): string {
+  return `<div style="margin:0 0 18px;background:${EMAIL_COLORS.lavender};border-left:4px solid ${EMAIL_COLORS.purple};border-radius:8px;padding:14px 16px;font-size:16px;line-height:1.6;color:${EMAIL_COLORS.ink}">${escapeHtml(text).replace(/\n/g, '<br>')}</div>`;
+}
+
+/** Label / value rows (sign-in details, request summary) in a lavender box, one per line. */
+export function emailDetails(rows: { label: string; value: string }[]): string {
+  const cells = rows
+    .map(
+      (r) =>
+        `<tr><td style="padding:4px 0;font-size:13px;color:${EMAIL_COLORS.muted};white-space:nowrap;vertical-align:top;padding-right:14px">${escapeHtml(r.label)}</td><td style="padding:4px 0;font-size:16px;font-weight:bold;color:${EMAIL_COLORS.ink};word-break:break-all">${escapeHtml(r.value)}</td></tr>`,
+    )
+    .join('');
+  return `<div style="margin:0 0 18px;background:${EMAIL_COLORS.lavender};border-radius:12px;padding:12px 16px"><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="font-family:${FONT}">${cells}</table></div>`;
+}
+
+const LOCALES: Record<Language, string> = {
+  [Language.EN]: 'en-GB',
+  [Language.ES]: 'es-ES',
+  [Language.FR]: 'fr-FR',
+  [Language.VA]: 'ca-ES',
+  [Language.GL]: 'gl-ES',
+  [Language.PT]: 'pt-PT',
+};
+
+/** "4 November 2026" in the email's language, from a YYYY-MM-DD date. */
+export function emailDate(
+  isoDate: string,
+  language?: Language | string,
+): string {
+  const date = new Date(`${isoDate.slice(0, 10)}T12:00:00Z`);
+  if (Number.isNaN(date.getTime())) return isoDate;
+  const locale = LOCALES[language as Language] ?? LOCALES[Language.EN];
+  return new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
 }
 
 /** A big code (sign-in code) in a lavender box, kept as one block so it copies cleanly. */
