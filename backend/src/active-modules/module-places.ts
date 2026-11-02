@@ -12,6 +12,8 @@ const WORSHIP: readonly PoiType[] = [
 // Every module not listed here is offered to every place. A module that
 // does not fit is hidden, never deleted: a row saved before stays in the
 // database, but no list, menu or bill sees it.
+// The landing shows the same rule (landing/assets/modules.js, checked by
+// landing-modules.spec.ts): change both together.
 const ONLY_FOR: Partial<Record<ModuleType, readonly PoiType[]>> = {
   [ModuleType.MASS_INTENTIONS]: [PoiType.CHURCH],
   [ModuleType.PRAYER_REQUESTS]: WORSHIP,
