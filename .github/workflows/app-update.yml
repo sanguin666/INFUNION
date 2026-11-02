@@ -76,7 +76,7 @@ jobs:
         if: steps.token.outputs.skip != 'true'
         run: |
           case "$BRANCH" in
-            production) url=https://infunion-api.up.railway.app ;;
+            production) url=https://api.infunion.app ;;
             staging) url=https://infunion-api-staging.up.railway.app ;;
             *) echo "::error::No backend for $BRANCH"; exit 1 ;;
           esac
