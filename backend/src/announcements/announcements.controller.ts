@@ -17,11 +17,11 @@ import { AnnouncementsService } from './announcements.service.js';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto.js';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto.js';
 import { localDiskStorage, publicUrlFor } from '../common/upload/multer-storage.js';
+import { LARGE_PICTURE_SIDE, MAX_PICTURE_UPLOAD_BYTES, pictureStorage } from '../common/upload/image-storage.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
 
 const MAX_AUDIO_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB — a few minutes of voice audio.
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 const ANNOUNCEMENT_IMAGES = 'announcements';
 
 @Controller('pois/:poiId/announcements')
@@ -78,8 +78,8 @@ export class AnnouncementsController {
   @UseGuards(JwtAuthGuard, PoiAdminGuard)
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: localDiskStorage(ANNOUNCEMENT_IMAGES),
-      limits: { fileSize: MAX_IMAGE_BYTES },
+      storage: pictureStorage(ANNOUNCEMENT_IMAGES, LARGE_PICTURE_SIDE),
+      limits: { fileSize: MAX_PICTURE_UPLOAD_BYTES },
       fileFilter: (_req, file, callback) => {
         if (!file.mimetype.startsWith('image/')) {
           callback(new UnsupportedMediaTypeException('File must be an image'), false);

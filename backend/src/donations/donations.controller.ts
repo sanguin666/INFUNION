@@ -38,10 +38,10 @@ import { PoisService } from '../pois/pois.service.js';
 import { decodeDonorKey, donorsCsv, encodeDonorKey, groupDonors, receiptHtml } from './receipts.js';
 import { RequestReceiptDto } from './dto/request-receipt.dto.js';
 import type { MyGift } from './donations.service.js';
-import { localDiskStorage, publicUrlFor } from '../common/upload/multer-storage.js';
+import { publicUrlFor } from '../common/upload/multer-storage.js';
+import { LARGE_PICTURE_SIDE, MAX_PICTURE_UPLOAD_BYTES, pictureStorage } from '../common/upload/image-storage.js';
 
 const CAMPAIGN_IMAGES = 'campaigns';
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
 function parseYear(value: string | undefined): number {
   const year = Number(value ?? new Date().getFullYear());
@@ -276,8 +276,8 @@ export class CampaignsController {
   @UseGuards(JwtAuthGuard, PoiAdminGuard)
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: localDiskStorage(CAMPAIGN_IMAGES),
-      limits: { fileSize: MAX_IMAGE_BYTES },
+      storage: pictureStorage(CAMPAIGN_IMAGES, LARGE_PICTURE_SIDE),
+      limits: { fileSize: MAX_PICTURE_UPLOAD_BYTES },
       fileFilter: (_req, file, callback) => {
         if (!file.mimetype.startsWith('image/')) {
           callback(new UnsupportedMediaTypeException('File must be an image'), false);

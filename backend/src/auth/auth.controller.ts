@@ -25,14 +25,13 @@ import { RequestLoginCodeDto, VerifyLoginCodeDto } from './dto/login-code.dto.js
 import { UpdateLanguageDto } from '../common/dto/update-language.dto.js';
 import { UpdateProfileDto } from '../common/dto/update-profile.dto.js';
 import { SetLastActivePoiDto } from '../common/dto/set-last-active-poi.dto.js';
-import { localDiskStorage, publicUrlFor } from '../common/upload/multer-storage.js';
+import { publicUrlFor } from '../common/upload/multer-storage.js';
+import { MAX_PICTURE_UPLOAD_BYTES, pictureStorage, SMALL_PICTURE_SIDE } from '../common/upload/image-storage.js';
 import { JwtAuthGuard, type AuthenticatedRequest } from './guards/jwt-auth.guard.js';
 
 const AVATAR_SUBFOLDER = 'avatars';
-// A profile picture is shown at 52pt: anything past a couple of megabytes
-// is a photo straight off a camera, which we don't need and shouldn't
-// keep.
-const MAX_AVATAR_SIZE_BYTES = 4 * 1024 * 1024;
+// A profile picture is shown at 52pt: whatever the phone sends (often a
+// full camera photo) is shrunk to 512px before it is kept.
 
 @Controller('auth')
 export class AuthController {
@@ -103,8 +102,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: localDiskStorage(AVATAR_SUBFOLDER),
-      limits: { fileSize: MAX_AVATAR_SIZE_BYTES },
+      storage: pictureStorage(AVATAR_SUBFOLDER, SMALL_PICTURE_SIDE),
+      limits: { fileSize: MAX_PICTURE_UPLOAD_BYTES },
       fileFilter: (_req, file, callback) => {
         if (!file.mimetype.startsWith('image/')) {
           callback(new UnsupportedMediaTypeException('File must be an image'), false);
