@@ -1072,6 +1072,7 @@
     });
   }
 
+  var WORSHIP_SHOTS = ["home", "calendar", "donate", "requests", "admin", "admin-requests", "admin-home"];
   var STORAGE_KEY = "ansae-landing-language";
 
   function applyLang(lang) {
@@ -1091,7 +1092,11 @@
     });
     // Real app screenshots, taken in each language (assets/screens/<lang>/).
     document.querySelectorAll("[data-shot]").forEach(function (el) {
-      el.src = "assets/screens/" + lang + "/" + el.getAttribute("data-shot") + ".webp?v=20261026-offer";
+      var shot = el.getAttribute("data-shot");
+      // The worship variant shows the Carmen demo (a church), the others the
+      // Crecer Juntos association; shots without a worship copy stay shared.
+      var folder = VARIANT === "worship" && WORSHIP_SHOTS.indexOf(shot) !== -1 ? "/worship/" : "/";
+      el.src = "assets/screens/" + lang + folder + shot + ".webp?v=20261102-variants";
     });
     document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-alt");
