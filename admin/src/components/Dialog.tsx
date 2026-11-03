@@ -1,13 +1,14 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
 /**
- * A panel that slides in from the right over the page, for a "new …"
- * form that used to sit at the top of the page (Seb, 29 Oct 2026). A
- * native <dialog> gives the focus trap and the Escape key; a click on the
- * dimmed page closes it too. The title can be the label of the button
- * that opened it; its leading "+" is dropped.
+ * A window in the middle of the screen over the dimmed page, for a "new …"
+ * or edit form. It replaced the panel that slid in from the right, which
+ * Seb did not like (3 Nov 2026). A native <dialog> gives the focus trap
+ * and the Escape key; a click on the dimmed page closes it too. The title
+ * can be the label of the button that opened it; its leading "+" is
+ * dropped.
  */
-export function SidePanel({
+export function Dialog({
   open,
   onClose,
   title,
@@ -33,16 +34,16 @@ export function SidePanel({
   return (
     <dialog
       ref={dialogRef}
-      className="side-panel"
+      className="dialog"
       aria-label={heading}
       onClose={onClose}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="side-panel-body">
-        <div className="side-panel-head">
-          <h2 className="side-panel-title">{heading}</h2>
+      <div className="dialog-body">
+        <div className="dialog-head">
+          <h2 className="dialog-title">{heading}</h2>
           <button type="button" className="btn" onClick={onClose}>
             {closeLabel}
           </button>
