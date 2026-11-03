@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
-import type { PoiBadge, PoiPageBlock } from '../api/types';
+import type { ModuleType, PoiBadge, PoiPageBlock } from '../api/types';
 
 // The app's web version, which the phone frame loads in preview mode.
 // `npm run start` in app/ serves it here; see admin/.env.example.
@@ -20,6 +20,8 @@ type Props = {
   blocks: PoiPageBlock[] | null;
   // Ids of the badges and sections with changes not saved yet.
   drafts: string[];
+  // The bottom menu as the editor holds it; null until loaded.
+  menuOrder?: ModuleType[] | null;
 };
 
 /**
@@ -28,7 +30,7 @@ type Props = {
  * app draws; the editor's content is pushed into it as it changes, so a
  * message shows while it is still being typed.
  */
-export function PhonePreview({ poiId, badges, blocks, drafts }: Props) {
+export function PhonePreview({ poiId, badges, blocks, drafts, menuOrder }: Props) {
   const { t, language } = useI18n();
   const frame = useRef<HTMLIFrameElement>(null);
   const [previewLanguage, setPreviewLanguage] = useState<SupportedLanguage>(language);
@@ -68,11 +70,12 @@ export function PhonePreview({ poiId, badges, blocks, drafts }: Props) {
         badges: badges?.filter((badge) => badge.enabled) ?? undefined,
         blocks: blocks ?? undefined,
         drafts,
+        menuOrder: menuOrder ?? undefined,
       },
       APP_ORIGIN,
     );
     // The page rebuilds `drafts` on every render; its contents are what count.
-  }, [ready, previewLanguage, badges, blocks, drafts.join()]);
+  }, [ready, previewLanguage, badges, blocks, drafts.join(), menuOrder?.join()]);
 
   return (
     <aside className="phone-preview" aria-labelledby="phone-preview-title">
