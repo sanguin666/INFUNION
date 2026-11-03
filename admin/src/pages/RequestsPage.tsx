@@ -23,6 +23,7 @@ import type {
 import { DestructiveButton } from '../components/DestructiveButton';
 import { fromLocalInputValue, toLocalInputValue } from '../format';
 import { typeName } from '../requestTypes';
+import { getDashboard } from '../api/dashboard';
 
 type T = ReturnType<typeof useI18n>['t'];
 
@@ -31,12 +32,22 @@ const STATUSES: ServiceRequestStatus[] = ['received', 'in_progress', 'appointmen
 // What the file picker offers — the backend takes a photo or a PDF, up to 10 MB.
 const DOCUMENT_ACCEPT = 'application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif';
 
-/** The office's list of requests, still open ones by default. */
+// Why a request waits on the team, by the rule behind the menu's count
+// (backend/src/dashboard/dashboard.service.ts): a new request, the
+// member wrote last, or a document came in since the team last looked.
+type Reason = 'new' | 'memberWrote' | 'newDocument';
+
+/**
+ * The team's list of requests, still open ones by default. Those that
+ * need a reply are pinned on top with a yellow dot, a "Needs a reply"
+ * chip and a Reply button (Seb, 3 Nov 2026), the rest below.
+ */
 export function RequestsPage() {
   const poiId = usePoiId();
   const { t, language } = useI18n();
   const [filter, setFilter] = useState<RequestFilter>('open');
   const [items, setItems] = useState<ServiceRequestSummary[] | null>(null);
+  const [waiting, setWaiting] = useState<Map<string, Reason[]>>(new Map());
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,6 +55,75 @@ export function RequestsPage() {
       .then(setItems)
       .catch(() => setError(t('requests.loadError')));
   }, [poiId, filter]);
+
+  useEffect(() => {
+    getDashboard(poiId)
+      .then((summary) => {
+        const next = new Map<string, Reason[]>();
+        const add = (id: string, reason: Reason) => {
+          const reasons = next.get(id) ?? [];
+          if (!reasons.includes(reason)) next.set(id, [...reasons, reason]);
+        };
+        summary.newRequests.forEach((r) => add(r.id, 'new'));
+        summary.awaitingReply.forEach((r) => add(r.id, 'memberWrote'));
+        summary.documentsToCheck.forEach((d) => add(d.requestId, 'newDocument'));
+        setWaiting(next);
+      })
+      .catch(() => setWaiting(new Map()));
+  }, [poiId]);
+
+  const reasonName = (reason: Reason) =>
+    reason === 'new'
+      ? t('requests.reasonNew')
+      : reason === 'memberWrote'
+        ? t('requests.reasonMemberWrote')
+        : t('requests.reasonNewDocument');
+
+  const pinned = items?.filter((item) => waiting.has(item.id)) ?? [];
+  const rest = items?.filter((item) => !waiting.has(item.id)) ?? [];
+
+  function row(item: ServiceRequestSummary) {
+    const reasons = waiting.get(item.id);
+    const label = `${typeName(item.type, t)} · ${item.contactName}`;
+    return (
+      <div key={item.id} className={reasons ? 'card-row request-row request-row-waiting' : 'card-row request-row'}>
+        <div className="request-row-main">
+          {reasons && <span className="request-dot" aria-hidden="true" />}
+          <div>
+            <p className="card-title" style={{ margin: 0 }}>
+              {label}
+            </p>
+            <p className="card-meta">
+              {statusName(item.status, t)} ·{' '}
+              {t('requests.askedOn', { date: new Date(item.createdAt).toLocaleDateString(intlLocale(language)) })}
+              {item.appointmentAt &&
+                ` · ${t('requests.appointmentOn', { date: new Date(item.appointmentAt).toLocaleString(intlLocale(language), { dateStyle: 'medium', timeStyle: 'short' }) })}`}
+            </p>
+            {(reasons || item.documentsPending > 0) && (
+              <p className="request-chips">
+                {reasons && <span className="request-chip-waiting">{t('requests.groupNeedsReply')}</span>}
+                {reasons && <span className="request-chip-reason">{reasons.map(reasonName).join(' · ')}</span>}
+                {item.documentsPending > 0 && (
+                  <span className="badge">
+                    {item.documentsPending === 1
+                      ? t('requests.documentsPendingOne')
+                      : t('requests.documentsPendingMany', { n: item.documentsPending })}
+                  </span>
+                )}
+              </p>
+            )}
+          </div>
+        </div>
+        <Link
+          to={item.id}
+          className={reasons ? 'btn btn-primary' : 'btn'}
+          aria-label={`${reasons ? t('requests.reply') : t('requests.open')}: ${label}`}
+        >
+          {reasons ? t('requests.reply') : t('requests.open')}
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -72,43 +152,12 @@ export function RequestsPage() {
       {items === null && !error && <p className="muted">{t('requests.loading')}</p>}
       {items?.length === 0 && <p className="muted">{t('requests.empty')}</p>}
 
-      {/* One white card, one row per request. */}
+      {/* One white card: those to answer first, then the rest. */}
       {items !== null && items.length > 0 && (
         <div className="card card-list">
-          {items.map((item) => (
-            <div key={item.id} className="card-row">
-              <div>
-                <p className="card-title" style={{ margin: 0 }}>
-                  {typeName(item.type, t)} · {item.contactName}
-                </p>
-                <p className="card-meta">
-                  {statusName(item.status, t)} ·{' '}
-                  {t('requests.askedOn', { date: new Date(item.createdAt).toLocaleDateString(intlLocale(language)) })}
-                  {item.appointmentAt &&
-                    ` · ${t('requests.appointmentOn', { date: new Date(item.appointmentAt).toLocaleString(intlLocale(language), { dateStyle: 'medium', timeStyle: 'short' }) })}`}
-                </p>
-                {(item.unread || item.documentsPending > 0) && (
-                  <p style={{ margin: '4px 0 0', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                    {item.unread && <span className="badge badge-active">{t('requests.unread')}</span>}
-                    {item.documentsPending > 0 && (
-                      <span className="badge">
-                        {item.documentsPending === 1
-                          ? t('requests.documentsPendingOne')
-                          : t('requests.documentsPendingMany', { n: item.documentsPending })}
-                      </span>
-                    )}
-                  </p>
-                )}
-              </div>
-              <Link
-                to={item.id}
-                className="btn"
-                aria-label={`${t('requests.open')}: ${typeName(item.type, t)} · ${item.contactName}`}
-              >
-                {t('requests.open')}
-              </Link>
-            </div>
-          ))}
+          {pinned.map(row)}
+          {pinned.length > 0 && rest.length > 0 && <p className="request-divider">{t('requests.groupOther')}</p>}
+          {rest.map(row)}
         </div>
       )}
     </div>
