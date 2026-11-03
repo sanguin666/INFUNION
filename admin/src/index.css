@@ -1059,51 +1059,73 @@ a.btn {
   }
 }
 
-/* ---------- Events > Regular: the week, one white card per day ---------- */
+/* ---------- Events > Regular: the week in one white card (Seb, 3 Nov 2026) ---------- */
 
-/* "+ New event" under the page title, on the left (Seb, 3 Nov 2026). */
+/* "+ New event" under the page title, on the left. */
 .page-action {
   margin: 16px 0 0;
 }
 
-.week-grid {
+/* Seven columns, one a day, told apart by a hairline. */
+.week-card {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
-  align-items: start;
-  margin-bottom: 16px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.week-col {
+  min-width: 0;
+  min-height: 200px;
+  padding: 14px 10px 12px 12px;
+  border-left: 1px solid var(--color-card-border);
+}
+
+.week-col:first-child {
+  border-left: none;
 }
 
 @media (max-width: 1023px) {
-  .week-grid {
+  .week-card {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-}
 
-@media (max-width: 760px) {
-  .week-grid {
-    grid-template-columns: minmax(0, 1fr);
+  .week-col {
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .week-col:nth-child(-n + 4) {
+    border-top: none;
+  }
+
+  .week-col:nth-child(4n + 1) {
+    border-left: none;
   }
 }
 
-.week-day {
-  background: var(--color-surface);
-  border: 1px solid var(--color-card-border);
-  border-radius: var(--radius);
-  padding: 14px 8px 6px 10px;
-  min-width: 0;
+@media (max-width: 640px) {
+  .week-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .week-col {
+    min-height: 0;
+    border-left: none;
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .week-col:first-child {
+    border-top: none;
+  }
 }
 
-.week-day .week-day-name,
-.week-monthly-dates .week-day-name {
+.main h3.week-day-name {
   margin: 0 0 6px;
   font-size: 16px;
   font-weight: 800;
-  overflow-wrap: break-word;
 }
 
-/* An event of the day: a row told apart by a hairline, with a purple
-   bar on its left; a monthly one has a dashed yellow bar and its tag. */
+/* An event of the day: a row with a purple bar on its left. */
 .week-event {
   display: block;
   width: 100%;
@@ -1133,13 +1155,10 @@ a.btn {
   padding-left: 8px;
 }
 
-.week-event-monthly > span {
-  border-left-style: dashed;
-  border-left-color: #f9b800;
-}
-
 .week-event:hover .week-event-title,
-.week-event:focus-visible .week-event-title {
+.week-event:focus-visible .week-event-title,
+.month-row:hover b,
+.month-row:focus-visible b {
   color: var(--color-primary-strong);
   text-decoration: underline;
 }
@@ -1162,45 +1181,107 @@ a.btn {
   color: var(--color-text-muted);
 }
 
-.week-event-tag {
-  display: inline-block;
-  margin-top: 3px;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-size: 12px;
-  line-height: 1.3;
-  font-weight: 800;
-  color: #6b4f00;
-  background: #fff3cc;
+/* "Not every week": the monthly events, one row each. */
+.week-monthly {
+  margin-top: 16px;
 }
 
-:root[data-theme='dark'] .week-event-tag {
-  color: #ffd866;
-  background: #3d3214;
+.main h3.week-monthly-heading {
+  margin: 0;
+  font-size: 18px;
 }
 
-.week-add {
-  display: block;
+.main p.week-monthly-hint {
+  margin: 2px 0 6px;
+  font-size: 15px;
+}
+
+.month-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
   width: 100%;
-  margin-top: 2px;
-  padding: 8px 0;
+  padding: 12px 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: none;
   border: none;
   border-top: 1px solid var(--color-card-border);
-  background: none;
-  font: inherit;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-primary-strong);
   cursor: pointer;
 }
 
-.week-add:hover {
-  text-decoration: underline;
+.month-row-when {
+  flex: 0 0 260px;
+  font-weight: 700;
+  color: #7a5a00;
 }
 
-/* Monthly events on a date (the 5th), which have no weekday to sit in. */
-.week-monthly-dates .week-event {
-  max-width: 480px;
+:root[data-theme='dark'] .month-row-when {
+  color: #ffd866;
+}
+
+.month-row-what {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+/* ---------- Events: the form on its own page, the preview beside it ---------- */
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.event-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.event-editor > .card {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1100px) {
+  .event-editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.event-preview {
+  position: sticky;
+  top: 24px;
+}
+
+.main h3.event-preview-heading {
+  margin: 0;
+  font-size: 18px;
+}
+
+.main p.event-preview-hint {
+  margin: 2px 0 8px;
+  font-size: 14px;
+}
+
+.event-preview-row {
+  display: flex;
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid var(--color-card-border);
+  font-size: 15px;
+}
+
+.event-preview-row b {
+  min-width: 44px;
+}
+
+.card-actions-end {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
 }
 
 /* ---------- Settings > Personalise: choices beside a drawn phone ---------- */
