@@ -135,10 +135,10 @@ export function DashboardLayout() {
   }
 
   const moduleItems = MODULE_NAV.filter((item) => isLive(item.module));
-  const showAddModules = canAddModules?.poiId === poiId && canAddModules.yes;
+  const showAddModules = !!canAddModules && canAddModules.poiId === poiId && canAddModules.yes;
 
   function navRow(item: NavItem) {
-    const n = item.count && counts?.poiId === poiId ? counts.counts[item.count] : 0;
+    const n = item.count && counts && counts.poiId === poiId ? counts.counts[item.count] : 0;
     return (
       <NavLink key={item.to} to={item.to}>
         <LineIcon path={item.icon} />
