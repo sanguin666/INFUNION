@@ -13,7 +13,7 @@ import {
 import { API_BASE_URL } from '../api/client';
 import type { Campaign, CampaignAllocationLine } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
-import { SidePanel } from '../components/SidePanel';
+import { Dialog } from '../components/Dialog';
 import { CURRENCY, endOfDayFromDateInput, formatMoney, toDateInputValue } from '../format';
 
 // `photo` is a picture picked but not sent yet: it goes up once the
@@ -296,7 +296,7 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
         </button>
       </div>
 
-      <SidePanel
+      <Dialog
         open={creating}
         onClose={() => setCreating(false)}
         title={t('tabs.newCampaign')}
@@ -309,7 +309,7 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
           </button>
           {error && <p className="error-text">{error}</p>}
         </form>
-      </SidePanel>
+      </Dialog>
 
       {error && <p className="error-text">{error}</p>}
       {items === null && !error && <p className="muted">{t('campaigns.loading')}</p>}
