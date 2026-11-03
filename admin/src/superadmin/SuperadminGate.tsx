@@ -7,6 +7,7 @@ import {
   SUPERADMIN_EXPIRED_EVENT,
   confirmEnrollment,
   getSuperadminStatus,
+  openWithoutCode,
   startEnrollment,
   verifyCode,
   type SuperadminStatus,
@@ -65,8 +66,18 @@ export function SuperadminCodeDialog({ onDone, onCancel }: { onDone: () => void;
 
   useEffect(() => {
     getSuperadminStatus()
-      .then(setStatus)
+      .then(async (found) => {
+        // SUPERADMIN_2FA=off on the server: no code to ask, open straight away.
+        if (found.codeRequired === false) {
+          setSuperadminSession(await openWithoutCode());
+          onDone();
+          return;
+        }
+        setStatus(found);
+      })
       .catch((err) => setError(describe(err)));
+    // onDone changes with every render of the parent; ask once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [describe]);
 
   return (

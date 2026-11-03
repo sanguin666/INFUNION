@@ -90,6 +90,27 @@ describe('Superadmin (e2e)', () => {
     expect(next.body.token).toBeTruthy();
   });
 
+  it('opens without a code only while SUPERADMIN_2FA=off', async () => {
+    const member = await signIn(app, '+34600700002', 'Member');
+    const normal = await passwordToken();
+    await client(app).post('/superadmin/auth/open').set(as(normal)).expect(400);
+    process.env.SUPERADMIN_2FA = 'off';
+    try {
+      const status = await client(app).get('/superadmin/auth/status').set(as(normal)).expect(200);
+      expect(status.body.codeRequired).toBe(false);
+      // Still only the superadmin account.
+      await client(app).post('/superadmin/auth/open').set(as(member)).expect(403);
+      const opened = await client(app).post('/superadmin/auth/open').set(as(normal)).expect(200);
+      await client(app).get('/superadmin/overview').set(as(opened.body.token)).expect(200);
+      const health = await client(app).get('/superadmin/health').set(as(opened.body.token)).expect(200);
+      expect(health.body.warnings).toContain('twoFactorOff');
+    } finally {
+      delete process.env.SUPERADMIN_2FA;
+    }
+    const status = await client(app).get('/superadmin/auth/status').set(as(normal)).expect(200);
+    expect(status.body.codeRequired).toBe(true);
+  });
+
   it('locks the code step after five wrong codes', async () => {
     const { normal } = await enrolled();
     for (let i = 0; i < 5; i++) {

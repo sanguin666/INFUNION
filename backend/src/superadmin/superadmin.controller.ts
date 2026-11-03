@@ -82,6 +82,12 @@ export class SuperadminAuthController {
     return this.auth.confirmEnrollment(request.superadmin, dto.code, request);
   }
 
+  @Post('open')
+  @HttpCode(200)
+  open(@Req() request: AccountRequest) {
+    return this.auth.openWithoutCode(request.superadmin, request);
+  }
+
   @Post('verify')
   @HttpCode(200)
   verify(@Req() request: AccountRequest, @Body() dto: SuperadminCodeDto) {
