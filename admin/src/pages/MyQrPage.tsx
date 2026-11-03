@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 import { usePoiId } from '../layout/usePoiId';
-import { useI18n } from '../i18n/I18nContext';
+import { translatorFor, useI18n } from '../i18n/I18nContext';
+import { SUPPORTED_LANGUAGES } from '../i18n/translations';
 import { getPoi } from '../api/pois';
 import { updatePoiProfile } from '../api/poiSettings';
 import type { Poi } from '../api/types';
@@ -19,6 +20,14 @@ function joinUrlFor(qrCodeToken: string): string {
   return `${LANDING_URL}/?token=${encodeURIComponent(qrCodeToken)}#join`;
 }
 
+// A saved text that is just one language's default (e.g. the English one,
+// saved before the flyer followed the community's language) counts as
+// "not customised", so the flyer falls back to the community-language default.
+function customText(saved: string | null, key: 'qr.defaultHeadline' | 'qr.defaultSubtext'): string {
+  const text = saved?.trim() ?? '';
+  return SUPPORTED_LANGUAGES.some((language) => translatorFor(language)(key) === text) ? '' : text;
+}
+
 export function MyQrPage() {
   const poiId = usePoiId();
   const { t } = useI18n();
@@ -34,8 +43,11 @@ export function MyQrPage() {
       setPoi(result);
       // A place that never wrote its own text starts from the default one,
       // shown as real text the admin can keep or edit, not as a placeholder.
-      setHeadline(result.qrFlyerHeadline || t('qr.defaultHeadline'));
-      setSubtext(result.qrFlyerSubtext || t('qr.defaultSubtext'));
+      // The flyer is for members, so it is in the community's language,
+      // not the admin's UI language.
+      const flyerT = translatorFor(result.language);
+      setHeadline(customText(result.qrFlyerHeadline, 'qr.defaultHeadline') || flyerT('qr.defaultHeadline'));
+      setSubtext(customText(result.qrFlyerSubtext, 'qr.defaultSubtext') || flyerT('qr.defaultSubtext'));
     });
   }, [poiId]);
 
@@ -51,8 +63,10 @@ export function MyQrPage() {
     setError(null);
     try {
       const updated = await updatePoiProfile(poiId, {
-        qrFlyerHeadline: headline.trim(),
-        qrFlyerSubtext: subtext.trim(),
+        // An unchanged default is stored as empty, so the flyer keeps
+        // following the community's language if that setting changes.
+        qrFlyerHeadline: customText(headline, 'qr.defaultHeadline'),
+        qrFlyerSubtext: customText(subtext, 'qr.defaultSubtext'),
       });
       setPoi(updated);
     } catch {
@@ -64,8 +78,11 @@ export function MyQrPage() {
 
   if (!poi) return null;
 
-  const displayHeadline = headline.trim() || t('qr.defaultHeadline');
-  const displaySubtext = subtext.trim() || t('qr.defaultSubtext');
+  // Everything printed on the flyer follows the community's language.
+  const flyerT = translatorFor(poi.language);
+
+  const displayHeadline = headline.trim() || flyerT('qr.defaultHeadline');
+  const displaySubtext = subtext.trim() || flyerT('qr.defaultSubtext');
 
   return (
     <div>
@@ -78,7 +95,7 @@ export function MyQrPage() {
           <input
             value={headline}
             onChange={(e) => setHeadline(e.target.value)}
-            placeholder={t('qr.defaultHeadline')}
+            placeholder={flyerT('qr.defaultHeadline')}
           />
         </label>
         <label>
@@ -86,7 +103,7 @@ export function MyQrPage() {
           <textarea
             value={subtext}
             onChange={(e) => setSubtext(e.target.value)}
-            placeholder={t('qr.defaultSubtext')}
+            placeholder={flyerT('qr.defaultSubtext')}
           />
         </label>
         <div className="card-actions">
@@ -109,18 +126,18 @@ export function MyQrPage() {
           <p className="qr-flyer-poi-name">{poi.name}</p>
           <h1 className="qr-flyer-headline">{displayHeadline}</h1>
           <p className="qr-flyer-subtext">{displaySubtext}</p>
-          {qrDataUrl && <img src={qrDataUrl} alt={t('qr.scanHint')} className="qr-flyer-code" />}
-          <p className="qr-flyer-hint">{t('qr.scanHint')}</p>
+          {qrDataUrl && <img src={qrDataUrl} alt={flyerT('qr.scanHint')} className="qr-flyer-code" />}
+          <p className="qr-flyer-hint">{flyerT('qr.scanHint')}</p>
           <ol className="qr-flyer-steps">
             {(['qr.step1', 'qr.step2', 'qr.step3'] as const).map((key, index) => (
               <li key={key}>
                 <span className="qr-flyer-step-number">{index + 1}</span>
-                {t(key)}
+                {flyerT(key)}
               </li>
             ))}
           </ol>
           <div className="qr-flyer-footer">
-            <span>{t('qr.getTheApp')}</span>
+            <span>{flyerT('qr.getTheApp')}</span>
             <Lockup height={30} />
           </div>
         </div>
