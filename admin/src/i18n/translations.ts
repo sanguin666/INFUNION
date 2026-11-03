@@ -153,6 +153,9 @@ export type Translations = {
     navMassIntentions: string;
     navReadings: string;
     navMembers: string;
+    navModulesHeading: string;
+    navManage: string;
+    navAddModules: string;
   };
   donations: {
     title: string;
@@ -1149,10 +1152,10 @@ const en: Translations = {
     navEvents: 'Events',
     navAnnouncements: 'Announcements',
     navLivestreams: 'Livestreams',
-    navPrayerRequests: 'Prayer Requests',
+    navPrayerRequests: "Prayer requests",
     navCommunity: "Our group",
-    navMyQr: 'My QR',
-    navModules: "Modules",
+    navMyQr: "QR code",
+    navModules: "Plans & modules",
     navHomePage: 'Home page',
     navDashboard: 'Dashboard',
     navSettings: 'Settings',
@@ -1161,6 +1164,9 @@ const en: Translations = {
     navMassIntentions: 'Mass intentions',
     navReadings: 'Daily readings',
     navMembers: "Members",
+    navModulesHeading: "Active modules",
+    navManage: "Manage",
+    navAddModules: "Add modules",
   },
   donations: {
     title: "Fees & contributions",
@@ -1709,7 +1715,7 @@ const en: Translations = {
     saving: 'Saving…',
   },
   qr: {
-    title: 'My QR',
+    title: "QR code",
     subtitle: 'A printable flyer with your QR code — put it up anywhere people can scan it to get the app and join your community.',
     flyerHeadlineLabel: 'Flyer headline',
     flyerSubtextLabel: 'Welcome message',
@@ -2160,8 +2166,8 @@ const es: Translations = {
     navLivestreams: 'Transmisiones',
     navPrayerRequests: 'Peticiones de oración',
     navCommunity: "Nuestro grupo",
-    navMyQr: 'Mi código QR',
-    navModules: "Módulos",
+    navMyQr: "Código QR",
+    navModules: "Planes y módulos",
     navHomePage: 'Página de inicio',
     navDashboard: 'Panel',
     navSettings: 'Configuración',
@@ -2170,6 +2176,9 @@ const es: Translations = {
     navMassIntentions: 'Intenciones de misa',
     navReadings: 'Lecturas del día',
     navMembers: "Miembros",
+    navModulesHeading: "Módulos activos",
+    navManage: "Gestionar",
+    navAddModules: "Añadir módulos",
   },
   donations: {
     title: "Cuotas y aportaciones",
@@ -2718,7 +2727,7 @@ const es: Translations = {
     saving: 'Guardando…',
   },
   qr: {
-    title: 'Mi código QR',
+    title: "Código QR",
     subtitle: 'Un folleto imprimible con tu código QR: colócalo donde la gente pueda escanearlo para obtener la app y unirse a tu comunidad.',
     flyerHeadlineLabel: 'Título del folleto',
     flyerSubtextLabel: 'Mensaje de bienvenida',
@@ -3169,8 +3178,8 @@ const fr: Translations = {
     navLivestreams: 'Diffusions',
     navPrayerRequests: 'Intentions de prière',
     navCommunity: "Notre groupe",
-    navMyQr: 'Mon code QR',
-    navModules: "Modules",
+    navMyQr: "Code QR",
+    navModules: "Formules et modules",
     navHomePage: "Page d'accueil",
     navDashboard: 'Tableau de bord',
     navSettings: 'Paramètres',
@@ -3179,6 +3188,9 @@ const fr: Translations = {
     navMassIntentions: 'Intentions de messe',
     navReadings: 'Lectures du jour',
     navMembers: "Membres",
+    navModulesHeading: "Modules actifs",
+    navManage: "Gérer",
+    navAddModules: "Ajouter des modules",
   },
   donations: {
     title: "Cotisations et contributions",
@@ -3727,7 +3739,7 @@ const fr: Translations = {
     saving: 'Enregistrement…',
   },
   qr: {
-    title: 'Mon code QR',
+    title: "Code QR",
     subtitle: "Un flyer imprimable avec votre code QR — affichez-le partout où l'on peut le scanner pour obtenir l'app et rejoindre votre communauté.",
     flyerHeadlineLabel: 'Titre du flyer',
     flyerSubtextLabel: 'Message d’accueil',
@@ -4178,8 +4190,8 @@ const va: Translations = {
     navLivestreams: 'Retransmissions',
     navPrayerRequests: 'Peticions d’oració',
     navCommunity: "El nostre grup",
-    navMyQr: 'El meu codi QR',
-    navModules: "Mòduls",
+    navMyQr: "Codi QR",
+    navModules: "Plans i mòduls",
     navHomePage: 'Pàgina d’inici',
     navDashboard: 'Tauler',
     navSettings: 'Configuració',
@@ -4188,6 +4200,9 @@ const va: Translations = {
     navMassIntentions: 'Intencions de missa',
     navReadings: 'Lectures del dia',
     navMembers: "Membres",
+    navModulesHeading: "Mòduls actius",
+    navManage: "Gestionar",
+    navAddModules: "Afegir mòduls",
   },
   donations: {
     title: "Quotes i aportacions",
@@ -4736,7 +4751,7 @@ const va: Translations = {
     saving: 'Guardant…',
   },
   qr: {
-    title: 'El meu codi QR',
+    title: "Codi QR",
     subtitle: 'Un fullet imprimible amb el teu codi QR: posa’l on la gent puga escanejar-lo per a obtindre l’aplicació i unir-se a la teua comunitat.',
     flyerHeadlineLabel: 'Títol del fullet',
     flyerSubtextLabel: 'Missatge de benvinguda',
@@ -5187,8 +5202,8 @@ const ca: Translations = {
     navLivestreams: 'Retransmissions',
     navPrayerRequests: 'Peticions d’oració',
     navCommunity: "El nostre grup",
-    navMyQr: 'El meu codi QR',
-    navModules: "Mòduls",
+    navMyQr: "Codi QR",
+    navModules: "Plans i mòduls",
     navHomePage: 'Pàgina d’inici',
     navDashboard: 'Tauler',
     navSettings: 'Configuració',
@@ -5197,6 +5212,9 @@ const ca: Translations = {
     navMassIntentions: 'Intencions de missa',
     navReadings: 'Lectures del dia',
     navMembers: "Membres",
+    navModulesHeading: "Mòduls actius",
+    navManage: "Gestiona",
+    navAddModules: "Afegeix mòduls",
   },
   donations: {
     title: "Quotes i aportacions",
@@ -5745,7 +5763,7 @@ const ca: Translations = {
     saving: 'Desant…',
   },
   qr: {
-    title: 'El meu codi QR',
+    title: "Codi QR",
     subtitle: 'Un fullet imprimible amb el teu codi QR: posa’l on la gent pugui escanejar-lo per obtenir l’aplicació i unir-se a la teva comunitat.',
     flyerHeadlineLabel: 'Títol del fullet',
     flyerSubtextLabel: 'Missatge de benvinguda',
@@ -6196,8 +6214,8 @@ const gl: Translations = {
     navLivestreams: 'Emisións',
     navPrayerRequests: 'Peticións de oración',
     navCommunity: "O noso grupo",
-    navMyQr: 'O meu código QR',
-    navModules: "Módulos",
+    navMyQr: "Código QR",
+    navModules: "Plans e módulos",
     navHomePage: 'Páxina de inicio',
     navDashboard: 'Panel',
     navSettings: 'Configuración',
@@ -6206,6 +6224,9 @@ const gl: Translations = {
     navMassIntentions: 'Intencións de misa',
     navReadings: 'Lecturas do día',
     navMembers: "Membros",
+    navModulesHeading: "Módulos activos",
+    navManage: "Xestionar",
+    navAddModules: "Engadir módulos",
   },
   donations: {
     title: "Cotas e achegas",
@@ -6754,7 +6775,7 @@ const gl: Translations = {
     saving: 'Gardando…',
   },
   qr: {
-    title: 'O meu código QR',
+    title: "Código QR",
     subtitle: 'Un folleto para imprimir co teu código QR: colócao onde a xente poida escanealo para obter a app e unirse á túa comunidade.',
     flyerHeadlineLabel: 'Título do folleto',
     flyerSubtextLabel: 'Mensaxe de benvida',
@@ -7205,8 +7226,8 @@ const pt: Translations = {
     navLivestreams: 'Transmissões',
     navPrayerRequests: 'Pedidos de oração',
     navCommunity: "O nosso grupo",
-    navMyQr: 'O meu código QR',
-    navModules: "Módulos",
+    navMyQr: "Código QR",
+    navModules: "Planos e módulos",
     navHomePage: 'Página inicial',
     navDashboard: 'Painel',
     navSettings: 'Definições',
@@ -7215,6 +7236,9 @@ const pt: Translations = {
     navMassIntentions: 'Intenções de missa',
     navReadings: 'Leituras do dia',
     navMembers: "Membros",
+    navModulesHeading: "Módulos ativos",
+    navManage: "Gerir",
+    navAddModules: "Adicionar módulos",
   },
   donations: {
     title: "Quotas e contribuições",
@@ -7763,7 +7787,7 @@ const pt: Translations = {
     saving: 'A guardar…',
   },
   qr: {
-    title: 'O meu código QR',
+    title: "Código QR",
     subtitle: 'Um folheto para imprimir com o seu código QR: afixe-o onde as pessoas o possam ler para obter a app e juntar-se à sua comunidade.',
     flyerHeadlineLabel: 'Título do folheto',
     flyerSubtextLabel: 'Mensagem de boas-vindas',

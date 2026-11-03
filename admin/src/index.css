@@ -191,16 +191,29 @@ a {
 }
 
 /* Rows on white, not buttons: the page you are on gets the coral wash
-   and a coral, bold label, as the app marks the menu button you are on. */
+   and a coral, bold label, as the app marks the menu button you are on.
+   Each row leads with its line icon (menu option B, 3 Nov 2026). */
 .sidebar nav a {
   display: flex;
   align-items: center;
+  gap: 12px;
   min-height: 48px;
-  padding: 0 14px;
+  padding: 0 12px 0 14px;
   border-radius: 12px;
   color: var(--color-text);
   text-decoration: none;
   font-weight: 600;
+}
+
+.sidebar nav a svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar nav a .nav-label {
+  flex: 1;
+  min-width: 0;
 }
 
 .sidebar nav a:hover {
@@ -211,6 +224,57 @@ a {
   background: var(--color-primary-soft);
   color: var(--color-primary-strong);
   font-weight: 700;
+}
+
+/* What waits on the team, beside its row. */
+.nav-count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* "Active modules" over the module rows, with Manage on the right. */
+.nav-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 12px 14px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.nav-heading-link {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-primary-strong);
+  text-decoration: none;
+}
+
+.nav-heading-link:hover {
+  text-decoration: underline;
+}
+
+.sidebar nav a.nav-add {
+  color: var(--color-primary-strong);
+}
+
+.sidebar .sidebar-nav > .menu-divider {
+  margin: 8px 0 0;
 }
 
 /* The page menu takes whatever height is left and scrolls on its own,
@@ -232,6 +296,9 @@ a {
   }
   .sidebar nav a {
     min-height: 38px;
+  }
+  .nav-heading {
+    margin-top: 8px;
   }
   .sidebar-footer {
     gap: 4px;
@@ -3313,4 +3380,39 @@ label.link-button:focus-within {
 :root[data-theme='dark'] .closing-banner {
   --color-warning-soft: #3d3214;
   --color-warning-ink: #f6d98a;
+}
+
+/* Short laptop screens (1366 x 768): the setup rows and pickers pinned at
+   the bottom take less height, so the active modules keep room to show
+   (admin menu option B, 3 Nov 2026). Language and Appearance put their
+   value beside their name instead of under it. */
+@media (max-height: 820px) {
+  .sidebar-user {
+    display: none;
+  }
+  .sidebar nav a {
+    min-height: 34px;
+  }
+  .sidebar-footer .picker-row,
+  .sidebar-footer .picker-row:has(.picker-row-value) {
+    min-height: 36px;
+    padding: 2px 4px;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+  }
+  .sidebar-footer .picker-row:has(.picker-row-value) > svg {
+    grid-row: 1;
+  }
+  .sidebar-footer .picker-row-label {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .sidebar-footer .picker-row-value {
+    grid-column: 3;
+    grid-row: 1;
+    font-size: 14px;
+  }
+  .sidebar-footer .picker-row:has(.picker-row-value) > svg:last-child {
+    grid-column: 4;
+  }
 }

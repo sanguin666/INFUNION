@@ -70,6 +70,9 @@ export type DashboardSummary = {
 /** For the place switcher: how many things wait on the office there. */
 export type PlaceWaiting = { poiId: string; waiting: number };
 
+/** The counts beside the admin menu's rows (Seb, 3 Nov 2026). */
+export type MenuCounts = { requests: number; massIntentions: number; messages: number };
+
 function iso(date: Date): string {
   return date.toISOString();
 }
@@ -133,6 +136,34 @@ export class DashboardService {
         return { poiId, waiting };
       }),
     );
+  }
+
+  /**
+   * What waits on the team beside each row of the admin menu: requests to
+   * open, answer or check, Mass intentions to tick as said, and unread
+   * member messages. A module that is off counts nothing.
+   */
+  async menuCounts(poiId: string): Promise<MenuCounts> {
+    const live = await this.modules.find({
+      where: {
+        poi: { id: poiId },
+        moduleType: In([ModuleType.REQUESTS, ModuleType.MASS_INTENTIONS, ModuleType.MESSAGES]),
+        status: In([ModuleStatus.TRIAL, ModuleStatus.ACTIVE]),
+      },
+    });
+    const isLive = (type: ModuleType) => live.some((m) => m.moduleType === type);
+    const counts: MenuCounts = { requests: 0, massIntentions: 0, messages: 0 };
+    if (isLive(ModuleType.REQUESTS) || isLive(ModuleType.MASS_INTENTIONS)) {
+      const summary = await this.summary(poiId);
+      if (isLive(ModuleType.REQUESTS)) {
+        counts.requests = summary.newRequests.length + summary.awaitingReply.length + summary.documentsToCheck.length;
+      }
+      if (isLive(ModuleType.MASS_INTENTIONS)) {
+        counts.massIntentions = summary.intentionsToMark.reduce((n, c) => n + c.count, 0);
+      }
+    }
+    if (isLive(ModuleType.MESSAGES)) counts.messages = await this.unreadConversations(poiId);
+    return counts;
   }
 
   /** Conversations where a member wrote last, after the office last looked. */
