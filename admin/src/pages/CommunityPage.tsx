@@ -4,6 +4,11 @@ import { useI18n } from '../i18n/I18nContext';
 import { deleteComment, deletePost, getComments, getCommunityPosts } from '../api/community';
 import type { CommunityComment, CommunityPost } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
+import { TabBar, TabPanel, useTab } from '../components/Tabs';
+import { ReportedPanel } from '../components/ReportedPanel';
+import { getReportCount } from '../api/moderation';
+
+const TABS = ['posts', 'reported'] as const;
 
 export function CommunityPage() {
   const poiId = usePoiId();
@@ -12,11 +17,16 @@ export function CommunityPage() {
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [comments, setComments] = useState<CommunityComment[] | null>(null);
+  const [tab, setTab] = useTab(TABS);
+  const [reported, setReported] = useState<number | null>(null);
 
   function load() {
     getCommunityPosts(poiId)
       .then(setPosts)
       .catch(() => setError(t('community.loadError')));
+    getReportCount(poiId)
+      .then((c) => setReported(c.community))
+      .catch(() => setReported(null));
   }
 
   useEffect(load, [poiId]);
@@ -69,6 +79,22 @@ export function CommunityPage() {
       <h2>{t('community.title')}</h2>
       <p className="muted">{t('community.subtitle')}</p>
 
+      <TabBar
+        idPrefix="community"
+        label={t('tabs.label')}
+        current={tab}
+        onChange={setTab}
+        tabs={[
+          { key: 'posts', label: t('moderation.tabPosts') },
+          { key: 'reported', label: t('moderation.tabReported'), count: reported },
+        ]}
+      />
+
+      <TabPanel idPrefix="community" tabKey="reported" current={tab}>
+        <ReportedPanel poiId={poiId} area="community" onChanged={load} />
+      </TabPanel>
+
+      <TabPanel idPrefix="community" tabKey="posts" current={tab}>
       {error && <p className="error-text">{error}</p>}
       {posts === null && !error && <p className="muted">{t('community.loading')}</p>}
       {posts?.length === 0 && <p className="muted">{t('community.empty')}</p>}
@@ -108,6 +134,7 @@ export function CommunityPage() {
           )}
         </div>
       ))}
+      </TabPanel>
     </div>
   );
 }

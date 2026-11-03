@@ -6,6 +6,8 @@ import { FormCard, FormDivider, FormField } from '../components/FormCard';
 import { BackChevronIcon } from '../components/icons';
 import { createComment, getComments } from '../api/community';
 import { SignInNotice } from '../components/SignInNotice';
+import { ContentMenu, ReportedNotice } from '../components/ContentMenu';
+import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import type { CommunityComment, CommunityPost, Poi } from '../api/types';
@@ -19,6 +21,8 @@ type Props = {
 };
 
 export function CommunityThreadScreen({ poi, post, onBack, onSignIn }: Props) {
+  const [blocked, setBlocked] = useState(false);
+  const [reported, setReported] = useState<Set<string>>(new Set());
   const { t } = useI18n();
   const { me } = useAuth();
   const [comments, setComments] = useState<CommunityComment[] | null>(null);
@@ -46,8 +50,9 @@ export function CommunityThreadScreen({ poi, post, onBack, onSignIn }: Props) {
       setComments((current) => [...(current ?? []), created]);
       setMessage('');
       setAuthorName('');
-    } catch {
-      setError(true);
+    } catch (e) {
+      if (e instanceof ApiError && e.message === 'posting_blocked') setBlocked(true);
+      else setError(true);
     } finally {
       setSubmitting(false);
     }
@@ -59,10 +64,26 @@ export function CommunityThreadScreen({ poi, post, onBack, onSignIn }: Props) {
         <BackChevronIcon size={20} color={colors.text} />
       </Pressable>
 
-      <View style={styles.postCard}>
-        <AccessibleText variant="body">{post.message}</AccessibleText>
-        <AccessibleText variant="caption">— {post.authorName ?? t('common.anonymous')}</AccessibleText>
-      </View>
+      {reported.has(post.id) ? (
+        <ReportedNotice />
+      ) : (
+        <View style={styles.postCard}>
+          <AccessibleText variant="body">{post.message}</AccessibleText>
+          <View style={styles.byline}>
+            <AccessibleText variant="caption" style={styles.bylineName}>
+              — {post.authorName ?? t('common.anonymous')}
+            </AccessibleText>
+            <ContentMenu
+              poiId={poi.id}
+              kind="post"
+              targetId={post.id}
+              authorName={post.authorName}
+              onReported={() => setReported((current) => new Set(current).add(post.id))}
+              onHidden={onBack}
+            />
+          </View>
+        </View>
+      )}
 
       <AccessibleText variant="caption" style={styles.sectionLabel}>
         {t('communityThread.repliesLabel')}
@@ -86,12 +107,34 @@ export function CommunityThreadScreen({ poi, post, onBack, onSignIn }: Props) {
         </AccessibleText>
       )}
 
-      {comments?.map((item) => (
-        <View key={item.id} style={styles.commentCard}>
-          <AccessibleText variant="body">{item.message}</AccessibleText>
-          <AccessibleText variant="caption">— {item.authorName ?? t('common.anonymous')}</AccessibleText>
-        </View>
-      ))}
+      {comments?.map((item) =>
+        reported.has(item.id) ? (
+          <ReportedNotice key={item.id} />
+        ) : (
+          <View key={item.id} style={styles.commentCard}>
+            <AccessibleText variant="body">{item.message}</AccessibleText>
+            <View style={styles.byline}>
+              <AccessibleText variant="caption" style={styles.bylineName}>
+                — {item.authorName ?? t('common.anonymous')}
+              </AccessibleText>
+              <ContentMenu
+                poiId={poi.id}
+                kind="comment"
+                targetId={item.id}
+                authorName={item.authorName}
+                onReported={() => setReported((current) => new Set(current).add(item.id))}
+                onHidden={load}
+              />
+            </View>
+          </View>
+        ),
+      )}
+
+      {blocked && (
+        <AccessibleText variant="body" color={colors.danger}>
+          {t('moderation.blocked')}
+        </AccessibleText>
+      )}
 
       {me ? (
         <>
@@ -145,6 +188,14 @@ const styles = themedStyles(() => ({
     textTransform: 'uppercase',
     letterSpacing: 0.6,
     marginTop: spacing.md,
+  },
+  byline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  bylineName: {
+    flex: 1,
   },
   commentCard: {
     ...cardSurface,

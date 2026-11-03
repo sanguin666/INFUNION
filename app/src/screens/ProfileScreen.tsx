@@ -10,6 +10,7 @@ import { FormCard, FormDivider, FormField, FormRow } from '../components/FormCar
 import { CameraIcon, CloseIcon } from '../components/icons';
 import { deleteMyAccount, getMyDataLink, updateMyProfile, uploadMyAvatar } from '../api/auth';
 import { ApiError, uploadUri } from '../api/client';
+import { getHiddenPeople, showPersonAgain, type HiddenPerson } from '../api/moderation';
 import { PRIVACY_URL, TERMS_URL } from '../legal';
 import { useAuth } from '../auth/AuthContext';
 import { cardSurface, colors, fontSizes, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
@@ -46,6 +47,7 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [hiddenPeople, setHiddenPeople] = useState<HiddenPerson[] | null>(null);
 
   // Reopening starts from whatever the session says, so an abandoned edit
   // is never waiting there the next time.
@@ -58,6 +60,23 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
     setError(null);
     setPickerOpen(false);
   }, [visible, me]);
+
+  // Profile › Hidden people: whose posts this member chose not to see.
+  useEffect(() => {
+    if (!visible || !me) return;
+    getHiddenPeople()
+      .then(setHiddenPeople)
+      .catch(() => setHiddenPeople(null));
+  }, [visible, me?.id]);
+
+  async function showAgain(id: string) {
+    try {
+      await showPersonAgain(id);
+      setHiddenPeople((current) => current?.filter((p) => p.id !== id) ?? null);
+    } catch {
+      // Left in the list; the member can try again.
+    }
+  }
 
   /**
    * The copy of their data opens in the phone's browser, which downloads
@@ -293,6 +312,45 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
                 }}
               />
 
+              {/* The people they hid from Our group and prayer requests,
+                  with the way to see them again. */}
+              <AccessibleText variant="caption" color={colors.textMuted} style={styles.laterNote}>
+                {t('moderation.hiddenPeople')}
+              </AccessibleText>
+              <FormCard>
+                {hiddenPeople && hiddenPeople.length > 0 ? (
+                  hiddenPeople.map((person, index) => (
+                    <View key={person.id}>
+                      {index > 0 && <FormDivider />}
+                      <View style={styles.hiddenRow}>
+                        <AccessibleText variant="bodyLarge" style={styles.hiddenName}>
+                          {person.name ?? t('moderation.someone')}
+                        </AccessibleText>
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel={`${t('moderation.showAgain')} ${person.name ?? ''}`.trim()}
+                          hitSlop={spacing.sm}
+                          onPress={() => void showAgain(person.id)}
+                        >
+                          <AccessibleText variant="body" color={colors.primary} style={styles.showAgain}>
+                            {t('moderation.showAgain')}
+                          </AccessibleText>
+                        </Pressable>
+                      </View>
+                    </View>
+                  ))
+                ) : (
+                  <View style={styles.hiddenRow}>
+                    <AccessibleText variant="body" color={colors.textMuted}>
+                      {t('moderation.hiddenEmpty')}
+                    </AccessibleText>
+                  </View>
+                )}
+              </FormCard>
+              <AccessibleText variant="caption" color={colors.textMuted}>
+                {t('moderation.hiddenPeopleHint')}
+              </AccessibleText>
+
               {/* Their data: a copy, the documents, and the way out for
                   good, which asks before acting like "Leave this place". */}
               <AccessibleText variant="caption" color={colors.textMuted} style={styles.laterNote}>
@@ -457,6 +515,19 @@ const styles = themedStyles(() => ({
   },
   laterNote: {
     paddingHorizontal: spacing.xs,
+  },
+  hiddenRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    minHeight: minTouchTarget,
+    paddingHorizontal: spacing.lg,
+  },
+  hiddenName: {
+    flex: 1,
+  },
+  showAgain: {
+    fontWeight: '700',
   },
   scrim: {
     flex: 1,

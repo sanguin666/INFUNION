@@ -6,9 +6,10 @@ import { PrayerRequestsController } from './prayer-requests.controller.js';
 import { PoisModule } from '../pois/pois.module.js';
 import { AuthModule } from '../auth/auth.module.js';
 import { UsersModule } from '../users/users.module.js';
+import { ModerationModule } from '../moderation/moderation.module.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PrayerRequest]), PoisModule, AuthModule, UsersModule],
+  imports: [TypeOrmModule.forFeature([PrayerRequest]), PoisModule, AuthModule, UsersModule, ModerationModule],
   controllers: [PrayerRequestsController],
   providers: [PrayerRequestsService],
   exports: [PrayerRequestsService],

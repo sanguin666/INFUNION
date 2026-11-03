@@ -17,6 +17,7 @@ import { ActiveModule } from '../active-modules/entities/active-module.entity.js
 import { MemberRole } from '../common/enums/member-role.enum.js';
 import { ModuleStatus } from '../common/enums/module-status.enum.js';
 import { ModuleType } from '../common/enums/module-type.enum.js';
+import { countsFrom, OPEN_REPORT_COUNTS_SQL } from '../moderation/open-report-counts.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -65,13 +66,22 @@ export type DashboardSummary = {
   expiredMessages: DashboardMessage[];
   members: { total: number; newThisWeek: number };
   prayerRequestsThisWeek: number;
+  // Items members reported that the team has not decided on yet.
+  reported: { community: number; prayer: number };
 };
 
 /** For the place switcher: how many things wait on the office there. */
 export type PlaceWaiting = { poiId: string; waiting: number };
 
 /** The counts beside the admin menu's rows (Seb, 3 Nov 2026). */
-export type MenuCounts = { requests: number; massIntentions: number; messages: number };
+export type MenuCounts = {
+  requests: number;
+  massIntentions: number;
+  messages: number;
+  // Reported posts and replies, and reported prayer requests.
+  community: number;
+  prayerRequests: number;
+};
 
 function iso(date: Date): string {
   return date.toISOString();
@@ -152,7 +162,14 @@ export class DashboardService {
       },
     });
     const isLive = (type: ModuleType) => live.some((m) => m.moduleType === type);
-    const counts: MenuCounts = { requests: 0, massIntentions: 0, messages: 0 };
+    const reported = await this.reportedCounts(poiId);
+    const counts: MenuCounts = {
+      requests: 0,
+      massIntentions: 0,
+      messages: 0,
+      community: reported.community,
+      prayerRequests: reported.prayer,
+    };
     if (isLive(ModuleType.REQUESTS) || isLive(ModuleType.MASS_INTENTIONS)) {
       const summary = await this.summary(poiId);
       if (isLive(ModuleType.REQUESTS)) {
@@ -259,10 +276,11 @@ export class DashboardService {
       order: { position: 'ASC' },
     });
 
-    const [total, newThisWeek, prayerRequestsThisWeek] = await Promise.all([
+    const [total, newThisWeek, prayerRequestsThisWeek, reported] = await Promise.all([
       this.memberships.count({ where: { poi: { id: poiId } } }),
       this.memberships.count({ where: { poi: { id: poiId }, joinedAt: MoreThanOrEqual(weekAgo) } }),
       this.prayers.count({ where: { poi: { id: poiId }, createdAt: MoreThanOrEqual(weekAgo) } }),
+      this.reportedCounts(poiId),
     ]);
 
     return {
@@ -275,7 +293,13 @@ export class DashboardService {
       expiredMessages: expired.map((b) => ({ id: b.id, text: b.text ?? '', showUntil: b.showUntil! })),
       members: { total, newThisWeek },
       prayerRequestsThisWeek,
+      reported,
     };
+  }
+
+  /** Reported items still open, one per item however many reported it. */
+  private async reportedCounts(poiId: string): Promise<{ community: number; prayer: number }> {
+    return countsFrom(await this.memberships.query(OPEN_REPORT_COUNTS_SQL, [poiId]));
   }
 
   /** The newest message of each request, if it has any. */

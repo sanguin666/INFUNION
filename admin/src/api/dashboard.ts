@@ -8,7 +8,14 @@ export function getDashboard(poiId: string): Promise<DashboardSummary> {
 }
 
 /** The counts beside the admin menu's rows: what waits on the team. */
-export type MenuCounts = { requests: number; massIntentions: number; messages: number };
+export type MenuCounts = {
+  requests: number;
+  massIntentions: number;
+  messages: number;
+  // Reported posts and replies, and reported prayer requests.
+  community: number;
+  prayerRequests: number;
+};
 
 export function getMenuCounts(poiId: string): Promise<MenuCounts> {
   return apiGet<MenuCounts>(`/pois/${poiId}/dashboard/menu-counts`);

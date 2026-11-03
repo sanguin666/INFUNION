@@ -51,6 +51,10 @@ export function ConsentScreen() {
       <AccessibleText variant="body" color={colors.textMuted}>
         {t('privacy.termsIntro')}
       </AccessibleText>
+      {/* What Apple asks the terms to say for content from members. */}
+      <AccessibleText variant="body" color={colors.textMuted}>
+        {t('moderation.termsLine')}
+      </AccessibleText>
 
       <FormCard>
         <TickRow label={t('privacy.ageCheck')} checked={isOldEnough} onToggle={() => setIsOldEnough((v) => !v)} />

@@ -3713,3 +3713,11 @@ label.link-button:focus-within {
 .card-rows.list-group {
   margin-top: 4px;
 }
+
+/* What a member reported, quoted: a purple edge, not a second box. */
+.report-excerpt {
+  margin: 10px 0;
+  padding: 2px 0 2px 12px;
+  border-left: 3px solid var(--color-primary);
+  white-space: pre-wrap;
+}

@@ -121,6 +121,27 @@ function todoRows(
       to: '../mass-intentions',
     });
   }
+  // Reported by members: Apple asks for a decision within 24 hours.
+  if (summary.reported?.community) {
+    rows.push({
+      key: 'reported-community',
+      count: summary.reported.community,
+      title: t('moderation.dashboardCommunity'),
+      meta: t('moderation.hint'),
+      action: t('moderation.actionReview'),
+      to: '../community?tab=reported',
+    });
+  }
+  if (summary.reported?.prayer) {
+    rows.push({
+      key: 'reported-prayer',
+      count: summary.reported.prayer,
+      title: t('moderation.dashboardPrayer'),
+      meta: t('moderation.hint'),
+      action: t('moderation.actionReview'),
+      to: '../prayer-requests?tab=reported',
+    });
+  }
   if (summary.expiredMessages.length) {
     rows.push({
       key: 'expired',
