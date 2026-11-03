@@ -95,6 +95,12 @@ export class Donation {
   @Column({ type: 'enum', enum: DonationPurpose, default: DonationPurpose.GENERAL })
   purpose!: DonationPurpose;
 
+  // A few words from the giver to the team ("for the flowers at Easter").
+  // Only offered on a gift to where it is most needed, never on a project:
+  // there the project already says what the money is for.
+  @Column('varchar', { length: 300, nullable: true })
+  message?: string | null;
+
   // The project a campaign gift went to. A campaign that is deleted keeps
   // its gifts, which simply stop being counted towards a goal.
   @ManyToOne(() => DonationCampaign, { nullable: true, onDelete: 'SET NULL' })

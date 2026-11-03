@@ -243,6 +243,8 @@ export type Translations = {
     projectButton: string;
     otherAmount: string;
     amountLabel: string;
+    messageLabel: string;
+    messagePlaceholder: string;
     myGifts: string;
     myMonthlyGift: string;
     giftGeneral: string;
@@ -816,6 +818,8 @@ const en: Translations = {
     projectButton: "Contribute {{amount}} to the project",
     otherAmount: 'Other',
     amountLabel: 'Amount',
+    messageLabel: 'Message to the team (optional)',
+    messagePlaceholder: 'For example: for the summer activities',
     myGifts: 'MY CONTRIBUTIONS',
     myMonthlyGift: 'MY MONTHLY CONTRIBUTION',
     giftGeneral: "Contribution",
@@ -1389,6 +1393,8 @@ const es: Translations = {
     projectButton: "Aportar {{amount}} al proyecto",
     otherAmount: 'Otro',
     amountLabel: 'Importe',
+    messageLabel: 'Mensaje para el equipo (opcional)',
+    messagePlaceholder: 'Por ejemplo: para las actividades de verano',
     myGifts: 'MIS APORTACIONES',
     myMonthlyGift: 'MI APORTACIÓN MENSUAL',
     giftGeneral: "Aportación",
@@ -1962,6 +1968,8 @@ const fr: Translations = {
     projectButton: "Contribuer {{amount}} au projet",
     otherAmount: 'Autre',
     amountLabel: 'Montant',
+    messageLabel: 'Message à l’équipe (facultatif)',
+    messagePlaceholder: 'Par exemple : pour les activités d’été',
     myGifts: 'MES CONTRIBUTIONS',
     myMonthlyGift: 'MA CONTRIBUTION MENSUELLE',
     giftGeneral: "Contribution",
@@ -2535,6 +2543,8 @@ const va: Translations = {
     projectButton: "Aportar {{amount}} al projecte",
     otherAmount: 'Altre',
     amountLabel: 'Import',
+    messageLabel: 'Missatge per a l’equip (opcional)',
+    messagePlaceholder: 'Per exemple: per a les activitats d’estiu',
     myGifts: 'LES MEUES APORTACIONS',
     myMonthlyGift: 'LA MEUA APORTACIÓ MENSUAL',
     giftGeneral: "Aportació",
@@ -3108,6 +3118,8 @@ const ca: Translations = {
     projectButton: "Aportar {{amount}} al projecte",
     otherAmount: 'Altre',
     amountLabel: 'Import',
+    messageLabel: 'Missatge per a l’equip (opcional)',
+    messagePlaceholder: 'Per exemple: per a les activitats d’estiu',
     myGifts: 'LES MEVES APORTACIONS',
     myMonthlyGift: 'LA MEVA APORTACIÓ MENSUAL',
     giftGeneral: "Aportació",
@@ -3681,6 +3693,8 @@ const gl: Translations = {
     projectButton: "Achegar {{amount}} ao proxecto",
     otherAmount: 'Outra',
     amountLabel: 'Importe',
+    messageLabel: 'Mensaxe para o equipo (opcional)',
+    messagePlaceholder: 'Por exemplo: para as actividades de verán',
     myGifts: 'AS MIÑAS ACHEGAS',
     myMonthlyGift: 'A MIÑA ACHEGA MENSUAL',
     giftGeneral: "Achega",
@@ -4255,6 +4269,8 @@ const pt: Translations = {
     projectButton: "Contribuir com {{amount}} para o projeto",
     otherAmount: 'Outro',
     amountLabel: 'Valor',
+    messageLabel: 'Mensagem para a equipa (opcional)',
+    messagePlaceholder: 'Por exemplo: para as atividades de verão',
     myGifts: 'AS MINHAS CONTRIBUIÇÕES',
     myMonthlyGift: 'A MINHA CONTRIBUIÇÃO MENSAL',
     giftGeneral: "Contribuição",

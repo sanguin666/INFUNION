@@ -279,6 +279,7 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
         purpose: g.purpose,
         campaign: g.campaign?.title ?? null,
         recurring: g.recurring,
+        message: g.message ?? null,
         donorName: g.donorName ?? null,
         donorAddress: g.donorAddress ?? null,
         donorPostalCode: g.donorPostalCode ?? null,

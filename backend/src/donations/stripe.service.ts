@@ -43,15 +43,32 @@ export class StripeService {
     amount: number;
     // What the payer sees on Stripe's page ("Donation to St. Mary's").
     productName: string;
+    // Shown under the name on Stripe's page and kept on the payment: the
+    // giver's note, when there is one.
+    description?: string | null;
     donationId: string;
     poiId: string;
+    // What the gift is for, kept on the payment in Stripe so the team's
+    // Stripe dashboard says which project it went to, and the note with it.
+    purpose: string;
+    campaign?: { id: string; title: string } | null;
+    message?: string | null;
     successUrl: string;
     cancelUrl: string;
     // Monthly: a subscription Stripe charges again every month until the
     // giver stops it, instead of a one-off payment.
     recurring?: boolean;
   }): Promise<Stripe.Checkout.Session> {
-    const metadata = { donationId: params.donationId, poiId: params.poiId };
+    // Stripe caps a metadata value at 500 characters; titles and notes are
+    // shorter than that already (120 and 300), the slice is only a guard.
+    const metadata: Record<string, string> = {
+      donationId: params.donationId,
+      poiId: params.poiId,
+      purpose: params.purpose,
+      ...(params.campaign ? { projectId: params.campaign.id, project: params.campaign.title.slice(0, 500) } : {}),
+      ...(params.message ? { note: params.message.slice(0, 500) } : {}),
+    };
+    const description = params.description?.trim() || undefined;
     return this.stripe.checkout.sessions.create({
       mode: params.recurring ? 'subscription' : 'payment',
       // Stripe works in the currency's smallest unit, so euros become cents.
@@ -62,7 +79,7 @@ export class StripeService {
           price_data: {
             currency: this.currency,
             unit_amount: Math.round(params.amount * 100),
-            product_data: { name: params.productName },
+            product_data: { name: params.productName, ...(description ? { description } : {}) },
             ...(params.recurring ? { recurring: { interval: 'month' as const } } : {}),
           },
         },
@@ -71,7 +88,11 @@ export class StripeService {
       // own ids and couldn't tell us which row to promote. A subscription
       // carries it too, so each later month's invoice can find its gift.
       metadata,
-      ...(params.recurring ? { subscription_data: { metadata } } : {}),
+      // The payment itself carries it too: a one-off gift shows as a
+      // payment in Stripe's dashboard, and its description is the note.
+      ...(params.recurring
+        ? { subscription_data: { metadata, ...(description ? { description } : {}) } }
+        : { payment_intent_data: { metadata, ...(description ? { description } : {}) } }),
       success_url: params.successUrl,
       cancel_url: params.cancelUrl,
     });

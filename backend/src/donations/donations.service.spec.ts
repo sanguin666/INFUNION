@@ -62,6 +62,25 @@ describe('DonationsService (Stripe checkout)', () => {
     service = module.get(DonationsService);
   });
 
+  it('keeps the giver\'s note on a general gift and passes it to Stripe', async () => {
+    await service.startCheckout('poi-1', { amount: 20, message: '  For the Easter flowers ' }, 'http://localhost:3000');
+
+    expect(saved[0].message).toBe('For the Easter flowers');
+    expect(stripe.createCheckoutSession).toHaveBeenCalledWith(
+      expect.objectContaining({ purpose: 'general', message: 'For the Easter flowers', description: 'For the Easter flowers' }),
+    );
+  });
+
+  it('drops a note sent with a collection gift', async () => {
+    await service.startCheckout(
+      'poi-1',
+      { amount: 20, purpose: 'collection' as never, message: 'hello' },
+      'http://localhost:3000',
+    );
+
+    expect(saved[0].message).toBeNull();
+  });
+
   it('records a gift as pending and hands back the Stripe checkout URL', async () => {
     const result = await service.startCheckout('poi-1', { amount: 50 }, 'http://localhost:3000');
 
