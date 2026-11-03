@@ -98,7 +98,7 @@ export class ModuleBillingService {
   // as it is in the database, never shown or switched.
   private async load(poiId: string): Promise<{ poi: Poi; modules: ActiveModule[] }> {
     const poi = await this.pois.findOne({ where: { id: poiId } });
-    if (!poi) throw new BadRequestException('Unknown place');
+    if (!poi) throw new BadRequestException('Unknown community');
     const all = await this.modules.find({ where: { poi: { id: poiId } } });
     const modules = all.filter((m) => moduleFitsPlace(m.moduleType, poi.type));
     return { poi, modules };

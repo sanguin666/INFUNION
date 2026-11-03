@@ -13,7 +13,7 @@ const words: Record<string, string> = {
   'badges.tomorrow': 'Tomorrow',
   'badges.mass': 'Mass',
   'badges.confession': 'Confessions',
-  'badges.officeOpen': 'Office open',
+  'badges.officeOpen': 'Open now',
   'badges.officeClosed': 'Office closed',
   'badges.until': 'until {{time}}',
   'badges.opens': 'opens {{when}}',
@@ -98,7 +98,7 @@ describe('badgeTiles', () => {
 
   it('says the office is open until it closes, or when it opens next', () => {
     const open = badgeTiles([badge('office_hours')], context())[0];
-    expect([open.label, open.value, open.icon]).toEqual(['Office open', 'until 12:00', 'open']);
+    expect([open.label, open.value, open.icon]).toEqual(['Open now', 'until 12:00', 'open']);
 
     const afterwards = badgeTiles([badge('office_hours')], context({ now: at(2026, 9, 7, 13) }))[0];
     expect([afterwards.label, afterwards.value, afterwards.icon]).toEqual([

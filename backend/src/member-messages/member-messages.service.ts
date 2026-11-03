@@ -211,7 +211,7 @@ export class MemberMessagesService {
       where: { poi: { id: poiId }, user: { id: userId } },
       relations: { user: true, poi: true },
     });
-    if (!membership) throw new NotFoundException('Not a member of this place');
+    if (!membership) throw new NotFoundException('Not a member of this community');
     return membership;
   }
 

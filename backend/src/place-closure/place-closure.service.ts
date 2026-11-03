@@ -155,7 +155,7 @@ export class PlaceClosureService implements OnModuleInit, OnModuleDestroy {
 
   private async findPoi(poiId: string): Promise<Poi> {
     const poi = await this.pois.findOne({ where: { id: poiId } });
-    if (!poi) throw new NotFoundException('Unknown place');
+    if (!poi) throw new NotFoundException('Unknown community');
     return poi;
   }
 
@@ -225,7 +225,7 @@ export class PlaceClosureService implements OnModuleInit, OnModuleDestroy {
       },
     });
     if (!membership)
-      throw new ForbiddenException('Only the place’s own admins can close it');
+      throw new ForbiddenException('Only the community’s own admins can close it');
     if (!dto.authority) throw new BadRequestException('authority_required');
     if (normalise(dto.confirmName) !== normalise(poi.name))
       throw new BadRequestException('name_mismatch');
@@ -785,11 +785,11 @@ export class PlaceClosureService implements OnModuleInit, OnModuleDestroy {
         `${poi.name} — data exported from infunion on ${now.toISOString()}`,
         '',
         'members.csv                 the member list',
-        'place.json                  the place’s profile and settings',
-        'content/                    what the office published',
+        'place.json                  the community’s profile and settings',
+        'content/                    what the team published',
         'members/                    what members sent: requests, messages, prayer requests, posts',
         'gifts/<year>/               every gift, the donors list, each tax receipt, the modelo 182 file',
-        'infunion/invoices.json      infunion’s invoices to the place',
+        'infunion/invoices.json      infunion’s invoices to the community',
         'files/                      pictures, audio and documents',
         '',
         'This file contains personal data. Keep it safe, and only as long as you need it.',
