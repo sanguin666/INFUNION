@@ -3698,3 +3698,18 @@ label.link-button:focus-within {
     grid-column: 4;
   }
 }
+
+/* A small heading over a group of rows inside one white card, such as
+   the bottom menu's "In the bottom menu" and "Under More". */
+.list-heading {
+  margin: 20px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-primary-strong);
+}
+
+.card-rows.list-group {
+  margin-top: 4px;
+}

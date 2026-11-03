@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useI18n } from '../i18n/I18nContext';
-import { updatePoiBranding, updatePoiMenuOrder } from '../api/poiSettings';
+import { updatePoiBranding } from '../api/poiSettings';
 import type { ActiveModule, ModuleType, Poi, PoiThemeName } from '../api/types';
 import { PLACE_THEMES, placeTheme } from '../placeThemes';
-import { initialMenuOrder, menuLayout, MenuOrderRows, moduleName } from './MenuOrder';
+import { initialMenuOrder, menuLayout, moduleName } from './MenuOrder';
 import { PlaceMark } from './LogoField';
 
 /**
  * Settings > Personalise (Seb, 29 Oct 2026): how the community's app
- * looks and is laid out, with a phone beside it that shows each change
- * before it is saved. Today the colour and the bottom menu; later options
- * get a card of their own here. One Save stores both.
+ * looks, with a phone beside it that shows each change before it is
+ * saved. Today the colour; later options get a card of their own here.
+ * The bottom menu's order moved to Home page > Bottom menu (Seb, 3 Nov
+ * 2026); the phone here still draws the saved one.
  */
 export function PersonalisePanel({
   poi,
@@ -23,30 +24,14 @@ export function PersonalisePanel({
 }) {
   const { t } = useI18n();
   const savedTheme = poi.theme ?? 'purple';
-  const savedOrder = useMemo(() => initialMenuOrder(poi, modules), [poi, modules]);
+  const order = useMemo(() => initialMenuOrder(poi, modules), [poi, modules]);
 
   const [theme, setTheme] = useState<PoiThemeName>(savedTheme);
-  const [order, setOrder] = useState<ModuleType[]>(savedOrder);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // A module switched on or off elsewhere changes the list.
-  useEffect(() => setOrder(savedOrder), [savedOrder]);
-
   const themeDirty = theme !== savedTheme;
-  const orderDirty = order.join(',') !== savedOrder.join(',');
-
-  function move(index: number, delta: number) {
-    setSaved(false);
-    setOrder((current) => {
-      const target = index + delta;
-      if (target < 0 || target >= current.length) return current;
-      const next = [...current];
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
-  }
 
   async function save() {
     setSaving(true);
@@ -54,7 +39,6 @@ export function PersonalisePanel({
     setError(null);
     try {
       if (themeDirty) onSaved(await updatePoiBranding(poi.id, theme));
-      if (orderDirty) onSaved(await updatePoiMenuOrder(poi.id, order));
       setSaved(true);
     } catch {
       setError(t('branding.saveError'));
@@ -91,24 +75,16 @@ export function PersonalisePanel({
           </div>
         </div>
 
-        <div className="card">
-          <p className="card-title">{t('menuOrder.title')}</p>
-          <p className="muted" style={{ marginTop: 4 }}>
-            {t('menuOrder.subtitle')}
-          </p>
-          <MenuOrderRows order={order} onMove={move} />
-        </div>
-
         <div className="card-actions">
           <button
             type="button"
             className="btn btn-primary"
-            disabled={saving || (!themeDirty && !orderDirty)}
+            disabled={saving || !themeDirty}
             onClick={save}
           >
             {saving ? t('tabs.saving') : t('tabs.save')}
           </button>
-          {saved && !themeDirty && !orderDirty && <span className="muted">{t('branding.saved')}</span>}
+          {saved && !themeDirty && <span className="muted">{t('branding.saved')}</span>}
         </div>
         {error && <p className="error-text">{error}</p>}
       </div>
