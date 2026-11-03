@@ -513,6 +513,7 @@ export class PlaceClosureService implements OnModuleInit, OnModuleDestroy {
           .update(Donation)
           .set({
             donorName: ANONYMOUS,
+            message: null,
             donorAddress: null,
             donorPostalCode: null,
             donorCity: null,

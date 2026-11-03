@@ -35,6 +35,13 @@ export class CreateDonationDto {
   @IsUUID()
   campaignId?: string;
 
+  // A note to the team, on a gift to where it is most needed only.
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  @EmptyStringToNull()
+  message?: string | null;
+
   // Monthly. Needs a signed-in giver, so they can stop it later.
   @IsOptional()
   @IsBoolean()

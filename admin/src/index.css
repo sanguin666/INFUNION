@@ -1432,6 +1432,12 @@ a.btn {
   border-bottom: 1px solid var(--color-card-border);
 }
 
+.donation-item > span:first-child {
+  flex: 1;
+  min-width: 0;
+  margin-right: 16px;
+}
+
 .donation-item:last-child {
   border-bottom: none;
 }
@@ -1450,6 +1456,16 @@ a.btn {
   display: block;
   height: 100%;
   background: var(--series-1);
+}
+
+/* The giver's note, in their own words: a quoted line under the gift. */
+.donation-message {
+  display: block;
+  margin-top: 4px;
+  font-style: italic;
+  color: var(--color-text);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
 .donation-amount {

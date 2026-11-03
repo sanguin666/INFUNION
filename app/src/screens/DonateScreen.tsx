@@ -25,7 +25,7 @@ import {
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
-import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
+import { cardSurface, colors, fontSizes, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { currencySymbol, formatAmount } from '../utils/currency';
 import { taxSaving } from '../utils/taxDeduction';
 import type { Poi } from '../api/types';
@@ -91,6 +91,8 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
   const [selected, setSelected] = useState<number>(10);
   const [customMode, setCustomMode] = useState(false);
   const [customAmount, setCustomAmount] = useState('');
+  // A note to the team, only on a gift to where it is most needed.
+  const [message, setMessage] = useState('');
   const [donated, setDonated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(false);
@@ -178,6 +180,7 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
         amount,
         purpose: project?.kind ?? 'general',
         campaignId: project?.kind === 'campaign' ? project.campaign.id : undefined,
+        message: !project ? message.trim() || undefined : undefined,
         recurring: monthly || undefined,
         donorName: receipt.name.trim() || undefined,
         wantsReceipt: wantsReceipt || undefined,
@@ -381,32 +384,18 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
               }}
             />
           ))}
-          <Choice label={t('donate.otherAmount')} selected={customMode} onPress={() => setCustomMode(true)} />
+          <CustomAmount
+            value={customAmount}
+            selected={customMode}
+            symbol={currencySymbol(currency)}
+            symbolFirst={formatted(1).trim().startsWith(currencySymbol(currency))}
+            onFocus={() => setCustomMode(true)}
+            onChange={(value) => {
+              setCustomAmount(value);
+              setCustomMode(true);
+            }}
+          />
         </View>
-        {customMode && (
-          <>
-            <FormDivider />
-            <View style={styles.customRow}>
-              <AccessibleText variant="caption" color={colors.textMuted}>
-                {t('donate.amountLabel')}
-              </AccessibleText>
-              <View style={styles.customInput}>
-                <TextInput
-                  value={customAmount}
-                  onChangeText={setCustomAmount}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                  autoFocus
-                  accessibilityLabel={t('donate.amountLabel')}
-                  style={styles.customInputField}
-                />
-                <AccessibleText variant="bodyLarge" style={styles.bold}>
-                  {currencySymbol(currency)}
-                </AccessibleText>
-              </View>
-            </View>
-          </>
-        )}
         {monthly && !isProject && (
           <AccessibleText variant="caption" style={styles.monthlyHint}>
             {t('donate.monthlyHint')}
@@ -425,6 +414,20 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
                 {t('donate.taxNote')}
               </AccessibleText>
             </View>
+          </>
+        )}
+        {!isProject && (
+          <>
+            <FormDivider />
+            <FormField
+              label={t('donate.messageLabel')}
+              placeholder={t('donate.messagePlaceholder')}
+              value={message}
+              onChangeText={setMessage}
+              maxLength={300}
+              multiline
+              tall
+            />
           </>
         )}
         <FormDivider />
@@ -729,6 +732,64 @@ function Choice({ label, selected, onPress }: { label: string; selected: boolean
   );
 }
 
+/**
+ * The fourth choice, typed straight into: tapping it is already the
+ * keyboard, no "Other" to press first. It reads "Other" until something
+ * is typed, then the amount with its currency, and is chosen while it
+ * holds the amount being given.
+ */
+function CustomAmount({
+  value,
+  selected,
+  symbol,
+  symbolFirst,
+  onFocus,
+  onChange,
+}: {
+  value: string;
+  selected: boolean;
+  symbol: string;
+  // "€25" in English, "25 €" in Spanish: the same order as the presets.
+  symbolFirst: boolean;
+  onFocus: () => void;
+  onChange: (value: string) => void;
+}) {
+  const { t } = useI18n();
+  const filled = value !== '';
+  // The figure and the symbol meet at the middle of the cell.
+  const symbolText = filled && (
+    <AccessibleText
+      variant="body"
+      style={[styles.choiceText, styles.flex, symbolFirst && styles.alignRight]}
+      color={selected ? colors.primaryStrong : colors.text}
+    >
+      {symbol}
+    </AccessibleText>
+  );
+  return (
+    <View
+      style={[styles.choice, styles.customChoice, !symbolFirst && styles.customChoiceSpaced, selected && styles.choiceSelected]}
+    >
+      {symbolFirst && symbolText}
+      <TextInput
+        value={value}
+        onChangeText={(text) => onChange(text.replace(/[^0-9]/g, '').slice(0, 6))}
+        onFocus={onFocus}
+        keyboardType="number-pad"
+        placeholder={t('donate.otherAmount')}
+        placeholderTextColor={colors.text}
+        accessibilityLabel={t('donate.amountLabel')}
+        style={[
+          styles.customInputField,
+          filled && (symbolFirst ? styles.alignLeft : styles.alignRight),
+          selected && styles.customInputSelected,
+        ]}
+      />
+      {!symbolFirst && symbolText}
+    </View>
+  );
+}
+
 function CheckboxRow({ label, checked, onToggle }: { label: string; checked: boolean; onToggle: () => void }) {
   return (
     <Pressable
@@ -972,20 +1033,34 @@ const styles = themedStyles(() => ({
   choiceText: {
     fontWeight: '800',
   },
-  customRow: {
-    paddingVertical: spacing.sm,
-  },
-  customInput: {
+  customChoice: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
   },
+  // "25 €" has a space, "€25" none, as the presets beside it.
+  customChoiceSpaced: {
+    gap: 4,
+  },
+  // Sized and weighted like the preset labels beside it, centred in its cell.
   customInputField: {
+    // Web only: no browser focus ring, the coral cell says it is chosen.
+    ...({ outlineStyle: 'none' } as object),
     flex: 1,
-    minHeight: minTouchTarget,
-    fontSize: 24,
+    minWidth: 0,
+    minHeight: minTouchTarget - 4,
+    paddingHorizontal: 0,
+    textAlign: 'center',
+    fontSize: fontSizes.body,
     fontWeight: '800',
     color: colors.text,
+  },
+  alignRight: {
+    textAlign: 'right',
+  },
+  alignLeft: {
+    textAlign: 'left',
+  },
+  customInputSelected: {
+    color: colors.primaryStrong,
   },
   monthlyHint: {
     paddingBottom: spacing.sm,

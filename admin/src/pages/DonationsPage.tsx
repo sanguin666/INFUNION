@@ -408,6 +408,7 @@ function DonationsOverview({ stats, recent }: { stats: DonationStats; recent: Do
                       </>
                     )}
                   </span>
+                  {donation.message && <span className="donation-message">“{donation.message}”</span>}
                 </span>
                 <span>
                   <span className="donation-amount">{formatCurrency(donation.amount)}</span>{' '}
