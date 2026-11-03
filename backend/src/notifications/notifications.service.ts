@@ -358,7 +358,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     const membership = await this.membershipRepository.findOne({
       where: { user: { id: userId }, poi: { id: poiId } },
     });
-    if (!membership) throw new NotFoundException('Not a member of this place');
+    if (!membership) throw new NotFoundException('Not a member of this community');
     return membership;
   }
 }
