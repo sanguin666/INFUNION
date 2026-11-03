@@ -40,6 +40,29 @@ function resolve(key: string, dict: Translations): string | undefined {
   return sectionDict?.[field];
 }
 
+function translateIn(
+  language: SupportedLanguage,
+  key: string,
+  params?: Record<string, string | number>,
+): string {
+  const raw = resolve(key, translations[language]) ?? resolve(key, translations.en) ?? key;
+  if (!params) return raw;
+  return Object.entries(params).reduce(
+    (result, [paramKey, value]) => result.replaceAll(`{{${paramKey}}}`, String(value)),
+    raw,
+  );
+}
+
+/**
+ * A translator for a fixed language, independent of the admin's UI
+ * language — for text members will read, such as the printed QR flyer,
+ * which follows the community's own language setting.
+ */
+export function translatorFor(language: SupportedLanguage): I18nState['t'] {
+  return ((key: string, params?: Record<string, string | number>) =>
+    translateIn(language, key, params)) as I18nState['t'];
+}
+
 /**
  * Local preference by default (so the login screen, before there's a
  * session, still has a language) — once signed in, this syncs with the
@@ -67,12 +90,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }
 
   function t(key: string, params?: Record<string, string | number>): string {
-    const raw = resolve(key, translations[language]) ?? resolve(key, translations.en) ?? key;
-    if (!params) return raw;
-    return Object.entries(params).reduce(
-      (result, [paramKey, value]) => result.replaceAll(`{{${paramKey}}}`, String(value)),
-      raw,
-    );
+    return translateIn(language, key, params);
   }
 
   return (
