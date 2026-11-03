@@ -281,6 +281,7 @@ const en = {
     warnDemoLogin: 'Demo sign-in is on in production (DEMO_LOGIN=on).',
     warnInitialPassword: 'SUPERADMIN_INITIAL_PASSWORD is still set on the server: remove it once the password is changed.',
     warnReset2fa: 'SUPERADMIN_RESET_2FA is still set: remove it.',
+    warnTwoFactorOff: 'SUPERADMIN_2FA=off: the authenticator code is switched off, the password alone opens this section.',
     warnCors: 'CORS_ORIGINS is not set.',
     passwordTitle: 'My superadmin password',
     currentPassword: 'Current password',
@@ -718,6 +719,7 @@ const fr: SaTranslations = {
     warnInitialPassword:
       'SUPERADMIN_INITIAL_PASSWORD est encore défini sur le serveur : à retirer une fois le mot de passe changé.',
     warnReset2fa: 'SUPERADMIN_RESET_2FA est encore défini : à retirer.',
+    warnTwoFactorOff: 'SUPERADMIN_2FA=off : le code de l’application d’authentification est désactivé, le mot de passe seul ouvre cette section.',
     warnCors: 'CORS_ORIGINS n’est pas défini.',
     passwordTitle: 'Mon mot de passe superadmin',
     currentPassword: 'Mot de passe actuel',
@@ -1153,6 +1155,7 @@ const es: SaTranslations = {
     warnInitialPassword:
       'SUPERADMIN_INITIAL_PASSWORD sigue definido en el servidor: quítelo una vez cambiada la contraseña.',
     warnReset2fa: 'SUPERADMIN_RESET_2FA sigue definido: quítelo.',
+    warnTwoFactorOff: 'SUPERADMIN_2FA=off: el código de la aplicación de autenticación está desactivado, la contraseña sola abre esta sección.',
     warnCors: 'CORS_ORIGINS no está definido.',
     passwordTitle: 'Mi contraseña de superadmin',
     currentPassword: 'Contraseña actual',
@@ -1588,6 +1591,7 @@ const va: SaTranslations = {
     warnInitialPassword:
       'SUPERADMIN_INITIAL_PASSWORD continua definit al servidor: lleveu-lo una vegada canviada la contrasenya.',
     warnReset2fa: 'SUPERADMIN_RESET_2FA continua definit: lleveu-lo.',
+    warnTwoFactorOff: "SUPERADMIN_2FA=off: el codi de l'aplicació d'autenticació està desactivat, la contrasenya sola obri esta secció.",
     warnCors: 'CORS_ORIGINS no està definit.',
     passwordTitle: 'La meua contrasenya de superadmin',
     currentPassword: 'Contrasenya actual',
@@ -2023,6 +2027,7 @@ const ca: SaTranslations = {
     warnInitialPassword:
       'SUPERADMIN_INITIAL_PASSWORD continua definit al servidor: traieu-lo una vegada canviada la contrasenya.',
     warnReset2fa: 'SUPERADMIN_RESET_2FA continua definit: traieu-lo.',
+    warnTwoFactorOff: "SUPERADMIN_2FA=off: el codi de l'aplicació d'autenticació està desactivat, la contrasenya sola obre aquesta secció.",
     warnCors: 'CORS_ORIGINS no està definit.',
     passwordTitle: 'La meva contrasenya de superadmin',
     currentPassword: 'Contrasenya actual',
@@ -2458,6 +2463,7 @@ const gl: SaTranslations = {
     warnInitialPassword:
       'SUPERADMIN_INITIAL_PASSWORD segue definido no servidor: quíteo unha vez cambiado o contrasinal.',
     warnReset2fa: 'SUPERADMIN_RESET_2FA segue definido: quíteo.',
+    warnTwoFactorOff: 'SUPERADMIN_2FA=off: o código da aplicación de autenticación está desactivado, o contrasinal só abre esta sección.',
     warnCors: 'CORS_ORIGINS non está definido.',
     passwordTitle: 'O meu contrasinal de superadmin',
     currentPassword: 'Contrasinal actual',
@@ -2893,6 +2899,7 @@ const pt: SaTranslations = {
     warnInitialPassword:
       'SUPERADMIN_INITIAL_PASSWORD continua definido no servidor: retire-o depois de mudar a palavra-passe.',
     warnReset2fa: 'SUPERADMIN_RESET_2FA continua definido: retire-o.',
+    warnTwoFactorOff: 'SUPERADMIN_2FA=off: o código da aplicação de autenticação está desativado, a palavra-passe sozinha abre esta secção.',
     warnCors: 'CORS_ORIGINS não está definido.',
     passwordTitle: 'A minha palavra-passe de superadmin',
     currentPassword: 'Palavra-passe atual',
