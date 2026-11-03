@@ -170,7 +170,7 @@ export function DashboardLayout() {
         <div>
           <div className="sidebar-brand">
             <h1 aria-label="infunion Admin">
-              <Lockup height={30} />
+              <Lockup height={26} />
               <span>Admin</span>
             </h1>
           </div>

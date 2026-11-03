@@ -138,7 +138,7 @@ export function MyQrPage() {
           </ol>
           <div className="qr-flyer-footer">
             <span>{flyerT('qr.getTheApp')}</span>
-            <Lockup height={30} />
+            <Lockup height={26} />
           </div>
         </div>
       </div>
