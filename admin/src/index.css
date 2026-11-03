@@ -1000,28 +1000,33 @@ a.btn {
   margin-bottom: 16px;
 }
 
-.side-panel {
-  margin: 0 0 0 auto;
-  width: min(520px, 100vw);
-  max-width: 100vw;
-  height: 100dvh;
-  max-height: 100dvh;
+/* A window in the middle of the screen (Seb, 3 Nov 2026), for a "new …"
+   or edit form: the beige of the page with the form's white card on it. */
+.dialog {
+  width: min(820px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 48px);
   padding: 0;
   border: none;
-  border-left: 1px solid var(--color-card-border);
+  border-radius: 20px;
   background: var(--color-bg);
   color: var(--color-text);
+  box-shadow: 0 24px 64px rgba(17, 17, 17, 0.28);
 }
 
-.side-panel::backdrop {
+.dialog::backdrop {
   background: var(--color-scrim);
 }
 
-.side-panel-body {
-  padding: 24px;
+.dialog-body {
+  padding: 24px 28px 28px;
 }
 
-.side-panel-head {
+.dialog-body > .card {
+  margin-bottom: 0;
+}
+
+.dialog-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1029,22 +1034,173 @@ a.btn {
   margin-bottom: 16px;
 }
 
-.side-panel-title {
+.dialog-title {
   margin: 0;
   font-size: 24px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .dialog-body {
+    padding: 16px;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .side-panel[open] {
-    animation: side-panel-in 0.18s ease-out;
+  .dialog[open] {
+    animation: dialog-in 0.16s ease-out;
   }
 }
 
-@keyframes side-panel-in {
+@keyframes dialog-in {
   from {
-    transform: translateX(40px);
+    transform: translateY(12px);
     opacity: 0;
   }
+}
+
+/* ---------- Events > Regular: the week, one white card per day ---------- */
+
+/* "+ New event" under the page title, on the left (Seb, 3 Nov 2026). */
+.page-action {
+  margin: 16px 0 0;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 1023px) {
+  .week-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .week-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.week-day {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius);
+  padding: 14px 8px 6px 10px;
+  min-width: 0;
+}
+
+.week-day .week-day-name,
+.week-monthly-dates .week-day-name {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 800;
+  overflow-wrap: break-word;
+}
+
+/* An event of the day: a row told apart by a hairline, with a purple
+   bar on its left; a monthly one has a dashed yellow bar and its tag. */
+.week-event {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--color-card-border);
+  padding: 9px 0;
+  cursor: pointer;
+}
+
+.week-day-name + .week-event {
+  border-top: none;
+}
+
+.week-event > span,
+.week-event-time,
+.week-event-title,
+.week-event-meta {
+  display: block;
+}
+
+.week-event > span {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 8px;
+}
+
+.week-event-monthly > span {
+  border-left-style: dashed;
+  border-left-color: #f9b800;
+}
+
+.week-event:hover .week-event-title,
+.week-event:focus-visible .week-event-title {
+  color: var(--color-primary-strong);
+  text-decoration: underline;
+}
+
+.week-event-time {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary-strong);
+}
+
+.week-event-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+
+.week-event-meta {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.week-event-tag {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 800;
+  color: #6b4f00;
+  background: #fff3cc;
+}
+
+:root[data-theme='dark'] .week-event-tag {
+  color: #ffd866;
+  background: #3d3214;
+}
+
+.week-add {
+  display: block;
+  width: 100%;
+  margin-top: 2px;
+  padding: 8px 0;
+  border: none;
+  border-top: 1px solid var(--color-card-border);
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary-strong);
+  cursor: pointer;
+}
+
+.week-add:hover {
+  text-decoration: underline;
+}
+
+/* Monthly events on a date (the 5th), which have no weekday to sit in. */
+.week-monthly-dates .week-event {
+  max-width: 480px;
 }
 
 /* ---------- Settings > Personalise: choices beside a drawn phone ---------- */

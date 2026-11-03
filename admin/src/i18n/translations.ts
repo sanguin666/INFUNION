@@ -226,6 +226,9 @@ export type Translations = {
     untilDate: string;
     weeklyHeading: string;
     weeklyHint: string;
+    addOnDay: string;
+    addOnDayLabel: string;
+    monthlyDatesHeading: string;
     recurrenceDaily: string;
     recurrenceDays: string;
     recurrenceMonthly: string;
@@ -1265,6 +1268,9 @@ const en: Translations = {
     exceptDates: 'except {{dates}}',
     noDays: 'Pick at least one day',
     weeklyHint: "Your community's regular week. The app shows it as your timetable, and the Celebration times section of your home page is built from it.",
+    addOnDay: "+ Add",
+    addOnDayLabel: "Add an event on {{day}}",
+    monthlyDatesHeading: "On a date each month",
     onceHeading: 'Dates',
   },
   announcements: {
@@ -2277,6 +2283,9 @@ const es: Translations = {
     exceptDates: 'excepto el {{dates}}',
     noDays: 'Elige al menos un día',
     weeklyHint: 'La semana habitual de tu comunidad. La app la muestra como tu horario, y la sección Horarios de celebraciones de tu página de inicio se construye con ella.',
+    addOnDay: "+ Añadir",
+    addOnDayLabel: "Añadir un evento: {{day}}",
+    monthlyDatesHeading: "En una fecha cada mes",
     onceHeading: 'Fechas',
   },
   announcements: {
@@ -3289,6 +3298,9 @@ const fr: Translations = {
     exceptDates: 'sauf le {{dates}}',
     noDays: 'Choisissez au moins un jour',
     weeklyHint: "La semaine habituelle de votre communauté. L'application l'affiche comme vos horaires, et la section Horaires des célébrations de votre page d'accueil est construite à partir d'elle.",
+    addOnDay: "+ Ajouter",
+    addOnDayLabel: "Ajouter un événement : {{day}}",
+    monthlyDatesHeading: "À une date chaque mois",
     onceHeading: 'Dates',
   },
   announcements: {
@@ -4301,6 +4313,9 @@ const va: Translations = {
     exceptDates: 'excepte el {{dates}}',
     noDays: 'Tria almenys un dia',
     weeklyHint: 'La setmana habitual de la teua comunitat. L’aplicació la mostra com el teu horari, i la secció Horaris de celebracions de la pàgina d’inici es fa a partir d’ella.',
+    addOnDay: "+ Afegir",
+    addOnDayLabel: "Afegir un esdeveniment: {{day}}",
+    monthlyDatesHeading: "En una data cada mes",
     onceHeading: 'Dates',
   },
   announcements: {
@@ -5313,6 +5328,9 @@ const ca: Translations = {
     exceptDates: 'excepte el {{dates}}',
     noDays: 'Tria almenys un dia',
     weeklyHint: 'La setmana habitual de la teva comunitat. L’aplicació la mostra com el teu horari, i la secció Horaris de celebracions de la pàgina d’inici es fa a partir d’ella.',
+    addOnDay: "+ Afegir",
+    addOnDayLabel: "Afegir un esdeveniment: {{day}}",
+    monthlyDatesHeading: "En una data cada mes",
     onceHeading: 'Dates',
   },
   announcements: {
@@ -6325,6 +6343,9 @@ const gl: Translations = {
     exceptDates: 'agás o {{dates}}',
     noDays: 'Escolle polo menos un día',
     weeklyHint: 'A semana habitual da túa comunidade. A app móstraa como o teu horario, e a sección Horarios das celebracións da túa páxina de inicio constrúese con ela.',
+    addOnDay: "+ Engadir",
+    addOnDayLabel: "Engadir un evento: {{day}}",
+    monthlyDatesHeading: "Nunha data cada mes",
     onceHeading: 'Datas',
   },
   announcements: {
@@ -7337,6 +7358,9 @@ const pt: Translations = {
     exceptDates: 'exceto a {{dates}}',
     noDays: 'Escolha pelo menos um dia',
     weeklyHint: 'A semana habitual da sua comunidade. A app mostra-a como o seu horário, e a secção Horários das celebrações da sua página inicial é construída a partir dela.',
+    addOnDay: "+ Adicionar",
+    addOnDayLabel: "Adicionar um evento: {{day}}",
+    monthlyDatesHeading: "Numa data todos os meses",
     onceHeading: 'Datas',
   },
   announcements: {

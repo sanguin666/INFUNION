@@ -14,7 +14,7 @@ import {
   toLocalInputValue,
 } from '../format';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
-import { SidePanel } from '../components/SidePanel';
+import { Dialog } from '../components/Dialog';
 
 const CATEGORIES: EventCategory[] = ['mass', 'confession', 'adoration', 'prayer', 'office_hours', 'other'];
 // Masses, confessions and adoration only make sense for a church (Seb,
@@ -213,14 +213,6 @@ function whenLine(item: Event, t: T, language: string): string {
         ]
       : [`${dateOf(item.startsAt)}, ${timeOf(item.startsAt)}${end}`];
   return [...parts, item.location].filter(Boolean).join(' · ');
-}
-
-// Repeating events in the order of the week (Monday first), then by time;
-// monthly ones after.
-function weekOrder(item: Event): number {
-  const d = new Date(item.startsAt);
-  const first = item.recurrence === 'monthly' ? 7 : (Math.min(...weekdaysOf(item).map((day) => (day + 6) % 7)));
-  return first * 24 * 60 + d.getHours() * 60 + d.getMinutes();
 }
 
 function canSave(draft: Draft): boolean {
@@ -477,18 +469,36 @@ function EventFields({
   );
 }
 
+// A new event set on one day of the week, from that day's "+ Add": the
+// next such day, weekly on it, with a time to change.
+function draftForDay(day: number): Draft {
+  const date = new Date();
+  date.setDate(date.getDate() + ((day - date.getDay() + 7) % 7));
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const startsAt = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T10:00`;
+  return { ...EMPTY_DRAFT, repeat: 'days', repeatDays: [day], startsAt };
+}
+
+// Minutes after midnight, to order a day's events.
+function minuteOfDay(iso: string): number {
+  const d = new Date(iso);
+  return d.getHours() * 60 + d.getMinutes();
+}
+
+// What the window is showing: a new event, or the one being edited.
+type Editing = { id: string | null };
+
 export function EventsPage() {
   const poiId = usePoiId();
   const { t, language } = useI18n();
   const [items, setItems] = useState<Event[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [submitting, setSubmitting] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editDraft, setEditDraft] = useState<Draft>(EMPTY_DRAFT);
+  const [editing, setEditing] = useState<Editing | null>(null);
   const [isChurch, setIsChurch] = useState(false);
   const [tab, setTab] = useTab(EVENT_TABS);
-  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     getPoi(poiId)
@@ -504,47 +514,47 @@ export function EventsPage() {
 
   useEffect(load, [poiId]);
 
-  async function handleCreate(event: FormEvent) {
+  const timeOf = (iso: string) => new Date(iso).toLocaleTimeString(intlLocale(language), { hour: '2-digit', minute: '2-digit' });
+  const sortByStart = (list: Event[]) => list.sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+
+  function openNew(next: Draft = EMPTY_DRAFT) {
+    setDraft(next);
+    setFormError(null);
+    setEditing({ id: null });
+  }
+
+  function openEdit(item: Event) {
+    setDraft(draftFrom(item));
+    setFormError(null);
+    setEditing({ id: item.id });
+  }
+
+  async function handleSave(event: FormEvent) {
     event.preventDefault();
-    if (!canSave(draft)) return;
+    if (!editing || !canSave(draft)) return;
     setSubmitting(true);
+    setFormError(null);
     try {
       const input = inputFrom(draft);
-      const created = await createEvent(poiId, {
-        ...input,
-        location: input.location || undefined,
-        description: input.description || undefined,
-      });
-      setItems((current) => [...(current ?? []), created].sort((a, b) => a.startsAt.localeCompare(b.startsAt)));
-      setDraft(EMPTY_DRAFT);
-      setCreating(false);
-      // Land on the tab where the new event is listed.
-      setTab(created.recurrence !== 'none' ? 'regular' : 'upcoming');
+      if (editing.id) {
+        const id = editing.id;
+        const updated = await updateEvent(poiId, id, input);
+        setItems((current) => (current ? sortByStart(current.map((e) => (e.id === id ? updated : e))) : null));
+      } else {
+        const created = await createEvent(poiId, {
+          ...input,
+          location: input.location || undefined,
+          description: input.description || undefined,
+        });
+        setItems((current) => sortByStart([...(current ?? []), created]));
+        // Land on the tab where the new event is listed.
+        setTab(created.recurrence !== 'none' ? 'regular' : 'upcoming');
+      }
+      setEditing(null);
     } catch {
-      setError(t('events.createError'));
+      setFormError(editing.id ? t('events.saveError') : t('events.createError'));
     } finally {
       setSubmitting(false);
-    }
-  }
-
-  function startEdit(item: Event) {
-    setEditingId(item.id);
-    setEditDraft(draftFrom(item));
-  }
-
-  async function saveEdit(id: string) {
-    if (!canSave(editDraft)) return;
-    try {
-      const updated = await updateEvent(poiId, id, inputFrom(editDraft));
-      setItems(
-        (current) =>
-          current
-            ?.map((e) => (e.id === id ? updated : e))
-            .sort((a, b) => a.startsAt.localeCompare(b.startsAt)) ?? null,
-      );
-      setEditingId(null);
-    } catch {
-      setError(t('events.saveError'));
     }
   }
 
@@ -552,32 +562,61 @@ export function EventsPage() {
     try {
       await deleteEvent(poiId, id);
       setItems((current) => current?.filter((e) => e.id !== id) ?? null);
+      if (editing?.id === id) setEditing(null);
     } catch {
       setError(t('events.deleteError'));
+      setFormError(t('events.deleteError'));
     }
   }
 
+  // "from 1 December · until 30 June · except 12 October", the parts of
+  // the full line a day's column does not already say.
+  function extrasOf(item: Event): string {
+    const dateOf = (iso: string) => new Date(iso).toLocaleDateString(intlLocale(language), { day: 'numeric', month: 'long' });
+    const exceptions = item.exceptions ?? [];
+    return [
+      new Date(item.startsAt) > new Date() ? t('events.fromDate', { date: dateOf(item.startsAt) }) : null,
+      item.repeatUntil ? t('events.untilDate', { date: dateOf(item.repeatUntil) }) : null,
+      exceptions.length
+        ? t('events.exceptDates', {
+            dates: exceptions.map((e) => exceptionDay(e.date, language).replace(/^\S+\s/, '')).join(', '),
+          })
+        : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
+  }
+
+  function weekEvent(item: Event, key: string) {
+    const monthly = item.recurrence === 'monthly';
+    const end = item.endsAt ? ` – ${timeOf(item.endsAt)}` : '';
+    const meta = [item.category !== 'other' ? categoryName(item.category, t) : null, extrasOf(item) || null]
+      .filter(Boolean)
+      .join(' · ');
+    return (
+      <button
+        key={key}
+        type="button"
+        className={monthly ? 'week-event week-event-monthly' : 'week-event'}
+        title={whenLine(item, t, language)}
+        onClick={() => openEdit(item)}
+      >
+        <span>
+          <span className="week-event-time">
+            {timeOf(item.startsAt)}
+            {end}
+          </span>
+          <span className="week-event-title">{item.title}</span>
+          {meta && (
+            <span className="week-event-meta">{meta}</span>
+          )}
+          {monthly && <span className="week-event-tag">{repeatPhrase(item, t, language)}</span>}
+        </span>
+      </button>
+    );
+  }
+
   function renderItem(item: Event) {
-    if (editingId === item.id) {
-      return (
-        <div key={item.id} className="card form">
-          <EventFields isChurch={isChurch} draft={editDraft} onChange={(patch) => setEditDraft((d) => ({ ...d, ...patch }))} />
-          <div className="card-actions">
-            <button
-              type="button"
-              className="btn btn-primary"
-              disabled={!canSave(editDraft)}
-              onClick={() => saveEdit(item.id)}
-            >
-              {t('events.save')}
-            </button>
-            <button type="button" className="btn" onClick={() => setEditingId(null)}>
-              {t('events.cancel')}
-            </button>
-          </div>
-        </div>
-      );
-    }
     return (
       <div key={item.id} className="card">
         <p className="card-title">{item.title}</p>
@@ -585,7 +624,7 @@ export function EventsPage() {
         <p className="card-meta">{whenLine(item, t, language)}</p>
         {item.description && <p>{item.description}</p>}
         <div className="card-actions">
-          <button type="button" className="btn" onClick={() => startEdit(item)}>
+          <button type="button" className="btn" onClick={() => openEdit(item)}>
             {t('events.edit')}
           </button>
           <DestructiveButton label={t('events.delete')} onConfirm={() => handleDelete(item.id)} />
@@ -594,33 +633,64 @@ export function EventsPage() {
     );
   }
 
-  const weekly = items?.filter((e) => e.recurrence !== 'none').sort((a, b) => weekOrder(a) - weekOrder(b)) ?? [];
+  const repeating = items?.filter((e) => e.recurrence !== 'none') ?? [];
+  // Each day of the week, Monday first: its weekly events and the monthly
+  // ones that fall on that weekday ("the first Friday"), by time.
+  const week = ALL_DAYS.map((day) => ({
+    day,
+    events: repeating
+      .filter((e) =>
+        e.recurrence === 'weekly' ? weekdaysOf(e).includes(day) : !e.monthlyDay && e.monthlyWeekday === day,
+      )
+      .sort((a, b) => minuteOfDay(a.startsAt) - minuteOfDay(b.startsAt)),
+  }));
+  const monthlyByDate = repeating
+    .filter((e) => e.recurrence === 'monthly' && e.monthlyDay)
+    .sort((a, b) => (a.monthlyDay ?? 0) - (b.monthlyDay ?? 0));
   const now = new Date().toISOString();
   const once = items?.filter((e) => e.recurrence === 'none') ?? [];
   const upcoming = once.filter((e) => (e.endsAt ?? e.startsAt) >= now);
   const past = once.filter((e) => (e.endsAt ?? e.startsAt) < now).reverse();
+  const editingId = editing?.id ?? null;
 
   return (
     <div>
-      <div className="page-head">
-        <div>
-          <h2>{t('events.title')}</h2>
-          <p className="muted">{t('events.subtitle')}</p>
-        </div>
-        <button type="button" className="btn btn-primary" onClick={() => setCreating(true)}>
+      <h2>{t('events.title')}</h2>
+      <p className="muted">{t('events.subtitle')}</p>
+      <div className="page-action">
+        <button type="button" className="btn btn-primary" onClick={() => openNew()}>
           {t('tabs.newEvent')}
         </button>
       </div>
 
-      <SidePanel open={creating} onClose={() => setCreating(false)} title={t('tabs.newEvent')} closeLabel={t('tabs.close')}>
-        <form className="form card" onSubmit={handleCreate}>
+      <Dialog
+        open={editing !== null}
+        onClose={() => setEditing(null)}
+        title={editingId ? draft.title || t('events.edit') : t('tabs.newEvent')}
+        closeLabel={t('tabs.close')}
+      >
+        <form className="form card" onSubmit={handleSave}>
           <EventFields isChurch={isChurch} draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
-          <button type="submit" className="btn btn-primary" disabled={submitting || !canSave(draft)}>
-            {submitting ? t('events.scheduling') : t('events.schedule')}
-          </button>
-          {error && <p className="error-text">{error}</p>}
+          <div className="card-actions">
+            <button type="submit" className="btn btn-primary" disabled={submitting || !canSave(draft)}>
+              {editingId
+                ? t('events.save')
+                : submitting
+                  ? t('events.scheduling')
+                  : t('events.schedule')}
+            </button>
+            <button type="button" className="btn" onClick={() => setEditing(null)}>
+              {t('events.cancel')}
+            </button>
+            {editingId && (
+              <span style={{ marginLeft: 'auto', display: 'flex', gap: 12 }}>
+                <DestructiveButton label={t('events.delete')} onConfirm={() => handleDelete(editingId)} />
+              </span>
+            )}
+          </div>
+          {formError && <p className="error-text">{formError}</p>}
         </form>
-      </SidePanel>
+      </Dialog>
 
       <TabBar
         idPrefix="events"
@@ -628,7 +698,7 @@ export function EventsPage() {
         current={tab}
         onChange={setTab}
         tabs={[
-          { key: 'regular', label: t('tabs.eventsRegular'), count: items ? weekly.length : null },
+          { key: 'regular', label: t('tabs.eventsRegular'), count: items ? repeating.length : null },
           { key: 'upcoming', label: t('tabs.eventsUpcoming'), count: items ? upcoming.length : null },
           { key: 'past', label: t('tabs.eventsPast') },
         ]}
@@ -639,8 +709,30 @@ export function EventsPage() {
 
       <TabPanel idPrefix="events" tabKey="regular" current={tab}>
         <p className="muted" style={{ marginTop: 0 }}>{t('events.weeklyHint')}</p>
-        {items && weekly.length === 0 && <p className="muted">{t('events.empty')}</p>}
-        <div className="card-grid">{weekly.map(renderItem)}</div>
+        {items && (
+          <div className="week-grid">
+            {week.map(({ day, events }) => (
+              <section key={day} className="week-day" aria-label={weekdayName(day, language)}>
+                <h3 className="week-day-name">{capitalise(weekdayName(day, language))}</h3>
+                {events.map((item) => weekEvent(item, `${item.id}-${day}`))}
+                <button
+                  type="button"
+                  className="week-add"
+                  aria-label={t('events.addOnDayLabel', { day: weekdayName(day, language) })}
+                  onClick={() => openNew(draftForDay(day))}
+                >
+                  {t('events.addOnDay')}
+                </button>
+              </section>
+            ))}
+          </div>
+        )}
+        {monthlyByDate.length > 0 && (
+          <section className="card week-monthly-dates">
+            <h3 className="week-day-name">{t('events.monthlyDatesHeading')}</h3>
+            {monthlyByDate.map((item) => weekEvent(item, item.id))}
+          </section>
+        )}
       </TabPanel>
 
       <TabPanel idPrefix="events" tabKey="upcoming" current={tab}>
@@ -655,6 +747,8 @@ export function EventsPage() {
     </div>
   );
 }
+
+const capitalise = (text: string) => text.charAt(0).toLocaleUpperCase() + text.slice(1);
 
 const EVENT_TABS = ['regular', 'upcoming', 'past'] as const;
 
