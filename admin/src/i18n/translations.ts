@@ -740,6 +740,12 @@ export type Translations = {
     askedOn: string;
     appointmentOn: string;
     unread: string;
+    groupNeedsReply: string;
+    groupOther: string;
+    reasonNew: string;
+    reasonMemberWrote: string;
+    reasonNewDocument: string;
+    reply: string;
     documentsPendingOne: string;
     documentsPendingMany: string;
     backToList: string;
@@ -1757,6 +1763,12 @@ const en: Translations = {
     askedOn: 'asked on {{date}}',
     appointmentOn: 'appointment {{date}}',
     unread: 'New from the member',
+    groupNeedsReply: "Needs a reply",
+    groupOther: "Everything else",
+    reasonNew: "New request",
+    reasonMemberWrote: "The member wrote",
+    reasonNewDocument: "New document in",
+    reply: "Reply",
     documentsPendingOne: '1 document awaited',
     documentsPendingMany: '{{n}} documents awaited',
     backToList: 'All requests',
@@ -2774,6 +2786,12 @@ const es: Translations = {
     askedOn: 'pedida el {{date}}',
     appointmentOn: 'cita el {{date}}',
     unread: 'Novedad del miembro',
+    groupNeedsReply: "Necesita respuesta",
+    groupOther: "Todo lo demás",
+    reasonNew: "Solicitud nueva",
+    reasonMemberWrote: "El miembro escribió",
+    reasonNewDocument: "Documento nuevo recibido",
+    reply: "Responder",
     documentsPendingOne: '1 documento pendiente',
     documentsPendingMany: '{{n}} documentos pendientes',
     backToList: 'Todas las solicitudes',
@@ -3791,6 +3809,12 @@ const fr: Translations = {
     askedOn: 'demandée le {{date}}',
     appointmentOn: 'rendez-vous le {{date}}',
     unread: 'Nouveau de la part du membre',
+    groupNeedsReply: "À répondre",
+    groupOther: "Tout le reste",
+    reasonNew: "Nouvelle demande",
+    reasonMemberWrote: "Le membre a écrit",
+    reasonNewDocument: "Nouveau document reçu",
+    reply: "Répondre",
     documentsPendingOne: '1 document attendu',
     documentsPendingMany: '{{n}} documents attendus',
     backToList: 'Toutes les demandes',
@@ -4808,6 +4832,12 @@ const va: Translations = {
     askedOn: 'demanada el {{date}}',
     appointmentOn: 'cita el {{date}}',
     unread: 'Novetat del membre',
+    groupNeedsReply: "Cal respondre",
+    groupOther: "Tota la resta",
+    reasonNew: "Sol·licitud nova",
+    reasonMemberWrote: "El membre ha escrit",
+    reasonNewDocument: "Document nou rebut",
+    reply: "Respondre",
     documentsPendingOne: '1 document pendent',
     documentsPendingMany: '{{n}} documents pendents',
     backToList: 'Totes les sol·licituds',
@@ -5825,6 +5855,12 @@ const ca: Translations = {
     askedOn: 'demanada el {{date}}',
     appointmentOn: 'cita el {{date}}',
     unread: 'Novetat del membre',
+    groupNeedsReply: "Cal respondre",
+    groupOther: "Tota la resta",
+    reasonNew: "Sol·licitud nova",
+    reasonMemberWrote: "El membre ha escrit",
+    reasonNewDocument: "Document nou rebut",
+    reply: "Respondre",
     documentsPendingOne: '1 document pendent',
     documentsPendingMany: '{{n}} documents pendents',
     backToList: 'Totes les sol·licituds',
@@ -6842,6 +6878,12 @@ const gl: Translations = {
     askedOn: 'pedida o {{date}}',
     appointmentOn: 'cita o {{date}}',
     unread: 'Novidade do membro',
+    groupNeedsReply: "Agarda resposta",
+    groupOther: "Todo o demais",
+    reasonNew: "Solicitude nova",
+    reasonMemberWrote: "O membro escribiu",
+    reasonNewDocument: "Documento novo recibido",
+    reply: "Responder",
     documentsPendingOne: '1 documento pendente',
     documentsPendingMany: '{{n}} documentos pendentes',
     backToList: 'Todas as solicitudes',
@@ -7859,6 +7901,12 @@ const pt: Translations = {
     askedOn: 'pedido a {{date}}',
     appointmentOn: 'marcação a {{date}}',
     unread: 'Novidade do membro',
+    groupNeedsReply: "Precisa de resposta",
+    groupOther: "Todo o resto",
+    reasonNew: "Pedido novo",
+    reasonMemberWrote: "O membro escreveu",
+    reasonNewDocument: "Novo documento recebido",
+    reply: "Responder",
     documentsPendingOne: '1 documento pendente',
     documentsPendingMany: '{{n}} documentos pendentes',
     backToList: 'Todos os pedidos',
