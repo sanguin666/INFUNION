@@ -122,6 +122,35 @@ const TEXTS = {
       'El compte de {place} es va tancar el {date}. Els seus continguts i la llista de membres estan esborrats. Els donatius i certificats es conserven bloquejats, com exigix la llei; escriu a privacy@infunion.app si els necessites.',
     openAdmin: 'Obrir Ajustos › Compte',
   },
+  ca: {
+    pushClosingTitle: '{place} deixa infunion',
+    pushClosingBody:
+      'La comunitat tanca el seu espai el {date}. Descarrega abans els teus certificats de donatius.',
+    pushStaysTitle: '{place} es queda',
+    pushStaysBody:
+      'La comunitat es queda a infunion. Els donatius mensuals que es van parar cal tornar-los a començar.',
+    mailClosingSubject: '{place} es tanca el {date}',
+    mailClosingHeading: 'El compte del teu lloc es tancarà',
+    mailClosingIntro:
+      '{name} ha demanat tancar el compte de {place}. Es tanca el {date}.',
+    mailClosingNow:
+      'Des d’ara, el lloc ja no apareix al mapa ni a la cerca, el seu codi QR ja no funciona, els donatius mensuals estan parats i el pla no es renovarà. Els membres encara poden llegir-ho tot.',
+    mailClosingThen:
+      'El {date} s’esborren els continguts, les fotos, els missatges i la llista de membres. Els donatius i certificats es conserven, bloquejats, com exigeix la llei.',
+    mailClosingExport:
+      'Abans d’aquesta data, descarrega totes les teves dades des d’Ajustos › Compte.',
+    mailClosingUndo:
+      'Has canviat d’idea? Qualsevol administrador pot conservar el lloc des d’Ajustos › Compte fins al {date}.',
+    mailStaysSubject: '{place} es queda a infunion',
+    mailStaysHeading: 'S’ha anul·lat el tancament',
+    mailStaysIntro:
+      '{name} ha conservat {place}. No s’esborrarà res. Els membres han de tornar a començar els donatius mensuals que es van parar.',
+    mailClosedSubject: '{place} ja està tancat',
+    mailClosedHeading: 'El compte del teu lloc està tancat',
+    mailClosedIntro:
+      'El compte de {place} es va tancar el {date}. Els seus continguts i la llista de membres estan esborrats. Els donatius i certificats es conserven bloquejats, com exigeix la llei; escriu a privacy@infunion.app si els necessites.',
+    openAdmin: 'Obrir Ajustos › Compte',
+  },
   gl: {
     pushClosingTitle: '{place} deixa infunion',
     pushClosingBody:

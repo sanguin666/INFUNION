@@ -245,6 +245,24 @@ const WORDING: Record<Language, Wording> = {
     missingIssuer: 'Les dades legals de la comunitat encara no s’han completat en el panell d’administració.',
     print: 'Imprimir o guardar en PDF',
   },
+  [Language.CA]: {
+    title: 'Certificat de donatius',
+    legalBasis:
+      'Als efectes del que preveu la Llei 49/2002, de 23 de desembre, de règim fiscal de les entitats sense finalitats lucratives i dels incentius fiscals al mecenatge. El donatiu té caràcter irrevocable.',
+    issuer: 'Entitat perceptora',
+    donor: 'Donant',
+    taxIdLabel: 'NIF',
+    amountLine: (amount, year) => `Import total rebut durant l’any ${year}: <strong>${amount}</strong>`,
+    giftsLine: (count) => `${count} donatiu${count > 1 ? 's' : ''} fet${count > 1 ? 's' : ''} en línia, amb targeta.`,
+    giftTitle: 'Certificat de donatiu',
+    giftAmountLine: (amount, date) => `Import rebut el ${date}: <strong>${amount}</strong>`,
+    giftLine: 'Donatiu fet en línia, amb targeta.',
+    nature: 'Naturalesa del donatiu: dinerari.',
+    signed: (place, date) => `${place ? `${place}, ` : ''}${date}`,
+    number: 'Certificat núm.',
+    missingIssuer: 'Les dades legals de la comunitat encara no s’han completat al panell d’administració.',
+    print: 'Imprimir o desar en PDF',
+  },
   [Language.GL]: {
     title: 'Certificado de doazóns',
     legalBasis:
@@ -315,6 +333,11 @@ const SPANISH_BASIS: Partial<Record<Language, Record<Exclude<TaxScheme, TaxSchem
   [Language.VA]: {
     [TaxScheme.ES_ART68]:
       'Donatiu a una entitat de les previstes en l’article 68.3.b) de la Llei 35/2006, de l’IRPF. El donatiu té caràcter irrevocable.',
+    [TaxScheme.NONE]: 'Justificant dels donatius rebuts.',
+  },
+  [Language.CA]: {
+    [TaxScheme.ES_ART68]:
+      'Donatiu a una entitat de les previstes a l’article 68.3.b) de la Llei 35/2006, de l’IRPF. El donatiu té caràcter irrevocable.',
     [TaxScheme.NONE]: 'Justificant dels donatius rebuts.',
   },
   [Language.GL]: {

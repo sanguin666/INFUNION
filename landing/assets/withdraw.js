@@ -83,6 +83,25 @@
       e_wait: "Espera un moment abans de demanar un altre codi.", e_network: "No hem pogut connectar amb infunion. Revisa la connexió i torna-ho a provar.",
       e_generic: "Alguna cosa ha fallat. Torna-ho a provar o escriu a support@infunion.app.",
     },
+    ca: {
+      eyebrow: "Desistir del contracte",
+      title: "Retira el teu lloc d’infunion",
+      lede: "Durant els 14 dies següents a la nostra aprovació, o en qualsevol moment abans, pots desistir del contracte sense donar cap motiu. No pagues res. Escriu el correu amb què vas registrar el teu lloc.",
+      email: "Correu electrònic", emailNote: "Amb el qual vas registrar el lloc",
+      sendCode: "Envia’m un codi", resendCode: "Enviar un altre codi", codeSentTo: "Codi enviat a {email}",
+      devCode: "Servidor de proves, no s’envia correu: el codi és {code}",
+      reason: "Per què te’n vas?", optional: "Opcional, ens ajuda a millorar",
+      cancel: "Cancel·lar", confirm: "Confirmar el desistiment", sending: "Enviant…",
+      doneTitle: "Hem rebut el teu desistiment",
+      doneText: "Hem rebut el teu desistiment del contracte de {place} el {date}. T’enviem una confirmació a {email}.",
+      doneOpen: "Tanquem el teu panell i parem el seu pla en 2 dies laborables.",
+      backHome: "Tornar a infunion", privacy: "Privacitat", terms: "Condicions d'ús", withdrawLink: "Desistir del contracte",
+      e_email: "Escriu un correu vàlid.", e_code: "Escriu el codi de 6 xifres del correu.",
+      e_nothing_to_withdraw: "No trobem cap sol·licitud ni contracte recent amb aquest correu. Potser ja han passat els 14 dies: escriu a support@infunion.app.",
+      e_codeWrong: "El codi no és correcte o ha caducat. Demana’n un de nou.",
+      e_wait: "Espera un moment abans de demanar un altre codi.", e_network: "No hem pogut connectar amb infunion. Revisa la connexió i torna-ho a provar.",
+      e_generic: "Alguna cosa ha fallat. Torna-ho a provar o escriu a support@infunion.app.",
+    },
     gl: {
       eyebrow: "Desistir do contrato",
       title: "Retira o teu lugar de infunion",
@@ -267,7 +286,7 @@
     button.textContent = t("sending");
     post("/registrations/withdraw", { email: email(), code: code, reason: $("wd-reason").value.trim() })
       .then(function (result) {
-        var date = new Date().toLocaleDateString(lang === "va" ? "ca-ES" : lang, { day: "numeric", month: "long", year: "numeric" });
+        var date = new Date().toLocaleDateString((lang === "va" || lang === "ca") ? "ca-ES" : lang, { day: "numeric", month: "long", year: "numeric" });
         $("wd-done-title").textContent = t("doneTitle");
         $("wd-done-text").textContent =
           t("doneText", { place: result.placeName, date: date, email: email() }) + (result.opened ? " " + t("doneOpen") : "");

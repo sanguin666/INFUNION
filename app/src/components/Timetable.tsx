@@ -94,7 +94,7 @@ const NTH_KEYS: Record<string, 'schedule.nth_1' | 'schedule.nth_2' | 'schedule.n
   '-1': 'schedule.nth_last',
 };
 
-const DATE_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
+const DATE_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', ca: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
 
 /** A monthly line's rule in words: "First Friday of the month", "On the 15th". */
 export function monthlyRuleLabel(
