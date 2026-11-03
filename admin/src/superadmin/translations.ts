@@ -19,9 +19,6 @@ const en = {
     session: 'Session: {{n}} min left',
     lock: 'Lock',
     signOut: 'Sign out',
-    viewing: 'You are viewing {{name}}’s admin as superadmin.',
-    backToSuperadmin: 'Back to superadmin',
-    thisCommunity: 'this community',
   },
   common: {
     loading: 'Loading…',
@@ -458,9 +455,6 @@ const fr: SaTranslations = {
     session: 'Session : encore {{n}} min',
     lock: 'Verrouiller',
     signOut: 'Se déconnecter',
-    viewing: 'Vous voyez l’admin de {{name}} en tant que superadmin.',
-    backToSuperadmin: 'Revenir au superadmin',
-    thisCommunity: 'cette communauté',
   },
   common: {
     loading: 'Chargement…',
@@ -896,9 +890,6 @@ const es: SaTranslations = {
     session: 'Sesión: quedan {{n}} min',
     lock: 'Bloquear',
     signOut: 'Cerrar sesión',
-    viewing: 'Estás viendo el admin de {{name}} como superadmin.',
-    backToSuperadmin: 'Volver al superadmin',
-    thisCommunity: 'esta comunidad',
   },
   common: {
     loading: 'Cargando…',
@@ -1334,9 +1325,6 @@ const va: SaTranslations = {
     session: 'Sessió: queden {{n}} min',
     lock: 'Bloquejar',
     signOut: 'Tancar la sessió',
-    viewing: 'Esteu veient l’admin de {{name}} com a superadmin.',
-    backToSuperadmin: 'Tornar al superadmin',
-    thisCommunity: 'aquesta comunitat',
   },
   common: {
     loading: 'Carregant…',
@@ -1772,9 +1760,6 @@ const ca: SaTranslations = {
     session: 'Sessió: queden {{n}} min',
     lock: 'Bloquejar',
     signOut: 'Tancar la sessió',
-    viewing: 'Esteu veient l’admin de {{name}} com a superadmin.',
-    backToSuperadmin: 'Tornar al superadmin',
-    thisCommunity: 'aquesta comunitat',
   },
   common: {
     loading: 'Carregant…',
@@ -2210,9 +2195,6 @@ const gl: SaTranslations = {
     session: 'Sesión: quedan {{n}} min',
     lock: 'Bloquear',
     signOut: 'Pechar sesión',
-    viewing: 'Estás vendo o admin de {{name}} como superadmin.',
-    backToSuperadmin: 'Volver ao superadmin',
-    thisCommunity: 'esta comunidade',
   },
   common: {
     loading: 'Cargando…',
@@ -2648,9 +2630,6 @@ const pt: SaTranslations = {
     session: 'Sessão: faltam {{n}} min',
     lock: 'Bloquear',
     signOut: 'Terminar sessão',
-    viewing: 'Está a ver o admin de {{name}} como superadmin.',
-    backToSuperadmin: 'Voltar ao superadmin',
-    thisCommunity: 'esta comunidade',
   },
   common: {
     loading: 'A carregar…',

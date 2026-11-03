@@ -261,12 +261,6 @@ export function DashboardLayout() {
       </aside>
 
       <main className="main">
-        {visiting && (
-          <p className="sa-viewing" role="status">
-            <span>{sa('nav.viewing', { name: currentPoi?.name || sa('nav.thisCommunity') })}</span>
-            <NavLink to={`/superadmin/communities/${poiId}`}>{sa('nav.backToSuperadmin')}</NavLink>
-          </p>
-        )}
         {poiId && <ClosingBanner poiId={poiId} />}
         <Outlet context={{ poiId: poiId!, modules, refreshModules } satisfies DashboardContext} />
       </main>
