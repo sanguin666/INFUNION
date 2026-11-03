@@ -42,10 +42,10 @@ const MODULE_NAV: (NavItem & { module: ModuleType })[] = [
   { to: 'announcements', label: 'layout.navAnnouncements', module: 'announcements', icon: MODULE_ICON.announcements },
   { to: 'donations', label: 'layout.navDonations', module: 'donations', icon: MODULE_ICON.donations },
   { to: 'mass-intentions', label: 'layout.navMassIntentions', module: 'mass_intentions', icon: MODULE_ICON.mass_intentions, count: 'massIntentions' },
-  { to: 'prayer-requests', label: 'layout.navPrayerRequests', module: 'prayer_requests', icon: MODULE_ICON.prayer_requests },
+  { to: 'prayer-requests', label: 'layout.navPrayerRequests', module: 'prayer_requests', icon: MODULE_ICON.prayer_requests, count: 'prayerRequests' },
   { to: 'readings', label: 'layout.navReadings', module: 'daily_readings', icon: MODULE_ICON.daily_readings },
   { to: 'livestreams', label: 'layout.navLivestreams', module: 'livestreams', icon: MODULE_ICON.livestreams },
-  { to: 'community', label: 'layout.navCommunity', module: 'community', icon: MODULE_ICON.community },
+  { to: 'community', label: 'layout.navCommunity', module: 'community', icon: MODULE_ICON.community, count: 'community' },
 ];
 
 const SETUP: NavItem[] = [

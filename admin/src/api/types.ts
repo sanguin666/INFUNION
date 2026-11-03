@@ -429,4 +429,6 @@ export type DashboardSummary = {
   expiredMessages: { id: string; text: string; showUntil: string }[];
   members: { total: number; newThisWeek: number };
   prayerRequestsThisWeek: number;
+  // Items members reported that the team has not decided on yet.
+  reported: { community: number; prayer: number };
 };

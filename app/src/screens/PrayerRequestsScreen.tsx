@@ -6,6 +6,8 @@ import { FormCard, FormDivider, FormField } from '../components/FormCard';
 import { CandleIcon } from '../components/icons';
 import { createPrayerRequest, getPrayerRequests, prayForRequest } from '../api/prayerRequests';
 import { SignInNotice } from '../components/SignInNotice';
+import { ContentMenu, ReportedNotice } from '../components/ContentMenu';
+import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import type { PrayerRequest, Poi } from '../api/types';
@@ -24,6 +26,8 @@ export function PrayerRequestsScreen({ poi, onSignIn }: Props) {
   const [message, setMessage] = useState('');
   const [authorName, setAuthorName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [blocked, setBlocked] = useState(false);
+  const [reported, setReported] = useState<Set<string>>(new Set());
 
   function load() {
     getPrayerRequests(poi.id)
@@ -44,8 +48,9 @@ export function PrayerRequestsScreen({ poi, onSignIn }: Props) {
       setRequests((current) => [created, ...(current ?? [])]);
       setMessage('');
       setAuthorName('');
-    } catch {
-      setError(true);
+    } catch (e) {
+      if (e instanceof ApiError && e.message === 'posting_blocked') setBlocked(true);
+      else setError(true);
     } finally {
       setSubmitting(false);
     }
@@ -100,6 +105,12 @@ export function PrayerRequestsScreen({ poi, onSignIn }: Props) {
         <SignInNotice onSignIn={onSignIn} />
       )}
 
+      {blocked && (
+        <AccessibleText variant="body" color={colors.danger}>
+          {t('moderation.blocked')}
+        </AccessibleText>
+      )}
+
       {error && (
         <AccessibleText variant="body" color={colors.danger}>
           {t('prayerRequests.error')}
@@ -112,13 +123,24 @@ export function PrayerRequestsScreen({ poi, onSignIn }: Props) {
         </AccessibleText>
       )}
 
-      {requests?.map((item) => (
+      {requests?.map((item) =>
+        reported.has(item.id) ? (
+          <ReportedNotice key={item.id} />
+        ) : (
         <View key={item.id} style={styles.card}>
           <AccessibleText variant="body">{item.message}</AccessibleText>
           <View style={styles.cardFooter}>
-            <AccessibleText variant="caption">
+            <AccessibleText variant="caption" style={styles.byline}>
               — {item.authorName ?? t('common.anonymous')} · {item.prayerCount} {t('prayerRequests.prayingSuffix')}
             </AccessibleText>
+            <ContentMenu
+              poiId={poi.id}
+              kind="prayer"
+              targetId={item.id}
+              authorName={item.authorName}
+              onReported={() => setReported((current) => new Set(current).add(item.id))}
+              onHidden={load}
+            />
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={t('prayerRequests.prayAria')}
@@ -132,7 +154,8 @@ export function PrayerRequestsScreen({ poi, onSignIn }: Props) {
             </Pressable>
           </View>
         </View>
-      ))}
+        ),
+      )}
     </>
   );
 }
@@ -153,6 +176,9 @@ const styles = themedStyles(() => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: spacing.sm,
+  },
+  byline: {
+    flex: 1,
   },
   prayButton: {
     flexDirection: 'row',
