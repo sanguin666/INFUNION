@@ -8,7 +8,7 @@ import { useI18n } from '../i18n/I18nContext';
 import { colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import type { Event } from '../api/types';
 
-const DATE_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
+const DATE_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', ca: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
 
 // Weekdays in the order a timetable lists them: Monday first.
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];

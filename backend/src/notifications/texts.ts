@@ -68,6 +68,21 @@ const TEXTS = {
     monthlyGiftFailed: 'El teu donatiu mensual de {amount} no s’ha pogut cobrar. Obri l’aplicació per a actualitzar la teua targeta.',
     monthlyGiftCardExpiring: 'La targeta del teu donatiu mensual de {amount} caduca abans del pròxim cobrament. Obri l’aplicació per a actualitzar-la.',
   },
+  ca: {
+    live: 'En directe: {title}',
+    readingsReady: 'Ja estan les lectures de avui.',
+    inOneHour: 'D’aquí a 1 hora: {title}',
+    requestTitle: 'La teva sol·licitud: {type}',
+    officeReplied: 'El despatx ha respost: «{body}»',
+    officeSentFile: 'El despatx t’ha enviat un fitxer.',
+    appointment: 'Cita: {when}',
+    statusNow: 'La teva sol·licitud ara està: {status}',
+    documentAsked: 'El despatx et demana un document: {label}',
+    messageFrom: '{name}: {body}',
+    office: 'El despatx',
+    monthlyGiftFailed: 'El teu donatiu mensual de {amount} no s’ha pogut cobrar. Obre l’aplicació per actualitzar la teva targeta.',
+    monthlyGiftCardExpiring: 'La targeta del teu donatiu mensual de {amount} caduca abans del pròxim cobrament. Obre l’aplicació per actualitzar-la.',
+  },
   gl: {
     live: 'En directo: {title}',
     readingsReady: 'Xa están as lecturas de hoxe.',
@@ -121,6 +136,11 @@ const REQUEST_TYPES: Record<Language, Record<ServiceRequestType, string>> = {
     confirmation: 'Confirmació', certificate: 'Certificat', meeting: 'Cita', blessing: 'Benedicció',
     sick_visit: 'Visita a un malalt', other: 'Una altra sol·licitud', registration: 'Inscripció',
   },
+  ca: {
+    baptism: 'Bateig', wedding: 'Boda', funeral: 'Funeral', first_communion: 'Primera Comunió',
+    confirmation: 'Confirmació', certificate: 'Certificat', meeting: 'Cita', blessing: 'Benedicció',
+    sick_visit: 'Visita a un malalt', other: 'Una altra sol·licitud', registration: 'Inscripció',
+  },
   gl: {
     baptism: 'Bautizo', wedding: 'Voda', funeral: 'Funeral', first_communion: 'Primeira Comuñón',
     confirmation: 'Confirmación', certificate: 'Certificado', meeting: 'Cita', blessing: 'Bendición',
@@ -138,6 +158,7 @@ const REQUEST_STATUSES: Record<Language, Record<ServiceRequestStatus, string>> =
   es: { received: 'recibida', in_progress: 'en curso', appointment_set: 'cita fijada', completed: 'terminada', cancelled: 'cancelada' },
   fr: { received: 'reçue', in_progress: 'en cours', appointment_set: 'rendez-vous fixé', completed: 'terminée', cancelled: 'annulée' },
   va: { received: 'rebuda', in_progress: 'en curs', appointment_set: 'cita fixada', completed: 'acabada', cancelled: 'cancel·lada' },
+  ca: { received: 'rebuda', in_progress: 'en curs', appointment_set: 'cita fixada', completed: 'acabada', cancelled: 'cancel·lada' },
   gl: { received: 'recibida', in_progress: 'en curso', appointment_set: 'cita fixada', completed: 'rematada', cancelled: 'cancelada' },
   pt: { received: 'recebido', in_progress: 'em curso', appointment_set: 'marcação feita', completed: 'concluído', cancelled: 'cancelado' },
 };

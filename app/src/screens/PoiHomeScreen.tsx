@@ -254,7 +254,7 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
   }
 }
 
-const CLOSING_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
+const CLOSING_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', ca: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
 
 const styles = themedStyles(() => ({
   closing: {

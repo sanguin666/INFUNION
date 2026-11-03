@@ -35,6 +35,7 @@ const TAGLINE: Record<Language, string> = {
   [Language.ES]: 'la app de tu comunidad',
   [Language.FR]: 'l’app de votre communauté',
   [Language.VA]: 'l’app de la teua comunitat',
+  [Language.CA]: 'l’app de la teva comunitat',
   [Language.GL]: 'a app da túa comunidade',
   [Language.PT]: 'a app da sua comunidade',
 };
@@ -128,6 +129,7 @@ const LOCALES: Record<Language, string> = {
   [Language.ES]: 'es-ES',
   [Language.FR]: 'fr-FR',
   [Language.VA]: 'ca-ES',
+  [Language.CA]: 'ca-ES',
   [Language.GL]: 'gl-ES',
   [Language.PT]: 'pt-PT',
 };

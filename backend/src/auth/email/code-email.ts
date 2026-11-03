@@ -15,7 +15,7 @@ type CodeEmailText = {
   ignore: string;
 };
 
-// The app's six languages. `{{code}}` is replaced in the subject so the
+// The app's seven languages. `{{code}}` is replaced in the subject so the
 // code can be read straight from the notification without opening it.
 const TEXTS: Record<Language, CodeEmailText> = {
   [Language.EN]: {
@@ -45,6 +45,13 @@ const TEXTS: Record<Language, CodeEmailText> = {
     intro: 'Este és el teu codi per a entrar en infunion:',
     expiry: 'És vàlid durant 10 minuts.',
     ignore: 'Si no l’has demanat, pots ignorar este correu.',
+  },
+  [Language.CA]: {
+    subject: '{{code}} és el teu codi d’infunion',
+    heading: 'El teu codi d’accés',
+    intro: 'Aquest és el teu codi per entrar en infunion:',
+    expiry: 'És vàlid durant 10 minuts.',
+    ignore: 'Si no l’has demanat, pots ignorar aquest correu.',
   },
   [Language.GL]: {
     subject: '{{code}} é o teu código de infunion',

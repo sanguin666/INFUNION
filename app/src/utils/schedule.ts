@@ -285,7 +285,7 @@ export function weeklyTimetable(events: Event[], now: Date, firstDay = 1): Timet
 }
 
 // The locale weekday names are written in, from the app's language.
-const DAY_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
+const DAY_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', ca: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
 
 function capitalise(text: string): string {
   return text.charAt(0).toLocaleUpperCase() + text.slice(1);

@@ -122,6 +122,12 @@ const PRODUCT_NAMES: Record<Language, Record<'gift' | 'monthly' | 'collection' |
     collection: 'Dia a dia — {name}',
     intention: 'Intenció de missa — {name}',
   },
+  [Language.CA]: {
+    gift: 'Donatiu a {name}',
+    monthly: 'Donatiu mensual a {name}',
+    collection: 'Dia a dia — {name}',
+    intention: 'Intenció de missa — {name}',
+  },
   [Language.GL]: {
     gift: 'Doazón a {name}',
     monthly: 'Doazón mensual a {name}',
