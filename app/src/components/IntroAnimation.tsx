@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Easing, Pressable, StyleSheet } from 'react-native';
 import { useFrameDimensions } from '../web/desktopFrame';
 import Svg, { G } from 'react-native-svg';
-import { Rings, WordmarkArt } from './Logo';
+import { LOCKUP_HEIGHT, LOCKUP_WIDTH } from './brandArt';
+import { RING_LEFT_X, RING_RIGHT_X, Rings, WordmarkArt } from './Logo';
 import { colors } from '../theme/theme';
 
 /**
  * The opening Seb picked (26 Oct 2026, option A, "slide and link"): the
  * purple and the yellow ring slide in from either side and link, then the
- * wordmark rises in, the yellow dot drops onto the i and the line sweeps
+ * wordmark rises in, the dot drops onto the i and the line sweeps
  * under "union". Then the whole thing fades into the app underneath.
  *
  * Drawn frame by frame from one clock. A tap skips it, and it never plays
@@ -26,8 +27,9 @@ const LINE_DONE = 820;
 const FADE_OUT = 850;
 const END = 1100;
 
-// How far out each ring starts, in the logo's own units (it is 392 wide).
-const TRAVEL = 26;
+// How far out each ring starts, in the logo's own units (it is 651.52 wide).
+const TRAVEL = 42;
+const DRAWING_WIDTH = LOCKUP_WIDTH + 2 * TRAVEL;
 
 const easeOut = Easing.out(Easing.cubic);
 const settle = Easing.out(Easing.back(1.7));
@@ -74,9 +76,9 @@ export function IntroAnimation({ onDone }: { onDone: () => void }) {
     };
   }, []);
 
-  // The logo is 392 × 80; the drawing is wider so the rings have room to
-  // start apart.
-  const scale = Math.min(1, (width - 48) / 444);
+  // The drawing is wider than the logo so the rings have room to start
+  // apart. On a phone it is about as wide as the old 444-unit drawing.
+  const scale = Math.min(444 / DRAWING_WIDTH, (width - 48) / DRAWING_WIDTH);
   const rings = easeOut(progress(t, 0, RINGS_DONE));
   const word = easeOut(progress(t, WORD_IN, WORD_DONE));
   const dot = settle(progress(t, DOT_IN, DOT_DONE));
@@ -90,14 +92,18 @@ export function IntroAnimation({ onDone }: { onDone: () => void }) {
       accessibilityLabel="infunion"
       style={[StyleSheet.absoluteFill, styles.root, { backgroundColor: colors.background, opacity }]}
     >
-      <Svg width={444 * scale} height={80 * scale} viewBox="-26 0 444 80">
+      <Svg
+        width={DRAWING_WIDTH * scale}
+        height={LOCKUP_HEIGHT * scale}
+        viewBox={`${-TRAVEL} 0 ${DRAWING_WIDTH} ${LOCKUP_HEIGHT}`}
+      >
         <Rings
-          purpleX={38 - TRAVEL * (1 - rings)}
-          yellowX={81 + TRAVEL * (1 - rings)}
+          purpleX={RING_LEFT_X - TRAVEL * (1 - rings)}
+          yellowX={RING_RIGHT_X + TRAVEL * (1 - rings)}
           opacity={rings}
           idPrefix="intro"
         />
-        <G opacity={word} transform={`translate(133 ${8 * (1 - word)})`}>
+        <G opacity={word} transform={`translate(0 ${11 * (1 - word)})`}>
           <WordmarkArt themed dot={t >= DOT_IN ? dot : 0} underline={line} />
         </G>
       </Svg>

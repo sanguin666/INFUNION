@@ -102,7 +102,7 @@ export function AddPlaceScreen({ onScanQR, onOpenPoi, onFindNearby, onFindByName
   return (
     <Screen scroll>
       <View style={styles.header}>
-        <Lockup height={48} />
+        <Lockup height={40} />
       </View>
 
       <AccessibleText variant="bodyLarge" style={styles.lead}>
