@@ -116,7 +116,7 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
       order: { joinedAt: 'ASC' },
     });
     if (poiId && memberships.length === 0)
-      throw new NotFoundException('Not a member of this place');
+      throw new NotFoundException('Not a member of this community');
 
     const [
       requests,
@@ -354,7 +354,7 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
       where: { user: { id: userId }, poi: { id: poiId } },
       relations: { poi: true },
     });
-    if (!membership) throw new NotFoundException('Not a member of this place');
+    if (!membership) throw new NotFoundException('Not a member of this community');
     if (membership.role === MemberRole.ADMIN) {
       throw new ConflictException('This is one of the office’s own accounts.');
     }

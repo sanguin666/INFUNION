@@ -55,7 +55,7 @@ type Texts = {
 const TEXTS: Record<Language, Texts> = {
   [Language.EN]: {
     receivedHeading: 'Request received',
-    readyHeading: 'Your place is ready',
+    readyHeading: 'Your community is ready',
     readyLogin: 'Sign in to your dashboard with:',
     emailLabel: 'Email',
     passwordLabel: 'Temporary password',
@@ -64,18 +64,18 @@ const TEXTS: Record<Language, Texts> = {
     declinedHeading: 'About your request',
     withdrawnHeading: 'Withdrawal confirmed',
     withdrawLink: 'Withdraw from the contract',
-    termsLabel: 'Terms of service for places',
+    termsLabel: 'Terms of service for communities',
     dpaLabel: 'Data processing agreement',
     receivedSubject: 'We have received the request for {{place}}',
     received: [
       'Thank you for registering {{place}} on infunion.',
-      'We check every place before opening it, usually within 2 working days. We may call or email you.',
+      'We check every community before opening it, usually within 2 working days. We may call or email you.',
       'You signed the {{termsLink}} ({{terms}}) and the {{dpaLink}} ({{dpa}}) as {{signed}} on {{date}}.',
     ],
     readySubject: '{{place}} is ready on infunion',
-    ready: ['We checked your place and your dashboard is open.'],
+    ready: ['We checked your community and your dashboard is open.'],
     readyExisting:
-      'Sign in with {{email}} as usual: {{place}} is now in your list of places.',
+      'Sign in with {{email}} as usual: {{place}} is now in your list of communities.',
     readyButton: 'Open my dashboard',
     questionSubject: 'A question about {{place}}',
     questionIntro: 'Before we open {{place}}, we need one more thing from you:',
@@ -95,7 +95,7 @@ const TEXTS: Record<Language, Texts> = {
   },
   [Language.ES]: {
     receivedHeading: 'Solicitud recibida',
-    readyHeading: 'Tu lugar está listo',
+    readyHeading: 'Tu comunidad está lista',
     readyLogin: 'Entra en tu panel con:',
     emailLabel: 'Correo',
     passwordLabel: 'Contraseña provisional',
@@ -104,18 +104,18 @@ const TEXTS: Record<Language, Texts> = {
     declinedHeading: 'Sobre tu solicitud',
     withdrawnHeading: 'Desistimiento confirmado',
     withdrawLink: 'Desistir del contrato',
-    termsLabel: 'Condiciones del servicio para lugares',
+    termsLabel: 'Condiciones del servicio para comunidades',
     dpaLabel: 'Acuerdo de tratamiento de datos',
     receivedSubject: 'Hemos recibido la solicitud de {{place}}',
     received: [
       'Gracias por registrar {{place}} en infunion.',
-      'Revisamos cada lugar antes de abrirlo, normalmente en 2 días laborables. Puede que te llamemos o te escribamos.',
+      'Revisamos cada comunidad antes de abrirla, normalmente en 2 días laborables. Puede que te llamemos o te escribamos.',
       'Firmaste las {{termsLink}} ({{terms}}) y el {{dpaLink}} ({{dpa}}) como {{signed}} el {{date}}.',
     ],
     readySubject: '{{place}} ya está en infunion',
-    ready: ['Hemos revisado tu lugar y tu panel ya está abierto.'],
+    ready: ['Hemos revisado tu comunidad y tu panel ya está abierto.'],
     readyExisting:
-      'Entra con {{email}} como siempre: {{place}} ya aparece en tu lista de lugares.',
+      'Entra con {{email}} como siempre: {{place}} ya aparece en tu lista de comunidades.',
     readyButton: 'Abrir mi panel',
     questionSubject: 'Una pregunta sobre {{place}}',
     questionIntro: 'Antes de abrir {{place}}, necesitamos algo más:',
@@ -135,7 +135,7 @@ const TEXTS: Record<Language, Texts> = {
   },
   [Language.FR]: {
     receivedHeading: 'Demande reçue',
-    readyHeading: 'Votre lieu est prêt',
+    readyHeading: 'Votre communauté est prête',
     readyLogin: 'Connectez-vous à votre tableau de bord avec :',
     emailLabel: 'E-mail',
     passwordLabel: 'Mot de passe provisoire',
@@ -144,20 +144,20 @@ const TEXTS: Record<Language, Texts> = {
     declinedHeading: 'À propos de votre demande',
     withdrawnHeading: 'Rétractation confirmée',
     withdrawLink: 'Se rétracter du contrat',
-    termsLabel: 'Conditions de service pour les lieux',
+    termsLabel: 'Conditions de service pour les communautés',
     dpaLabel: 'Accord de traitement des données',
     receivedSubject: 'Nous avons bien reçu la demande pour {{place}}',
     received: [
       'Merci d’avoir inscrit {{place}} sur infunion.',
-      'Nous vérifions chaque lieu avant de l’ouvrir, en général sous 2 jours ouvrés. Nous pourrons vous appeler ou vous écrire.',
+      'Nous vérifions chaque communauté avant de l’ouvrir, en général sous 2 jours ouvrés. Nous pourrons vous appeler ou vous écrire.',
       'Vous avez signé les {{termsLink}} ({{terms}}) et l’{{dpaLink}} ({{dpa}}) au nom de {{signed}} le {{date}}.',
     ],
     readySubject: '{{place}} est prêt sur infunion',
     ready: [
-      'Nous avons vérifié votre lieu : votre tableau de bord est ouvert.',
+      'Nous avons vérifié votre communauté : votre tableau de bord est ouvert.',
     ],
     readyExisting:
-      'Connectez-vous avec {{email}} comme d’habitude : {{place}} est maintenant dans votre liste de lieux.',
+      'Connectez-vous avec {{email}} comme d’habitude : {{place}} est maintenant dans votre liste de communautés.',
     readyButton: 'Ouvrir mon tableau de bord',
     questionSubject: 'Une question sur {{place}}',
     questionIntro: 'Avant d’ouvrir {{place}}, il nous manque une chose :',
@@ -179,7 +179,7 @@ const TEXTS: Record<Language, Texts> = {
   },
   [Language.VA]: {
     receivedHeading: 'Sol·licitud rebuda',
-    readyHeading: 'El teu lloc està llest',
+    readyHeading: 'La teua comunitat està llesta',
     readyLogin: 'Entra al teu panell amb:',
     emailLabel: 'Correu',
     passwordLabel: 'Contrasenya provisional',
@@ -188,18 +188,18 @@ const TEXTS: Record<Language, Texts> = {
     declinedHeading: 'Sobre la teua sol·licitud',
     withdrawnHeading: 'Desistiment confirmat',
     withdrawLink: 'Desistir del contracte',
-    termsLabel: 'Condicions del servici per a llocs',
+    termsLabel: 'Condicions del servici per a comunitats',
     dpaLabel: 'Acord de tractament de dades',
     receivedSubject: 'Hem rebut la sol·licitud de {{place}}',
     received: [
       'Gràcies per registrar {{place}} en infunion.',
-      'Revisem cada lloc abans d’obrir-lo, normalment en 2 dies laborables. És possible que et cridem o t’escrivim.',
+      'Revisem cada comunitat abans d’obrir-la, normalment en 2 dies laborables. És possible que et cridem o t’escrivim.',
       'Vas signar les {{termsLink}} ({{terms}}) i l’{{dpaLink}} ({{dpa}}) com a {{signed}} el {{date}}.',
     ],
     readySubject: '{{place}} ja està en infunion',
-    ready: ['Hem revisat el teu lloc i el teu panell ja està obert.'],
+    ready: ['Hem revisat la teua comunitat i el teu panell ja està obert.'],
     readyExisting:
-      'Entra amb {{email}} com sempre: {{place}} ja apareix en la teua llista de llocs.',
+      'Entra amb {{email}} com sempre: {{place}} ja apareix en la teua llista de comunitats.',
     readyButton: 'Obrir el meu panell',
     questionSubject: 'Una pregunta sobre {{place}}',
     questionIntro: 'Abans d’obrir {{place}}, necessitem una cosa més:',
@@ -219,7 +219,7 @@ const TEXTS: Record<Language, Texts> = {
   },
   [Language.CA]: {
     receivedHeading: 'Sol·licitud rebuda',
-    readyHeading: 'El teu lloc està llest',
+    readyHeading: 'La teva comunitat està llesta',
     readyLogin: 'Entra al teu panell amb:',
     emailLabel: 'Correu',
     passwordLabel: 'Contrasenya provisional',
@@ -228,18 +228,18 @@ const TEXTS: Record<Language, Texts> = {
     declinedHeading: 'Sobre la teva sol·licitud',
     withdrawnHeading: 'Desistiment confirmat',
     withdrawLink: 'Desistir del contracte',
-    termsLabel: 'Condicions del servei per a llocs',
+    termsLabel: 'Condicions del servei per a comunitats',
     dpaLabel: 'Acord de tractament de dades',
     receivedSubject: 'Hem rebut la sol·licitud de {{place}}',
     received: [
       'Gràcies per registrar {{place}} en infunion.',
-      'Revisem cada lloc abans d’obrir-lo, normalment en 2 dies laborables. És possible que et cridem o t’escrivim.',
+      'Revisem cada comunitat abans d’obrir-la, normalment en 2 dies laborables. És possible que et cridem o t’escrivim.',
       'Vas signar les {{termsLink}} ({{terms}}) i l’{{dpaLink}} ({{dpa}}) com a {{signed}} el {{date}}.',
     ],
     readySubject: '{{place}} ja està en infunion',
-    ready: ['Hem revisat el teu lloc i el teu panell ja està obert.'],
+    ready: ['Hem revisat la teva comunitat i el teu panell ja està obert.'],
     readyExisting:
-      'Entra amb {{email}} com sempre: {{place}} ja apareix a la teva llista de llocs.',
+      'Entra amb {{email}} com sempre: {{place}} ja apareix a la teva llista de comunitats.',
     readyButton: 'Obrir el meu panell',
     questionSubject: 'Una pregunta sobre {{place}}',
     questionIntro: 'Abans d’obrir {{place}}, necessitem una cosa més:',
@@ -259,7 +259,7 @@ const TEXTS: Record<Language, Texts> = {
   },
   [Language.GL]: {
     receivedHeading: 'Solicitude recibida',
-    readyHeading: 'O teu lugar está listo',
+    readyHeading: 'A túa comunidade está lista',
     readyLogin: 'Entra no teu panel con:',
     emailLabel: 'Correo',
     passwordLabel: 'Contrasinal provisional',
@@ -268,18 +268,18 @@ const TEXTS: Record<Language, Texts> = {
     declinedHeading: 'Sobre a túa solicitude',
     withdrawnHeading: 'Desistimento confirmado',
     withdrawLink: 'Desistir do contrato',
-    termsLabel: 'Condicións do servizo para lugares',
+    termsLabel: 'Condicións do servizo para comunidades',
     dpaLabel: 'Acordo de tratamento de datos',
     receivedSubject: 'Recibimos a solicitude de {{place}}',
     received: [
       'Grazas por rexistrar {{place}} en infunion.',
-      'Revisamos cada lugar antes de abrilo, normalmente en 2 días laborables. Pode que te chamemos ou te escribamos.',
+      'Revisamos cada comunidade antes de abrila, normalmente en 2 días laborables. Pode que te chamemos ou te escribamos.',
       'Asinaches as {{termsLink}} ({{terms}}) e o {{dpaLink}} ({{dpa}}) como {{signed}} o {{date}}.',
     ],
     readySubject: '{{place}} xa está en infunion',
-    ready: ['Revisamos o teu lugar e o teu panel xa está aberto.'],
+    ready: ['Revisamos a túa comunidade e o teu panel xa está aberto.'],
     readyExisting:
-      'Entra con {{email}} coma sempre: {{place}} xa aparece na túa lista de lugares.',
+      'Entra con {{email}} coma sempre: {{place}} xa aparece na túa lista de comunidades.',
     readyButton: 'Abrir o meu panel',
     questionSubject: 'Unha pregunta sobre {{place}}',
     questionIntro: 'Antes de abrir {{place}}, necesitamos unha cousa máis:',
@@ -299,7 +299,7 @@ const TEXTS: Record<Language, Texts> = {
   },
   [Language.PT]: {
     receivedHeading: 'Pedido recebido',
-    readyHeading: 'O seu local está pronto',
+    readyHeading: 'A sua comunidade está pronta',
     readyLogin: 'Entre no seu painel com:',
     emailLabel: 'Email',
     passwordLabel: 'Palavra-passe provisória',
@@ -308,18 +308,18 @@ const TEXTS: Record<Language, Texts> = {
     declinedHeading: 'Sobre o seu pedido',
     withdrawnHeading: 'Desistência confirmada',
     withdrawLink: 'Desistir do contrato',
-    termsLabel: 'Termos de serviço para locais',
+    termsLabel: 'Termos de serviço para comunidades',
     dpaLabel: 'Acordo de tratamento de dados',
     receivedSubject: 'Recebemos o pedido de {{place}}',
     received: [
       'Obrigado por registar {{place}} no infunion.',
-      'Verificamos cada local antes de o abrir, normalmente em 2 dias úteis. Podemos telefonar-lhe ou escrever-lhe.',
+      'Verificamos cada comunidade antes de a abrir, normalmente em 2 dias úteis. Podemos telefonar-lhe ou escrever-lhe.',
       'Assinou os {{termsLink}} ({{terms}}) e o {{dpaLink}} ({{dpa}}) como {{signed}} em {{date}}.',
     ],
     readySubject: '{{place}} já está no infunion',
-    ready: ['Verificámos o seu local e o seu painel já está aberto.'],
+    ready: ['Verificámos a sua comunidade e o seu painel já está aberto.'],
     readyExisting:
-      'Entre com {{email}} como de costume: {{place}} já aparece na sua lista de locais.',
+      'Entre com {{email}} como de costume: {{place}} já aparece na sua lista de comunidades.',
     readyButton: 'Abrir o meu painel',
     questionSubject: 'Uma pergunta sobre {{place}}',
     questionIntro: 'Antes de abrir {{place}}, precisamos de mais uma coisa:',
@@ -592,9 +592,9 @@ export function withdrawalNoticeEmail(
     reviewUrl: string;
   },
 ): EmailMessage {
-  return build(to, `Withdrawal: ${r.placeName}`, 'A place withdrew', [
+  return build(to, `Withdrawal: ${r.placeName}`, 'A community withdrew', [
     details([
-      { label: 'Place', value: r.placeName },
+      { label: 'Community', value: r.placeName },
       { label: 'Email', value: r.email },
       {
         label: 'Status',
@@ -604,7 +604,7 @@ export function withdrawalNoticeEmail(
     ...(r.reason ? [para('Reason given:'), quote(r.reason)] : []),
     para(
       r.opened
-        ? 'The place was already open: close it and stop its plan within 2 working days.'
+        ? 'The community was already open: close it and stop its plan within 2 working days.'
         : 'The request had not been approved yet: nothing else to do.',
     ),
     button({ label: 'Open the request', url: r.reviewUrl }),
@@ -623,10 +623,10 @@ export function newRequestEmail(
     reviewUrl: string;
   },
 ): EmailMessage {
-  return build(to, `New place request: ${r.placeName}`, 'New place request', [
+  return build(to, `New community request: ${r.placeName}`, 'New community request', [
     para(`${r.placeName} asks to join infunion.`),
     details([
-      { label: 'Place', value: r.placeName },
+      { label: 'Community', value: r.placeName },
       { label: 'City', value: r.city },
       { label: 'Plan', value: planName(r.plan) },
       { label: 'Email', value: r.email },
