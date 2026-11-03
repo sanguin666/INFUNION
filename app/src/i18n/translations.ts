@@ -582,6 +582,34 @@ export type Translations = {
     deleteError: string;
     deleteManager: string;
   };
+  moderation: {
+    menuAria: string;
+    reportPost: string;
+    reportReply: string;
+    reportPrayer: string;
+    hidePerson: string;
+    hideAnonymous: string;
+    cancel: string;
+    reportHint: string;
+    reasonSpam: string;
+    reasonHateful: string;
+    reasonHarassment: string;
+    reasonInappropriate: string;
+    reasonOther: string;
+    send: string;
+    sending: string;
+    reported: string;
+    failed: string;
+    ownContent: string;
+    noAuthor: string;
+    blocked: string;
+    hiddenPeople: string;
+    hiddenPeopleHint: string;
+    hiddenEmpty: string;
+    showAgain: string;
+    someone: string;
+    termsLine: string;
+  };
   appUpdate: {
     ready: string;
     restart: string;
@@ -1156,6 +1184,34 @@ const en: Translations = {
     deleteConfirm: 'Delete for good',
     deleteError: 'Couldn’t delete your account. Please try again.',
     deleteManager: "You manage a community, so this account can’t be deleted here. Write to privacy@infunion.app.",
+  },
+  moderation: {
+    menuAria: "More options",
+    reportPost: "Report this post",
+    reportReply: "Report this reply",
+    reportPrayer: "Report this prayer request",
+    hidePerson: "Hide everything from {{name}}",
+    hideAnonymous: "Hide everything from this person",
+    cancel: "Cancel",
+    reportHint: "Only the team of the community sees your report. They look at it within 24 hours.",
+    reasonSpam: "Spam or advertising",
+    reasonHateful: "Insulting or hateful",
+    reasonHarassment: "Harassment or threats",
+    reasonInappropriate: "Inappropriate content",
+    reasonOther: "Something else",
+    send: "Send the report",
+    sending: "Sending…",
+    reported: "Thanks. You reported this, so it's hidden for you while the team looks at it within 24 hours.",
+    failed: "That didn't work. Try again.",
+    ownContent: "This is yours, so there's nothing to hide.",
+    noAuthor: "This was written without an account, so it can only be reported.",
+    blocked: "The team of this community has stopped you from posting here.",
+    hiddenPeople: "Hidden people",
+    hiddenPeopleHint: "What you hide is only hidden for you; the other person isn't told.",
+    hiddenEmpty: "You haven't hidden anyone.",
+    showAgain: "Show again",
+    someone: "Someone without a name",
+    termsLine: "No offensive or abusive content is tolerated. Members can report anything, the team reviews reports within 24 hours, and people who post such content can be blocked.",
   },
   appUpdate: {
     ready: 'A new version of infunion is ready.',
@@ -1732,6 +1788,34 @@ const es: Translations = {
     deleteError: 'No se pudo eliminar tu cuenta. Inténtalo de nuevo.',
     deleteManager: "Gestionas una comunidad, así que esta cuenta no se puede eliminar aquí. Escribe a privacy@infunion.app.",
   },
+  moderation: {
+    menuAria: "Más opciones",
+    reportPost: "Denunciar esta publicación",
+    reportReply: "Denunciar esta respuesta",
+    reportPrayer: "Denunciar esta petición de oración",
+    hidePerson: "Ocultar todo de {{name}}",
+    hideAnonymous: "Ocultar todo de esta persona",
+    cancel: "Cancelar",
+    reportHint: "Solo el equipo de la comunidad ve tu denuncia. La revisa en un plazo de 24 horas.",
+    reasonSpam: "Spam o publicidad",
+    reasonHateful: "Insultante u ofensivo",
+    reasonHarassment: "Acoso o amenazas",
+    reasonInappropriate: "Contenido inapropiado",
+    reasonOther: "Otra cosa",
+    send: "Enviar la denuncia",
+    sending: "Enviando…",
+    reported: "Gracias. Has denunciado esto, así que ya no lo ves mientras el equipo lo revisa en un plazo de 24 horas.",
+    failed: "No ha funcionado. Inténtalo de nuevo.",
+    ownContent: "Esto es tuyo, no hay nada que ocultar.",
+    noAuthor: "Esto se escribió sin cuenta, así que solo se puede denunciar.",
+    blocked: "El equipo de esta comunidad te ha impedido publicar aquí.",
+    hiddenPeople: "Personas ocultas",
+    hiddenPeopleHint: "Lo que ocultas solo se oculta para ti; la otra persona no lo sabe.",
+    hiddenEmpty: "No has ocultado a nadie.",
+    showAgain: "Volver a mostrar",
+    someone: "Alguien sin nombre",
+    termsLine: "No se tolera ningún contenido ofensivo o abusivo. Los miembros pueden denunciar cualquier cosa, el equipo revisa las denuncias en un plazo de 24 horas y quien publique ese contenido puede ser bloqueado.",
+  },
   appUpdate: {
     ready: 'Hay una nueva versión de infunion lista.',
     restart: 'Reiniciar',
@@ -2306,6 +2390,34 @@ const fr: Translations = {
     deleteConfirm: 'Supprimer définitivement',
     deleteError: 'Impossible de supprimer votre compte. Veuillez réessayer.',
     deleteManager: "Vous gérez une communauté : ce compte ne peut pas être supprimé ici. Écrivez à privacy@infunion.app.",
+  },
+  moderation: {
+    menuAria: "Plus d'options",
+    reportPost: "Signaler cette publication",
+    reportReply: "Signaler cette réponse",
+    reportPrayer: "Signaler cette intention de prière",
+    hidePerson: "Masquer tout de {{name}}",
+    hideAnonymous: "Masquer tout de cette personne",
+    cancel: "Annuler",
+    reportHint: "Seule l'équipe de la communauté voit votre signalement. Elle le regarde sous 24 heures.",
+    reasonSpam: "Spam ou publicité",
+    reasonHateful: "Insultant ou haineux",
+    reasonHarassment: "Harcèlement ou menaces",
+    reasonInappropriate: "Contenu inapproprié",
+    reasonOther: "Autre chose",
+    send: "Envoyer le signalement",
+    sending: "Envoi…",
+    reported: "Merci. Vous l'avez signalé : il est masqué pour vous pendant que l'équipe le regarde, sous 24 heures.",
+    failed: "Ça n'a pas marché. Réessayez.",
+    ownContent: "C'est à vous, il n'y a rien à masquer.",
+    noAuthor: "Ceci a été écrit sans compte : on peut seulement le signaler.",
+    blocked: "L'équipe de cette communauté vous a empêché de publier ici.",
+    hiddenPeople: "Personnes masquées",
+    hiddenPeopleHint: "Ce que vous masquez n'est masqué que pour vous ; l'autre personne n'est pas prévenue.",
+    hiddenEmpty: "Vous n'avez masqué personne.",
+    showAgain: "Afficher à nouveau",
+    someone: "Quelqu'un sans nom",
+    termsLine: "Aucun contenu offensant ou abusif n'est toléré. Les membres peuvent tout signaler, l'équipe regarde les signalements sous 24 heures, et les personnes qui publient ce contenu peuvent être bloquées.",
   },
   appUpdate: {
     ready: 'Une nouvelle version d’infunion est prête.',
@@ -2882,6 +2994,34 @@ const va: Translations = {
     deleteError: 'No s’ha pogut eliminar el teu compte. Torna-ho a provar.',
     deleteManager: "Gestiones una comunitat, per això este compte no es pot eliminar ací. Escriu a privacy@infunion.app.",
   },
+  moderation: {
+    menuAria: "Més opcions",
+    reportPost: "Denunciar esta publicació",
+    reportReply: "Denunciar esta resposta",
+    reportPrayer: "Denunciar esta petició d'oració",
+    hidePerson: "Amagar tot de {{name}}",
+    hideAnonymous: "Amagar tot d'esta persona",
+    cancel: "Cancel·lar",
+    reportHint: "Només l'equip de la comunitat veu la teua denúncia. La revisa en 24 hores.",
+    reasonSpam: "Spam o publicitat",
+    reasonHateful: "Insultant o ofensiu",
+    reasonHarassment: "Assetjament o amenaces",
+    reasonInappropriate: "Contingut inadequat",
+    reasonOther: "Una altra cosa",
+    send: "Enviar la denúncia",
+    sending: "S'està enviant…",
+    reported: "Gràcies. Ho has denunciat, així que ja no ho veus mentre l'equip ho revisa en 24 hores.",
+    failed: "No ha funcionat. Torna-ho a provar.",
+    ownContent: "Açò és teu, no hi ha res a amagar.",
+    noAuthor: "Açò es va escriure sense compte, així que només es pot denunciar.",
+    blocked: "L'equip d'esta comunitat t'ha impedit publicar ací.",
+    hiddenPeople: "Persones amagades",
+    hiddenPeopleHint: "El que amagues només s'amaga per a tu; l'altra persona no ho sap.",
+    hiddenEmpty: "No has amagat ningú.",
+    showAgain: "Tornar a mostrar",
+    someone: "Algú sense nom",
+    termsLine: "No es tolera cap contingut ofensiu o abusiu. Els membres poden denunciar qualsevol cosa, l'equip revisa les denúncies en 24 hores i qui publique eixe contingut pot ser bloquejat.",
+  },
   appUpdate: {
     ready: 'Hi ha una nova versió d’infunion a punt.',
     restart: 'Reinicia',
@@ -3456,6 +3596,34 @@ const ca: Translations = {
     deleteConfirm: 'Eliminar per sempre',
     deleteError: 'No s’ha pogut eliminar el teu compte. Torna-ho a provar.',
     deleteManager: "Gestiones una comunitat, per això aquest compte no es pot eliminar aquí. Escriu a privacy@infunion.app.",
+  },
+  moderation: {
+    menuAria: "Més opcions",
+    reportPost: "Denunciar aquesta publicació",
+    reportReply: "Denunciar aquesta resposta",
+    reportPrayer: "Denunciar aquesta petició d'oració",
+    hidePerson: "Amagar tot de {{name}}",
+    hideAnonymous: "Amagar tot d'aquesta persona",
+    cancel: "Cancel·lar",
+    reportHint: "Només l'equip de la comunitat veu la teva denúncia. La revisa en 24 hores.",
+    reasonSpam: "Spam o publicitat",
+    reasonHateful: "Insultant o ofensiu",
+    reasonHarassment: "Assetjament o amenaces",
+    reasonInappropriate: "Contingut inadequat",
+    reasonOther: "Una altra cosa",
+    send: "Enviar la denúncia",
+    sending: "S'està enviant…",
+    reported: "Gràcies. Ho has denunciat, així que ja no ho veus mentre l'equip ho revisa en 24 hores.",
+    failed: "No ha funcionat. Torna-ho a provar.",
+    ownContent: "Això és teu, no hi ha res a amagar.",
+    noAuthor: "Això es va escriure sense compte, així que només es pot denunciar.",
+    blocked: "L'equip d'aquesta comunitat t'ha impedit publicar aquí.",
+    hiddenPeople: "Persones amagades",
+    hiddenPeopleHint: "El que amagues només s'amaga per a tu; l'altra persona no ho sap.",
+    hiddenEmpty: "No has amagat ningú.",
+    showAgain: "Tornar a mostrar",
+    someone: "Algú sense nom",
+    termsLine: "No es tolera cap contingut ofensiu o abusiu. Els membres poden denunciar qualsevol cosa, l'equip revisa les denúncies en 24 hores i qui publiqui aquest contingut pot ser bloquejat.",
   },
   appUpdate: {
     ready: 'Hi ha una nova versió d’infunion a punt.',
@@ -4032,6 +4200,34 @@ const gl: Translations = {
     deleteError: 'Non se puido eliminar a túa conta. Téntao de novo.',
     deleteManager: "Xestionas unha comunidade, así que esta conta non se pode eliminar aquí. Escribe a privacy@infunion.app.",
   },
+  moderation: {
+    menuAria: "Máis opcións",
+    reportPost: "Denunciar esta publicación",
+    reportReply: "Denunciar esta resposta",
+    reportPrayer: "Denunciar esta petición de oración",
+    hidePerson: "Agochar todo de {{name}}",
+    hideAnonymous: "Agochar todo desta persoa",
+    cancel: "Cancelar",
+    reportHint: "Só o equipo da comunidade ve a túa denuncia. Revísaa nun prazo de 24 horas.",
+    reasonSpam: "Spam ou publicidade",
+    reasonHateful: "Insultante ou ofensivo",
+    reasonHarassment: "Acoso ou ameazas",
+    reasonInappropriate: "Contido inapropiado",
+    reasonOther: "Outra cousa",
+    send: "Enviar a denuncia",
+    sending: "Enviando…",
+    reported: "Grazas. Denunciaches isto, así que xa non o ves mentres o equipo o revisa nun prazo de 24 horas.",
+    failed: "Non funcionou. Téntao de novo.",
+    ownContent: "Isto é teu, non hai nada que agochar.",
+    noAuthor: "Isto escribiuse sen conta, así que só se pode denunciar.",
+    blocked: "O equipo desta comunidade impediuche publicar aquí.",
+    hiddenPeople: "Persoas agochadas",
+    hiddenPeopleHint: "O que agochas só se agocha para ti; a outra persoa non o sabe.",
+    hiddenEmpty: "Non agochaches a ninguén.",
+    showAgain: "Volver mostrar",
+    someone: "Alguén sen nome",
+    termsLine: "Non se tolera ningún contido ofensivo ou abusivo. Os membros poden denunciar calquera cousa, o equipo revisa as denuncias nun prazo de 24 horas e quen publique ese contido pode ser bloqueado.",
+  },
   appUpdate: {
     ready: 'Hai unha nova versión de infunion lista.',
     restart: 'Reiniciar',
@@ -4607,6 +4803,34 @@ const pt: Translations = {
     deleteConfirm: 'Eliminar para sempre',
     deleteError: 'Não foi possível eliminar a sua conta. Tente novamente.',
     deleteManager: "Gere uma comunidade, por isso esta conta não pode ser eliminada aqui. Escreva para privacy@infunion.app.",
+  },
+  moderation: {
+    menuAria: "Mais opções",
+    reportPost: "Denunciar esta publicação",
+    reportReply: "Denunciar esta resposta",
+    reportPrayer: "Denunciar este pedido de oração",
+    hidePerson: "Ocultar tudo de {{name}}",
+    hideAnonymous: "Ocultar tudo desta pessoa",
+    cancel: "Cancelar",
+    reportHint: "Só a equipa da comunidade vê a sua denúncia. Ela vê-a no prazo de 24 horas.",
+    reasonSpam: "Spam ou publicidade",
+    reasonHateful: "Insultuoso ou de ódio",
+    reasonHarassment: "Assédio ou ameaças",
+    reasonInappropriate: "Conteúdo inapropriado",
+    reasonOther: "Outra coisa",
+    send: "Enviar a denúncia",
+    sending: "A enviar…",
+    reported: "Obrigado. Denunciou isto, por isso fica oculto para si enquanto a equipa o vê, no prazo de 24 horas.",
+    failed: "Não funcionou. Tente de novo.",
+    ownContent: "Isto é seu, não há nada a ocultar.",
+    noAuthor: "Isto foi escrito sem conta, por isso só pode ser denunciado.",
+    blocked: "A equipa desta comunidade impediu-o de publicar aqui.",
+    hiddenPeople: "Pessoas ocultas",
+    hiddenPeopleHint: "O que oculta só fica oculto para si; a outra pessoa não é avisada.",
+    hiddenEmpty: "Não ocultou ninguém.",
+    showAgain: "Mostrar de novo",
+    someone: "Alguém sem nome",
+    termsLine: "Não é tolerado nenhum conteúdo ofensivo ou abusivo. Os membros podem denunciar tudo, a equipa vê as denúncias no prazo de 24 horas e quem publicar esse conteúdo pode ser bloqueado.",
   },
   appUpdate: {
     ready: 'Está pronta uma nova versão da infunion.',
