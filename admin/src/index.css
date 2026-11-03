@@ -443,6 +443,72 @@ a {
   padding-bottom: 16px;
 }
 
+/* Requests: the ones that need a reply pinned on top (Seb, 3 Nov 2026),
+   with a yellow dot and a yellow "Needs a reply" label; "Everything
+   else" below a small heading. */
+.request-row-main {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.request-row-waiting {
+  align-items: flex-start;
+}
+
+.request-dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: #f9b800;
+}
+
+.request-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin: 6px 0 0;
+}
+
+.request-chip-waiting {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #6b4f00;
+  background: #fff3cc;
+}
+
+:root[data-theme='dark'] .request-chip-waiting {
+  color: #ffd866;
+  background: #3d3214;
+}
+
+.request-chip-reason {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary-strong);
+}
+
+.main .card-list > .request-divider {
+  max-width: none;
+  margin: 0;
+  padding: 16px 0 4px;
+  border-top: 1px solid var(--color-card-border);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.request-divider + .card-row {
+  border-top: none;
+}
+
 /* ---------- Forms: one white block, one row per field ---------- */
 
 /* The label sits small, top-left inside its row, above the value, so
