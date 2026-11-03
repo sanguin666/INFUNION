@@ -76,7 +76,7 @@ describe('code SMS', () => {
     const { codeSms } = await import('./sms/code-sms.js');
     expect(codeSms('123456', 'es')).toBe('123456 es tu código de infunion. Válido durante 10 minutos.');
     expect(codeSms('123456', 'xx')).toBe('123456 is your infunion code. It works for 10 minutes.');
-    for (const lang of ['en', 'es', 'fr', 'va', 'gl', 'pt']) {
+    for (const lang of ['en', 'es', 'fr', 'va', 'ca', 'gl', 'pt']) {
       expect(codeSms('123456', lang).length).toBeLessThanOrEqual(70);
     }
   });

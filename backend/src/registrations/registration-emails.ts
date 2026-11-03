@@ -14,7 +14,7 @@ import {
 } from '../common/email/email-layout.js';
 
 /**
- * The emails a registration request sends, in the six languages, written
+ * The emails a registration request sends, in the seven languages, written
  * to the person who registered their place. `{{name}}` style fields are
  * filled by `fill`. Plain text first; the HTML is the same text in
  * paragraphs, so both always say the same thing.
@@ -209,6 +209,46 @@ const TEXTS: Record<Language, Texts> = {
     declinedOutro: 'Si creus que és un error, escriu a {{contact}}.',
     withdrawInfo:
       'Pots desistir d’este contracte en els 14 dies següents a la nostra aprovació, o en qualsevol moment abans, sense donar cap motiu.',
+    withdrawnSubject: 'Has desistit de la sol·licitud de {{place}}',
+    withdrawn:
+      'Hem rebut el teu desistiment del contracte de {{place}} el {{date}}. No has de pagar res.',
+    withdrawnOpen:
+      'Tanquem el panell de {{place}} i parem el seu pla en 2 dies laborables. Les dades dels membres s’esborren com diu l’Acord de tractament de dades.',
+    hello: 'Hola, {{first}}:',
+    signature: 'L’equip d’infunion',
+  },
+  [Language.CA]: {
+    receivedHeading: 'Sol·licitud rebuda',
+    readyHeading: 'El teu lloc està llest',
+    readyLogin: 'Entra al teu panell amb:',
+    emailLabel: 'Correu',
+    passwordLabel: 'Contrasenya provisional',
+    readyChange: 'Canvia la contrasenya al teu perfil després d’entrar.',
+    questionHeading: 'Una cosa més',
+    declinedHeading: 'Sobre la teva sol·licitud',
+    withdrawnHeading: 'Desistiment confirmat',
+    withdrawLink: 'Desistir del contracte',
+    termsLabel: 'Condicions del servei per a llocs',
+    dpaLabel: 'Acord de tractament de dades',
+    receivedSubject: 'Hem rebut la sol·licitud de {{place}}',
+    received: [
+      'Gràcies per registrar {{place}} en infunion.',
+      'Revisem cada lloc abans d’obrir-lo, normalment en 2 dies laborables. És possible que et cridem o t’escrivim.',
+      'Vas signar les {{termsLink}} ({{terms}}) i l’{{dpaLink}} ({{dpa}}) com a {{signed}} el {{date}}.',
+    ],
+    readySubject: '{{place}} ja està en infunion',
+    ready: ['Hem revisat el teu lloc i el teu panell ja està obert.'],
+    readyExisting:
+      'Entra amb {{email}} com sempre: {{place}} ja apareix a la teva llista de llocs.',
+    readyButton: 'Obrir el meu panell',
+    questionSubject: 'Una pregunta sobre {{place}}',
+    questionIntro: 'Abans d’obrir {{place}}, necessitem una cosa més:',
+    questionOutro: 'Només cal que escriguis a {{contact}}.',
+    declinedSubject: 'La teva sol·licitud per a {{place}}',
+    declinedIntro: 'Ho sentim, no podem obrir {{place}} en infunion:',
+    declinedOutro: 'Si creus que és un error, escriu a {{contact}}.',
+    withdrawInfo:
+      'Pots desistir d’aquest contracte durant els 14 dies següents a la nostra aprovació, o en qualsevol moment abans, sense donar cap motiu.',
     withdrawnSubject: 'Has desistit de la sol·licitud de {{place}}',
     withdrawn:
       'Hem rebut el teu desistiment del contracte de {{place}} el {{date}}. No has de pagar res.',

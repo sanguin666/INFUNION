@@ -1,6 +1,6 @@
 export type PoiType = 'church' | 'mosque' | 'synagogue' | 'other_worship' | 'association' | 'culture';
 
-export type SupportedLanguage = 'en' | 'es' | 'va' | 'gl' | 'pt' | 'fr';
+export type SupportedLanguage = 'en' | 'es' | 'ca' | 'va' | 'gl' | 'pt' | 'fr';
 
 export type Poi = {
   id: string;

@@ -43,6 +43,7 @@ import { MadeWith } from '../components/MadeWith';
 const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
   en: 'English',
   es: 'Español',
+  ca: 'Català',
   va: 'Valencià',
   gl: 'Galego',
   pt: 'Português',
