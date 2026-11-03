@@ -255,6 +255,8 @@ export type Donation = {
   donorName: string | null;
   purpose: DonationPurpose;
   campaign: { id: string; title: string } | null;
+  // The giver's note to the team, on a gift to where it is most needed.
+  message: string | null;
   // A monthly gift: the first payment and every later month alike.
   recurring: boolean;
   createdAt: string;
