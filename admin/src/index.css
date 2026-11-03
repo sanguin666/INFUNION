@@ -390,14 +390,6 @@ a {
   font-size: 16px;
 }
 
-/* Forms keep a comfortable width: one field per row reads badly once
-   it spans a whole wide screen. */
-.main form.card,
-.main .card.form,
-.main .card:has(> .form) {
-  max-width: 960px;
-}
-
 .card-title {
   font-weight: 700;
   font-size: 19px;
