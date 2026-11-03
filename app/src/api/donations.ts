@@ -66,6 +66,8 @@ export type CheckoutBody = {
   donorName?: string;
   purpose?: DonationPurpose;
   campaignId?: string;
+  // A note to the team, on a gift to where it is most needed only.
+  message?: string;
   // Monthly; needs the giver to be signed in.
   recurring?: boolean;
   wantsReceipt?: boolean;

@@ -142,8 +142,11 @@ const PRODUCT_NAMES: Record<Language, Record<'gift' | 'monthly' | 'collection' |
   },
 };
 
-function productName(poi: Poi, purpose: DonationPurpose, recurring: boolean): string {
+function productName(poi: Poi, purpose: DonationPurpose, recurring: boolean, projectTitle: string | null): string {
   const names = PRODUCT_NAMES[poi.language] ?? PRODUCT_NAMES[Language.EN];
+  // A project gift names the project, so the payer and the team's Stripe
+  // dashboard both read where the money went ("New roof — St Mary's").
+  if (projectTitle) return `${projectTitle} — ${poi.name}`;
   const key =
     purpose === DonationPurpose.MASS_INTENTION
       ? 'intention'
@@ -267,12 +270,17 @@ export class DonationsService {
       if (!campaign) throw new BadRequestException('This campaign is not open for gifts');
     }
 
+    // A note only goes with a gift to where it is most needed: a project
+    // already says what the money is for.
+    const message = purpose === DonationPurpose.GENERAL ? dto.message?.trim() || null : null;
+
     const fields: Partial<Donation> = {
       amount: dto.amount,
       donorName: dto.donorName,
       poi,
       purpose,
       campaign,
+      message,
       donor: options.donorUserId ? ({ id: options.donorUserId } as User) : null,
       recurring,
       wantsReceipt: dto.wantsReceipt === true,
@@ -305,9 +313,13 @@ export class DonationsService {
     try {
       session = await this.stripeService.createCheckoutSession({
         amount: dto.amount,
-        productName: productName(poi, purpose, recurring),
+        productName: productName(poi, purpose, recurring, campaign?.title ?? null),
+        description: message,
         donationId: donation.id,
         poiId: poi.id,
+        purpose,
+        campaign: campaign ? { id: campaign.id, title: campaign.title } : null,
+        message,
         successUrl: `${returnUrlBase}/donations/return?status=success`,
         cancelUrl: `${returnUrlBase}/donations/return?status=cancelled`,
         recurring,
