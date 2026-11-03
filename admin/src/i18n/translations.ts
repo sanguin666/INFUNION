@@ -54,6 +54,7 @@ export type Translations = {
     eventsNoPast: string;
     homeBadges: string;
     homeSections: string;
+    homeMenu: string;
     newEvent: string;
     newCampaign: string;
     addMessage: string;
@@ -1076,6 +1077,7 @@ const en: Translations = {
     eventsNoPast: "No past events.",
     homeBadges: "Badges",
     homeSections: "Page sections",
+    homeMenu: "Bottom menu",
     newEvent: "+ New event",
     newCampaign: "+ New campaign",
     addMessage: "+ Add a message",
@@ -1361,7 +1363,7 @@ const en: Translations = {
   },
   modules: {
     title: 'Settings',
-    subtitle: "This community's public info, language and app menu.",
+    subtitle: "This community's public info, language, colour and address.",
     modulesSectionTitle: 'Active modules',
     activate: 'Activate',
     deactivate: 'Deactivate',
@@ -1555,8 +1557,8 @@ const en: Translations = {
   menuOrder: {
     title: 'Bottom menu order',
     subtitle:
-      'The app gives the first modules on this list a button of their own at the bottom of the screen and puts the rest under More. Put what your people use most at the top.',
-    onBar: 'On the menu',
+      "The buttons at the bottom of your community's app. Home is always first and More always last. The first three modules on this list get a button between them; the others go under More.",
+    onBar: "In the bottom menu",
     underMore: 'Under More',
     insideEvents: 'Inside Events',
     moveUp: 'Move up',
@@ -2099,6 +2101,7 @@ const es: Translations = {
     eventsNoPast: "No hay eventos pasados.",
     homeBadges: "Insignias",
     homeSections: "Secciones de la página",
+    homeMenu: "Menú inferior",
     newEvent: "+ Nuevo evento",
     newCampaign: "+ Nueva campaña",
     addMessage: "+ Añadir un mensaje",
@@ -2384,7 +2387,7 @@ const es: Translations = {
   },
   modules: {
     title: 'Configuración',
-    subtitle: 'La información pública, el idioma y el menú de la app de esta comunidad.',
+    subtitle: 'La información pública, el idioma, el color y la dirección de esta comunidad.',
     modulesSectionTitle: 'Módulos activos',
     activate: 'Activar',
     deactivate: 'Desactivar',
@@ -2578,8 +2581,8 @@ const es: Translations = {
   menuOrder: {
     title: 'Orden del menú inferior',
     subtitle:
-      'La app da un botón propio a los primeros módulos de esta lista, en la parte inferior de la pantalla, y pone el resto en Más. Coloca arriba lo que más usa tu gente.',
-    onBar: 'En el menú',
+      "Los botones de la parte inferior de la app de tu comunidad. Inicio va siempre primero y Más siempre al final. Los tres primeros módulos de esta lista tienen un botón entre ellos; los demás van en Más.",
+    onBar: "En el menú inferior",
     underMore: 'En Más',
     insideEvents: 'Dentro de Eventos',
     moveUp: 'Subir',
@@ -3122,6 +3125,7 @@ const fr: Translations = {
     eventsNoPast: "Aucun événement passé.",
     homeBadges: "Badges",
     homeSections: "Sections de la page",
+    homeMenu: "Menu du bas",
     newEvent: "+ Nouvel événement",
     newCampaign: "+ Nouvelle campagne",
     addMessage: "+ Ajouter un message",
@@ -3407,7 +3411,7 @@ const fr: Translations = {
   },
   modules: {
     title: 'Paramètres',
-    subtitle: "Les informations publiques, la langue et le menu de l’application de cette communauté.",
+    subtitle: "Les informations publiques, la langue, la couleur et l’adresse de cette communauté.",
     modulesSectionTitle: 'Modules actifs',
     activate: 'Activer',
     deactivate: 'Désactiver',
@@ -3601,8 +3605,8 @@ const fr: Translations = {
   menuOrder: {
     title: 'Ordre du menu du bas',
     subtitle:
-      "L'app donne un bouton à part aux premiers modules de cette liste, en bas de l'écran, et met les autres dans Plus. Placez en haut ce que vos membres utilisent le plus.",
-    onBar: 'Dans le menu',
+      "Les boutons en bas de l’application de votre communauté. Accueil est toujours en premier et Plus toujours en dernier. Les trois premiers modules de cette liste ont un bouton entre les deux ; les autres vont dans Plus.",
+    onBar: "Dans le menu du bas",
     underMore: 'Dans Plus',
     insideEvents: 'Dans Agenda',
     moveUp: 'Monter',
@@ -4145,6 +4149,7 @@ const va: Translations = {
     eventsNoPast: "No hi ha esdeveniments passats.",
     homeBadges: "Distintius",
     homeSections: "Seccions de la pàgina",
+    homeMenu: "Menú inferior",
     newEvent: "+ Nou esdeveniment",
     newCampaign: "+ Nova campanya",
     addMessage: "+ Afegir un missatge",
@@ -4430,7 +4435,7 @@ const va: Translations = {
   },
   modules: {
     title: 'Configuració',
-    subtitle: 'La informació pública, l’idioma i el menú de l’aplicació d’esta comunitat.',
+    subtitle: 'La informació pública, l’idioma, el color i l’adreça d’esta comunitat.',
     modulesSectionTitle: 'Mòduls actius',
     activate: 'Activar',
     deactivate: 'Desactivar',
@@ -4624,8 +4629,8 @@ const va: Translations = {
   menuOrder: {
     title: 'Orde del menú inferior',
     subtitle:
-      'L’aplicació dona un botó propi als primers mòduls d’esta llista, en la part de baix de la pantalla, i posa la resta en Més. Posa dalt el que més usa la teua gent.',
-    onBar: 'En el menú',
+      "Els botons de la part de baix de l’aplicació de la teua comunitat. Inici va sempre primer i Més sempre al final. Els tres primers mòduls d’esta llista tenen un botó entre ells; la resta van en Més.",
+    onBar: "En el menú inferior",
     underMore: 'En Més',
     insideEvents: 'Dins d’Esdeveniments',
     moveUp: 'Pujar',
@@ -5168,6 +5173,7 @@ const ca: Translations = {
     eventsNoPast: "No hi ha esdeveniments passats.",
     homeBadges: "Distintius",
     homeSections: "Seccions de la pàgina",
+    homeMenu: "Menú inferior",
     newEvent: "+ Nou esdeveniment",
     newCampaign: "+ Nova campanya",
     addMessage: "+ Afegir un missatge",
@@ -5453,7 +5459,7 @@ const ca: Translations = {
   },
   modules: {
     title: 'Configuració',
-    subtitle: 'La informació pública, l’idioma i el menú de l’aplicació d’aquesta comunitat.',
+    subtitle: 'La informació pública, l’idioma, el color i l’adreça d’aquesta comunitat.',
     modulesSectionTitle: 'Mòduls actius',
     activate: 'Activar',
     deactivate: 'Desactivar',
@@ -5647,8 +5653,8 @@ const ca: Translations = {
   menuOrder: {
     title: 'Ordre del menú inferior',
     subtitle:
-      'L’aplicació dona un botó propi als primers mòduls d’aquesta llista, a la part de baix de la pantalla, i posa la resta en Més. Posa dalt el que més usa la teva gent.',
-    onBar: 'Al menú',
+      "Els botons de la part de baix de l’aplicació de la teva comunitat. Inici va sempre primer i Més sempre al final. Els tres primers mòduls d’aquesta llista tenen un botó entre ells; la resta van en Més.",
+    onBar: "Al menú inferior",
     underMore: 'En Més',
     insideEvents: 'Dins d’Esdeveniments',
     moveUp: 'Pujar',
@@ -6191,6 +6197,7 @@ const gl: Translations = {
     eventsNoPast: "Non hai eventos pasados.",
     homeBadges: "Insignias",
     homeSections: "Seccións da páxina",
+    homeMenu: "Menú inferior",
     newEvent: "+ Novo evento",
     newCampaign: "+ Nova campaña",
     addMessage: "+ Engadir unha mensaxe",
@@ -6476,7 +6483,7 @@ const gl: Translations = {
   },
   modules: {
     title: 'Configuración',
-    subtitle: 'A información pública, o idioma e o menú da app desta comunidade.',
+    subtitle: 'A información pública, o idioma, a cor e o enderezo desta comunidade.',
     modulesSectionTitle: 'Módulos activos',
     activate: 'Activar',
     deactivate: 'Desactivar',
@@ -6670,8 +6677,8 @@ const gl: Translations = {
   menuOrder: {
     title: 'Orde do menú inferior',
     subtitle:
-      'A app dá un botón propio aos primeiros módulos desta lista, na parte inferior da pantalla, e pon o resto en Máis. Coloca arriba o que máis usa a túa xente.',
-    onBar: 'No menú',
+      "Os botóns da parte inferior da app da túa comunidade. Inicio vai sempre primeiro e Máis sempre ao final. Os tres primeiros módulos desta lista teñen un botón entre eles; os demais van en Máis.",
+    onBar: "No menú inferior",
     underMore: 'En Máis',
     insideEvents: 'Dentro de Eventos',
     moveUp: 'Subir',
@@ -7214,6 +7221,7 @@ const pt: Translations = {
     eventsNoPast: "Não há eventos passados.",
     homeBadges: "Distintivos",
     homeSections: "Secções da página",
+    homeMenu: "Menu inferior",
     newEvent: "+ Novo evento",
     newCampaign: "+ Nova campanha",
     addMessage: "+ Adicionar uma mensagem",
@@ -7499,7 +7507,7 @@ const pt: Translations = {
   },
   modules: {
     title: 'Definições',
-    subtitle: 'A informação pública, o idioma e o menu da app desta comunidade.',
+    subtitle: 'A informação pública, o idioma, a cor e a morada desta comunidade.',
     modulesSectionTitle: 'Módulos ativos',
     activate: 'Ativar',
     deactivate: 'Desativar',
@@ -7693,8 +7701,8 @@ const pt: Translations = {
   menuOrder: {
     title: 'Ordem do menu inferior',
     subtitle:
-      'A app dá um botão próprio aos primeiros módulos desta lista, na parte inferior do ecrã, e põe os restantes em Mais. Coloque no topo o que a sua gente mais usa.',
-    onBar: 'No menu',
+      "Os botões na parte inferior da app da sua comunidade. Início fica sempre em primeiro e Mais sempre em último. Os três primeiros módulos desta lista têm um botão entre eles; os restantes ficam em Mais.",
+    onBar: "No menu inferior",
     underMore: 'Em Mais',
     insideEvents: 'Dentro de Eventos',
     moveUp: 'Subir',

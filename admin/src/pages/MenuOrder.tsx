@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useI18n } from '../i18n/I18nContext';
+import { updatePoiMenuOrder } from '../api/poiSettings';
 import type { ActiveModule, ModuleType, Poi } from '../api/types';
 
 // Kept in step with the app's PoiShell: Home takes the first of five
@@ -60,7 +62,9 @@ export function menuLayout(order: ModuleType[]): { bar: ModuleType[]; placement:
 
 /**
  * The bottom menu's modules as a numbered list with up and down arrows,
- * each saying where it will land in the app.
+ * in two groups: the ones that get a button of their own in the app, then
+ * the ones under More. The livestream says when the app shows it inside
+ * Events instead.
  */
 export function MenuOrderRows({
   order,
@@ -70,12 +74,7 @@ export function MenuOrderRows({
   onMove: (index: number, delta: number) => void;
 }) {
   const { t } = useI18n();
-  const { placement } = menuLayout(order);
-  const label: Record<MenuPlacement, string> = {
-    bar: t('menuOrder.onBar'),
-    more: t('menuOrder.underMore'),
-    events: t('menuOrder.insideEvents'),
-  };
+  const { bar, placement } = menuLayout(order);
 
   if (order.length === 0) {
     return (
@@ -85,44 +84,124 @@ export function MenuOrderRows({
     );
   }
 
+  function row(type: ModuleType, index: number) {
+    return (
+      <li key={type} className="card-row">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <span style={{ fontWeight: 700, minWidth: 20, textAlign: 'right' }}>{index + 1}</span>
+          <div>
+            <p className="card-title" style={{ margin: 0 }}>
+              {moduleName(type, t)}
+            </p>
+            {placement(type) === 'events' && <span className="muted">{t('menuOrder.insideEvents')}</span>}
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            type="button"
+            className="btn btn-icon"
+            aria-label={t('menuOrder.moveUp')}
+            disabled={index === 0}
+            onClick={() => onMove(index, -1)}
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            className="btn btn-icon"
+            aria-label={t('menuOrder.moveDown')}
+            disabled={index === order.length - 1}
+            onClick={() => onMove(index, 1)}
+          >
+            ↓
+          </button>
+        </div>
+      </li>
+    );
+  }
+
+  // The bar always takes the head of the list (menuLayout), so the
+  // groups are a plain split of it.
+  const below = order.slice(bar.length);
   return (
-    <ol className="card-rows">
-      {order.map((type, index) => (
-        <li key={type} className="card-row">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <span style={{ fontWeight: 700, minWidth: 20, textAlign: 'right' }}>{index + 1}</span>
-            <div>
-              <p className="card-title" style={{ margin: 0 }}>
-                {moduleName(type, t)}
-              </p>
-              <span className={`badge ${placement(type) === 'bar' ? 'badge-active' : ''}`}>
-                {label[placement(type)]}
-              </span>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              type="button"
-              className="btn btn-icon"
-              aria-label={t('menuOrder.moveUp')}
-              disabled={index === 0}
-              onClick={() => onMove(index, -1)}
-            >
-              ↑
-            </button>
-            <button
-              type="button"
-              className="btn btn-icon"
-              aria-label={t('menuOrder.moveDown')}
-              disabled={index === order.length - 1}
-              onClick={() => onMove(index, 1)}
-            >
-              ↓
-            </button>
-          </div>
-        </li>
-      ))}
-    </ol>
+    <>
+      <p className="list-heading">{t('menuOrder.onBar')}</p>
+      <ol className="card-rows list-group">{bar.map((type, index) => row(type, index))}</ol>
+      {below.length > 0 && (
+        <>
+          <p className="list-heading">{t('menuOrder.underMore')}</p>
+          <ol className="card-rows list-group">{below.map((type, index) => row(type, bar.length + index))}</ol>
+        </>
+      )}
+    </>
+  );
+}
+
+/**
+ * Home page > Bottom menu (Seb, 3 Nov 2026): the order of the buttons at
+ * the bottom of the community's app, beside the live phone, which shows
+ * the order as it stands here before it is saved.
+ */
+export function BottomMenuPanel({
+  poi,
+  modules,
+  order,
+  onChange,
+  onSaved,
+}: {
+  poi: Poi;
+  modules: ActiveModule[];
+  order: ModuleType[];
+  onChange: (order: ModuleType[]) => void;
+  onSaved: (poi: Poi) => void;
+}) {
+  const { t } = useI18n();
+  const savedOrder = initialMenuOrder(poi, modules);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const dirty = order.join(',') !== savedOrder.join(',');
+
+  function move(index: number, delta: number) {
+    const target = index + delta;
+    if (target < 0 || target >= order.length) return;
+    const next = [...order];
+    [next[index], next[target]] = [next[target], next[index]];
+    setSaved(false);
+    onChange(next);
+  }
+
+  async function save() {
+    setSaving(true);
+    setSaved(false);
+    setError(null);
+    try {
+      onSaved(await updatePoiMenuOrder(poi.id, order));
+      setSaved(true);
+    } catch {
+      setError(t('menuOrder.saveError'));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="card">
+        <p className="card-title">{t('menuOrder.title')}</p>
+        <p className="muted" style={{ marginTop: 4 }}>
+          {t('menuOrder.subtitle')}
+        </p>
+        <MenuOrderRows order={order} onMove={move} />
+      </div>
+      <div className="card-actions">
+        <button type="button" className="btn btn-primary" disabled={saving || !dirty} onClick={save}>
+          {saving ? t('menuOrder.saving') : t('menuOrder.save')}
+        </button>
+        {saved && !dirty && <span className="muted">{t('menuOrder.saved')}</span>}
+      </div>
+      {error && <p className="error-text">{error}</p>}
+    </>
   );
 }
 
