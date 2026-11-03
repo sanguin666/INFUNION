@@ -45,7 +45,7 @@ export function ConsentScreen() {
   return (
     <Screen scroll>
       <View style={styles.brand}>
-        <Lockup height={48} />
+        <Lockup height={40} />
       </View>
       <AccessibleText variant="title">{t('privacy.termsTitle')}</AccessibleText>
       <AccessibleText variant="body" color={colors.textMuted}>

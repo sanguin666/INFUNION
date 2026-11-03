@@ -1,28 +1,33 @@
-import { WORDMARK_HEIGHT, WORDMARK_PARTS, WORDMARK_TRANSFORM, WORDMARK_UNDERLINE, WORDMARK_WIDTH } from './brandArt';
+import { LOCKUP_HEIGHT, LOCKUP_WIDTH, WORDMARK_LEFT, WORDMARK_PARTS, WORDMARK_RIGHT, WORDMARK_UNDERLINE } from './brandArt';
 
-// The infunion logo (Seb, 26 Oct 2026): a purple and a yellow ring linked
-// like a chain, and the lowercase wordmark with "fun" in purple. Fixed
-// brand colours, never themed. Mirrored in app/src/components/Logo.tsx.
+// The infunion logo, from Seb's logo kit (3 Nov 2026): a purple and a
+// yellow circle linked like a chain, and the lowercase Montserrat Bold
+// wordmark with "fun" in purple and a rounded yellow line under "union".
+// Fixed brand colours, never themed. Mirrored in app/src/components/Logo.tsx.
 export const LOGO_PURPLE = '#6C4FD9';
-// On a dark background (Seb, 30 Oct 2026) the purple ring and "fun" stay
-// violet, a brighter one so they read on the dark navy.
-export const LOGO_PURPLE_ON_DARK = '#8B6CF2';
+// The kit's light purple, only on dark backgrounds.
+export const LOGO_PURPLE_ON_DARK = '#A895F2';
 export const LOGO_YELLOW = '#F9B800';
 export const LOGO_INK = '#1D1A2D';
 
-// One ring: a rounded oval, flat along the top and bottom, centred on 0,0.
-// The mark is 120 × 70 with the rings centred at x 38 and 81, y 35.
-export const LOGO_RING = 'M-7 -29 L7 -29 A25 29 0 0 1 32 0 A25 29 0 0 1 7 29 L-7 29 A25 29 0 0 1 -32 0 A25 29 0 0 1 -7 -29 Z';
-const RING_STROKE = 10.5;
+// The rings, in the kit's lockup drawing: two circles of radius 48.6 and
+// stroke 15.6, centred at x 56.4 and 126.86, y 56.4.
+export const RING_LEFT_X = 56.4;
+export const RING_RIGHT_X = 126.86;
+const RING_Y = 56.4;
+const RING_R = 48.6;
+const RING_STROKE = 15.6;
+/** The rings alone are this wide (and LOCKUP_HEIGHT high). */
+export const MARK_WIDTH = 183.26;
 
 /**
- * The two rings as SVG children. The yellow ring is drawn in two halves,
- * the lower one under the purple ring and the upper one over it, so the
- * rings pass over and under each other where they cross.
+ * The two rings as SVG children. The purple ring is drawn under the yellow
+ * one, then its lower half again on top, so the rings pass over and under
+ * each other where they cross.
  */
 export function Rings({
-  purpleX = 38,
-  yellowX = 81,
+  purpleX = RING_LEFT_X,
+  yellowX = RING_RIGHT_X,
   opacity = 1,
   onDark = false,
   idPrefix = 'logo',
@@ -33,59 +38,61 @@ export function Rings({
   onDark?: boolean;
   idPrefix?: string;
 }) {
-  const yellow = (
-    <path d={LOGO_RING} fill="none" stroke={LOGO_YELLOW} strokeWidth={RING_STROKE} transform={`translate(${yellowX} 35)`} />
-  );
+  const purple = onDark ? LOGO_PURPLE_ON_DARK : LOGO_PURPLE;
   return (
     <g opacity={opacity}>
       <defs>
         <clipPath id={`${idPrefix}-low`}>
-          <rect x={-200} y={34} width={600} height={100} />
-        </clipPath>
-        <clipPath id={`${idPrefix}-high`}>
-          <rect x={-200} y={-100} width={600} height={136} />
+          <rect x={-400} y={RING_Y} width={1200} height={200} />
         </clipPath>
       </defs>
-      <g clipPath={`url(#${idPrefix}-low)`}>{yellow}</g>
-      <path
-        d={LOGO_RING}
+      <circle cx={purpleX} cy={RING_Y} r={RING_R} fill="none" stroke={purple} strokeWidth={RING_STROKE} />
+      <circle cx={yellowX} cy={RING_Y} r={RING_R} fill="none" stroke={LOGO_YELLOW} strokeWidth={RING_STROKE} />
+      <circle
+        cx={purpleX}
+        cy={RING_Y}
+        r={RING_R}
         fill="none"
-        stroke={onDark ? LOGO_PURPLE_ON_DARK : LOGO_PURPLE}
+        stroke={purple}
         strokeWidth={RING_STROKE}
-        transform={`translate(${purpleX} 35)`}
+        clipPath={`url(#${idPrefix}-low)`}
       />
-      <g clipPath={`url(#${idPrefix}-high)`}>{yellow}</g>
     </g>
   );
 }
 
-/** The rings alone. `size` is the height; the mark is 12:7. */
+/** The rings alone. `size` is the height. */
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (
-    <svg width={(size * 120) / 70} height={size} viewBox="0 0 120 70" role="img" aria-label="infunion">
+    <svg
+      width={(size * MARK_WIDTH) / LOCKUP_HEIGHT}
+      height={size}
+      viewBox={`0 0 ${MARK_WIDTH} ${LOCKUP_HEIGHT}`}
+      role="img"
+      aria-label="infunion"
+    >
       <Rings idPrefix={`mark${size}`} />
     </svg>
   );
 }
 
-/** The wordmark as children of a 258 × 80 drawing; `dot` and `underline` (0–1) animate it. */
+/** The wordmark as children of the lockup drawing; `dot` and `underline` (0–1) animate it. */
 export function WordmarkArt({ onDark = false, dot = 1, underline = 1 }: { onDark?: boolean; dot?: number; underline?: number }) {
   // The letters follow the theme through --logo-ink / --logo-fun (lighter
   // in dark mode, see index.css); the brand colours are the fallback.
   const fill = {
     ink: onDark ? '#FFFFFF' : `var(--logo-ink, ${LOGO_INK})`,
     purple: onDark ? LOGO_PURPLE_ON_DARK : `var(--logo-fun, ${LOGO_PURPLE})`,
-    yellow: LOGO_YELLOW,
   };
   return (
-    <g transform={WORDMARK_TRANSFORM}>
+    <g>
       {WORDMARK_PARTS.map((part, i) => (
         <path
           key={i}
           d={part.d}
           style={{ fill: fill[part.role] }}
           opacity={i === 1 && dot <= 0 ? 0 : 1}
-          transform={`translate(${part.x} ${i === 1 ? 500 * (1 - dot) : 0})`}
+          transform={i === 1 ? `translate(0 ${-42 * (1 - dot)})` : undefined}
         />
       ))}
       <rect
@@ -93,6 +100,7 @@ export function WordmarkArt({ onDark = false, dot = 1, underline = 1 }: { onDark
         y={WORDMARK_UNDERLINE.y}
         width={WORDMARK_UNDERLINE.width * underline}
         height={WORDMARK_UNDERLINE.height}
+        rx={WORDMARK_UNDERLINE.height / 2}
         fill={LOGO_YELLOW}
       />
     </g>
@@ -100,11 +108,12 @@ export function WordmarkArt({ onDark = false, dot = 1, underline = 1 }: { onDark
 }
 
 export function Wordmark({ height = 32, onDark = false }: { height?: number; onDark?: boolean }) {
+  const width = WORDMARK_RIGHT - WORDMARK_LEFT;
   return (
     <svg
-      width={(height * WORDMARK_WIDTH) / WORDMARK_HEIGHT}
+      width={(height * width) / LOCKUP_HEIGHT}
       height={height}
-      viewBox={`0 0 ${WORDMARK_WIDTH} ${WORDMARK_HEIGHT}`}
+      viewBox={`${WORDMARK_LEFT} 0 ${width} ${LOCKUP_HEIGHT}`}
       role="img"
       aria-label="infunion"
     >
@@ -113,14 +122,18 @@ export function Wordmark({ height = 32, onDark = false }: { height?: number; onD
   );
 }
 
-/** Rings and wordmark side by side, 392 × 80. */
+/** Rings and wordmark side by side, as in the kit. */
 export function Lockup({ height = 32, onDark = false }: { height?: number; onDark?: boolean }) {
   return (
-    <svg width={(height * 392) / 80} height={height} viewBox="0 0 392 80" role="img" aria-label="infunion">
+    <svg
+      width={(height * LOCKUP_WIDTH) / LOCKUP_HEIGHT}
+      height={height}
+      viewBox={`0 0 ${LOCKUP_WIDTH} ${LOCKUP_HEIGHT}`}
+      role="img"
+      aria-label="infunion"
+    >
       <Rings onDark={onDark} idPrefix={`lockup${height}`} />
-      <g transform="translate(133 0)">
-        <WordmarkArt onDark={onDark} />
-      </g>
+      <WordmarkArt onDark={onDark} />
     </svg>
   );
 }

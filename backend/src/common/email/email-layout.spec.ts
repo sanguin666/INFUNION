@@ -18,7 +18,7 @@ describe('email layout', () => {
     expect(html).toContain(EMAIL_LOGO_URL);
     expect(html).toContain('alt="infunion"');
     expect(html).toContain('Hello &lt;you&gt;');
-    expect(html).toContain('la app de tu comunidad');
+    expect(html).toContain('La unión que te hace comunidad');
     expect(html).toContain('support@infunion.app');
   });
 

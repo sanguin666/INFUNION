@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Rings, WordmarkArt } from './LogoMark';
+import { LOCKUP_HEIGHT, LOCKUP_WIDTH } from './brandArt';
+import { RING_LEFT_X, RING_RIGHT_X, Rings, WordmarkArt } from './LogoMark';
 
 /**
  * The infunion logo arriving the way the app opens (Seb, 26 Oct 2026,
  * option A, "slide and link"): the two rings slide in from either side and
- * link, the wordmark rises in, the yellow dot drops onto the i and the line
+ * link, the wordmark rises in, the dot drops onto the i and the line
  * sweeps under "union". Keep the beats in step with the app's
  * `app/src/components/IntroAnimation.tsx`.
  *
@@ -12,7 +13,9 @@ import { Rings, WordmarkArt } from './LogoMark';
  * `skip` jumps straight to the finished logo.
  */
 
-const TRAVEL = 26;
+// How far out each ring starts, in the logo's own units.
+const TRAVEL = 42;
+const DRAWING_WIDTH = LOCKUP_WIDTH + 2 * TRAVEL;
 const RINGS_DONE = 380;
 const WORD_IN = 350;
 const WORD_DONE = 600;
@@ -53,19 +56,19 @@ export function IntroLogoMark({ height = 64, delay = 0, skip = false }: { height
   const dot = settle(progress(t, DOT_IN, DOT_DONE));
   const line = easeOut(progress(t, LINE_IN, LINE_DONE));
 
-  // The lockup is 392 × 80; the drawing is wider so the rings have room
-  // to start apart.
+  // The drawing is wider than the lockup so the rings have room to start
+  // apart.
   return (
     <svg
-      width={(height * 444) / 80}
+      width={(height * DRAWING_WIDTH) / LOCKUP_HEIGHT}
       height={height}
-      viewBox="-26 0 444 80"
+      viewBox={`${-TRAVEL} 0 ${DRAWING_WIDTH} ${LOCKUP_HEIGHT}`}
       role="img"
       aria-label="infunion"
       className="intro-mark"
     >
-      <Rings purpleX={38 - TRAVEL * (1 - rings)} yellowX={81 + TRAVEL * (1 - rings)} opacity={rings} idPrefix="intro" />
-      <g opacity={word} transform={`translate(133 ${8 * (1 - word)})`}>
+      <Rings purpleX={RING_LEFT_X - TRAVEL * (1 - rings)} yellowX={RING_RIGHT_X + TRAVEL * (1 - rings)} opacity={rings} idPrefix="intro" />
+      <g opacity={word} transform={`translate(0 ${11 * (1 - word)})`}>
         <WordmarkArt dot={t >= DOT_IN ? dot : 0} underline={line} />
       </g>
     </svg>
