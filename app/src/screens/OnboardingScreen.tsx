@@ -65,7 +65,7 @@ export function OnboardingScreen({ onSignUp, onSignIn, onDemoSignIn }: Props) {
       >
         <LogoMark size={104} />
         <View style={styles.wordmark}>
-          <Wordmark height={72} />
+          <Wordmark height={61} />
         </View>
         <AccessibleText variant="bodyLarge" color={colors.textMuted} style={styles.welcome}>
           {t('onboarding.welcome')}

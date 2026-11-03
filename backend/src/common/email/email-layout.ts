@@ -13,7 +13,7 @@ import { Language } from '../enums/language.enum.js';
  */
 
 export const EMAIL_LOGO_URL =
-  'https://www.infunion.app/assets/email/infunion-logo.png';
+  'https://www.infunion.app/assets/email/infunion-logo.png?v=20261103';
 export const EMAIL_SITE_URL = 'https://www.infunion.app';
 export const EMAIL_SUPPORT = 'support@infunion.app';
 
@@ -30,14 +30,15 @@ export const EMAIL_COLORS = {
   rule: '#EEEBF6',
 } as const;
 
+// The slogan from Seb's logo kit (3 Nov 2026), in the reader's language.
 const TAGLINE: Record<Language, string> = {
-  [Language.EN]: 'the app for your community',
-  [Language.ES]: 'la app de tu comunidad',
-  [Language.FR]: 'l’app de votre communauté',
-  [Language.VA]: 'l’app de la teua comunitat',
-  [Language.CA]: 'l’app de la teva comunitat',
-  [Language.GL]: 'a app da túa comunidade',
-  [Language.PT]: 'a app da sua comunidade',
+  [Language.EN]: 'The union that makes you a community',
+  [Language.ES]: 'La unión que te hace comunidad',
+  [Language.FR]: 'L’union qui fait de vous une communauté',
+  [Language.VA]: 'La unió que et fa comunitat',
+  [Language.CA]: 'La unió que et fa comunitat',
+  [Language.GL]: 'A unión que te fai comunidade',
+  [Language.PT]: 'A união que te faz comunidade',
 };
 
 const FONT = 'Arial,Helvetica,sans-serif';
@@ -171,7 +172,7 @@ export function emailLayout(
 <body style="margin:0;padding:0;background:${c.page}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${c.page}"><tr><td align="center" style="padding:32px 12px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;background:#ffffff;border:1px solid ${c.border};border-radius:16px;font-family:${FONT};color:${c.ink}">
-<tr><td style="padding:24px 28px 20px"><a href="${EMAIL_SITE_URL}" style="text-decoration:none"><img src="${EMAIL_LOGO_URL}" width="150" height="31" alt="infunion" style="display:block;border:0;font-family:${FONT};font-size:22px;font-weight:bold;color:${c.purple}"></a></td></tr>
+<tr><td style="padding:24px 28px 20px"><a href="${EMAIL_SITE_URL}" style="text-decoration:none"><img src="${EMAIL_LOGO_URL}" width="174" height="30" alt="infunion" style="display:block;border:0;font-family:${FONT};font-size:22px;font-weight:bold;color:${c.purple}"></a></td></tr>
 <tr><td style="padding:0 28px"><div style="height:4px;line-height:4px;font-size:0;background:${c.yellow};border-radius:2px">&nbsp;</div></td></tr>
 <tr><td style="padding:30px 28px 10px">${content}</td></tr>
 <tr><td style="border-top:1px solid ${c.rule};padding:16px 28px;font-size:12px;line-height:1.6;color:${c.faint}">infunion · ${escapeHtml(tagline)}<br><a href="${EMAIL_SITE_URL}" style="color:${c.purple};text-decoration:none">infunion.app</a> · <a href="mailto:${EMAIL_SUPPORT}" style="color:${c.faint};text-decoration:none">${EMAIL_SUPPORT}</a></td></tr>

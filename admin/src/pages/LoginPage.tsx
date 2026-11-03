@@ -57,7 +57,7 @@ export function LoginPage() {
   return (
     <div className={skipIntro ? 'login-page' : 'login-page login-intro'}>
       <form className="login-panel" onSubmit={handleSubmit}>
-        <IntroLogoMark height={64} delay={300} skip={skipIntro} />
+        <IntroLogoMark height={56} delay={300} skip={skipIntro} />
         <h1 className="login-wordmark">{t('login.heading')}</h1>
         <p className="login-subtitle login-step">{t('login.subtitle')}</p>
 

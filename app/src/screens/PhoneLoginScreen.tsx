@@ -102,7 +102,7 @@ export function PhoneLoginScreen({ signUp, onBack, onSignedIn }: Props) {
       {/* The same infunion lockup as the next step (adding a place), so
           the whole way in looks like one app. */}
       <View style={styles.brand}>
-        <Lockup height={48} />
+        <Lockup height={40} />
       </View>
 
       <AccessibleText variant="title">{t(signUp ? 'signIn.signUpTitle' : 'signIn.title')}</AccessibleText>
