@@ -3,7 +3,8 @@ import type { BillingSummary, ModuleType, PlanTier, PoiType, SupportedLanguage }
 
 // ---- the code step
 
-export type SuperadminStatus = { email: string; enrolled: boolean };
+// codeRequired is false while the server has SUPERADMIN_2FA=off (older servers leave it out).
+export type SuperadminStatus = { email: string; enrolled: boolean; codeRequired?: boolean };
 
 export function getSuperadminStatus(): Promise<SuperadminStatus> {
   return apiGet<SuperadminStatus>('/superadmin/auth/status');
@@ -15,6 +16,10 @@ export function startEnrollment(password: string): Promise<{ secret: string; otp
 
 export function confirmEnrollment(code: string): Promise<SuperadminSession> {
   return apiPost<SuperadminSession>('/superadmin/auth/enroll/confirm', { code });
+}
+
+export function openWithoutCode(): Promise<SuperadminSession> {
+  return apiPost<SuperadminSession>('/superadmin/auth/open', {});
 }
 
 export function verifyCode(code: string): Promise<SuperadminSession> {
@@ -244,7 +249,7 @@ export type Health = {
   push: { enabled: boolean; devices: number };
   demoLogin: boolean;
   stripe: boolean;
-  warnings: ('demoLogin' | 'initialPassword' | 'reset2fa' | 'cors')[];
+  warnings: ('demoLogin' | 'initialPassword' | 'reset2fa' | 'cors' | 'twoFactorOff')[];
 };
 
 export const getHealth = () => guarded(() => apiGet<Health>('/superadmin/health'));

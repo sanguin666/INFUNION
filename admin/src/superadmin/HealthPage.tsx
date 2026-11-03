@@ -7,6 +7,7 @@ const WARNINGS: Record<Health['warnings'][number], string> = {
   initialPassword: 'health.warnInitialPassword',
   reset2fa: 'health.warnReset2fa',
   cors: 'health.warnCors',
+  twoFactorOff: 'health.warnTwoFactorOff',
 };
 
 function uptime(seconds: number, { s }: Sa): string {
