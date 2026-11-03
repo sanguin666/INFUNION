@@ -133,7 +133,7 @@ describe('Notifications (e2e)', () => {
     expect(sent).toEqual([]);
   });
 
-  it('tells a member about the office’s reply, in the language of their phone', async () => {
+  it('tells a member about the team’s reply, in the language of their phone', async () => {
     await client(app).post('/auth/me/push-tokens').set(as(ana.token)).send({ token: anaPhone, language: 'es', timeZone: 'Europe/Madrid' }).expect(204);
     const created = await client(app)
       .post(`/pois/${place.id}/requests`)
@@ -153,7 +153,7 @@ describe('Notifications (e2e)', () => {
     await settle();
 
     expect(sent.map((m) => [m.to, m.title, m.body])).toEqual([
-      [anaPhone, 'Tu solicitud: Bautizo', 'La oficina ha respondido: «We can meet Tuesday»'],
+      [anaPhone, 'Tu solicitud: Bautizo', 'El equipo ha respondido: «We can meet Tuesday»'],
       [anaPhone, 'Tu solicitud: Bautizo', expect.stringMatching(/^Cita: .*18:00, Despacho$/)],
     ]);
     expect(sent[0].data).toEqual({ screen: 'request', id, poiId: place.id });
