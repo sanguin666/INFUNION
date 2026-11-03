@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Navigate, NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { Lockup } from '../components/LogoMark';
@@ -10,6 +10,9 @@ import { PlaceChip } from '../components/PlaceChip';
 import { getWaitingByPlace, rememberPlace } from './placeSwitcher';
 import { getActiveModules } from '../api/activeModules';
 import { getPoi } from '../api/pois';
+import { getMenuCounts, type MenuCounts } from '../api/dashboard';
+import { getBilling } from '../api/billing';
+import { LineIcon, MODULE_ICON, PAGE_ICON } from '../components/moduleIcons';
 import { ClosingBanner } from './ClosingBanner';
 import { getSuperadminSession } from '../api/client';
 import type { ActiveModule, ModuleType } from '../api/types';
@@ -19,26 +22,36 @@ import { useSa } from '../superadmin/format';
 
 const LIVE_STATUSES = new Set(['trial', 'active']);
 
-// The sidebar in its order. A page tied to a module only shows while the
-// place runs that module; the others (dashboard, home page, QR code,
-// settings) are always there.
-const NAV: { to: string; label: `layout.${keyof Translations['layout']}`; module?: ModuleType }[] = [
-  { to: 'dashboard', label: 'layout.navDashboard' },
-  { to: 'home-page', label: 'layout.navHomePage' },
-  { to: 'requests', label: 'layout.navRequests', module: 'requests' },
-  { to: 'donations', label: 'layout.navDonations', module: 'donations' },
+type NavLabel = `layout.${keyof Translations['layout']}`;
+type NavItem = { to: string; label: NavLabel; icon: string; module?: ModuleType; count?: keyof MenuCounts };
+
+// The menu in three parts (Seb chose option B, 3 Nov 2026): the
+// community's own pages, then its active modules, then setup pinned at
+// the bottom. A module's row only shows while the place runs it.
+const TOP: NavItem[] = [
+  { to: 'dashboard', label: 'layout.navDashboard', icon: PAGE_ICON.dashboard },
+  { to: 'home-page', label: 'layout.navHomePage', icon: PAGE_ICON.homePage },
   // Always there: without the Messages module the page offers it.
-  { to: 'members', label: 'layout.navMembers' },
-  { to: 'events', label: 'layout.navEvents', module: 'events' },
-  { to: 'mass-intentions', label: 'layout.navMassIntentions', module: 'mass_intentions' },
-  { to: 'readings', label: 'layout.navReadings', module: 'daily_readings' },
-  { to: 'announcements', label: 'layout.navAnnouncements', module: 'announcements' },
-  { to: 'livestreams', label: 'layout.navLivestreams', module: 'livestreams' },
-  { to: 'prayer-requests', label: 'layout.navPrayerRequests', module: 'prayer_requests' },
-  { to: 'community', label: 'layout.navCommunity', module: 'community' },
-  { to: 'my-qr', label: 'layout.navMyQr' },
-  { to: 'modules', label: 'layout.navModules' },
-  { to: 'settings', label: 'layout.navSettings' },
+  { to: 'members', label: 'layout.navMembers', icon: PAGE_ICON.members, count: 'messages' },
+];
+
+// From what a team checks daily to what it opens now and then.
+const MODULE_NAV: (NavItem & { module: ModuleType })[] = [
+  { to: 'requests', label: 'layout.navRequests', module: 'requests', icon: MODULE_ICON.requests, count: 'requests' },
+  { to: 'events', label: 'layout.navEvents', module: 'events', icon: MODULE_ICON.events },
+  { to: 'announcements', label: 'layout.navAnnouncements', module: 'announcements', icon: MODULE_ICON.announcements },
+  { to: 'donations', label: 'layout.navDonations', module: 'donations', icon: MODULE_ICON.donations },
+  { to: 'mass-intentions', label: 'layout.navMassIntentions', module: 'mass_intentions', icon: MODULE_ICON.mass_intentions, count: 'massIntentions' },
+  { to: 'prayer-requests', label: 'layout.navPrayerRequests', module: 'prayer_requests', icon: MODULE_ICON.prayer_requests },
+  { to: 'readings', label: 'layout.navReadings', module: 'daily_readings', icon: MODULE_ICON.daily_readings },
+  { to: 'livestreams', label: 'layout.navLivestreams', module: 'livestreams', icon: MODULE_ICON.livestreams },
+  { to: 'community', label: 'layout.navCommunity', module: 'community', icon: MODULE_ICON.community },
+];
+
+const SETUP: NavItem[] = [
+  { to: 'settings', label: 'layout.navSettings', icon: PAGE_ICON.settings },
+  { to: 'modules', label: 'layout.navModules', icon: PAGE_ICON.plan },
+  { to: 'my-qr', label: 'layout.navMyQr', icon: PAGE_ICON.qr },
 ];
 
 export function DashboardLayout() {
@@ -64,6 +77,26 @@ export function DashboardLayout() {
   }, [poiId]);
 
   useEffect(refreshModules, [refreshModules]);
+
+  // "Add modules" under the list, for a community not on Complete (and
+  // not on a plan infunion offers): it opens Plans & modules.
+  const [canAddModules, setCanAddModules] = useState<{ poiId: string; yes: boolean } | null>(null);
+  useEffect(() => {
+    if (!poiId) return;
+    getBilling(poiId)
+      .then((b) => setCanAddModules({ poiId, yes: b.plan !== 'complete' && !b.planOffered && !b.comped }))
+      .catch(() => setCanAddModules({ poiId, yes: false }));
+  }, [poiId, modules]);
+
+  // What waits on the team, beside its row. Read again on every page
+  // change, so a request just answered drops off the count.
+  const [counts, setCounts] = useState<{ poiId: string; counts: MenuCounts } | null>(null);
+  useEffect(() => {
+    if (!poiId) return;
+    getMenuCounts(poiId)
+      .then((c) => setCounts({ poiId, counts: c }))
+      .catch(() => setCounts(null));
+  }, [poiId, location.pathname]);
 
   // The superadmin opening a community it is not an admin of ("Ouvrir son
   // admin"): its name comes from the public directory.
@@ -101,12 +134,28 @@ export function DashboardLayout() {
     return !!modules?.some((m) => m.moduleType === type && LIVE_STATUSES.has(m.status));
   }
 
-  const navItems = NAV.filter((item) => !item.module || isLive(item.module));
+  const moduleItems = MODULE_NAV.filter((item) => isLive(item.module));
+  const showAddModules = canAddModules?.poiId === poiId && canAddModules.yes;
+
+  function navRow(item: NavItem) {
+    const n = item.count && counts?.poiId === poiId ? counts.counts[item.count] : 0;
+    return (
+      <NavLink key={item.to} to={item.to}>
+        <LineIcon path={item.icon} />
+        <span className="nav-label">{t(item.label)}</span>
+        {n > 0 && (
+          <span className="nav-count" aria-label={t('layout.waitingCount', { n })}>
+            {n}
+          </span>
+        )}
+      </NavLink>
+    );
+  }
 
   // A module switched off (here in Settings, or elsewhere) takes its page
   // with it: whoever is still on it goes back to the dashboard.
   const section = location.pathname.split('/')[3];
-  const closedPage = NAV.find((item) => item.to === section && item.module);
+  const closedPage = MODULE_NAV.find((item) => item.to === section && item.module);
   if (modules && closedPage && !isLive(closedPage.module!)) {
     return <Navigate to={`/poi/${poiId}/dashboard`} replace />;
   }
@@ -180,16 +229,29 @@ export function DashboardLayout() {
           </>
         )}
 
-        <nav className="sidebar-nav">
-          {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to}>
-              {t(item.label)}
-            </NavLink>
-          ))}
-        </nav>
+        <div className="sidebar-nav">
+          <nav aria-label={currentPoi?.name || undefined}>{TOP.map(navRow)}</nav>
+          <hr className="menu-divider" />
+          <div className="nav-heading">
+            <span id="nav-modules-heading">{t('layout.navModulesHeading')}</span>
+            <Link to="modules" className="nav-heading-link">
+              {t('layout.navManage')}
+            </Link>
+          </div>
+          <nav aria-labelledby="nav-modules-heading">
+            {moduleItems.map(navRow)}
+            {showAddModules && (
+              <Link to="modules" className="nav-add">
+                <LineIcon path="M12 5v14M5 12h14" />
+                <span className="nav-label">{t('layout.navAddModules')}</span>
+              </Link>
+            )}
+          </nav>
+        </div>
 
         <div className="sidebar-footer">
           <hr className="menu-divider" />
+          <nav>{SETUP.map(navRow)}</nav>
           <LanguagePicker />
           <AppearancePicker />
           <button type="button" className="btn btn-destructive btn-block" onClick={logout}>

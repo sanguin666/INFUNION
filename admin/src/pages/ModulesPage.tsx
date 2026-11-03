@@ -11,6 +11,7 @@ import {
   startPlanTrial,
   stopModule,
 } from '../api/billing';
+import { MODULE_ICON } from '../components/moduleIcons';
 import type { ActiveModule, BillingInterval, BillingSummary, ModuleType, PlanTier } from '../api/types';
 
 type Key<S extends keyof Translations> = `${S}.${Extract<keyof Translations[S], string>}`;
@@ -31,16 +32,16 @@ type ModuleInfo = {
 
 // In plan order, then the order an office is likely to want them.
 const MODULES: ModuleInfo[] = [
-  { type: 'events', name: 'moduleNames.events', description: 'billing.descEvents', intro: 'plans.evI', members: 'plans.evM', team: 'plans.evT', hue: 'events', icon: 'M4 7h16v13H4zM4 7V5h16v2M8 3v4M16 3v4M8 12h3' },
-  { type: 'donations', name: 'moduleNames.donations', description: 'billing.descDonations', intro: 'plans.doI', members: 'plans.doM', team: 'plans.doT', hue: 'donations', icon: 'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z' },
-  { type: 'announcements', name: 'moduleNames.announcements', description: 'billing.descAnnouncements', intro: 'plans.anI', members: 'plans.anM', team: 'plans.anT', hue: 'announcements', icon: 'M4 10v4h3l6 4V6L7 10zM17 9a4 4 0 0 1 0 6' },
-  { type: 'requests', name: 'moduleNames.requests', description: 'billing.descRequests', intro: 'plans.reI', members: 'plans.reM', team: 'plans.reT', hue: 'requests', icon: 'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h5' },
-  { type: 'messages', name: 'moduleNames.messages', description: 'billing.descMessages', intro: 'plans.meI', members: 'plans.meM', team: 'plans.meT', hue: 'messages', icon: 'M4 5h16v11H9l-5 4z' },
-  { type: 'community', name: 'moduleNames.community', description: 'billing.descCommunity', intro: 'plans.coI', members: 'plans.coM', team: 'plans.coT', hue: 'community', icon: 'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M21 19a5 5 0 0 0-4-5' },
-  { type: 'livestreams', name: 'moduleNames.livestream', description: 'billing.descLivestreams', intro: 'plans.liI', members: 'plans.liM', team: 'plans.liT', hue: 'livestreams', icon: 'M3 7h12v10H3zM15 11l6-3v8l-6-3' },
-  { type: 'prayer_requests', name: 'moduleNames.prayerRequests', description: 'billing.descPrayerRequests', intro: 'plans.prI', members: 'plans.prM', team: 'plans.prT', hue: 'prayer', icon: 'M12 3v6M9 6h6M6 21l3-9h6l3 9' },
-  { type: 'daily_readings', name: 'moduleNames.readings', description: 'billing.descReadings', intro: 'plans.rdI', members: 'plans.rdM', team: 'plans.rdT', hue: 'readings', icon: 'M4 5c3-1 6-1 8 1 2-2 5-2 8-1v14c-3-1-6-1-8 1-2-2-5-2-8-1zM12 6v14' },
-  { type: 'mass_intentions', name: 'moduleNames.massIntentions', description: 'billing.descMassIntentions', intro: 'plans.miI', members: 'plans.miM', team: 'plans.miT', hue: 'mass', icon: 'M12 3v4M10 5h4M7 21V11l5-3 5 3v10M10 21v-5h4v5' },
+  { type: 'events', name: 'moduleNames.events', description: 'billing.descEvents', intro: 'plans.evI', members: 'plans.evM', team: 'plans.evT', hue: 'events', icon: MODULE_ICON.events },
+  { type: 'donations', name: 'moduleNames.donations', description: 'billing.descDonations', intro: 'plans.doI', members: 'plans.doM', team: 'plans.doT', hue: 'donations', icon: MODULE_ICON.donations },
+  { type: 'announcements', name: 'moduleNames.announcements', description: 'billing.descAnnouncements', intro: 'plans.anI', members: 'plans.anM', team: 'plans.anT', hue: 'announcements', icon: MODULE_ICON.announcements },
+  { type: 'requests', name: 'moduleNames.requests', description: 'billing.descRequests', intro: 'plans.reI', members: 'plans.reM', team: 'plans.reT', hue: 'requests', icon: MODULE_ICON.requests },
+  { type: 'messages', name: 'moduleNames.messages', description: 'billing.descMessages', intro: 'plans.meI', members: 'plans.meM', team: 'plans.meT', hue: 'messages', icon: MODULE_ICON.messages },
+  { type: 'community', name: 'moduleNames.community', description: 'billing.descCommunity', intro: 'plans.coI', members: 'plans.coM', team: 'plans.coT', hue: 'community', icon: MODULE_ICON.community },
+  { type: 'livestreams', name: 'moduleNames.livestream', description: 'billing.descLivestreams', intro: 'plans.liI', members: 'plans.liM', team: 'plans.liT', hue: 'livestreams', icon: MODULE_ICON.livestreams },
+  { type: 'prayer_requests', name: 'moduleNames.prayerRequests', description: 'billing.descPrayerRequests', intro: 'plans.prI', members: 'plans.prM', team: 'plans.prT', hue: 'prayer', icon: MODULE_ICON.prayer_requests },
+  { type: 'daily_readings', name: 'moduleNames.readings', description: 'billing.descReadings', intro: 'plans.rdI', members: 'plans.rdM', team: 'plans.rdT', hue: 'readings', icon: MODULE_ICON.daily_readings },
+  { type: 'mass_intentions', name: 'moduleNames.massIntentions', description: 'billing.descMassIntentions', intro: 'plans.miI', members: 'plans.miM', team: 'plans.miT', hue: 'mass', icon: MODULE_ICON.mass_intentions },
 ];
 
 const PLAN_ORDER: PlanTier[] = ['basic', 'essentials', 'complete'];

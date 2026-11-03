@@ -12,6 +12,12 @@ export class DashboardController {
   summary(@Param('poiId') poiId: string) {
     return this.dashboardService.summary(poiId);
   }
+
+  /** The small counts beside the admin menu's rows. */
+  @Get('menu-counts')
+  menuCounts(@Param('poiId') poiId: string) {
+    return this.dashboardService.menuCounts(poiId);
+  }
 }
 
 /** The admin's place switcher: a count beside each place they run. */
