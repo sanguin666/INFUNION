@@ -62,9 +62,25 @@ export class SuperadminAuthService {
     }
   }
 
+  /**
+   * SUPERADMIN_2FA=off (Seb, 3 Nov 2026) skips the authenticator code for
+   * now: the password sign-in alone then opens the superadmin section.
+   * Anything else, or no variable, keeps the code step.
+   */
+  codeRequired(): boolean {
+    return (this.config.get<string>('SUPERADMIN_2FA') ?? '').trim().toLowerCase() !== 'off';
+  }
+
   async status(identity: SuperadminIdentity) {
     const user = await this.load(identity.userId);
-    return { email: identity.email, enrolled: !!user.totpSecret };
+    return { email: identity.email, enrolled: !!user.totpSecret, codeRequired: this.codeRequired() };
+  }
+
+  /** The superadmin token without a code, only while SUPERADMIN_2FA=off. */
+  async openWithoutCode(identity: SuperadminIdentity, request: Request): Promise<SuperadminSession> {
+    if (this.codeRequired()) throw new BadRequestException('code_required');
+    await this.access.record({ action: 'superadmin.login', actorId: identity.userId, actorEmail: identity.email, request });
+    return this.issue(identity);
   }
 
   async startEnrollment(identity: SuperadminIdentity, password: string, request: Request) {

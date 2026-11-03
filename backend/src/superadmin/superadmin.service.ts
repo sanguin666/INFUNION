@@ -712,12 +712,13 @@ export class SuperadminService {
     const [size] = await this.data.query('SELECT pg_database_size(current_database())::bigint AS bytes');
     const now = new Date();
     // Codes, worded by the admin.
-    const warnings: ('demoLogin' | 'initialPassword' | 'reset2fa' | 'cors')[] = [];
+    const warnings: ('demoLogin' | 'initialPassword' | 'reset2fa' | 'cors' | 'twoFactorOff')[] = [];
     if (this.demoLoginOn() && this.isProduction()) warnings.push('demoLogin');
     if (this.config.get<string>('SUPERADMIN_INITIAL_PASSWORD')) {
       warnings.push('initialPassword');
     }
     if (this.config.get<string>('SUPERADMIN_RESET_2FA')) warnings.push('reset2fa');
+    if ((this.config.get<string>('SUPERADMIN_2FA') ?? '').trim().toLowerCase() === 'off') warnings.push('twoFactorOff');
     if (this.isProduction() && !this.config.get<string>('CORS_ORIGINS')) warnings.push('cors');
     return {
       environment: this.environment(),
