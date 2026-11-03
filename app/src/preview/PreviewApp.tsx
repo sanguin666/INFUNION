@@ -7,7 +7,7 @@ import { useI18n } from '../i18n/I18nContext';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
 import { applyColorScheme, colors, spacing } from '../theme/theme';
 import { poiAccent } from '../theme/poiThemes';
-import type { Poi } from '../api/types';
+import type { ModuleType, Poi } from '../api/types';
 import { PreviewContext, type PreviewState } from './PreviewContext';
 
 // What the dashboard sends, and what this answers it with.
@@ -21,6 +21,8 @@ type AdminMessage = {
   badges?: PreviewState['badges'];
   blocks?: PreviewState['blocks'];
   drafts?: string[];
+  // The bottom menu as it stands in the dashboard's editor, saved or not.
+  menuOrder?: ModuleType[];
 };
 
 /** The place to preview, from `?preview=<id>`, on the web only. */
@@ -49,6 +51,7 @@ export function PreviewApp({ poiId }: { poiId: string }) {
   const [poi, setPoi] = useState<Poi | null>(null);
   const [failed, setFailed] = useState(false);
   const [state, setState] = useState<PreviewState>({ badges: null, blocks: null, drafts: [] });
+  const [menuOrder, setMenuOrder] = useState<ModuleType[] | null>(null);
 
   useEffect(() => {
     const lang = new URLSearchParams(window.location.search).get('lang');
@@ -64,6 +67,7 @@ export function PreviewApp({ poiId }: { poiId: string }) {
       const data = event.data as AdminMessage | undefined;
       if (!data || data.source !== FROM_ADMIN || data.type !== 'preview') return;
       if (isLanguage(data.language)) setLanguage(data.language);
+      if (Array.isArray(data.menuOrder)) setMenuOrder(data.menuOrder);
       setState((current) => ({
         badges: data.badges ?? current.badges,
         blocks: data.blocks ?? current.blocks,
@@ -98,7 +102,7 @@ export function PreviewApp({ poiId }: { poiId: string }) {
   return (
     <PreviewContext.Provider value={state}>
       <PoiHubScreen
-        poi={poi}
+        poi={menuOrder ? { ...poi, menuOrder } : poi}
         onOpenPlaces={() => undefined}
         onAddPlace={() => undefined}
         onLeavePlace={async () => undefined}

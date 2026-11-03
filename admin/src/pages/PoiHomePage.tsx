@@ -12,14 +12,15 @@ import {
   updatePageBlock,
   uploadPageImage,
 } from '../api/poiPage';
-import type { ActiveModule, ModuleType, PageBlockType, PoiPageBlock } from '../api/types';
+import type { ActiveModule, ModuleType, PageBlockType, Poi, PoiPageBlock } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
 import { BadgesSection } from './BadgesSection';
 import { PhonePreview } from '../components/PhonePreview';
 import type { PoiBadge } from '../api/types';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
+import { BottomMenuPanel, initialMenuOrder } from './MenuOrder';
 
-const HOME_TABS = ['badges', 'sections'] as const;
+const HOME_TABS = ['badges', 'sections', 'menu'] as const;
 
 // Blocks that fill themselves from a module's content. They have nothing
 // to write, only a count, and they need that module switched on.
@@ -63,6 +64,11 @@ export function PoiHomePage() {
   // a reorder, so they ride along at the end.
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
   const [modules, setModules] = useState<ActiveModule[]>([]);
+  const [modulesLoaded, setModulesLoaded] = useState(false);
+  // The bottom menu (its own tab): the community, and the order as the
+  // tab holds it, saved or not, which the phone shows as it changes.
+  const [poi, setPoi] = useState<Poi | null>(null);
+  const [menuOrder, setMenuOrder] = useState<ModuleType[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [justSavedId, setJustSavedId] = useState<string | null>(null);
@@ -93,12 +99,24 @@ export function PoiHomePage() {
     getPageBlocks(poiId)
       .then(adopt)
       .catch(() => setError(t('homePage.loadError')));
+    getPoi(poiId)
+      .then(setPoi)
+      .catch(() => {});
     getActiveModules(poiId)
-      .then(setModules)
+      .then((list) => {
+        setModules(list);
+        setModulesLoaded(true);
+      })
       // The editor still works without this; it only drives the "module is
       // off" hint, so a failure here isn't worth an error banner.
       .catch(() => {});
   }, [poiId]);
+
+  // A module switched on or off, or a save, starts the list again from
+  // what the server has.
+  useEffect(() => {
+    if (poi && modulesLoaded) setMenuOrder(initialMenuOrder(poi, modules));
+  }, [poi, modules, modulesLoaded]);
 
   function isModuleLive(type: ModuleType) {
     return modules.some((m) => m.moduleType === type && LIVE_STATUSES.has(m.status));
@@ -158,8 +176,8 @@ export function PoiHomePage() {
     setError(null);
     try {
       // Matches the app's fallback page: the place's own description.
-      const poi = await getPoi(poiId);
-      await createPageBlock(poiId, { type: 'text', body: poi.description ?? '' });
+      const community = await getPoi(poiId);
+      await createPageBlock(poiId, { type: 'text', body: community.description ?? '' });
       adopt(await getPageBlocks(poiId));
     } catch {
       setError(t('homePage.saveError'));
@@ -232,6 +250,7 @@ export function PoiHomePage() {
           tabs={[
             { key: 'badges', label: t('tabs.homeBadges') },
             { key: 'sections', label: t('tabs.homeSections'), count: blocks?.length ?? null },
+            { key: 'menu', label: t('tabs.homeMenu') },
           ]}
         />
 
@@ -393,12 +412,20 @@ export function PoiHomePage() {
             </div>
           )}
         </TabPanel>
+
+        <TabPanel idPrefix="home" tabKey="menu" current={tab}>
+          {poi && menuOrder && (
+            <BottomMenuPanel poi={poi} modules={modules} order={menuOrder} onChange={setMenuOrder} onSaved={setPoi} />
+          )}
+          {(!poi || !menuOrder) && <p className="muted">{t('homePage.loading')}</p>}
+        </TabPanel>
       </div>
       <PhonePreview
         poiId={poiId}
         badges={previewBadges?.badges ?? null}
         blocks={blocks}
         drafts={previewDrafts}
+        menuOrder={menuOrder}
       />
     </div>
   );
