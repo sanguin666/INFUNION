@@ -2610,19 +2610,6 @@ label.link-button:focus-within {
   color: var(--color-placeholder);
 }
 
-/* The superadmin inside a community's own admin. */
-.sa-viewing {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px 16px;
-  margin: -8px 0 20px;
-  padding: 10px 0;
-  border-bottom: 2px solid var(--color-primary);
-  font-weight: 600;
-}
-
 /* ---------- Address and map (map of communities) ---------- */
 
 /* The map runs to the card's edges between two hairlines, so it reads as
