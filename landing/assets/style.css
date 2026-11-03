@@ -141,7 +141,7 @@ section[id] {
   gap: 12px;
 }
 
-/* Six languages: one compact menu, each written in itself, instead of a
+/* Seven languages: one compact menu, each written in itself, instead of a
    row of pills that crowded the header. Kept on phones too. */
 .lang-select {
   padding: 8px 32px 8px 14px;
