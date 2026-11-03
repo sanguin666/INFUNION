@@ -226,6 +226,11 @@ export type Translations = {
     untilDate: string;
     weeklyHeading: string;
     weeklyHint: string;
+    notEveryWeek: string;
+    notEveryWeekHint: string;
+    allEvents: string;
+    previewHeading: string;
+    previewHint: string;
     recurrenceDaily: string;
     recurrenceDays: string;
     recurrenceMonthly: string;
@@ -1265,6 +1270,11 @@ const en: Translations = {
     exceptDates: 'except {{dates}}',
     noDays: 'Pick at least one day',
     weeklyHint: "Your community's regular week. The app shows it as your timetable, and the Celebration times section of your home page is built from it.",
+    notEveryWeek: "Not every week",
+    notEveryWeekHint: "Events that come back once a month.",
+    allEvents: "← All events",
+    previewHeading: "In the app",
+    previewHint: "How members will see it, as you type.",
     onceHeading: 'Dates',
   },
   announcements: {
@@ -2277,6 +2287,11 @@ const es: Translations = {
     exceptDates: 'excepto el {{dates}}',
     noDays: 'Elige al menos un día',
     weeklyHint: 'La semana habitual de tu comunidad. La app la muestra como tu horario, y la sección Horarios de celebraciones de tu página de inicio se construye con ella.',
+    notEveryWeek: "No todas las semanas",
+    notEveryWeekHint: "Eventos que vuelven una vez al mes.",
+    allEvents: "← Todos los eventos",
+    previewHeading: "En la app",
+    previewHint: "Así lo verán los miembros, mientras escribes.",
     onceHeading: 'Fechas',
   },
   announcements: {
@@ -3289,6 +3304,11 @@ const fr: Translations = {
     exceptDates: 'sauf le {{dates}}',
     noDays: 'Choisissez au moins un jour',
     weeklyHint: "La semaine habituelle de votre communauté. L'application l'affiche comme vos horaires, et la section Horaires des célébrations de votre page d'accueil est construite à partir d'elle.",
+    notEveryWeek: "Pas toutes les semaines",
+    notEveryWeekHint: "Les événements qui reviennent une fois par mois.",
+    allEvents: "← Tous les événements",
+    previewHeading: "Dans l'application",
+    previewHint: "Ce que verront les membres, pendant que vous écrivez.",
     onceHeading: 'Dates',
   },
   announcements: {
@@ -4301,6 +4321,11 @@ const va: Translations = {
     exceptDates: 'excepte el {{dates}}',
     noDays: 'Tria almenys un dia',
     weeklyHint: 'La setmana habitual de la teua comunitat. L’aplicació la mostra com el teu horari, i la secció Horaris de celebracions de la pàgina d’inici es fa a partir d’ella.',
+    notEveryWeek: "No totes les setmanes",
+    notEveryWeekHint: "Esdeveniments que tornen una vegada al mes.",
+    allEvents: "← Tots els esdeveniments",
+    previewHeading: "En l’aplicació",
+    previewHint: "Així ho veuran els membres, mentre escrius.",
     onceHeading: 'Dates',
   },
   announcements: {
@@ -5313,6 +5338,11 @@ const ca: Translations = {
     exceptDates: 'excepte el {{dates}}',
     noDays: 'Tria almenys un dia',
     weeklyHint: 'La setmana habitual de la teva comunitat. L’aplicació la mostra com el teu horari, i la secció Horaris de celebracions de la pàgina d’inici es fa a partir d’ella.',
+    notEveryWeek: "No cada setmana",
+    notEveryWeekHint: "Esdeveniments que tornen un cop al mes.",
+    allEvents: "← Tots els esdeveniments",
+    previewHeading: "A l’aplicació",
+    previewHint: "Així ho veuran els membres, mentre escrius.",
     onceHeading: 'Dates',
   },
   announcements: {
@@ -6325,6 +6355,11 @@ const gl: Translations = {
     exceptDates: 'agás o {{dates}}',
     noDays: 'Escolle polo menos un día',
     weeklyHint: 'A semana habitual da túa comunidade. A app móstraa como o teu horario, e a sección Horarios das celebracións da túa páxina de inicio constrúese con ela.',
+    notEveryWeek: "Non todas as semanas",
+    notEveryWeekHint: "Eventos que volven unha vez ao mes.",
+    allEvents: "← Todos os eventos",
+    previewHeading: "Na app",
+    previewHint: "Así o verán os membros, mentres escribes.",
     onceHeading: 'Datas',
   },
   announcements: {
@@ -7337,6 +7372,11 @@ const pt: Translations = {
     exceptDates: 'exceto a {{dates}}',
     noDays: 'Escolha pelo menos um dia',
     weeklyHint: 'A semana habitual da sua comunidade. A app mostra-a como o seu horário, e a secção Horários das celebrações da sua página inicial é construída a partir dela.',
+    notEveryWeek: "Não todas as semanas",
+    notEveryWeekHint: "Eventos que voltam uma vez por mês.",
+    allEvents: "← Todos os eventos",
+    previewHeading: "Na app",
+    previewHint: "Assim o verão os membros, enquanto escreve.",
     onceHeading: 'Datas',
   },
   announcements: {

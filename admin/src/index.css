@@ -1000,28 +1000,33 @@ a.btn {
   margin-bottom: 16px;
 }
 
-.side-panel {
-  margin: 0 0 0 auto;
-  width: min(520px, 100vw);
-  max-width: 100vw;
-  height: 100dvh;
-  max-height: 100dvh;
+/* A window in the middle of the screen (Seb, 3 Nov 2026), for a "new …"
+   or edit form: the beige of the page with the form's white card on it. */
+.dialog {
+  width: min(820px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 48px);
   padding: 0;
   border: none;
-  border-left: 1px solid var(--color-card-border);
+  border-radius: 20px;
   background: var(--color-bg);
   color: var(--color-text);
+  box-shadow: 0 24px 64px rgba(17, 17, 17, 0.28);
 }
 
-.side-panel::backdrop {
+.dialog::backdrop {
   background: var(--color-scrim);
 }
 
-.side-panel-body {
-  padding: 24px;
+.dialog-body {
+  padding: 24px 28px 28px;
 }
 
-.side-panel-head {
+.dialog-body > .card {
+  margin-bottom: 0;
+}
+
+.dialog-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1029,22 +1034,254 @@ a.btn {
   margin-bottom: 16px;
 }
 
-.side-panel-title {
+.dialog-title {
   margin: 0;
   font-size: 24px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .dialog-body {
+    padding: 16px;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .side-panel[open] {
-    animation: side-panel-in 0.18s ease-out;
+  .dialog[open] {
+    animation: dialog-in 0.16s ease-out;
   }
 }
 
-@keyframes side-panel-in {
+@keyframes dialog-in {
   from {
-    transform: translateX(40px);
+    transform: translateY(12px);
     opacity: 0;
   }
+}
+
+/* ---------- Events > Regular: the week in one white card (Seb, 3 Nov 2026) ---------- */
+
+/* "+ New event" under the page title, on the left. */
+.page-action {
+  margin: 16px 0 0;
+}
+
+/* Seven columns, one a day, told apart by a hairline. */
+.week-card {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  padding: 0;
+  overflow: hidden;
+}
+
+.week-col {
+  min-width: 0;
+  min-height: 200px;
+  padding: 14px 10px 12px 12px;
+  border-left: 1px solid var(--color-card-border);
+}
+
+.week-col:first-child {
+  border-left: none;
+}
+
+@media (max-width: 1023px) {
+  .week-card {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .week-col {
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .week-col:nth-child(-n + 4) {
+    border-top: none;
+  }
+
+  .week-col:nth-child(4n + 1) {
+    border-left: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .week-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .week-col {
+    min-height: 0;
+    border-left: none;
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .week-col:first-child {
+    border-top: none;
+  }
+}
+
+.main h3.week-day-name {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* An event of the day: a row with a purple bar on its left. */
+.week-event {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--color-card-border);
+  padding: 9px 0;
+  cursor: pointer;
+}
+
+.week-day-name + .week-event {
+  border-top: none;
+}
+
+.week-event > span,
+.week-event-time,
+.week-event-title,
+.week-event-meta {
+  display: block;
+}
+
+.week-event > span {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 8px;
+}
+
+.week-event:hover .week-event-title,
+.week-event:focus-visible .week-event-title,
+.month-row:hover b,
+.month-row:focus-visible b {
+  color: var(--color-primary-strong);
+  text-decoration: underline;
+}
+
+.week-event-time {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary-strong);
+}
+
+.week-event-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+
+.week-event-meta {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* "Not every week": the monthly events, one row each. */
+.week-monthly {
+  margin-top: 16px;
+}
+
+.main h3.week-monthly-heading {
+  margin: 0;
+  font-size: 18px;
+}
+
+.main p.week-monthly-hint {
+  margin: 2px 0 6px;
+  font-size: 15px;
+}
+
+.month-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  width: 100%;
+  padding: 12px 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--color-card-border);
+  cursor: pointer;
+}
+
+.month-row-when {
+  flex: 0 0 260px;
+  font-weight: 700;
+  color: #7a5a00;
+}
+
+:root[data-theme='dark'] .month-row-when {
+  color: #ffd866;
+}
+
+.month-row-what {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+/* ---------- Events: the form on its own page, the preview beside it ---------- */
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.event-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.event-editor > .card {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1100px) {
+  .event-editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.event-preview {
+  position: sticky;
+  top: 24px;
+}
+
+.main h3.event-preview-heading {
+  margin: 0;
+  font-size: 18px;
+}
+
+.main p.event-preview-hint {
+  margin: 2px 0 8px;
+  font-size: 14px;
+}
+
+.event-preview-row {
+  display: flex;
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid var(--color-card-border);
+  font-size: 15px;
+}
+
+.event-preview-row b {
+  min-width: 44px;
+}
+
+.card-actions-end {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
 }
 
 /* ---------- Settings > Personalise: choices beside a drawn phone ---------- */
