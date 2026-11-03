@@ -1767,7 +1767,7 @@ const ca: SaTranslations = {
     accounts: 'Usuaris',
     health: 'Estat tècnic',
     journal: 'Registre',
-    registrations: "Sol·licituds de llocs",
+    registrations: "Sol·licituds de comunitats",
     myCommunities: 'Les meves comunitats',
     session: 'Sessió: queden {{n}} min',
     lock: 'Bloquejar',
@@ -2085,7 +2085,7 @@ const ca: SaTranslations = {
     'superadmin.poi_admin.write': "Canvi a l'admin d'una comunitat",
   },
   registrations: {
-    title: "Sol·licituds de llocs",
+    title: "Sol·licituds de comunitats",
     intro: "Els llocs que s’han registrat des de la web. Res és públic fins que ho aprovis: ni xinxeta al mapa, ni codi QR, ni membres.",
     open: "Per resoldre",
     approved: "Aprovades",
