@@ -1,6 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Image, Platform, Pressable, TextInput, View } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
+import { openPayment } from '../utils/openPayment';
 import { AccessibleText } from '../components/AccessibleText';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { FormCard, FormDivider, FormField } from '../components/FormCard';
@@ -204,7 +205,7 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
       // On the web target the browser is opened from the button below instead:
       // window.open() right after an await is treated as a popup and blocked.
       if (Platform.OS !== 'web') {
-        await WebBrowser.openBrowserAsync(result.checkoutUrl);
+        await openPayment(result.checkoutUrl);
       }
     } catch {
       setError(true);
@@ -232,7 +233,7 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
     setOpeningCard(id);
     try {
       const { url } = await getCardUpdateUrl(poi.id, id);
-      await WebBrowser.openBrowserAsync(url);
+      await openPayment(url);
       loadMine();
     } catch {
       setError(true);
@@ -322,7 +323,7 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
         <AccessibleButton
           label={t('donate.openPaymentButton')}
           onPress={() => {
-            WebBrowser.openBrowserAsync(pending.checkoutUrl).catch(() => setError(true));
+            openPayment(pending.checkoutUrl).catch(() => setError(true));
           }}
         />
         <Pressable
