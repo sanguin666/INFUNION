@@ -6,6 +6,8 @@ import { FormCard, FormDivider, FormField } from '../components/FormCard';
 import { ChatBubbleIcon, ChevronRightIcon } from '../components/icons';
 import { createCommunityPost, getCommunityPosts } from '../api/community';
 import { SignInNotice } from '../components/SignInNotice';
+import { ContentMenu, ReportedNotice } from '../components/ContentMenu';
+import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import type { CommunityPost, Poi } from '../api/types';
@@ -25,6 +27,10 @@ export function CommunityScreen({ poi, onOpenPost, onSignIn }: Props) {
   const [message, setMessage] = useState('');
   const [authorName, setAuthorName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [blocked, setBlocked] = useState(false);
+  // Reported in this visit: shown as hidden until the list loads again,
+  // after which the backend leaves them out.
+  const [reported, setReported] = useState<Set<string>>(new Set());
 
   function load() {
     getCommunityPosts(poi.id)
@@ -45,8 +51,9 @@ export function CommunityScreen({ poi, onOpenPost, onSignIn }: Props) {
       setPosts((current) => [created, ...(current ?? [])]);
       setMessage('');
       setAuthorName('');
-    } catch {
-      setError(true);
+    } catch (e) {
+      if (e instanceof ApiError && e.message === 'posting_blocked') setBlocked(true);
+      else setError(true);
     } finally {
       setSubmitting(false);
     }
@@ -86,6 +93,12 @@ export function CommunityScreen({ poi, onOpenPost, onSignIn }: Props) {
         <SignInNotice onSignIn={onSignIn} />
       )}
 
+      {blocked && (
+        <AccessibleText variant="body" color={colors.danger}>
+          {t('moderation.blocked')}
+        </AccessibleText>
+      )}
+
       {error && (
         <AccessibleText variant="body" color={colors.danger}>
           {t('community.error')}
@@ -98,7 +111,10 @@ export function CommunityScreen({ poi, onOpenPost, onSignIn }: Props) {
         </AccessibleText>
       )}
 
-      {posts?.map((item) => (
+      {posts?.map((item) =>
+        reported.has(item.id) ? (
+          <ReportedNotice key={item.id} />
+        ) : (
         <Pressable
           key={item.id}
           accessibilityRole="button"
@@ -115,12 +131,21 @@ export function CommunityScreen({ poi, onOpenPost, onSignIn }: Props) {
                 <AccessibleText variant="caption" color={colors.primary} style={styles.commentCountLabel}>
                   {item.commentCount}
                 </AccessibleText>
+                <ContentMenu
+                  poiId={poi.id}
+                  kind="post"
+                  targetId={item.id}
+                  authorName={item.authorName}
+                  onReported={() => setReported((current) => new Set(current).add(item.id))}
+                  onHidden={load}
+                />
               </View>
             </View>
           </View>
           <ChevronRightIcon size={20} color={colors.textMuted} />
         </Pressable>
-      ))}
+        ),
+      )}
     </>
   );
 }

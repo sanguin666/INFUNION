@@ -5,8 +5,11 @@ import { CreateCommunityPostDto } from './dto/create-community-post.dto.js';
 import { CreateCommunityCommentDto } from './dto/create-community-comment.dto.js';
 import {
   JwtAuthGuard,
+  OptionalJwtAuthGuard,
   type AuthenticatedRequest,
+  type MaybeAuthenticatedRequest,
 } from '../auth/guards/jwt-auth.guard.js';
+import { ModerationService } from '../moderation/moderation.service.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
 
 @Controller('pois/:poiId/community-posts')
@@ -14,22 +17,33 @@ export class CommunityController {
   constructor(
     private readonly postsService: CommunityPostsService,
     private readonly commentsService: CommunityCommentsService,
+    private readonly moderation: ModerationService,
   ) {}
 
   // Posting and replying need an account; reading the board doesn't.
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(
+  async create(
     @Req() request: AuthenticatedRequest,
     @Param('poiId') poiId: string,
     @Body() dto: CreateCommunityPostDto,
   ) {
+    await this.moderation.assertCanPost(poiId, request.userId);
     return this.postsService.create(poiId, request.userId, dto);
   }
 
+  // Signed in, what the member reported or whose author they hid is left out.
   @Get()
-  findForPoi(@Param('poiId') poiId: string) {
-    return this.postsService.findForPoi(poiId);
+  @UseGuards(OptionalJwtAuthGuard)
+  async findForPoi(
+    @Req() request: MaybeAuthenticatedRequest,
+    @Param('poiId') poiId: string,
+  ) {
+    return this.moderation.visibleFor(
+      request.userId,
+      'post',
+      await this.postsService.findForPoi(poiId),
+    );
   }
 
   @Get(':postId')
@@ -39,17 +53,27 @@ export class CommunityController {
 
   @Post(':postId/comments')
   @UseGuards(JwtAuthGuard)
-  createComment(
+  async createComment(
     @Req() request: AuthenticatedRequest,
+    @Param('poiId') poiId: string,
     @Param('postId') postId: string,
     @Body() dto: CreateCommunityCommentDto,
   ) {
+    await this.moderation.assertCanPost(poiId, request.userId);
     return this.commentsService.create(postId, request.userId, dto);
   }
 
   @Get(':postId/comments')
-  findComments(@Param('postId') postId: string) {
-    return this.commentsService.findForPost(postId);
+  @UseGuards(OptionalJwtAuthGuard)
+  async findComments(
+    @Req() request: MaybeAuthenticatedRequest,
+    @Param('postId') postId: string,
+  ) {
+    return this.moderation.visibleFor(
+      request.userId,
+      'comment',
+      await this.commentsService.findForPost(postId),
+    );
   }
 
   // Moderation.

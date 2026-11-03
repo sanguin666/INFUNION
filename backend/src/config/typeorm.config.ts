@@ -30,6 +30,9 @@ import { MemberMessage } from '../member-messages/entities/member-message.entity
 import { RateLimit } from '../common/rate-limit/rate-limit.entity.js';
 import { PlaceRegistration } from '../registrations/entities/place-registration.entity.js';
 import { RegistrationBlock } from '../registrations/entities/registration-block.entity.js';
+import { ContentReport } from '../moderation/entities/content-report.entity.js';
+import { HiddenPerson } from '../moderation/entities/hidden-person.entity.js';
+import { PostingBan } from '../moderation/entities/posting-ban.entity.js';
 
 // Every entity the app maps. Exported so the metadata check in
 // typeorm.config.spec.ts, and data-source.ts (which the TypeORM CLI loads
@@ -67,6 +70,9 @@ export const ENTITIES = [
   MemberConversation,
   MemberMessage,
   RateLimit,
+  ContentReport,
+  HiddenPerson,
+  PostingBan,
 ];
 
 export function buildTypeOrmConfig(
