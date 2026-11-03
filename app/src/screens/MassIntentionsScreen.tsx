@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, View } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
+import { openPayment } from '../utils/openPayment';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { AccessibleText } from '../components/AccessibleText';
 import { FormCard, FormDivider, FormField } from '../components/FormCard';
@@ -120,7 +120,7 @@ export function MassIntentionsScreen({ poi }: Props) {
       });
       if (result.checkout?.mode === 'stripe') {
         setPending({ id: result.intention.id, checkoutUrl: result.checkout.checkoutUrl });
-        if (Platform.OS !== 'web') await WebBrowser.openBrowserAsync(result.checkout.checkoutUrl);
+        if (Platform.OS !== 'web') await openPayment(result.checkout.checkoutUrl);
         return;
       }
       setDone({ when: choice });
@@ -177,7 +177,7 @@ export function MassIntentionsScreen({ poi }: Props) {
         <AccessibleButton
           label={t('donate.openPaymentButton')}
           onPress={() => {
-            WebBrowser.openBrowserAsync(pending.checkoutUrl).catch(() => setError(true));
+            openPayment(pending.checkoutUrl).catch(() => setError(true));
           }}
         />
         <AccessibleButton variant="secondary" label={t('donate.cancelButton')} onPress={() => setPending(null)} />
