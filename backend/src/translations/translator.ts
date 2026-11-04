@@ -77,6 +77,7 @@ export class Translator {
   constructor(config: ConfigService) {
     const apiKey = config.get<string>('ANTHROPIC_API_KEY')?.trim();
     this.client = apiKey ? new Anthropic({ apiKey, maxRetries: 2, timeout: 30_000 }) : null;
+    this.logger.log(`Automatic translation is ${this.client ? 'on' : 'off (no ANTHROPIC_API_KEY)'}`);
   }
 
   get enabled(): boolean {

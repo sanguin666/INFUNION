@@ -31,7 +31,10 @@ export type TranslationView = {
 };
 
 // Where each kind's words are, and which columns get translated.
-const SOURCES: Record<TranslatableKind, { table: string; columns: string[]; poiJoin?: string }> = {
+const SOURCES: Record<
+  TranslatableKind,
+  { table: string; columns: string[]; poiJoin?: string; poiColumn?: string }
+> = {
   post: { table: 'community_posts', columns: ['message'] },
   comment: {
     table: 'community_comments',
@@ -41,6 +44,10 @@ const SOURCES: Record<TranslatableKind, { table: string; columns: string[]; poiJ
   prayer: { table: 'prayer_requests', columns: ['message'] },
   announcement: { table: 'announcements', columns: ['title', 'body'] },
   event: { table: 'events', columns: ['title', 'description'] },
+  // The home page (Seb, 4 Nov 2026): the team's text blocks, and the
+  // community's description shown while it has no page of its own.
+  block: { table: 'poi_page_blocks', columns: ['title', 'body'] },
+  about: { table: 'pois', columns: ['description'], poiColumn: 't.id' },
 };
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -125,7 +132,7 @@ export class TranslationsService implements OnModuleInit, OnModuleDestroy {
     }
     if (Object.keys(missing).length > 0) {
       try {
-        const found = await this.translator.detect(missing);
+        const found = await this.translator.detect(missing).catch((error: Error) => this.failed('detect', error));
         const rows = Object.entries(found).map(([id, language]) =>
           this.languages.create({ kind, targetId: id, sourceHash: hashes.get(id)!, language }),
         );
@@ -196,7 +203,7 @@ export class TranslationsService implements OnModuleInit, OnModuleDestroy {
     ids: string[],
   ): Promise<Map<string, Record<string, string>>> {
     const source = SOURCES[kind];
-    const poiColumn = source.poiJoin ? 'parent.poi_id' : 't.poi_id';
+    const poiColumn = source.poiColumn ?? (source.poiJoin ? 'parent.poi_id' : 't.poi_id');
     const rows: Record<string, string | null>[] = await this.dataSource.query(
       `SELECT t.id, ${source.columns.map((c) => `t."${c}"`).join(', ')}
          FROM "${source.table}" t ${source.poiJoin ?? ''}
@@ -216,6 +223,13 @@ export class TranslationsService implements OnModuleInit, OnModuleDestroy {
   }
 
   /** A removed text takes its translations with it (members' words, GDPR). */
+  // A failed call to Claude is logged (Railway shows it) and answered as
+  // 503, so the app keeps the original text.
+  private failed(step: string, error: Error): never {
+    this.logger.warn(`Translation ${step} failed: ${error.message}`);
+    throw new ServiceUnavailableException('translation_failed');
+  }
+
   async sweep(): Promise<void> {
     for (const [kind, source] of Object.entries(SOURCES)) {
       for (const table of ['content_translations', 'content_languages']) {
