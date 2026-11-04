@@ -33,6 +33,8 @@ import { RegistrationBlock } from '../registrations/entities/registration-block.
 import { ContentReport } from '../moderation/entities/content-report.entity.js';
 import { HiddenPerson } from '../moderation/entities/hidden-person.entity.js';
 import { PostingBan } from '../moderation/entities/posting-ban.entity.js';
+import { ContentTranslation } from '../translations/entities/content-translation.entity.js';
+import { ContentLanguage } from '../translations/entities/content-language.entity.js';
 
 // Every entity the app maps. Exported so the metadata check in
 // typeorm.config.spec.ts, and data-source.ts (which the TypeORM CLI loads
@@ -73,6 +75,8 @@ export const ENTITIES = [
   ContentReport,
   HiddenPerson,
   PostingBan,
+  ContentTranslation,
+  ContentLanguage,
 ];
 
 export function buildTypeOrmConfig(

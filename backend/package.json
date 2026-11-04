@@ -27,6 +27,7 @@
     "migration:revert": "nest build && typeorm migration:revert -d dist/data-source.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.4.0",
     "@aws-sdk/client-s3": "^3.1157.0",
     "@aws-sdk/lib-storage": "^3.1157.0",
     "@aws-sdk/s3-request-presigner": "^3.1157.0",

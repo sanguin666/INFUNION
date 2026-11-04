@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { ActivityIndicator, Modal, Pressable, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { AccessibleText } from '../components/AccessibleText';
@@ -28,6 +28,7 @@ import { type ActiveModule, type ModuleType, type Poi, sendsNotifications } from
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { getPoiTheme } from '../theme/poiThemes';
 import { useI18n } from '../i18n/I18nContext';
+import { translationAvailable } from '../translation/useTranslations';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
 import { getNotificationPreferences } from '../api/notifications';
 import { getPermissionState } from '../notifications/push';
@@ -94,7 +95,7 @@ export function MoreScreen({
   onOpenNotifications,
   messagesUnread = false,
 }: Props) {
-  const { t, language, setLanguage } = useI18n();
+  const { t, language, setLanguage, autoTranslate, setAutoTranslate } = useI18n();
   const insets = useSafeAreaInsets();
   const poiTheme = getPoiTheme(poi.type);
   const [languageOpen, setLanguageOpen] = useState(false);
@@ -357,6 +358,33 @@ export function MoreScreen({
             );
           })}
 
+          {/* Automatic translation is the member's own choice, on the
+              Complete plan only (Seb, 4 Nov 2026). */}
+          {translationAvailable(poi, !!me) && (
+            <Pressable
+              accessibilityRole="switch"
+              accessibilityState={{ checked: autoTranslate }}
+              accessibilityLabel={`${t('translation.autoTitle')}. ${t('translation.autoHint')}`}
+              onPress={() => setAutoTranslate(!autoTranslate)}
+              style={styles.autoTranslateRow}
+            >
+              <View style={styles.rowLabel}>
+                <AccessibleText variant="bodyLarge">{t('translation.autoTitle')}</AccessibleText>
+                <AccessibleText variant="caption" color={colors.textMuted}>
+                  {t('translation.autoHint')}
+                </AccessibleText>
+              </View>
+              <Switch
+                value={autoTranslate}
+                onValueChange={setAutoTranslate}
+                trackColor={{ false: colors.switchOff, true: colors.primary }}
+                thumbColor="#FFFFFF"
+                importantForAccessibility="no-hide-descendants"
+                accessibilityElementsHidden
+              />
+            </Pressable>
+          )}
+
           <AccessibleButton
             label={t('places.close')}
             variant="secondary"
@@ -567,6 +595,16 @@ const styles = themedStyles(() => ({
   languageOptionSelected: {},
   languageOptionLast: {
     borderBottomWidth: 0,
+  },
+  // Set apart from the languages above by a hairline: a setting, not a choice.
+  autoTranslateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    minHeight: minTouchTarget + 14,
+    borderTopWidth: 1,
+    borderTopColor: colors.primary,
+    paddingVertical: spacing.sm,
   },
   confirmSheet: {
     backgroundColor: colors.surface,
