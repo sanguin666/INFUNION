@@ -12,6 +12,8 @@ export const TRANSLATABLE_KINDS = [
   'prayer',
   'announcement',
   'event',
+  'block',
+  'about',
 ] as const;
 export type TranslatableKind = (typeof TRANSLATABLE_KINDS)[number];
 

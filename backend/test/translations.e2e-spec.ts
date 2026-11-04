@@ -117,6 +117,29 @@ describe('Translations (e2e)', () => {
     expect(ok.body[0].fields).toEqual({ title: 'EN: Mercat', body: 'EN: Dissabte a la plaça' });
   });
 
+  it('translates the home page: its text blocks and the description', async () => {
+    await complete();
+    const db = app.get(DataSource);
+    await db.query(`UPDATE pois SET description = 'Una comunitat oberta' WHERE id = $1`, [place.id]);
+    const [block] = await db.query(
+      `INSERT INTO poi_page_blocks (poi_id, type, position, title, body) VALUES ($1, 'text', 0, 'Horaris', 'Obert cada dia')
+       RETURNING id`,
+      [place.id],
+    );
+    const about = await client(app)
+      .post(`/pois/${place.id}/translations`)
+      .set(auth(memberToken))
+      .send({ kind: 'about', ids: [place.id], language: 'en' })
+      .expect(201);
+    expect(about.body[0].fields).toEqual({ description: 'EN: Una comunitat oberta' });
+    const blocks = await client(app)
+      .post(`/pois/${place.id}/translations`)
+      .set(auth(memberToken))
+      .send({ kind: 'block', ids: [block.id], language: 'en' })
+      .expect(201);
+    expect(blocks.body[0].fields).toEqual({ title: 'EN: Horaris', body: 'EN: Obert cada dia' });
+  });
+
   it('finds each text\'s language once', async () => {
     await complete();
     const a = await post('Hello everyone');
