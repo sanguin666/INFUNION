@@ -341,13 +341,14 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
   // concerns one person and can't wait (`always`).
   private async sendToUsers(userIds: string[], poiId: string, notification: Composer, always = false): Promise<void> {
     if (userIds.length === 0 || !this.expoPush.enabled) return;
-    if (!always) {
-      const poi = await this.poiRepository.findOne({ where: { id: poiId }, select: { id: true, plan: true, billingComped: true } });
-      if (!poi || !sendsNotifications(poi)) return;
-    }
+    const poi = await this.poiRepository.findOne({
+      where: { id: poiId },
+      select: { id: true, name: true, plan: true, billingComped: true },
+    });
+    if (!poi || (!always && !sendsNotifications(poi))) return;
     const tokens = await this.tokenRepository.find({ where: { user: { id: In(userIds) } } });
     const messages: PushMessage[] = tokens.map((t) => {
-      const written = typeof notification === 'function' ? notification(t) : notification;
+      const written = withCommunityName(typeof notification === 'function' ? notification(t) : notification, poi.name);
       return { to: t.token, ...written, data: { ...written.data, poiId } };
     });
     const dead = await this.expoPush.send(messages);
@@ -361,6 +362,19 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     if (!membership) throw new NotFoundException('Not a member of this community');
     return membership;
   }
+}
+
+/**
+ * Every notification says which community it comes from (Seb, 4 Nov
+ * 2026): the community's name is the title, and a title of its own
+ * ("In 1 hour: Mass") moves to the first line of the message. A title
+ * that already names the community stays as it is.
+ */
+export function withCommunityName(notification: Notification, name: string): Notification {
+  const title = notification.title.trim();
+  if (!name || title.includes(name)) return notification;
+  const body = [title, notification.body.trim()].filter(Boolean).join('\n');
+  return { ...notification, title: name, body };
 }
 
 function toPreferences(membership: UserPoi): NotificationPreferences {
