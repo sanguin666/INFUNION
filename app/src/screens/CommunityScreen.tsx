@@ -7,6 +7,8 @@ import { ChatBubbleIcon, ChevronRightIcon } from '../components/icons';
 import { createCommunityPost, getCommunityPosts } from '../api/community';
 import { SignInNotice } from '../components/SignInNotice';
 import { ContentMenu, ReportedNotice } from '../components/ContentMenu';
+import { TranslateLine } from '../components/TranslateLine';
+import { useTranslations } from '../translation/useTranslations';
 import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
@@ -31,6 +33,7 @@ export function CommunityScreen({ poi, onOpenPost, onSignIn }: Props) {
   // Reported in this visit: shown as hidden until the list loads again,
   // after which the backend leaves them out.
   const [reported, setReported] = useState<Set<string>>(new Set());
+  const tr = useTranslations(poi, 'post', posts?.map((p) => p.id) ?? []);
 
   function load() {
     getCommunityPosts(poi.id)
@@ -123,7 +126,8 @@ export function CommunityScreen({ poi, onOpenPost, onSignIn }: Props) {
           style={styles.card}
         >
           <View style={styles.cardBody}>
-            <AccessibleText variant="body">{item.message}</AccessibleText>
+            <AccessibleText variant="body">{tr.text(item.id, 'message', item.message)}</AccessibleText>
+            <TranslateLine handle={tr} id={item.id} />
             <View style={styles.cardFooter}>
               <AccessibleText variant="caption">— {item.authorName ?? t('common.anonymous')}</AccessibleText>
               <View style={styles.commentCount}>

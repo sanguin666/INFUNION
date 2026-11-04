@@ -7,6 +7,8 @@ import { CandleIcon } from '../components/icons';
 import { createPrayerRequest, getPrayerRequests, prayForRequest } from '../api/prayerRequests';
 import { SignInNotice } from '../components/SignInNotice';
 import { ContentMenu, ReportedNotice } from '../components/ContentMenu';
+import { TranslateLine } from '../components/TranslateLine';
+import { useTranslations } from '../translation/useTranslations';
 import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
@@ -28,6 +30,7 @@ export function PrayerRequestsScreen({ poi, onSignIn }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const [reported, setReported] = useState<Set<string>>(new Set());
+  const tr = useTranslations(poi, 'prayer', requests?.map((r) => r.id) ?? []);
 
   function load() {
     getPrayerRequests(poi.id)
@@ -128,7 +131,8 @@ export function PrayerRequestsScreen({ poi, onSignIn }: Props) {
           <ReportedNotice key={item.id} />
         ) : (
         <View key={item.id} style={styles.card}>
-          <AccessibleText variant="body">{item.message}</AccessibleText>
+          <AccessibleText variant="body">{tr.text(item.id, 'message', item.message)}</AccessibleText>
+          <TranslateLine handle={tr} id={item.id} />
           <View style={styles.cardFooter}>
             <AccessibleText variant="caption" style={styles.byline}>
               — {item.authorName ?? t('common.anonymous')} · {item.prayerCount} {t('prayerRequests.prayingSuffix')}

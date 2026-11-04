@@ -582,6 +582,21 @@ export type Translations = {
     deleteError: string;
     deleteManager: string;
   };
+  translation: {
+    translate: string;
+    translating: string;
+    translatedFrom: string;
+    seeOriginal: string;
+    otherLanguage: string;
+    lang_en: string;
+    lang_es: string;
+    lang_ca: string;
+    lang_gl: string;
+    lang_pt: string;
+    lang_fr: string;
+    autoTitle: string;
+    autoHint: string;
+  };
   moderation: {
     menuAria: string;
     reportPost: string;
@@ -1184,6 +1199,21 @@ const en: Translations = {
     deleteConfirm: 'Delete for good',
     deleteError: 'Couldn’t delete your account. Please try again.',
     deleteManager: "You manage a community, so this account can’t be deleted here. Write to privacy@infunion.app.",
+  },
+  translation: {
+    translate: "Translate",
+    translating: "Translating…",
+    translatedFrom: "Translated from {{language}}",
+    seeOriginal: "See original",
+    otherLanguage: "another language",
+    lang_en: "English",
+    lang_es: "Spanish",
+    lang_ca: "Catalan",
+    lang_gl: "Galician",
+    lang_pt: "Portuguese",
+    lang_fr: "French",
+    autoTitle: "Translate automatically",
+    autoHint: "Posts in other languages open in English",
   },
   moderation: {
     menuAria: "More options",
@@ -1788,6 +1818,21 @@ const es: Translations = {
     deleteError: 'No se pudo eliminar tu cuenta. Inténtalo de nuevo.',
     deleteManager: "Gestionas una comunidad, así que esta cuenta no se puede eliminar aquí. Escribe a privacy@infunion.app.",
   },
+  translation: {
+    translate: "Traducir",
+    translating: "Traduciendo…",
+    translatedFrom: "Traducido del {{language}}",
+    seeOriginal: "Ver el original",
+    otherLanguage: "otro idioma",
+    lang_en: "inglés",
+    lang_es: "español",
+    lang_ca: "catalán",
+    lang_gl: "gallego",
+    lang_pt: "portugués",
+    lang_fr: "francés",
+    autoTitle: "Traducir automáticamente",
+    autoHint: "Las publicaciones en otros idiomas se abren en español",
+  },
   moderation: {
     menuAria: "Más opciones",
     reportPost: "Denunciar esta publicación",
@@ -2390,6 +2435,21 @@ const fr: Translations = {
     deleteConfirm: 'Supprimer définitivement',
     deleteError: 'Impossible de supprimer votre compte. Veuillez réessayer.',
     deleteManager: "Vous gérez une communauté : ce compte ne peut pas être supprimé ici. Écrivez à privacy@infunion.app.",
+  },
+  translation: {
+    translate: "Traduire",
+    translating: "Traduction…",
+    translatedFrom: "Traduit de : {{language}}",
+    seeOriginal: "Voir l'original",
+    otherLanguage: "une autre langue",
+    lang_en: "anglais",
+    lang_es: "espagnol",
+    lang_ca: "catalan",
+    lang_gl: "galicien",
+    lang_pt: "portugais",
+    lang_fr: "français",
+    autoTitle: "Traduire automatiquement",
+    autoHint: "Les publications dans d'autres langues s'ouvrent en français",
   },
   moderation: {
     menuAria: "Plus d'options",
@@ -2994,6 +3054,21 @@ const va: Translations = {
     deleteError: 'No s’ha pogut eliminar el teu compte. Torna-ho a provar.',
     deleteManager: "Gestiones una comunitat, per això este compte no es pot eliminar ací. Escriu a privacy@infunion.app.",
   },
+  translation: {
+    translate: "Traduir",
+    translating: "S'està traduint…",
+    translatedFrom: "Traduït de: {{language}}",
+    seeOriginal: "Veure l'original",
+    otherLanguage: "una altra llengua",
+    lang_en: "anglés",
+    lang_es: "castellà",
+    lang_ca: "català",
+    lang_gl: "gallec",
+    lang_pt: "portugués",
+    lang_fr: "francés",
+    autoTitle: "Traduir automàticament",
+    autoHint: "Les publicacions en altres llengües s'obrin en valencià",
+  },
   moderation: {
     menuAria: "Més opcions",
     reportPost: "Denunciar esta publicació",
@@ -3596,6 +3671,21 @@ const ca: Translations = {
     deleteConfirm: 'Eliminar per sempre',
     deleteError: 'No s’ha pogut eliminar el teu compte. Torna-ho a provar.',
     deleteManager: "Gestiones una comunitat, per això aquest compte no es pot eliminar aquí. Escriu a privacy@infunion.app.",
+  },
+  translation: {
+    translate: "Traduir",
+    translating: "S'està traduint…",
+    translatedFrom: "Traduït de: {{language}}",
+    seeOriginal: "Veure l'original",
+    otherLanguage: "una altra llengua",
+    lang_en: "anglès",
+    lang_es: "castellà",
+    lang_ca: "català",
+    lang_gl: "gallec",
+    lang_pt: "portuguès",
+    lang_fr: "francès",
+    autoTitle: "Traduir automàticament",
+    autoHint: "Les publicacions en altres llengües s'obren en català",
   },
   moderation: {
     menuAria: "Més opcions",
@@ -4200,6 +4290,21 @@ const gl: Translations = {
     deleteError: 'Non se puido eliminar a túa conta. Téntao de novo.',
     deleteManager: "Xestionas unha comunidade, así que esta conta non se pode eliminar aquí. Escribe a privacy@infunion.app.",
   },
+  translation: {
+    translate: "Traducir",
+    translating: "Traducindo…",
+    translatedFrom: "Traducido do {{language}}",
+    seeOriginal: "Ver o orixinal",
+    otherLanguage: "outra lingua",
+    lang_en: "inglés",
+    lang_es: "castelán",
+    lang_ca: "catalán",
+    lang_gl: "galego",
+    lang_pt: "portugués",
+    lang_fr: "francés",
+    autoTitle: "Traducir automaticamente",
+    autoHint: "As publicacións noutras linguas ábrense en galego",
+  },
   moderation: {
     menuAria: "Máis opcións",
     reportPost: "Denunciar esta publicación",
@@ -4803,6 +4908,21 @@ const pt: Translations = {
     deleteConfirm: 'Eliminar para sempre',
     deleteError: 'Não foi possível eliminar a sua conta. Tente novamente.',
     deleteManager: "Gere uma comunidade, por isso esta conta não pode ser eliminada aqui. Escreva para privacy@infunion.app.",
+  },
+  translation: {
+    translate: "Traduzir",
+    translating: "A traduzir…",
+    translatedFrom: "Traduzido de: {{language}}",
+    seeOriginal: "Ver o original",
+    otherLanguage: "outra língua",
+    lang_en: "inglês",
+    lang_es: "espanhol",
+    lang_ca: "catalão",
+    lang_gl: "galego",
+    lang_pt: "português",
+    lang_fr: "francês",
+    autoTitle: "Traduzir automaticamente",
+    autoHint: "As publicações noutras línguas abrem em português",
   },
   moderation: {
     menuAria: "Mais opções",
