@@ -274,7 +274,7 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
             onCreated={() => setDrilldown({ kind: 'list' })}
           />
         ) : drilldown.kind === 'announcement' ? (
-          <AnnouncementScreen key={drilldown.item.id} item={drilldown.item} />
+          <AnnouncementScreen key={drilldown.item.id} poi={poi} item={drilldown.item} />
         ) : (
           <AnnouncementsScreen
             poi={poi}

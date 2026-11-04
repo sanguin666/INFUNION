@@ -4,7 +4,9 @@ import { AccessibleText } from '../components/AccessibleText';
 import { PlayIcon } from '../components/icons';
 import { uploadUri } from '../api/client';
 import { useI18n } from '../i18n/I18nContext';
-import type { Announcement } from '../api/types';
+import type { Announcement, Poi } from '../api/types';
+import { TranslateLine } from '../components/TranslateLine';
+import { useTranslations } from '../translation/useTranslations';
 import { colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 
 export function formatNewsDate(iso: string) {
@@ -28,8 +30,9 @@ export function ImportantLabel() {
  * the photo, the date and title, the whole text, and the voice message
  * when the office recorded one.
  */
-export function AnnouncementScreen({ item }: { item: Announcement }) {
+export function AnnouncementScreen({ poi, item }: { poi: Poi; item: Announcement }) {
   const { t } = useI18n();
+  const tr = useTranslations(poi, 'announcement', [item.id]);
   const long = new Date(item.createdAt).toLocaleDateString(undefined, {
     weekday: 'long',
     month: 'long',
@@ -53,10 +56,11 @@ export function AnnouncementScreen({ item }: { item: Announcement }) {
           </AccessibleText>
         </View>
         <AccessibleText variant="title" style={styles.title} accessibilityRole="header">
-          {item.title}
+          {tr.text(item.id, 'title', item.title)}
         </AccessibleText>
       </View>
-      {!!item.body && <AccessibleText variant="body">{item.body}</AccessibleText>}
+      {!!item.body && <AccessibleText variant="body">{tr.text(item.id, 'body', item.body)}</AccessibleText>}
+      <TranslateLine handle={tr} id={item.id} />
       {!!item.audioUrl && <VoiceButton path={item.audioUrl} label={t('announcements.playVoice')} />}
     </>
   );

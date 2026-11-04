@@ -35,6 +35,7 @@ import { VendorModule } from './vendor/vendor.module.js';
 import { AppUpdatesModule } from './app-updates/app-updates.module.js';
 import { RegistrationsModule } from './registrations/registrations.module.js';
 import { ModerationModule } from './moderation/moderation.module.js';
+import { TranslationsModule } from './translations/translations.module.js';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { ModerationModule } from './moderation/moderation.module.js';
     AppUpdatesModule,
     RegistrationsModule,
     ModerationModule,
+    TranslationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

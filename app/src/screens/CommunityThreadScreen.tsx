@@ -7,6 +7,8 @@ import { BackChevronIcon } from '../components/icons';
 import { createComment, getComments } from '../api/community';
 import { SignInNotice } from '../components/SignInNotice';
 import { ContentMenu, ReportedNotice } from '../components/ContentMenu';
+import { TranslateLine } from '../components/TranslateLine';
+import { useTranslations } from '../translation/useTranslations';
 import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
@@ -23,9 +25,11 @@ type Props = {
 export function CommunityThreadScreen({ poi, post, onBack, onSignIn }: Props) {
   const [blocked, setBlocked] = useState(false);
   const [reported, setReported] = useState<Set<string>>(new Set());
+  const [comments, setComments] = useState<CommunityComment[] | null>(null);
+  const postTr = useTranslations(poi, 'post', [post.id]);
+  const tr = useTranslations(poi, 'comment', comments?.map((c) => c.id) ?? []);
   const { t } = useI18n();
   const { me } = useAuth();
-  const [comments, setComments] = useState<CommunityComment[] | null>(null);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState('');
   const [authorName, setAuthorName] = useState('');
@@ -68,7 +72,8 @@ export function CommunityThreadScreen({ poi, post, onBack, onSignIn }: Props) {
         <ReportedNotice />
       ) : (
         <View style={styles.postCard}>
-          <AccessibleText variant="body">{post.message}</AccessibleText>
+          <AccessibleText variant="body">{postTr.text(post.id, 'message', post.message)}</AccessibleText>
+          <TranslateLine handle={postTr} id={post.id} />
           <View style={styles.byline}>
             <AccessibleText variant="caption" style={styles.bylineName}>
               — {post.authorName ?? t('common.anonymous')}
@@ -112,7 +117,8 @@ export function CommunityThreadScreen({ poi, post, onBack, onSignIn }: Props) {
           <ReportedNotice key={item.id} />
         ) : (
           <View key={item.id} style={styles.commentCard}>
-            <AccessibleText variant="body">{item.message}</AccessibleText>
+            <AccessibleText variant="body">{tr.text(item.id, 'message', item.message)}</AccessibleText>
+            <TranslateLine handle={tr} id={item.id} />
             <View style={styles.byline}>
               <AccessibleText variant="caption" style={styles.bylineName}>
                 — {item.authorName ?? t('common.anonymous')}
