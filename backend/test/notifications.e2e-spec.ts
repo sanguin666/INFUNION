@@ -153,8 +153,8 @@ describe('Notifications (e2e)', () => {
     await settle();
 
     expect(sent.map((m) => [m.to, m.title, m.body])).toEqual([
-      [anaPhone, 'Tu solicitud: Bautizo', 'El equipo ha respondido: «We can meet Tuesday»'],
-      [anaPhone, 'Tu solicitud: Bautizo', expect.stringMatching(/^Cita: .*18:00, Despacho$/)],
+      [anaPhone, 'San Roque', 'Tu solicitud: Bautizo\nEl equipo ha respondido: «We can meet Tuesday»'],
+      [anaPhone, 'San Roque', expect.stringMatching(/^Tu solicitud: Bautizo\nCita: .*18:00, Despacho$/)],
     ]);
     expect(sent[0].data).toEqual({ screen: 'request', id, poiId: place.id });
   });
@@ -184,7 +184,8 @@ describe('Notifications (e2e)', () => {
 
     await notifications.sendDueEventReminders();
     await notifications.sendDueEventReminders();
-    expect(sent.map((m) => [m.to, m.title])).toEqual([[anaPhone, 'In 1 hour: Rosary']]);
+    expect(sent.map((m) => [m.to, m.title])).toEqual([[anaPhone, 'San Roque']]);
+    expect(sent[0].body).toMatch(/^In 1 hour: Rosary\n/);
     expect(sent[0].body).toMatch(/Chapel$/);
     expect(sent[0].data).toEqual({ screen: 'event', id: eventId, poiId: place.id });
 
@@ -227,13 +228,13 @@ describe('Notifications (e2e)', () => {
 
     const notifications = app.get(NotificationsService);
     const at = (iso: string) => notifications.sendDueEventReminders(new Date(iso));
-    const tenAM = expect.stringMatching(/^10:00( AM)?, Church$/);
+    const tenAM = expect.stringMatching(/^In 1 hour: Mass\n10:00( AM)?, Church$/);
     const got = () => sent.splice(0).map((m) => [m.to, m.title, m.body]);
 
     // Sunday 27 September, 09:30 in Madrid: Mass at 10:00, once.
     await at('2026-09-27T07:30:00.000Z');
     await at('2026-09-27T07:45:00.000Z');
-    expect(got()).toEqual([[anaPhone, 'In 1 hour: Mass', tenAM]]);
+    expect(got()).toEqual([[anaPhone, 'San Roque', tenAM]]);
 
     // Not on a weekday, nor on the day off.
     await at('2026-09-29T07:30:00.000Z');
@@ -243,8 +244,8 @@ describe('Notifications (e2e)', () => {
     // 11 October: Ana as every week, Luis for his one day.
     await at('2026-10-11T07:30:00.000Z');
     expect(got().sort()).toEqual([
-      [anaPhone, 'In 1 hour: Mass', tenAM],
-      [luisPhone, 'In 1 hour: Mass', tenAM],
+      [anaPhone, 'San Roque', tenAM],
+      [luisPhone, 'San Roque', tenAM],
     ]);
     const after = await client(app).get(`/auth/me/pois/${place.id}/event-reminders`).set(as(luis.token)).expect(200);
     expect(after.body).toEqual([]);
@@ -253,7 +254,7 @@ describe('Notifications (e2e)', () => {
     await at('2026-11-01T07:30:00.000Z');
     expect(got()).toEqual([]);
     await at('2026-11-01T08:30:00.000Z');
-    expect(got()).toEqual([[anaPhone, 'In 1 hour: Mass', tenAM]]);
+    expect(got()).toEqual([[anaPhone, 'San Roque', tenAM]]);
   });
 
   it('looks at a bell only when its next time is near, and again when the event moves', async () => {
@@ -283,7 +284,7 @@ describe('Notifications (e2e)', () => {
     await client(app).patch(`/pois/${place.id}/events/${eventId}`).set(as(adminToken)).send({ repeatDays: [6] }).expect(200);
     expect(await nextCheck()).toBeNull();
     await notifications.sendDueEventReminders(new Date('2026-10-03T07:30:00.000Z'));
-    expect(sent.map((m) => [m.to, m.title])).toEqual([[anaPhone, 'In 1 hour: Mass']]);
+    expect(sent.map((m) => [m.to, m.body.split('\n')[0]])).toEqual([[anaPhone, 'In 1 hour: Mass']]);
     expect(await nextCheck()).toBe('2026-10-10T07:00:00.000Z');
   });
 
