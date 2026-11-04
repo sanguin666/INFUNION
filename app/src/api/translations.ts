@@ -1,6 +1,6 @@
 import { apiPost } from './client';
 
-export type TranslatableKind = 'post' | 'comment' | 'prayer' | 'announcement' | 'event';
+export type TranslatableKind = 'post' | 'comment' | 'prayer' | 'announcement' | 'event' | 'block' | 'about';
 
 export type Translation = {
   id: string;
