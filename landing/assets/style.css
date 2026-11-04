@@ -237,6 +237,14 @@ section[id] {
   margin: 18px 0 0;
 }
 
+/* The kit's slogan under the headline, as on the partners' deck cover. */
+.hero p.hero-claim {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--purple, #6C4FD9);
+}
+
 .hero-actions {
   display: flex;
   gap: 14px;
