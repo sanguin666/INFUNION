@@ -21,6 +21,8 @@ import type {
 import type { HubTab } from '../components/PoiShell';
 import { cardSurface, colors, radii, spacing, themedStyles } from '../theme/theme';
 import { useI18n } from '../i18n/I18nContext';
+import { TranslateLine } from '../components/TranslateLine';
+import { useTranslations } from '../translation/useTranslations';
 
 type Props = {
   poi: Poi;
@@ -118,6 +120,25 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
     const required = BLOCK_MODULE[block.type];
     return !required || isLive(required);
   });
+  // The team's own words, translated for a member reading another
+  // language (Complete plan). Not in the dashboard's preview, where the
+  // team is still writing them.
+  const ABOUT = 'default:about';
+  const blockTr = useTranslations(
+    poi,
+    'block',
+    preview ? [] : visible.filter((b) => b.id !== ABOUT && (b.title || b.body)).map((b) => b.id),
+  );
+  const aboutTr = useTranslations(poi, 'about', !preview && visible.some((b) => b.id === ABOUT) ? [poi.id] : []);
+  const tx = (block: PoiPageBlock, field: 'title' | 'body', original: string | null | undefined) =>
+    block.id === ABOUT
+      ? field === 'body'
+        ? aboutTr.text(poi.id, 'description', original)
+        : (original ?? '')
+      : blockTr.text(block.id, field, original);
+  const translateLine = (block: PoiPageBlock) =>
+    block.id === ABOUT ? <TranslateLine handle={aboutTr} id={poi.id} /> : <TranslateLine handle={blockTr} id={block.id} />;
+
   // The badges are the one place other sections still show: fetched
   // only when a badge needs them.
   const needsEvents = isLive('events') && badges.some((b) => b.kind !== 'message' && b.kind !== 'campaign');
@@ -203,10 +224,11 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
           <View key={block.id} style={styles.section}>
             {!!block.title && (
               <AccessibleText variant="bodyLarge" style={styles.blockTitle}>
-                {block.title}
+                {tx(block, 'title', block.title)}
               </AccessibleText>
             )}
-            {!!block.body && <AccessibleText variant="body">{block.body}</AccessibleText>}
+            {!!block.body && <AccessibleText variant="body">{tx(block, 'body', block.body)}</AccessibleText>}
+            {translateLine(block)}
           </View>
         );
 
@@ -222,9 +244,10 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
             />
             {!!block.title && (
               <AccessibleText variant="caption" color={colors.textMuted}>
-                {block.title}
+                {tx(block, 'title', block.title)}
               </AccessibleText>
             )}
+            {!!block.title && translateLine(block)}
           </View>
         );
 
@@ -233,14 +256,15 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
           <View key={block.id} style={styles.section}>
             {!!block.title && (
               <AccessibleText variant="bodyLarge" style={styles.blockTitle}>
-                {block.title}
+                {tx(block, 'title', block.title)}
               </AccessibleText>
             )}
             {!!block.body && (
               <AccessibleText variant="body" color={colors.textMuted}>
-                {block.body}
+                {tx(block, 'body', block.body)}
               </AccessibleText>
             )}
+            {translateLine(block)}
             <AccessibleButton
               label={t('hub.donationsLabel')}
               onPress={() => onSelectTab('donations')}
