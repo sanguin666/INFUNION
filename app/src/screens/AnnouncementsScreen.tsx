@@ -9,6 +9,8 @@ import { useI18n } from '../i18n/I18nContext';
 import type { Announcement, Poi } from '../api/types';
 import { cardSurface, colors, radii, spacing, themedStyles } from '../theme/theme';
 import { formatNewsDate, ImportantLabel } from './AnnouncementScreen';
+import { TranslateLine } from '../components/TranslateLine';
+import { useTranslations, type TranslationsHandle } from '../translation/useTranslations';
 
 type Props = {
   poi: Poi;
@@ -47,6 +49,7 @@ export function AnnouncementsScreen({ poi, onCompose, onOpen, canCompose }: Prop
   }, [poi.id]);
 
   const [latest, ...earlier] = announcements ?? [];
+  const tr = useTranslations(poi, 'announcement', (announcements ?? []).map((a) => a.id));
 
   return (
     <>
@@ -84,28 +87,30 @@ export function AnnouncementsScreen({ poi, onCompose, onOpen, canCompose }: Prop
         </AccessibleText>
       )}
 
-      {latest && <LatestPost item={latest} onPress={() => onOpen(latest)} />}
+      {latest && <LatestPost item={latest} tr={tr} onPress={() => onOpen(latest)} />}
 
       {earlier.length > 0 && (
         <>
           <AccessibleText variant="caption" style={styles.sectionLabel}>
             {t('announcements.earlier')}
           </AccessibleText>
-          <PostList items={earlier} onOpen={onOpen} />
+          <PostList items={earlier} tr={tr} onOpen={onOpen} />
         </>
       )}
     </>
   );
 }
 
-function LatestPost({ item, onPress }: { item: Announcement; onPress: () => void }) {
+function LatestPost({ item, tr, onPress }: { item: Announcement; tr: TranslationsHandle; onPress: () => void }) {
   const { t } = useI18n();
+  const title = tr.text(item.id, 'title', item.title);
+  const body = tr.text(item.id, 'body', item.body);
   const isNew = Date.now() - new Date(item.createdAt).getTime() < NEW_FOR_MS;
   const date = formatNewsDate(item.createdAt);
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${item.title}, ${date}`}
+      accessibilityLabel={`${title}, ${date}`}
       accessibilityHint={t('announcements.readMore')}
       onPress={onPress}
       style={styles.latestCard}
@@ -121,13 +126,14 @@ function LatestPost({ item, onPress }: { item: Announcement; onPress: () => void
           </AccessibleText>
         </View>
         <AccessibleText variant="bodyLarge" style={styles.bold}>
-          {item.title}
+          {title}
         </AccessibleText>
         {!!item.body && (
           <AccessibleText variant="body" color={colors.textMuted} numberOfLines={3}>
-            {item.body}
+            {body}
           </AccessibleText>
         )}
+        <TranslateLine handle={tr} id={item.id} />
         {!item.body && !!item.audioUrl && (
           <AccessibleText variant="body" color={colors.textMuted}>
             {t('announcements.voiceMessage')}
@@ -145,7 +151,15 @@ function LatestPost({ item, onPress }: { item: Announcement; onPress: () => void
  * Earlier posts on the News tab, grouped under the day they were posted
  * ("Hoy", "Ayer", "Lunes 28 sept") in one white box.
  */
-export function PostList({ items, onOpen }: { items: Announcement[]; onOpen: (item: Announcement) => void }) {
+export function PostList({
+  items,
+  tr,
+  onOpen,
+}: {
+  items: Announcement[];
+  tr?: TranslationsHandle;
+  onOpen: (item: Announcement) => void;
+}) {
   const { t } = useI18n();
   return (
     <SummaryList>
@@ -155,11 +169,11 @@ export function PostList({ items, onOpen }: { items: Announcement[]; onOpen: (it
           {day.items.map((item) => (
             <SummaryRow
               key={item.id}
-              title={item.title}
+              title={tr ? tr.text(item.id, 'title', item.title) : item.title}
               above={item.important ? <ImportantLabel /> : null}
               detail={item.audioUrl ? t('announcements.voiceMessage') : null}
               imageUrl={item.imageUrl}
-              accessibilityLabel={`${item.title}, ${formatNewsDate(item.createdAt)}`}
+              accessibilityLabel={`${tr ? tr.text(item.id, 'title', item.title) : item.title}, ${formatNewsDate(item.createdAt)}`}
               onPress={() => onOpen(item)}
             />
           ))}
