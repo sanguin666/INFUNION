@@ -67,6 +67,7 @@ function withIcon(name: string) {
   );
 }
 const BELL = 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0';
+const SPARKLE = 'M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z';
 const DAY_MS = 24 * 60 * 60 * 1000;
 const LIVE = new Set(['trial', 'active']);
 
@@ -248,6 +249,15 @@ export function ModulesPage() {
               {t('plans.pushTitle')}
             </p>
             <p>{t('plans.pushBody')}</p>
+          </div>
+        )}
+        {tier === 'complete' && (
+          <div className="plan-push">
+            <p className="plan-push-title">
+              <Icon path={SPARKLE} />
+              {t('plans.assistantTitle')}
+            </p>
+            <p>{t('plans.assistantBody')}</p>
           </div>
         )}
         <ul className="plan-modules">

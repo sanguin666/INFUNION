@@ -632,6 +632,32 @@ export type Translations = {
     download: string;
     later: string;
   };
+  assistant: {
+    askPlaceholder: string;
+    title: string;
+    subtitle: string;
+    intro: string;
+    note: string;
+    inputLabel: string;
+    send: string;
+    thinking: string;
+    error: string;
+    limit: string;
+    left: string;
+    go_home: string;
+    go_events: string;
+    go_calendar: string;
+    go_announcements: string;
+    go_donations: string;
+    go_requests: string;
+    go_new_request: string;
+    go_messages: string;
+    go_community: string;
+    go_livestreams: string;
+    go_prayer_requests: string;
+    go_daily_readings: string;
+    go_mass_intentions: string;
+  };
 };
 
 const en: Translations = {
@@ -1249,6 +1275,32 @@ const en: Translations = {
     newApk: 'A new version of the app is available.',
     download: 'Download',
     later: 'Later',
+  },
+  assistant: {
+    askPlaceholder: "Ask a question about {{name}}…",
+    title: "Ask {{name}}",
+    subtitle: "Answers from the community's information",
+    intro: "Ask about times, events, news or how to ask the team for something. I answer from what {{name}} has published.",
+    note: "Answers can be wrong. For anything important, ask the team.",
+    inputLabel: "Your question",
+    send: "Ask",
+    thinking: "Looking…",
+    error: "The assistant can't answer right now. Try again in a moment.",
+    limit: "You have asked all your questions for today. Come back tomorrow, or ask the team.",
+    left: "{{n}} questions left today",
+    go_home: "Home page",
+    go_events: "See the timetable",
+    go_calendar: "See the calendar",
+    go_announcements: "Read the news",
+    go_donations: "Contribute",
+    go_requests: "See my requests",
+    go_new_request: "New request",
+    go_messages: "Write to the team",
+    go_community: "Open Our group",
+    go_livestreams: "Watch the livestream",
+    go_prayer_requests: "Prayer requests",
+    go_daily_readings: "Today's readings",
+    go_mass_intentions: "Ask for a Mass",
   },
 };
 
@@ -1868,6 +1920,32 @@ const es: Translations = {
     download: 'Descargar',
     later: 'Más tarde',
   },
+  assistant: {
+    askPlaceholder: "Haz una pregunta sobre {{name}}…",
+    title: "Pregunta a {{name}}",
+    subtitle: "Respuestas con la información de la comunidad",
+    intro: "Pregunta por horarios, actividades, noticias o cómo pedir algo al equipo. Respondo con lo que {{name}} ha publicado.",
+    note: "Las respuestas pueden equivocarse. Para algo importante, pregunta al equipo.",
+    inputLabel: "Tu pregunta",
+    send: "Preguntar",
+    thinking: "Buscando…",
+    error: "El asistente no puede responder ahora. Inténtalo de nuevo en un momento.",
+    limit: "Ya has hecho todas tus preguntas de hoy. Vuelve mañana o pregunta al equipo.",
+    left: "Te quedan {{n}} preguntas hoy",
+    go_home: "Inicio",
+    go_events: "Ver el horario",
+    go_calendar: "Ver el calendario",
+    go_announcements: "Leer las noticias",
+    go_donations: "Aportar",
+    go_requests: "Ver mis solicitudes",
+    go_new_request: "Nueva solicitud",
+    go_messages: "Escribir al equipo",
+    go_community: "Abrir Nuestro grupo",
+    go_livestreams: "Ver la retransmisión",
+    go_prayer_requests: "Peticiones de oración",
+    go_daily_readings: "Lecturas de hoy",
+    go_mass_intentions: "Pedir una Misa",
+  },
 };
 
 const fr: Translations = {
@@ -2485,6 +2563,32 @@ const fr: Translations = {
     newApk: 'Une nouvelle version de l’application est disponible.',
     download: 'Télécharger',
     later: 'Plus tard',
+  },
+  assistant: {
+    askPlaceholder: "Posez une question sur {{name}}…",
+    title: "Demander à {{name}}",
+    subtitle: "Réponses tirées des informations de la communauté",
+    intro: "Demandez les horaires, les activités, les actualités ou comment demander quelque chose à l'équipe. Je réponds avec ce que {{name}} a publié.",
+    note: "Les réponses peuvent se tromper. Pour tout ce qui est important, demandez à l'équipe.",
+    inputLabel: "Votre question",
+    send: "Demander",
+    thinking: "Recherche…",
+    error: "L'assistant ne peut pas répondre pour le moment. Réessayez dans un instant.",
+    limit: "Vous avez posé toutes vos questions pour aujourd'hui. Revenez demain, ou demandez à l'équipe.",
+    left: "Encore {{n}} questions aujourd'hui",
+    go_home: "Accueil",
+    go_events: "Voir les horaires",
+    go_calendar: "Voir le calendrier",
+    go_announcements: "Lire les actualités",
+    go_donations: "Contribuer",
+    go_requests: "Voir mes demandes",
+    go_new_request: "Nouvelle demande",
+    go_messages: "Écrire à l'équipe",
+    go_community: "Ouvrir Notre groupe",
+    go_livestreams: "Voir la diffusion",
+    go_prayer_requests: "Intentions de prière",
+    go_daily_readings: "Lectures du jour",
+    go_mass_intentions: "Demander une messe",
   },
 };
 
@@ -3104,6 +3208,32 @@ const va: Translations = {
     download: 'Descarrega',
     later: 'Més tard',
   },
+  assistant: {
+    askPlaceholder: "Fes una pregunta sobre {{name}}…",
+    title: "Pregunta a {{name}}",
+    subtitle: "Respostes amb la informació de la comunitat",
+    intro: "Pregunta per horaris, activitats, notícies o com demanar alguna cosa a l'equip. Responc amb el que {{name}} ha publicat.",
+    note: "Les respostes poden equivocar-se. Per a alguna cosa important, pregunta a l'equip.",
+    inputLabel: "La teua pregunta",
+    send: "Preguntar",
+    thinking: "Buscant…",
+    error: "L'assistent no pot respondre ara. Torna-ho a provar d'ací a un moment.",
+    limit: "Ja has fet totes les preguntes de hui. Torna demà o pregunta a l'equip.",
+    left: "Et queden {{n}} preguntes hui",
+    go_home: "Inici",
+    go_events: "Veure l'horari",
+    go_calendar: "Veure el calendari",
+    go_announcements: "Llegir les notícies",
+    go_donations: "Aportar",
+    go_requests: "Veure les meues sol·licituds",
+    go_new_request: "Nova sol·licitud",
+    go_messages: "Escriure a l'equip",
+    go_community: "Obrir El nostre grup",
+    go_livestreams: "Veure la retransmissió",
+    go_prayer_requests: "Peticions d'oració",
+    go_daily_readings: "Lectures de hui",
+    go_mass_intentions: "Demanar una missa",
+  },
 };
 
 const ca: Translations = {
@@ -3721,6 +3851,32 @@ const ca: Translations = {
     newApk: 'Hi ha una nova versió de l’aplicació.',
     download: 'Descarrega',
     later: 'Més tard',
+  },
+  assistant: {
+    askPlaceholder: "Fes una pregunta sobre {{name}}…",
+    title: "Pregunta a {{name}}",
+    subtitle: "Respostes amb la informació de la comunitat",
+    intro: "Pregunta per horaris, activitats, notícies o com demanar alguna cosa a l'equip. Responc amb el que {{name}} ha publicat.",
+    note: "Les respostes poden equivocar-se. Per a qualsevol cosa important, pregunta a l'equip.",
+    inputLabel: "La teva pregunta",
+    send: "Preguntar",
+    thinking: "Cercant…",
+    error: "L'assistent no pot respondre ara. Torna-ho a provar d'aquí a un moment.",
+    limit: "Ja has fet totes les preguntes d'avui. Torna demà o pregunta a l'equip.",
+    left: "Et queden {{n}} preguntes avui",
+    go_home: "Inici",
+    go_events: "Veure l'horari",
+    go_calendar: "Veure el calendari",
+    go_announcements: "Llegir les notícies",
+    go_donations: "Aportar",
+    go_requests: "Veure les meves sol·licituds",
+    go_new_request: "Nova sol·licitud",
+    go_messages: "Escriure a l'equip",
+    go_community: "Obrir El nostre grup",
+    go_livestreams: "Veure la retransmissió",
+    go_prayer_requests: "Peticions d'oració",
+    go_daily_readings: "Lectures d'avui",
+    go_mass_intentions: "Demanar una missa",
   },
 };
 
@@ -4340,6 +4496,32 @@ const gl: Translations = {
     download: 'Descargar',
     later: 'Máis tarde',
   },
+  assistant: {
+    askPlaceholder: "Fai unha pregunta sobre {{name}}…",
+    title: "Pregúntalle a {{name}}",
+    subtitle: "Respostas coa información da comunidade",
+    intro: "Pregunta por horarios, actividades, novas ou como pedirlle algo ao equipo. Respondo co que {{name}} publicou.",
+    note: "As respostas poden equivocarse. Para algo importante, pregúntalle ao equipo.",
+    inputLabel: "A túa pregunta",
+    send: "Preguntar",
+    thinking: "Buscando…",
+    error: "O asistente non pode responder agora. Téntao de novo nun momento.",
+    limit: "Xa fixeches todas as preguntas de hoxe. Volve mañá ou pregúntalle ao equipo.",
+    left: "Quédanche {{n}} preguntas hoxe",
+    go_home: "Inicio",
+    go_events: "Ver o horario",
+    go_calendar: "Ver o calendario",
+    go_announcements: "Ler as novas",
+    go_donations: "Achegar",
+    go_requests: "Ver as miñas solicitudes",
+    go_new_request: "Nova solicitude",
+    go_messages: "Escribir ao equipo",
+    go_community: "Abrir O noso grupo",
+    go_livestreams: "Ver a retransmisión",
+    go_prayer_requests: "Peticións de oración",
+    go_daily_readings: "Lecturas de hoxe",
+    go_mass_intentions: "Pedir unha misa",
+  },
 };
 
 // European Portuguese (pt-PT).
@@ -4958,6 +5140,32 @@ const pt: Translations = {
     newApk: 'Está disponível uma nova versão da aplicação.',
     download: 'Transferir',
     later: 'Mais tarde',
+  },
+  assistant: {
+    askPlaceholder: "Faça uma pergunta sobre {{name}}…",
+    title: "Perguntar a {{name}}",
+    subtitle: "Respostas com a informação da comunidade",
+    intro: "Pergunte por horários, atividades, notícias ou como pedir algo à equipa. Respondo com o que {{name}} publicou.",
+    note: "As respostas podem estar erradas. Para algo importante, pergunte à equipa.",
+    inputLabel: "A sua pergunta",
+    send: "Perguntar",
+    thinking: "A procurar…",
+    error: "O assistente não consegue responder agora. Tente de novo daqui a pouco.",
+    limit: "Já fez todas as perguntas de hoje. Volte amanhã ou pergunte à equipa.",
+    left: "Restam {{n}} perguntas hoje",
+    go_home: "Início",
+    go_events: "Ver o horário",
+    go_calendar: "Ver o calendário",
+    go_announcements: "Ler as notícias",
+    go_donations: "Contribuir",
+    go_requests: "Ver os meus pedidos",
+    go_new_request: "Novo pedido",
+    go_messages: "Escrever à equipa",
+    go_community: "Abrir O nosso grupo",
+    go_livestreams: "Ver a transmissão",
+    go_prayer_requests: "Pedidos de oração",
+    go_daily_readings: "Leituras de hoje",
+    go_mass_intentions: "Pedir uma missa",
   },
 };
 

@@ -144,6 +144,8 @@ const SEEDED_EVENT_TITLES = [
   'Rosario',
   'Despacho abierto',
   'Despacho abierto (sábado)',
+  'Horario de atención',
+  'Horario de atención (sábado)',
   'Misa del primer viernes',
   'Reunión de padres de catequesis',
   'Cursillo prematrimonial',
@@ -226,7 +228,7 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
         email: CARMEN_ADMIN_EMAIL,
         passwordHash: await bcrypt.hash(CARMEN_ADMIN_PASSWORD, 10),
         firstName: 'Carmen',
-        lastName: 'Despacho',
+        lastName: 'Equipo',
         language: Language.ES,
       }),
     );
@@ -321,11 +323,11 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
         endsAt: span(adoration, 45),
       }),
       weekly('Rosario', at(1, 19), EventCategory.PRAYER, 'Iglesia', { repeatDays: [1, 2, 3, 4, 5, 6] }),
-      weekly('Despacho abierto', officeTue, EventCategory.OFFICE_HOURS, 'Despacho', {
+      weekly('Horario de atención', officeTue, EventCategory.OFFICE_HOURS, 'Entrada lateral', {
         repeatDays: [2, 4],
         endsAt: span(officeTue, 120),
       }),
-      weekly('Despacho abierto (sábado)', officeSat, EventCategory.OFFICE_HOURS, 'Despacho', {
+      weekly('Horario de atención (sábado)', officeSat, EventCategory.OFFICE_HOURS, 'Entrada lateral', {
         endsAt: span(officeSat, 120),
       }),
       events.create({
@@ -352,7 +354,7 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
         startsAt: inDays(9, 18),
         endsAt: inDays(9, 20),
         location: 'Salón de la comunidad',
-        description: 'Primera de cuatro sesiones para las parejas que se casan este año. Inscripción en el despacho.',
+        description: 'Primera de cuatro sesiones para las parejas que se casan este año. Inscripción con el equipo.',
       }),
       events.create({
         poi: place,
@@ -383,12 +385,12 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
     await announcements.save([
       note(
         'Horarios de otoño',
-        'A partir del 1 de octubre la Misa de diario vuelve a las 19:30. El despacho abre martes y jueves de 18:00 a 20:00 y los sábados de 11:00 a 13:00.',
+        'A partir del 1 de octubre la Misa de diario vuelve a las 19:30. El equipo atiende martes y jueves de 18:00 a 20:00 y los sábados de 11:00 a 13:00.',
         6,
       ),
       note(
         'Inscripciones de catequesis abiertas',
-        'Ya podéis inscribir a los niños en catequesis de primera comunión y a los jóvenes en confirmación. Se hace desde el apartado Solicitudes de la app o en el despacho.',
+        'Ya podéis inscribir a los niños en catequesis de primera comunión y a los jóvenes en confirmación. Se hace desde el apartado Solicitudes de la app o con el equipo.',
         3,
       ),
       note(
@@ -659,7 +661,7 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
         contactName: 'Laura y Sergio',
         details: 'Queremos casarnos en junio del año que viene, a ser posible un sábado por la tarde.',
         appointmentAt: at(4, 18, 30),
-        appointmentPlace: 'Despacho',
+        appointmentPlace: 'Sala de reuniones',
         lastMemberActivityAt: new Date(now - 2 * DAY),
         lastStaffActivityAt: new Date(now - DAY),
         staffSeenAt: new Date(now - DAY),
