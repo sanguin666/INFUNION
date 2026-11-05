@@ -22,6 +22,7 @@ import { PhoneAuthService } from './phone-auth.service.js';
 import { PasswordResetService } from './password-reset.service.js';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/password-reset.dto.js';
 import { LoginDto } from './dto/login.dto.js';
+import { SeenTipDto } from './dto/seen-tip.dto.js';
 import { RequestPhoneCodeDto } from './dto/request-phone-code.dto.js';
 import { VerifyPhoneCodeDto } from './dto/verify-phone-code.dto.js';
 import { RequestLoginCodeDto, VerifyLoginCodeDto } from './dto/login-code.dto.js';
@@ -157,6 +158,20 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   updateMyLanguage(@Req() request: AuthenticatedRequest, @Body() dto: UpdateLanguageDto) {
     return this.authService.updateMyLanguage(request.userId, dto.language);
+  }
+
+  // The admin's welcome tour and page tips (Seb, 5 Nov 2026): one seen,
+  // or all of them shown again from Settings.
+  @Post('me/tips')
+  @UseGuards(JwtAuthGuard)
+  markTipSeen(@Req() request: AuthenticatedRequest, @Body() dto: SeenTipDto) {
+    return this.authService.markTipSeen(request.userId, dto.key);
+  }
+
+  @Delete('me/tips')
+  @UseGuards(JwtAuthGuard)
+  resetTips(@Req() request: AuthenticatedRequest) {
+    return this.authService.resetTips(request.userId);
   }
 
   // Joining and leaving a place, scoped to whoever the token belongs to.
