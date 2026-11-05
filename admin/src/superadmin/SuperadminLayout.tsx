@@ -9,7 +9,7 @@ import { LanguagePicker } from '../components/LanguagePicker';
 import { useSa } from './format';
 import { SuperadminGate } from './SuperadminGate';
 
-const NAV = ['overview', 'registrations', 'communities', 'accounts', 'health', 'journal'];
+const NAV = ['overview', 'registrations', 'communities', 'accounts', 'questions', 'health', 'journal'];
 
 function SessionClock() {
   const { s } = useSa();

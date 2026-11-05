@@ -123,6 +123,52 @@ export class SuperadminService {
     for (const poi of all) await this.billing.settle(poi.id);
   }
 
+  // ------------------------------------------------------ assistant questions
+
+  /**
+   * What members asked the assistant: topics, how many it could answer, and
+   * the anonymised questions (kept 90 days, never linked to a member).
+   */
+  async assistantQuestions(days: number, poiId: string | null) {
+    const params: unknown[] = [days];
+    let where = `q.created_at >= now() - make_interval(days => $1)`;
+    if (poiId) {
+      params.push(poiId);
+      where += ` AND q.poi_id = $2`;
+    }
+    const [totals]: { total: number; answered: number; communities: number }[] = await this.data.query(
+      `SELECT count(*)::int AS total, count(*) FILTER (WHERE q.answered)::int AS answered,
+              count(DISTINCT q.poi_id)::int AS communities
+       FROM assistant_questions q WHERE ${where}`,
+      params,
+    );
+    const topics: { topic: string; total: number; unanswered: number }[] = await this.data.query(
+      `SELECT q.topic, count(*)::int AS total, count(*) FILTER (WHERE NOT q.answered)::int AS unanswered
+       FROM assistant_questions q WHERE ${where}
+       GROUP BY q.topic ORDER BY total DESC, q.topic`,
+      params,
+    );
+    const questions: {
+      question: string;
+      topic: string;
+      answered: boolean;
+      language: string;
+      poiId: string;
+      poiName: string;
+      createdAt: Date;
+    }[] = await this.data.query(
+      `SELECT q.question, q.topic, q.answered, q.language, q.poi_id AS "poiId", p.name AS "poiName", q.created_at AS "createdAt"
+       FROM assistant_questions q JOIN pois p ON p.id = q.poi_id
+       WHERE ${where} AND q.question IS NOT NULL
+       ORDER BY q.created_at DESC LIMIT 200`,
+      params,
+    );
+    const communities: { id: string; name: string }[] = await this.data.query(
+      `SELECT DISTINCT p.id, p.name FROM assistant_questions q JOIN pois p ON p.id = q.poi_id ORDER BY p.name`,
+    );
+    return { days, ...totals, topics, questions, communityOptions: communities };
+  }
+
   // ---------------------------------------------------------------- overview
 
   async overview() {

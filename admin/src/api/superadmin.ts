@@ -44,6 +44,23 @@ async function guarded<T>(call: () => Promise<T>): Promise<T> {
   }
 }
 
+// ---- what members ask the assistant
+
+export type AssistantQuestions = {
+  days: number;
+  total: number;
+  answered: number;
+  communities: number;
+  topics: { topic: string; total: number; unanswered: number }[];
+  questions: { question: string; topic: string; answered: boolean; language: string; poiId: string; poiName: string; createdAt: string }[];
+  communityOptions: { id: string; name: string }[];
+};
+
+export const getAssistantQuestions = (days: number, poiId?: string) =>
+  guarded(() =>
+    apiGet<AssistantQuestions>(`/superadmin/assistant-questions?days=${days}${poiId ? `&poiId=${encodeURIComponent(poiId)}` : ''}`),
+  );
+
 // ---- overview
 
 /** One line of "To watch": a kind plus its figures, worded by the admin in its own language. */

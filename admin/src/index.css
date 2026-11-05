@@ -3914,3 +3914,106 @@ label.link-button:focus-within {
     transition: none;
   }
 }
+
+/* Superadmin › Member questions (Seb, 5 Nov 2026): answered in purple,
+   not answered in the brand yellow. */
+.sa-questions-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sa-questions-filters .chips {
+  margin: 0;
+}
+
+.sa-questions-filters select {
+  width: auto;
+  min-width: 220px;
+}
+
+.sa-questions-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.sa-questions-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-left: 8px;
+}
+
+.card-title .sa-questions-key {
+  margin: 0 8px 1px 0;
+}
+
+.sa-questions-key-answered {
+  background: var(--series-1);
+}
+
+.sa-questions-key-unanswered {
+  background: #f9b800;
+}
+
+.sa-topics {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.sa-topic {
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.sa-topic-label {
+  font-weight: 600;
+}
+
+.sa-topic-track {
+  display: flex;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--chart-grid);
+}
+
+.sa-topic-answered {
+  background: var(--series-1);
+}
+
+.sa-topic-unanswered {
+  background: #f9b800;
+}
+
+.sa-topic-count {
+  min-width: 90px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .sa-topic {
+    grid-template-columns: 1fr auto;
+  }
+  .sa-topic-track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+.sa-topic-missed {
+  display: block;
+  font-weight: 400;
+}
