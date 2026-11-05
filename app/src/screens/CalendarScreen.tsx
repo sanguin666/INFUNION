@@ -8,6 +8,7 @@ import { dayKey, occurrencesOnDay, repeats, startOfWeek, timeKey, type Occurrenc
 import { useEventReminders } from '../notifications/useEventReminders';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
+import { useTranslations } from '../translation/useTranslations';
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles, currentColorScheme } from '../theme/theme';
 import { type Event, type EventCategory, type Poi, sendsNotifications } from '../api/types';
 
@@ -67,9 +68,18 @@ function endOf(o: Occurrence): Date {
  * bell in the week strip instead of its dots.
  */
 export function CalendarScreen({ poi }: Props) {
-  const { t, language } = useI18n();
+  const { t, language, autoTranslate } = useI18n();
   const locale = DAY_LOCALES[language] ?? language;
-  const [events, setEvents] = useState<Event[] | null>(null);
+  const [loaded, setEvents] = useState<Event[] | null>(null);
+  // Translated titles with "Translate automatically" on, as on Events.
+  const tr = useTranslations(poi, 'event', autoTranslate ? (loaded ?? []).map((e) => e.id) : []);
+  const events =
+    loaded &&
+    loaded.map((e) => ({
+      ...e,
+      title: tr.text(e.id, 'title', e.title),
+      description: e.description ? tr.text(e.id, 'description', e.description) : e.description,
+    }));
   const [error, setError] = useState(false);
   const [day, setDay] = useState(() => {
     const today = new Date();
