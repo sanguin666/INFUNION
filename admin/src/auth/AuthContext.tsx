@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { getCurrentUser, login as loginRequest } from '../api/auth';
+import { getCurrentUser, login as loginRequest, markTipSeen, resetTips as resetTipsRequest } from '../api/auth';
 import { getToken, setSuperadminSession, setToken } from '../api/client';
 import type { CurrentUser } from '../api/types';
 
@@ -9,6 +9,10 @@ type AuthState = {
   /** Signs in and hands back who signed in. */
   login: (email: string, password: string) => Promise<CurrentUser>;
   logout: () => void;
+  /** The welcome tour and page tips: seen once, on the account. */
+  seenTip: (key: string) => boolean;
+  dismissTip: (key: string) => void;
+  resetTips: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -43,8 +47,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const seenTip = useCallback((key: string) => !!user?.seenTips?.includes(key), [user]);
+
+  // Hidden at once; the server is told in the background, and a failure
+  // only means the tip comes back on the next visit.
+  const dismissTip = useCallback((key: string) => {
+    setUser((current) =>
+      current ? { ...current, seenTips: [...(current.seenTips ?? []).filter((k) => k !== key), key] } : current,
+    );
+    markTipSeen(key).catch(() => undefined);
+  }, []);
+
+  const resetTips = useCallback(async () => {
+    await resetTipsRequest();
+    setUser((current) => (current ? { ...current, seenTips: [] } : current));
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, seenTip, dismissTip, resetTips }}>
       {children}
     </AuthContext.Provider>
   );

@@ -157,4 +157,19 @@ export class UsersService {
     user.language = language;
     return this.usersRepository.save(user);
   }
+
+  /** Marks one tip as seen; at most 100 kept, so the list stays small. */
+  async markTipSeen(id: string, key: string): Promise<string[]> {
+    await this.usersRepository.query(
+      `UPDATE users SET seen_tips = seen_tips || to_jsonb($2::text)
+        WHERE id = $1 AND NOT seen_tips ? $2 AND jsonb_array_length(seen_tips) < 100`,
+      [id, key],
+    );
+    return (await this.findOne(id)).seenTips ?? [];
+  }
+
+  async resetTips(id: string): Promise<string[]> {
+    await this.usersRepository.update(id, { seenTips: [] });
+    return [];
+  }
 }

@@ -8,6 +8,7 @@ import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../
 import type { ActiveModule, Poi } from '../api/types';
 import { LocationCard } from './LocationCard';
 import { AccountPanel } from './AccountPanel';
+import { TourResetCard } from './TourResetCard';
 import { LogoField } from './LogoField';
 import { PersonalisePanel } from './PersonalisePanel';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
@@ -123,6 +124,7 @@ export function SettingsPage() {
             </div>
           </div>
         )}
+        <TourResetCard />
       </TabPanel>
 
       <TabPanel idPrefix="settings" tabKey="personalise" current={tab}>

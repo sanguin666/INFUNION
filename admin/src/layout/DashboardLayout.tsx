@@ -14,6 +14,8 @@ import { getMenuCounts, type MenuCounts } from '../api/dashboard';
 import { getBilling } from '../api/billing';
 import { LineIcon, MODULE_ICON, PAGE_ICON } from '../components/moduleIcons';
 import { ClosingBanner } from './ClosingBanner';
+import { WelcomeTour } from '../components/WelcomeTour';
+import { PageTip, PAGE_TIPS } from '../components/PageTip';
 import { getSuperadminSession } from '../api/client';
 import type { ActiveModule, ModuleType } from '../api/types';
 import type { Translations } from '../i18n/translations';
@@ -55,7 +57,7 @@ const SETUP: NavItem[] = [
 ];
 
 export function DashboardLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, seenTip, dismissTip } = useAuth();
   const { t } = useI18n();
   const { s: sa } = useSa();
   const navigate = useNavigate();
@@ -137,10 +139,10 @@ export function DashboardLayout() {
   const moduleItems = MODULE_NAV.filter((item) => isLive(item.module));
   const showAddModules = !!canAddModules && canAddModules.poiId === poiId && canAddModules.yes;
 
-  function navRow(item: NavItem) {
+  function navRow(item: NavItem, tour?: boolean) {
     const n = item.count && counts && counts.poiId === poiId ? counts.counts[item.count] : 0;
     return (
-      <NavLink key={item.to} to={item.to}>
+      <NavLink key={item.to} to={item.to} data-tour={tour ? item.to : undefined}>
         <LineIcon path={item.icon} />
         <span className="nav-label">{t(item.label)}</span>
         {n > 0 && (
@@ -159,6 +161,13 @@ export function DashboardLayout() {
   if (modules && closedPage && !isLive(closedPage.module!)) {
     return <Navigate to={`/poi/${poiId}/dashboard`} replace />;
   }
+
+  // The welcome tour, then a tip on each page the first time it opens
+  // (Seb, 5 Nov 2026): for the community's own team, not the superadmin
+  // visiting. The tour waits for the modules so it lights the full list.
+  const showTour = !!memberPoi && !visiting && modules !== null && !seenTip('tour');
+  const showPageTip =
+    !!memberPoi && !visiting && seenTip('tour') && section in PAGE_TIPS && !seenTip(`page:${section}`);
 
   function handlePoiChange(nextPoiId: string) {
     navigate(`/poi/${nextPoiId}/dashboard`);
@@ -230,28 +239,30 @@ export function DashboardLayout() {
         )}
 
         <div className="sidebar-nav">
-          <nav aria-label={currentPoi?.name || undefined}>{TOP.map(navRow)}</nav>
+          <nav aria-label={currentPoi?.name || undefined}>{TOP.map((item) => navRow(item, true))}</nav>
           <hr className="menu-divider" />
-          <div className="nav-heading">
-            <span id="nav-modules-heading">{t('layout.navModulesHeading')}</span>
-            <Link to="modules" className="nav-heading-link">
-              {t('layout.navManage')}
-            </Link>
-          </div>
-          <nav aria-labelledby="nav-modules-heading">
-            {moduleItems.map(navRow)}
-            {showAddModules && (
-              <Link to="modules" className="nav-add">
-                <LineIcon path="M12 5v14M5 12h14" />
-                <span className="nav-label">{t('layout.navAddModules')}</span>
+          <div data-tour="modules">
+            <div className="nav-heading">
+              <span id="nav-modules-heading">{t('layout.navModulesHeading')}</span>
+              <Link to="modules" className="nav-heading-link">
+                {t('layout.navManage')}
               </Link>
-            )}
-          </nav>
+            </div>
+            <nav aria-labelledby="nav-modules-heading">
+              {moduleItems.map((item) => navRow(item))}
+              {showAddModules && (
+                <Link to="modules" className="nav-add">
+                  <LineIcon path="M12 5v14M5 12h14" />
+                  <span className="nav-label">{t('layout.navAddModules')}</span>
+                </Link>
+              )}
+            </nav>
+          </div>
         </div>
 
         <div className="sidebar-footer">
           <hr className="menu-divider" />
-          <nav>{SETUP.map(navRow)}</nav>
+          <nav data-tour="setup">{SETUP.map((item) => navRow(item))}</nav>
           <LanguagePicker />
           <AppearancePicker />
           <button type="button" className="btn btn-destructive btn-block" onClick={logout}>
@@ -262,8 +273,12 @@ export function DashboardLayout() {
 
       <main className="main">
         {poiId && <ClosingBanner poiId={poiId} />}
+        {showPageTip && <PageTip page={section} onDismiss={() => dismissTip(`page:${section}`)} />}
         <Outlet context={{ poiId: poiId!, modules, refreshModules } satisfies DashboardContext} />
       </main>
+      {showTour && (
+        <WelcomeTour firstName={user.firstName} communityName={memberPoi!.name} onDone={() => dismissTip('tour')} />
+      )}
     </div>
   );
 }
