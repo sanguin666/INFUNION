@@ -218,7 +218,7 @@ export function PoiShell({
           style={styles.askButton}
         >
           <View style={styles.askCircle}>
-            <SparkleIcon size={24} color={colors.primaryStrong} />
+            <SparkleIcon size={28} color={colors.primaryText} />
           </View>
         </Pressable>
       )}
@@ -430,12 +430,12 @@ const styles = themedStyles(() => ({
     justifyContent: 'center',
   },
   askCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.primaryFill,
   },
   footerSlot: {
     backgroundColor: colors.background,
