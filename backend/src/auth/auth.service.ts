@@ -8,12 +8,10 @@ import { PoisService } from '../pois/pois.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { JoinPoiDto } from '../user-pois/dto/join-poi.dto.js';
 import type { Language } from '../common/enums/language.enum.js';
-import { LoginThrottle } from './login-throttle.js';
+import { adminLoginThrottle } from './login-throttle.js';
 import { SuperadminAccess } from './superadmin-access.service.js';
 import { CONSENT_VERSION } from '../privacy/consent.js';
 
-// Five wrong passwords for one address in 15 minutes locks it for 15.
-const adminLoginThrottle = new LoginThrottle('admin-login', 5, 15 * 60_000, 15 * 60_000);
 
 @Injectable()
 export class AuthService {

@@ -288,6 +288,10 @@ The app and admin dashboard UI (menus, buttons, labels, error messages — every
 
 The admin dashboard (`admin/`) uses a real email + password login (`POST /auth/login`, JWT), separate from the congregant app's phone login below. A `PoiAdminGuard` (`backend/src/auth/guards`) checks the caller has an `admin` `user_pois` row for the `:poiId` in the URL before allowing an admin-only action — see `backend/src/auth` for the guard and `backend/src/user-pois/user-pois.service.ts` for the membership lookups it uses.
 
+### Forgot password
+
+The login page has a "Forgot your password?" link, for community admins and the superadmin alike. `POST /auth/password/forgot {email, language}` emails a link (Brevo, through `EmailSender`) to `<ADMIN_URL>/reset-password?token=…`; it answers the same whether or not the address has an account, and sends at most 3 links an hour per address. The token is signed with a key made from `JWT_SECRET` and the account's current password hash, so it is never a sign-in token, works once and expires after an hour. `GET /auth/password/reset?token=` checks it, `POST /auth/password/reset {token, password}` sets the new password (8+ characters, 12+ for the superadmin) and clears the login lockout. The superadmin still types the authenticator code afterwards. Without `BREVO_API_KEY` the link is written to the backend log.
+
 ## Superadmin
 
 infunion's own section of the admin (Seb, 17 Oct 2026): the whole app's figures (revenue of the month, members, donations), every community (create, edit, admins, modules, offering a module, suspending, deleting), every account, server health and a Journal of who did what.
