@@ -204,7 +204,7 @@ export const removeAdmin = (poiId: string, userId: string) =>
   guarded(() => apiDelete<CommunityDetail>(`/superadmin/pois/${poiId}/admins/${userId}`));
 
 export const resetAdminPassword = (poiId: string, userId: string) =>
-  guarded(() => apiPost<{ email: string; temporaryPassword: string }>(`/superadmin/pois/${poiId}/admins/${userId}/reset-password`));
+  guarded(() => apiPost<{ email: string; temporaryPassword?: string; linkSent?: boolean }>(`/superadmin/pois/${poiId}/admins/${userId}/reset-password`));
 
 // ---- accounts
 
