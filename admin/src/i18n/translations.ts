@@ -123,6 +123,30 @@ export type Translations = {
     signIn: string;
     signingIn: string;
     genericError: string;
+    forgotPassword: string;
+  };
+  reset: {
+    heading: string;
+    intro: string;
+    send: string;
+    sending: string;
+    backToSignIn: string;
+    sentHeading: string;
+    sentText: string;
+    sentHint: string;
+    sendAgain: string;
+    newHeading: string;
+    newIntro: string;
+    newLabel: string;
+    confirmLabel: string;
+    save: string;
+    saving: string;
+    tooShort: string;
+    mismatch: string;
+    expiredHeading: string;
+    expiredText: string;
+    askNewLink: string;
+    done: string;
   };
   layout: {
     managing: string;
@@ -1177,6 +1201,30 @@ const en: Translations = {
     signIn: 'Sign in',
     signingIn: 'Signing in…',
     genericError: 'Something went wrong. Try again.',
+    forgotPassword: "Forgot your password?",
+  },
+  reset: {
+    heading: "Reset your password",
+    intro: "Type the email you sign in with. We'll send you a link to choose a new password.",
+    send: "Send me a link",
+    sending: "Sending…",
+    backToSignIn: "Back to sign in",
+    sentHeading: "Check your email",
+    sentText: "If {{email}} has a dashboard account, a link to choose a new password is on its way.",
+    sentHint: "The link works for one hour. Nothing arrived? Look in your spam folder.",
+    sendAgain: "Send it again",
+    newHeading: "Choose a new password",
+    newIntro: "At least {{count}} characters. You'll use it to sign in from now on.",
+    newLabel: "New password",
+    confirmLabel: "Type it again",
+    save: "Save my new password",
+    saving: "Saving…",
+    tooShort: "Use at least {{count}} characters.",
+    mismatch: "The two passwords are different.",
+    expiredHeading: "This link no longer works",
+    expiredText: "It has expired or was already used. Ask for a new one, it only takes a minute.",
+    askNewLink: "Send me a new link",
+    done: "Your password has been changed. Sign in with it now.",
   },
   layout: {
     managing: 'Managing',
@@ -2232,6 +2280,30 @@ const es: Translations = {
     signIn: 'Iniciar sesión',
     signingIn: 'Iniciando sesión…',
     genericError: 'Algo salió mal. Inténtalo de nuevo.',
+    forgotPassword: "¿Has olvidado tu contraseña?",
+  },
+  reset: {
+    heading: "Restablecer la contraseña",
+    intro: "Escribe el correo con el que inicias sesión. Te enviaremos un enlace para elegir una nueva contraseña.",
+    send: "Enviarme un enlace",
+    sending: "Enviando…",
+    backToSignIn: "Volver a iniciar sesión",
+    sentHeading: "Revisa tu correo",
+    sentText: "Si {{email}} tiene una cuenta de administración, te llega un enlace para elegir una nueva contraseña.",
+    sentHint: "El enlace funciona durante una hora. ¿No ha llegado nada? Mira en la carpeta de spam.",
+    sendAgain: "Enviarlo de nuevo",
+    newHeading: "Elige una nueva contraseña",
+    newIntro: "Al menos {{count}} caracteres. La usarás para iniciar sesión a partir de ahora.",
+    newLabel: "Nueva contraseña",
+    confirmLabel: "Escríbela otra vez",
+    save: "Guardar mi nueva contraseña",
+    saving: "Guardando…",
+    tooShort: "Usa al menos {{count}} caracteres.",
+    mismatch: "Las dos contraseñas son distintas.",
+    expiredHeading: "Este enlace ya no funciona",
+    expiredText: "Ha caducado o ya se ha usado. Pide uno nuevo, solo lleva un minuto.",
+    askNewLink: "Enviarme un nuevo enlace",
+    done: "Tu contraseña se ha cambiado. Inicia sesión con ella.",
   },
   layout: {
     managing: 'Administrando',
@@ -3287,6 +3359,30 @@ const fr: Translations = {
     signIn: 'Se connecter',
     signingIn: 'Connexion…',
     genericError: "Une erreur s'est produite. Réessayez.",
+    forgotPassword: "Mot de passe oublié ?",
+  },
+  reset: {
+    heading: "Réinitialiser le mot de passe",
+    intro: "Saisissez l’e-mail avec lequel vous vous connectez. Nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+    send: "M’envoyer un lien",
+    sending: "Envoi…",
+    backToSignIn: "Retour à la connexion",
+    sentHeading: "Consultez vos e-mails",
+    sentText: "Si {{email}} a un compte d’administration, un lien pour choisir un nouveau mot de passe est en route.",
+    sentHint: "Le lien est valable une heure. Rien reçu ? Regardez dans les spams.",
+    sendAgain: "Renvoyer",
+    newHeading: "Choisissez un nouveau mot de passe",
+    newIntro: "Au moins {{count}} caractères. Vous l’utiliserez désormais pour vous connecter.",
+    newLabel: "Nouveau mot de passe",
+    confirmLabel: "Saisissez-le à nouveau",
+    save: "Enregistrer mon nouveau mot de passe",
+    saving: "Enregistrement…",
+    tooShort: "Utilisez au moins {{count}} caractères.",
+    mismatch: "Les deux mots de passe sont différents.",
+    expiredHeading: "Ce lien ne fonctionne plus",
+    expiredText: "Il a expiré ou a déjà été utilisé. Demandez-en un nouveau, cela ne prend qu’une minute.",
+    askNewLink: "M’envoyer un nouveau lien",
+    done: "Votre mot de passe a été changé. Connectez-vous avec lui.",
   },
   layout: {
     managing: 'Gestion de',
@@ -4342,6 +4438,30 @@ const va: Translations = {
     signIn: 'Iniciar sessió',
     signingIn: 'Iniciant sessió…',
     genericError: 'Alguna cosa ha eixit malament. Torna-ho a provar.',
+    forgotPassword: "Has oblidat la contrasenya?",
+  },
+  reset: {
+    heading: "Restablir la contrasenya",
+    intro: "Escriu el correu amb què inicies la sessió. T’enviarem un enllaç per a triar una contrasenya nova.",
+    send: "Envia’m un enllaç",
+    sending: "S’està enviant…",
+    backToSignIn: "Tornar a iniciar la sessió",
+    sentHeading: "Revisa el correu",
+    sentText: "Si {{email}} té un compte d’administració, t’arriba un enllaç per a triar una contrasenya nova.",
+    sentHint: "L’enllaç funciona durant una hora. No ha arribat res? Mira en la carpeta de correu brossa.",
+    sendAgain: "Torna a enviar-lo",
+    newHeading: "Tria una contrasenya nova",
+    newIntro: "Almenys {{count}} caràcters. La usaràs per a iniciar la sessió d’ara en avant.",
+    newLabel: "Contrasenya nova",
+    confirmLabel: "Torna a escriure-la",
+    save: "Guardar la meua contrasenya nova",
+    saving: "S’està guardant…",
+    tooShort: "Usa almenys {{count}} caràcters.",
+    mismatch: "Les dues contrasenyes són diferents.",
+    expiredHeading: "Este enllaç ja no funciona",
+    expiredText: "Ha caducat o ja s’ha usat. Demana’n un de nou, només costa un minut.",
+    askNewLink: "Envia’m un enllaç nou",
+    done: "S’ha canviat la contrasenya. Inicia la sessió amb ella.",
   },
   layout: {
     managing: 'Administrant',
@@ -5397,6 +5517,30 @@ const ca: Translations = {
     signIn: 'Iniciar sessió',
     signingIn: 'Iniciant sessió…',
     genericError: 'Alguna cosa ha sortit malament. Torna-ho a provar.',
+    forgotPassword: "Has oblidat la contrasenya?",
+  },
+  reset: {
+    heading: "Restablir la contrasenya",
+    intro: "Escriu el correu amb què inicies la sessió. T’enviarem un enllaç per triar una contrasenya nova.",
+    send: "Envia’m un enllaç",
+    sending: "S’està enviant…",
+    backToSignIn: "Tornar a iniciar la sessió",
+    sentHeading: "Revisa el correu",
+    sentText: "Si {{email}} té un compte d’administració, t’arriba un enllaç per triar una contrasenya nova.",
+    sentHint: "L’enllaç funciona durant una hora. No ha arribat res? Mira a la carpeta de correu brossa.",
+    sendAgain: "Torna a enviar-lo",
+    newHeading: "Tria una contrasenya nova",
+    newIntro: "Almenys {{count}} caràcters. La faràs servir per iniciar la sessió a partir d’ara.",
+    newLabel: "Contrasenya nova",
+    confirmLabel: "Torna a escriure-la",
+    save: "Desar la meva contrasenya nova",
+    saving: "S’està desant…",
+    tooShort: "Fes servir almenys {{count}} caràcters.",
+    mismatch: "Les dues contrasenyes són diferents.",
+    expiredHeading: "Aquest enllaç ja no funciona",
+    expiredText: "Ha caducat o ja s’ha fet servir. Demana’n un de nou, només costa un minut.",
+    askNewLink: "Envia’m un enllaç nou",
+    done: "S’ha canviat la contrasenya. Inicia la sessió amb ella.",
   },
   layout: {
     managing: 'Administrant',
@@ -6452,6 +6596,30 @@ const gl: Translations = {
     signIn: 'Iniciar sesión',
     signingIn: 'Iniciando sesión…',
     genericError: 'Algo saíu mal. Téntao de novo.',
+    forgotPassword: "Esqueciches o contrasinal?",
+  },
+  reset: {
+    heading: "Restablecer o contrasinal",
+    intro: "Escribe o correo co que inicias sesión. Enviarémosche unha ligazón para escoller un contrasinal novo.",
+    send: "Enviádeme unha ligazón",
+    sending: "Enviando…",
+    backToSignIn: "Volver a iniciar sesión",
+    sentHeading: "Revisa o teu correo",
+    sentText: "Se {{email}} ten unha conta de administración, chégache unha ligazón para escoller un contrasinal novo.",
+    sentHint: "A ligazón funciona durante unha hora. Non chegou nada? Mira no cartafol de spam.",
+    sendAgain: "Envialo de novo",
+    newHeading: "Escolle un contrasinal novo",
+    newIntro: "Polo menos {{count}} caracteres. Usarao para iniciar sesión de agora en diante.",
+    newLabel: "Contrasinal novo",
+    confirmLabel: "Escríbeo outra vez",
+    save: "Gardar o meu contrasinal novo",
+    saving: "Gardando…",
+    tooShort: "Usa polo menos {{count}} caracteres.",
+    mismatch: "Os dous contrasinais son distintos.",
+    expiredHeading: "Esta ligazón xa non funciona",
+    expiredText: "Caducou ou xa se usou. Pide unha nova, só leva un minuto.",
+    askNewLink: "Enviádeme unha ligazón nova",
+    done: "O teu contrasinal cambiouse. Inicia sesión con el.",
   },
   layout: {
     managing: 'Administrando',
@@ -7507,6 +7675,30 @@ const pt: Translations = {
     signIn: 'Iniciar sessão',
     signingIn: 'A iniciar sessão…',
     genericError: 'Algo correu mal. Tente novamente.',
+    forgotPassword: "Esqueceu-se da palavra-passe?",
+  },
+  reset: {
+    heading: "Repor a palavra-passe",
+    intro: "Escreva o e-mail com que inicia sessão. Enviamos-lhe uma ligação para escolher uma nova palavra-passe.",
+    send: "Enviar-me uma ligação",
+    sending: "A enviar…",
+    backToSignIn: "Voltar ao início de sessão",
+    sentHeading: "Verifique o seu e-mail",
+    sentText: "Se {{email}} tiver uma conta de administração, está a caminho uma ligação para escolher uma nova palavra-passe.",
+    sentHint: "A ligação funciona durante uma hora. Não chegou nada? Veja na pasta de spam.",
+    sendAgain: "Enviar de novo",
+    newHeading: "Escolha uma nova palavra-passe",
+    newIntro: "Pelo menos {{count}} caracteres. Vai usá-la para iniciar sessão a partir de agora.",
+    newLabel: "Nova palavra-passe",
+    confirmLabel: "Escreva-a outra vez",
+    save: "Guardar a minha nova palavra-passe",
+    saving: "A guardar…",
+    tooShort: "Use pelo menos {{count}} caracteres.",
+    mismatch: "As duas palavras-passe são diferentes.",
+    expiredHeading: "Esta ligação já não funciona",
+    expiredText: "Expirou ou já foi usada. Peça uma nova, demora só um minuto.",
+    askNewLink: "Enviar-me uma nova ligação",
+    done: "A sua palavra-passe foi alterada. Inicie sessão com ela.",
   },
   layout: {
     managing: 'A gerir',

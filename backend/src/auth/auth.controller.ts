@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UnsupportedMediaTypeException,
   UploadedFile,
@@ -18,6 +19,8 @@ import type { Request } from 'express';
 import { JoinPoiDto } from '../user-pois/dto/join-poi.dto.js';
 import { AuthService } from './auth.service.js';
 import { PhoneAuthService } from './phone-auth.service.js';
+import { PasswordResetService } from './password-reset.service.js';
+import { ForgotPasswordDto, ResetPasswordDto } from './dto/password-reset.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RequestPhoneCodeDto } from './dto/request-phone-code.dto.js';
 import { VerifyPhoneCodeDto } from './dto/verify-phone-code.dto.js';
@@ -38,12 +41,31 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly phoneAuthService: PhoneAuthService,
+    private readonly passwordReset: PasswordResetService,
   ) {}
 
   // Email + password, used by the admin dashboard only.
   @Post('login')
   login(@Body() dto: LoginDto, @Req() request: Request) {
     return this.authService.login(dto, request);
+  }
+
+  // "Forgot your password?" on the admin dashboard, for community admins
+  // and the superadmin alike. Answers the same whether or not the address
+  // has an account; the link works for an hour, once.
+  @Post('password/forgot')
+  forgotPassword(@Body() dto: ForgotPasswordDto, @Req() request: Request) {
+    return this.passwordReset.requestLink(dto.email, dto.language, request);
+  }
+
+  @Get('password/reset')
+  checkResetLink(@Query('token') token = '') {
+    return this.passwordReset.check(String(token));
+  }
+
+  @Post('password/reset')
+  resetPassword(@Body() dto: ResetPasswordDto, @Req() request: Request) {
+    return this.passwordReset.reset(dto.token, dto.password, request);
   }
 
   // The member app's login: one field, "Email or phone number", and a

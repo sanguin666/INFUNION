@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { ApiError } from '../api/client';
@@ -12,6 +12,9 @@ export function LoginPage() {
   const { login } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Back from "Choose a new password" (PasswordResetPages.tsx).
+  const resetDone = searchParams.get('reset') === 'done';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +64,8 @@ export function LoginPage() {
         <h1 className="login-wordmark">{t('login.heading')}</h1>
         <p className="login-subtitle login-step">{t('login.subtitle')}</p>
 
+        {resetDone && <p className="reset-done login-step">{t('reset.done')}</p>}
+
         <div className="card form login-step">
           <label>
             {t('login.emailLabel')}
@@ -83,6 +88,13 @@ export function LoginPage() {
             />
           </label>
         </div>
+
+        <Link
+          className="link-button reset-link login-step"
+          to={email.trim() ? `/forgot-password?email=${encodeURIComponent(email.trim())}` : '/forgot-password'}
+        >
+          {t('login.forgotPassword')}
+        </Link>
 
         {error && <p className="error-text">{error}</p>}
         <button type="submit" className="btn btn-primary btn-block login-step" disabled={submitting}>
