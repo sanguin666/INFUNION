@@ -467,3 +467,12 @@ export function AlertIcon({ size = 24, color = colors.text }: IconProps) {
     </Svg>
   );
 }
+
+// The member assistant's mark: a four-point sparkle.
+export function SparkleIcon({ size = 20, color = colors.primary }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" fill={color} />
+    </Svg>
+  );
+}

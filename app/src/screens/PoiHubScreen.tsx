@@ -22,6 +22,9 @@ import { PrayerRequestsScreen } from './PrayerRequestsScreen';
 import { ProfileScreen } from './ProfileScreen';
 import { RequestDetailScreen } from './RequestDetailScreen';
 import { RequestsScreen } from './RequestsScreen';
+import { AssistantScreen, type AssistantItem } from './AssistantScreen';
+import { getAssistantStatus } from '../api/assistant';
+import { translationAvailable } from '../translation/useTranslations';
 import { useAuth } from '../auth/AuthContext';
 import { getActiveModules } from '../api/pois';
 import { getAnnouncements } from '../api/announcements';
@@ -51,6 +54,7 @@ type Drilldown =
   | { kind: 'request'; id: string }
   | { kind: 'calendar' }
   | { kind: 'notifications' }
+  | { kind: 'assistant' }
   | { kind: 'project'; project: DonationProject };
 
 /**
@@ -68,6 +72,12 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
   const [profileOpen, setProfileOpen] = useState(false);
   // The office wrote and the member has not opened Messages since.
   const [messagesUnread, setMessagesUnread] = useState(false);
+  // The member assistant (Complete plan): shown once the server says so,
+  // and its conversation kept for the visit.
+  const [assistantOn, setAssistantOn] = useState(false);
+  const [assistantItems, setAssistantItems] = useState<AssistantItem[]>([]);
+  const [assistantLeft, setAssistantLeft] = useState<number | null>(null);
+  const assistantPossible = translationAvailable(poi, !!me);
   const messagesLive = !!modules?.some((m) => m.moduleType === 'messages' && m.status !== 'expired' && m.status !== 'cancelled');
 
   useEffect(() => {
@@ -87,6 +97,43 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
       clearInterval(timer);
     };
   }, [poi.id, me, messagesLive]);
+
+  useEffect(() => {
+    setAssistantOn(false);
+    setAssistantItems([]);
+    setAssistantLeft(null);
+    if (!assistantPossible) return;
+    let cancelled = false;
+    getAssistantStatus(poi.id)
+      .then((status) => {
+        if (cancelled) return;
+        setAssistantOn(status.available);
+        setAssistantLeft(status.remaining);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [poi.id, assistantPossible]);
+
+  // Where an answer's button goes.
+  function goFromAssistant(action: string) {
+    switch (action) {
+      case 'home':
+        selectTab('home');
+        break;
+      case 'calendar':
+        setTab('events');
+        setDrilldown({ kind: 'calendar' });
+        break;
+      case 'new_request':
+        setTab('requests');
+        setDrilldown({ kind: 'new-request' });
+        break;
+      default:
+        selectTab(action as HubTab);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -189,6 +236,7 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
       onBack={tab === 'home' && drilldown.kind === 'list' ? undefined : goBack}
       onOpenPlaces={onOpenPlaces}
       onOpenProfile={() => setProfileOpen(true)}
+      scrollEndKey={tab === 'home' && drilldown.kind === 'assistant' ? assistantItems.length : undefined}
       scrollKey={`${tab}:${drilldown.kind}:${drilldown.kind === 'project' ? projectKey(drilldown.project) : drilldown.kind === 'announcement' ? drilldown.item.id : ''}`}
     >
       <ProfileScreen
@@ -197,11 +245,23 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
         onSignIn={onSignIn}
       />
 
-      {tab === 'home' && (
+      {tab === 'home' && drilldown.kind === 'assistant' && (
+        <AssistantScreen
+          poi={poi}
+          items={assistantItems}
+          onItems={setAssistantItems}
+          remaining={assistantLeft}
+          onRemaining={setAssistantLeft}
+          onGo={goFromAssistant}
+        />
+      )}
+
+      {tab === 'home' && drilldown.kind !== 'assistant' && (
         <PoiHomeScreen
           poi={poi}
           modules={modules}
           onSelectTab={selectTab}
+          onAsk={assistantOn ? () => setDrilldown({ kind: 'assistant' }) : undefined}
         />
       )}
 

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import Anthropic from '@anthropic-ai/sdk';
 
 /** What the reader reads in, named for the model. */
-const TARGET_NAMES: Record<string, string> = {
+export const TARGET_NAMES: Record<string, string> = {
   en: 'English',
   es: 'Spanish (Spain)',
   fr: 'French',

@@ -18,6 +18,7 @@ import {
   weeklyTimetable,
 } from '../utils/schedule';
 import { useI18n } from '../i18n/I18nContext';
+import { useTranslations } from '../translation/useTranslations';
 import { colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { type Event, type EventCategory, type Poi, sendsNotifications } from '../api/types';
 
@@ -31,9 +32,9 @@ type Props = {
 };
 
 export function EventsScreen({ poi, onWatchLive, onOpenCalendar }: Props) {
-  const { t } = useI18n();
+  const { t, autoTranslate } = useI18n();
   const { me } = useAuth();
-  const [events, setEvents] = useState<Event[] | null>(null);
+  const [loaded, setEvents] = useState<Event[] | null>(null);
   const [error, setError] = useState(false);
   // The bells the reader rang: a push an hour before, sent by the backend.
   const reminders = useEventReminders(poi.id);
@@ -45,6 +46,17 @@ export function EventsScreen({ poi, onWatchLive, onOpenCalendar }: Props) {
       .then(setEvents)
       .catch(() => setError(true));
   }, [poi.id]);
+
+  // With "Translate automatically" on, titles and descriptions in another
+  // language show translated (no Translate link on a short title).
+  const tr = useTranslations(poi, 'event', autoTranslate ? (loaded ?? []).map((e) => e.id) : []);
+  const events =
+    loaded &&
+    loaded.map((e) => ({
+      ...e,
+      title: tr.text(e.id, 'title', e.title),
+      description: e.description ? tr.text(e.id, 'description', e.description) : e.description,
+    }));
 
   // The weekly timetable first, since it is what most people come for;
   // then the one-off events still to come, soonest first.

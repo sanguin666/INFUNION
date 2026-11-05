@@ -140,6 +140,7 @@ export function PoiShell({
   onOpenPlaces,
   onOpenProfile,
   scrollKey,
+  scrollEndKey,
   children,
 }: Props) {
   const { t } = useI18n();
@@ -244,6 +245,7 @@ export function PoiShell({
     <Screen
       scroll
       scrollKey={scrollKey}
+      scrollEndKey={scrollEndKey}
       header={header}
       headerStyle={styles.headerSlot}
       footer={footer}
@@ -275,6 +277,8 @@ type Props = {
   onOpenProfile: () => void;
   // What is showing, so the page starts at its top when it changes.
   scrollKey?: string;
+  // Changes when the page grows at its end (the assistant's chat).
+  scrollEndKey?: number;
   children: ReactNode;
 };
 

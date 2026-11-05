@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { AccessibleText } from '../components/AccessibleText';
 import { AccessibleButton } from '../components/AccessibleButton';
 import { uploadUri } from '../api/client';
@@ -22,12 +22,15 @@ import type { HubTab } from '../components/PoiShell';
 import { cardSurface, colors, radii, spacing, themedStyles } from '../theme/theme';
 import { useI18n } from '../i18n/I18nContext';
 import { TranslateLine } from '../components/TranslateLine';
+import { SparkleIcon } from '../components/icons';
 import { useTranslations } from '../translation/useTranslations';
 
 type Props = {
   poi: Poi;
   modules: ActiveModule[] | null;
   onSelectTab: (tab: HubTab) => void;
+  // The member assistant, when the community has it (Complete plan).
+  onAsk?: () => void;
 };
 
 // What a POI that hasn't built a page yet gets: its own description,
@@ -63,7 +66,7 @@ const RETIRED_BLOCKS = new Set<PageBlockType>([
  * built one. This is what a congregant lands on when they open the place,
  * before they pick anything from the menu.
  */
-export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
+export function PoiHomeScreen({ poi, modules, onSelectTab, onAsk }: Props) {
   const { t, language } = useI18n();
 
   const [savedBlocks, setBlocks] = useState<PoiPageBlock[] | null>(null);
@@ -201,6 +204,19 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
   return (
     <>
       {closing}
+      {onAsk && !preview && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('assistant.askPlaceholder', { name: poi.name })}
+          onPress={onAsk}
+          style={styles.ask}
+        >
+          <SparkleIcon size={22} color={colors.primary} />
+          <AccessibleText variant="body" color={colors.textMuted} style={styles.askText} numberOfLines={3}>
+            {t('assistant.askPlaceholder', { name: poi.name })}
+          </AccessibleText>
+        </Pressable>
+      )}
       {top}
       {visible.map((block) => {
         const drawn = renderBlock(block);
@@ -281,6 +297,22 @@ export function PoiHomeScreen({ poi, modules, onSelectTab }: Props) {
 const CLOSING_LOCALES: Record<string, string> = { en: 'en-GB', es: 'es-ES', va: 'ca-ES', ca: 'ca-ES', gl: 'gl-ES', pt: 'pt-PT', fr: 'fr-FR' };
 
 const styles = themedStyles(() => ({
+  // The assistant's entry, styled as the field it opens.
+  ask: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minHeight: 56,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.lg,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
+  },
+  askText: {
+    flex: 1,
+  },
   closing: {
     gap: spacing.xs,
     padding: spacing.md,

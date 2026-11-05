@@ -36,6 +36,7 @@ import { AppUpdatesModule } from './app-updates/app-updates.module.js';
 import { RegistrationsModule } from './registrations/registrations.module.js';
 import { ModerationModule } from './moderation/moderation.module.js';
 import { TranslationsModule } from './translations/translations.module.js';
+import { AssistantModule } from './assistant/assistant.module.js';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { TranslationsModule } from './translations/translations.module.js';
     RegistrationsModule,
     ModerationModule,
     TranslationsModule,
+    AssistantModule,
   ],
   controllers: [AppController],
   providers: [AppService],
