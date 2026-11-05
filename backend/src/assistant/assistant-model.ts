@@ -11,20 +11,28 @@ export type AssistantReply = { answer: string; actions: string[] };
 
 /**
  * The model behind the member assistant, from ANTHROPIC_API_KEY (the same
- * key and credits as translation). Without the key, `enabled` is false.
+ * key and credits as translation). Without the key, or with ASSISTANT=off,
+ * `enabled` is false.
  */
 @Injectable()
 export class AssistantModel {
   private readonly logger = new Logger(AssistantModel.name);
   private readonly client: Anthropic | null;
+  private readonly switchedOff: boolean;
 
   constructor(config: ConfigService) {
     const apiKey = config.get<string>('ANTHROPIC_API_KEY')?.trim();
     this.client = apiKey ? new Anthropic({ apiKey, maxRetries: 2, timeout: 30_000 }) : null;
+    // ASSISTANT=off hides the members' "Ask" button everywhere (Seb,
+    // 5 Nov 2026), whatever the plan; translation is not affected.
+    this.switchedOff = (config.get<string>('ASSISTANT') ?? '').trim().toLowerCase() === 'off';
+    this.logger.log(
+      `Member assistant is ${this.switchedOff ? 'off (ASSISTANT=off)' : this.client ? 'on' : 'off (no ANTHROPIC_API_KEY)'}`,
+    );
   }
 
   get enabled(): boolean {
-    return this.client !== null;
+    return this.client !== null && !this.switchedOff;
   }
 
   async answer(input: {
