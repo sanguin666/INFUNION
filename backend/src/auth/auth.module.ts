@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
 import { PhoneAuthService } from './phone-auth.service.js';
+import { PasswordResetService } from './password-reset.service.js';
 import { PhoneVerificationCode } from './entities/phone-verification-code.entity.js';
 import { BrevoSmsSender, ConsoleSmsSender, SmsSender } from './sms/sms-sender.js';
 import { BrevoEmailSender, ConsoleEmailSender, EmailSender } from './email/email-sender.js';
@@ -27,6 +28,7 @@ import { PoisModule } from '../pois/pois.module.js';
   providers: [
     AuthService,
     PhoneAuthService,
+    PasswordResetService,
     // Real SMS through Brevo once SMS_PROVIDER=brevo (and BREVO_API_KEY) are
     // set; the log otherwise, with the code shown on screen on demo servers.
     {

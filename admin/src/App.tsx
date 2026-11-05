@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { I18nProvider, useI18n } from './i18n/I18nContext';
+import { ForgotPasswordPage, ResetPasswordPage } from './pages/PasswordResetPages';
 import { LoginPage } from './pages/LoginPage';
 import { lastPlace } from './layout/placeSwitcher';
 import { DashboardLayout } from './layout/DashboardLayout';
@@ -85,6 +86,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route
         path="/"
         element={

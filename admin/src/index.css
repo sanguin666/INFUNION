@@ -3721,3 +3721,35 @@ label.link-button:focus-within {
   border-left: 3px solid var(--color-primary);
   white-space: pre-wrap;
 }
+
+/* ---------- Forgot password (PasswordResetPages.tsx) ---------- */
+
+.reset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reset-link {
+  align-self: center !important;
+  text-decoration: none;
+  text-align: center;
+}
+
+.login-panel .reset-link.login-step {
+  margin: -6px 0 -6px;
+}
+
+.reset-note {
+  margin: -8px 0 0;
+  text-align: center;
+  font-size: 15px;
+}
+
+/* A plain sentence in the brand purple, never a box. */
+.reset-done {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-primary-strong);
+}
