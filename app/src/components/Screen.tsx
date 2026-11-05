@@ -20,6 +20,9 @@ type Props = {
   // a list): the scroll goes back to the top, rather than opening the new
   // page halfway down.
   scrollKey?: string;
+  // Changes when the page grows at its end, as a conversation does: the
+  // scroll follows it down.
+  scrollEndKey?: number;
 };
 
 /**
@@ -41,11 +44,18 @@ export function Screen({
   footer,
   footerStyle,
   scrollKey,
+  scrollEndKey,
 }: Props) {
   const scrollRef = useRef<ScrollView>(null);
   useEffect(() => {
     scrollRef.current?.scrollTo({ y: 0, animated: false });
   }, [scrollKey]);
+  useEffect(() => {
+    if (!scrollEndKey) return;
+    // Once the new content is laid out.
+    const timer = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 80);
+    return () => clearTimeout(timer);
+  }, [scrollEndKey]);
   const insets = useSafeAreaInsets();
 
   // Whichever element touches an edge absorbs that edge's inset: a bar if
@@ -59,7 +69,11 @@ export function Screen({
 
   const Content = scroll ? ScrollView : View;
   const contentProps = scroll
-    ? { contentContainerStyle: [styles.content, contentInsets], style: styles.scrollFlex, ref: scrollRef }
+    ? {
+        contentContainerStyle: [styles.content, contentInsets],
+        style: styles.scrollFlex,
+        ref: scrollRef,
+      }
     : { style: [styles.content, contentInsets] };
 
   return (
