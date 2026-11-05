@@ -1,4 +1,6 @@
 import {
+  IsIn,
+  IsUUID,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -134,4 +136,15 @@ export class SuperadminPlanDto {
   @IsOptional()
   @IsEnum(PlanTier)
   tier?: PlanTier;
+}
+
+/** Member questions to the assistant: the last 7, 30 or 90 days, for one community or all. */
+export class AssistantQuestionsQuery {
+  @IsOptional()
+  @IsIn(['7', '30', '90'])
+  days?: '7' | '30' | '90';
+
+  @IsOptional()
+  @IsUUID()
+  poiId?: string;
 }

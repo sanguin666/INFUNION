@@ -260,4 +260,39 @@ describe('Superadmin (e2e)', () => {
     expect(overview.body.revenue.thisMonth).toBe(0);
     expect(overview.body.communities.total).toBe(0);
   });
+
+  it('shows what members ask the assistant, by topic, anonymised', async () => {
+    const { superToken } = await enrolled();
+    const admin = await signIn(app, '+34600700009', 'Admin');
+    const place = await createPlace(app, admin, 'Carmen');
+    const { DataSource } = await import('typeorm');
+    const db = app.get(DataSource);
+    const insert = (topic: string, answered: boolean, question: string | null, daysAgo = 0) =>
+      db.query(
+        `INSERT INTO assistant_questions (poi_id, topic, answered, language, question, created_at)
+         VALUES ($1, $2, $3, 'es', $4, now() - make_interval(days => $5))`,
+        [place.id, topic, answered, question, daysAgo],
+      );
+    await insert('times', true, 'What time is Sunday Mass?');
+    await insert('times', true, 'When is evening Mass on weekdays?');
+    await insert('ceremonies', false, 'How to book a baptism?');
+    await insert('times', true, 'Old question', 40);
+
+    await client(app).get('/superadmin/assistant-questions').set(as(admin)).expect(401);
+    const month = await client(app).get('/superadmin/assistant-questions').set(as(superToken)).expect(200);
+    expect(month.body).toMatchObject({ days: 30, total: 3, answered: 2, communities: 1 });
+    expect(month.body.topics).toEqual([
+      { topic: 'times', total: 2, unanswered: 0 },
+      { topic: 'ceremonies', total: 1, unanswered: 1 },
+    ]);
+    expect(month.body.questions[0]).toMatchObject({ poiName: 'Carmen', topic: expect.any(String) });
+    expect(month.body.questions[0]).not.toHaveProperty('userId');
+    const quarter = await client(app)
+      .get('/superadmin/assistant-questions')
+      .query({ days: '90', poiId: place.id })
+      .set(as(superToken))
+      .expect(200);
+    expect(quarter.body.total).toBe(4);
+    await client(app).get('/superadmin/assistant-questions').query({ days: '12' }).set(as(superToken)).expect(400);
+  });
 });
