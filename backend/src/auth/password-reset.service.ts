@@ -52,8 +52,24 @@ export class PasswordResetService {
     const found = await this.users.findByEmailForLogin(key);
     // Members sign in with a code and have no password to reset.
     if (!found?.passwordHash) return;
-    const user = await this.users.findByIdForPasswordReset(found.id);
-    if (!user?.passwordHash || !user.email) return;
+    await this.sendLink(found.id, language, request);
+  }
+
+  /**
+   * The superadmin's "Send a reset link" on a community's admin (Seb,
+   * 5 Nov 2026): the same email, sent on their behalf. The admin's
+   * current password keeps working until they choose a new one.
+   * False when no email can actually leave (no BREVO_API_KEY).
+   */
+  async sendLinkFor(userId: string, language: Language | undefined, request?: Request): Promise<boolean> {
+    if (!this.email.delivers) return false;
+    return this.sendLink(userId, language, request);
+  }
+
+  private async sendLink(userId: string, language: Language | undefined, request?: Request): Promise<boolean> {
+    const user = await this.users.findByIdForPasswordReset(userId);
+    if (!user?.passwordHash || !user.email) return false;
+    const key = user.email.toLowerCase();
     const token = await this.jwt.signAsync(
       { sub: user.id },
       { audience: AUDIENCE, expiresIn: LINK_SECONDS, secret: this.keyFor(user.passwordHash) },
@@ -63,10 +79,11 @@ export class PasswordResetService {
       await this.email.send(passwordResetEmail(user.email, link, language));
     } catch (err) {
       this.logger.error(`Reset email to ${user.email} failed: ${(err as Error).message}`);
-      return;
+      return false;
     }
     if (!this.email.delivers) this.logger.log(`Reset link for ${user.email}: ${link}`);
     await this.access.record({ action: 'admin.password.reset.requested', actorId: user.id, actorEmail: key, request });
+    return true;
   }
 
   /** Whether a link still works, and how long the new password must be. */
