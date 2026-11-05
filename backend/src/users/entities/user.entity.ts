@@ -62,6 +62,12 @@ export class User {
   @Column({ type: 'enum', enum: Language, default: Language.EN })
   language!: Language;
 
+  // The admin's welcome tour and page tips already seen (Seb, 5 Nov 2026),
+  // by key: "tour", "page:events"... Kept on the account so a tip seen on
+  // the laptop is not shown again on the phone. Settings can reset it.
+  @Column({ name: 'seen_tips', type: 'jsonb', default: () => "'[]'" })
+  seenTips!: string[];
+
   // infunion's own superadmin (Seb, 17 Oct 2026). Never set from the API:
   // SuperadminBootstrap writes it on boot for the one address named by
   // SUPERADMIN_EMAIL and clears it everywhere else, and every superadmin

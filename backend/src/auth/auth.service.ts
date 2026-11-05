@@ -64,6 +64,7 @@ export class AuthService {
       // deleted, so the app treats it as a preference, not a guarantee.
       lastActivePoiId: user.lastActivePoiId,
       language: user.language,
+      seenTips: user.seenTips ?? [],
       // The app asks to accept the terms and privacy policy whenever this
       // is true: never accepted, or accepted before the current version.
       consentRequired: user.consentVersion !== CONSENT_VERSION,
@@ -125,5 +126,13 @@ export class AuthService {
   async updateMyLanguage(userId: string, language: Language): Promise<{ language: Language }> {
     const user = await this.usersService.updateLanguage(userId, language);
     return { language: user.language };
+  }
+
+  async markTipSeen(userId: string, key: string): Promise<{ seenTips: string[] }> {
+    return { seenTips: await this.usersService.markTipSeen(userId, key) };
+  }
+
+  async resetTips(userId: string): Promise<{ seenTips: string[] }> {
+    return { seenTips: await this.usersService.resetTips(userId) };
   }
 }

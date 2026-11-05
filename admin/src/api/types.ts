@@ -101,6 +101,8 @@ export type CurrentUser = {
   firstName: string | null;
   lastName: string | null;
   language: SupportedLanguage;
+  // The welcome tour and page tips already seen ("tour", "page:events"...).
+  seenTips?: string[];
   // infunion's own account: shows the Superadmin section.
   isSuperadmin?: boolean;
   adminPois: Poi[];

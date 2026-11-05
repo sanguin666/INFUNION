@@ -3753,3 +3753,164 @@ label.link-button:focus-within {
   font-weight: 700;
   color: var(--color-primary-strong);
 }
+
+/* ---- Welcome tour and page tips (Seb, 5 Nov 2026) ---- */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.tour-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 16, 40, 0.55);
+}
+
+/* The lit part of the menu: a hole in the dimmed screen. */
+.tour-spotlight {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(20, 16, 40, 0.55);
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  pointer-events: none;
+  transition: top 0.2s ease, height 0.2s ease;
+}
+
+.tour-bubble {
+  position: fixed;
+  width: min(360px, calc(100vw - 32px));
+  padding: 20px 22px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.tour-bubble::before {
+  content: '';
+  position: absolute;
+  left: -9px;
+  top: var(--tour-arrow, 28px);
+  width: 18px;
+  height: 18px;
+  background: var(--color-surface);
+  transform: rotate(45deg);
+}
+
+.tour-bubble-centred {
+  top: 50%;
+  left: 50%;
+  width: min(440px, calc(100vw - 32px));
+  transform: translate(-50%, -50%);
+}
+
+.tour-bubble-centred::before {
+  display: none;
+}
+
+.tour-step {
+  margin: 0 0 6px;
+  color: var(--color-primary-strong);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.tour-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.tour-text {
+  margin: 0 0 16px;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tour-moves {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tour-skip {
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.page-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 0 24px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--color-primary-soft);
+}
+
+.page-tip-icon {
+  display: grid;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.page-tip-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-tip-title {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.page-tip-text {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.page-tip-close {
+  flex: none;
+  min-height: 44px;
+  margin: -10px -6px 0 0;
+  padding: 0 6px;
+  border: none;
+  background: none;
+  color: var(--color-primary-strong);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-spotlight {
+    transition: none;
+  }
+}
