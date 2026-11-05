@@ -236,6 +236,15 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
       onBack={tab === 'home' && drilldown.kind === 'list' ? undefined : goBack}
       onOpenPlaces={onOpenPlaces}
       onOpenProfile={() => setProfileOpen(true)}
+      onAsk={
+        assistantOn && !(tab === 'home' && drilldown.kind === 'assistant')
+          ? () => {
+              setProfileOpen(false);
+              setTab('home');
+              setDrilldown({ kind: 'assistant' });
+            }
+          : undefined
+      }
       scrollEndKey={tab === 'home' && drilldown.kind === 'assistant' ? assistantItems.length : undefined}
       scrollKey={`${tab}:${drilldown.kind}:${drilldown.kind === 'project' ? projectKey(drilldown.project) : drilldown.kind === 'announcement' ? drilldown.item.id : ''}`}
     >
@@ -261,7 +270,6 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
           poi={poi}
           modules={modules}
           onSelectTab={selectTab}
-          onAsk={assistantOn ? () => setDrilldown({ kind: 'assistant' }) : undefined}
         />
       )}
 
