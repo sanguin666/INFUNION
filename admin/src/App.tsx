@@ -27,6 +27,7 @@ import { SuperadminCommunitiesPage } from './superadmin/CommunitiesPage';
 import { SuperadminCommunityPage } from './superadmin/CommunityPage';
 import { SuperadminAccountsPage } from './superadmin/AccountsPage';
 import { SuperadminHealthPage } from './superadmin/HealthPage';
+import { SuperadminQuestionsPage } from './superadmin/QuestionsPage';
 import { SuperadminJournalPage } from './superadmin/JournalPage';
 import { SuperadminRegistrationsPage } from './superadmin/RegistrationsPage';
 import { SuperadminRegistrationPage } from './superadmin/RegistrationPage';
@@ -138,6 +139,7 @@ function AppRoutes() {
         <Route path="communities" element={<SuperadminCommunitiesPage />} />
         <Route path="communities/:poiId" element={<SuperadminCommunityPage />} />
         <Route path="accounts" element={<SuperadminAccountsPage />} />
+        <Route path="questions" element={<SuperadminQuestionsPage />} />
         <Route path="health" element={<SuperadminHealthPage />} />
         <Route path="journal" element={<SuperadminJournalPage />} />
       </Route>

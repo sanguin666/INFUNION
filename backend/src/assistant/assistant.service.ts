@@ -10,7 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, In, MoreThan } from 'typeorm';
-import { AssistantModel, type AssistantTurn } from './assistant-model.js';
+import { AssistantModel, type AssistantInsight, type AssistantTurn } from './assistant-model.js';
 import { Poi } from '../pois/entities/poi.entity.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
 import { Event } from '../events/entities/event.entity.js';
@@ -32,6 +32,8 @@ import { isTimeZone, localTime } from '../events/occurrences.js';
 export const DAILY_QUESTIONS = 20;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+// The anonymised question text is erased after this many days; the topic stays.
+export const QUESTION_KEEP_DAYS = 90;
 const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -132,13 +134,14 @@ export class AssistantService {
         .map((m) => m.moduleType),
     );
     try {
-      const reply = await this.model.answer({
+      const { insight, ...reply } = await this.model.answer({
         community: poi.name,
         info: await this.info(poi, live),
         screens: this.screens(poi, live),
         language,
         turns,
       });
+      await this.record(poi.id, language, insight);
       return { ...reply, remaining };
     } catch (error) {
       // Not counted when nothing came back.
@@ -148,6 +151,23 @@ export class AssistantService {
       );
       this.logger.warn(`Assistant failed for ${poi.id}: ${(error as Error).message}`);
       throw new ServiceUnavailableException('assistant_failed');
+    }
+  }
+
+  /** Keeps the question for statistics, never linked to the member; a failure here never costs the answer. */
+  private async record(poiId: string, language: string, insight: AssistantInsight): Promise<void> {
+    try {
+      await this.dataSource.query(
+        `INSERT INTO assistant_questions (poi_id, topic, answered, language, question) VALUES ($1, $2, $3, $4, $5)`,
+        [poiId, insight.topic, insight.answered, language, insight.question || null],
+      );
+      await this.dataSource.query(
+        `UPDATE assistant_questions SET question = NULL
+         WHERE question IS NOT NULL AND created_at < now() - make_interval(days => $1)`,
+        [QUESTION_KEEP_DAYS],
+      );
+    } catch (error) {
+      this.logger.warn(`Could not record an assistant question: ${(error as Error).message}`);
     }
   }
 

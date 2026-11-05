@@ -31,6 +31,7 @@ describe('Assistant (e2e)', () => {
     answer = vi.fn(async (input: { screens: Record<string, string> }) => ({
       answer: 'On Sunday at 10:00.',
       actions: Object.keys(input.screens).includes('calendar') ? ['calendar'] : [],
+      insight: { topic: 'times', answered: true, question: 'What time is Sunday Mass?' },
     }));
     (model as unknown as { answer: typeof answer }).answer = answer;
   });
@@ -86,6 +87,23 @@ describe('Assistant (e2e)', () => {
     expect(input.info).toContain('Misa dominical');
     expect(input.info).toContain('every Sunday at 10:00');
     expect(input.screens).toHaveProperty('home');
+  });
+
+  it('keeps the question anonymised for statistics, never linked to the member', async () => {
+    await complete();
+    answer.mockRejectedValueOnce(new Error('down'));
+    await ask(memberToken).expect(503);
+    const res = await ask(memberToken, 'Soy María, ¿a qué hora es la misa del domingo?').expect(201);
+    expect(res.body).not.toHaveProperty('insight');
+    const rows = await app.get(DataSource).query(`SELECT * FROM assistant_questions`);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ poi_id: place.id, topic: 'times', answered: true, language: 'en', question: 'What time is Sunday Mass?' });
+    expect(Object.keys(rows[0])).not.toContain('user_id');
+
+    await app.get(DataSource).query(`UPDATE assistant_questions SET created_at = now() - interval '91 days'`);
+    await ask(memberToken).expect(201);
+    const kept = await app.get(DataSource).query(`SELECT question FROM assistant_questions ORDER BY created_at`);
+    expect(kept.map((r: { question: string | null }) => r.question)).toEqual([null, 'What time is Sunday Mass?']);
   });
 
   it('stops at the daily limit, and does not count a failed answer', async () => {
