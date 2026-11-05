@@ -633,7 +633,7 @@ export type Translations = {
     later: string;
   };
   assistant: {
-    askPlaceholder: string;
+    open: string;
     title: string;
     subtitle: string;
     intro: string;
@@ -1277,7 +1277,7 @@ const en: Translations = {
     later: 'Later',
   },
   assistant: {
-    askPlaceholder: "Ask a question about {{name}}…",
+    open: "Ask a question",
     title: "Ask {{name}}",
     subtitle: "Answers from the community's information",
     intro: "Ask about times, events, news or how to ask the team for something. I answer from what {{name}} has published.",
@@ -1921,7 +1921,7 @@ const es: Translations = {
     later: 'Más tarde',
   },
   assistant: {
-    askPlaceholder: "Haz una pregunta sobre {{name}}…",
+    open: "Hacer una pregunta",
     title: "Pregunta a {{name}}",
     subtitle: "Respuestas con la información de la comunidad",
     intro: "Pregunta por horarios, actividades, noticias o cómo pedir algo al equipo. Respondo con lo que {{name}} ha publicado.",
@@ -2565,7 +2565,7 @@ const fr: Translations = {
     later: 'Plus tard',
   },
   assistant: {
-    askPlaceholder: "Posez une question sur {{name}}…",
+    open: "Poser une question",
     title: "Demander à {{name}}",
     subtitle: "Réponses tirées des informations de la communauté",
     intro: "Demandez les horaires, les activités, les actualités ou comment demander quelque chose à l'équipe. Je réponds avec ce que {{name}} a publié.",
@@ -3209,7 +3209,7 @@ const va: Translations = {
     later: 'Més tard',
   },
   assistant: {
-    askPlaceholder: "Fes una pregunta sobre {{name}}…",
+    open: "Fer una pregunta",
     title: "Pregunta a {{name}}",
     subtitle: "Respostes amb la informació de la comunitat",
     intro: "Pregunta per horaris, activitats, notícies o com demanar alguna cosa a l'equip. Responc amb el que {{name}} ha publicat.",
@@ -3853,7 +3853,7 @@ const ca: Translations = {
     later: 'Més tard',
   },
   assistant: {
-    askPlaceholder: "Fes una pregunta sobre {{name}}…",
+    open: "Fer una pregunta",
     title: "Pregunta a {{name}}",
     subtitle: "Respostes amb la informació de la comunitat",
     intro: "Pregunta per horaris, activitats, notícies o com demanar alguna cosa a l'equip. Responc amb el que {{name}} ha publicat.",
@@ -4497,7 +4497,7 @@ const gl: Translations = {
     later: 'Máis tarde',
   },
   assistant: {
-    askPlaceholder: "Fai unha pregunta sobre {{name}}…",
+    open: "Facer unha pregunta",
     title: "Pregúntalle a {{name}}",
     subtitle: "Respostas coa información da comunidade",
     intro: "Pregunta por horarios, actividades, novas ou como pedirlle algo ao equipo. Respondo co que {{name}} publicou.",
@@ -5142,7 +5142,7 @@ const pt: Translations = {
     later: 'Mais tarde',
   },
   assistant: {
-    askPlaceholder: "Faça uma pergunta sobre {{name}}…",
+    open: "Fazer uma pergunta",
     title: "Perguntar a {{name}}",
     subtitle: "Respostas com a informação da comunidade",
     intro: "Pergunte por horários, atividades, notícias ou como pedir algo à equipa. Respondo com o que {{name}} publicou.",

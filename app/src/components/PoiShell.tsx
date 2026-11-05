@@ -20,6 +20,7 @@ import {
   MegaphoneIcon,
   MoreDotsIcon,
   PlayIcon,
+  SparkleIcon,
 } from './icons';
 import type { ActiveModule, ModuleType, Poi } from '../api/types';
 import type { Me } from '../api/auth';
@@ -139,6 +140,7 @@ export function PoiShell({
   onBack,
   onOpenPlaces,
   onOpenProfile,
+  onAsk,
   scrollKey,
   scrollEndKey,
   children,
@@ -203,6 +205,21 @@ export function PoiShell({
           style={styles.backButton}
         >
           <BackChevronIcon size={26} color={colors.text} />
+        </Pressable>
+      )}
+
+      {/* The member assistant (Complete plan), on every page (Seb,
+          5 Nov 2026): a sparkle in a soft circle beside the profile. */}
+      {onAsk && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('assistant.open')}
+          onPress={onAsk}
+          style={styles.askButton}
+        >
+          <View style={styles.askCircle}>
+            <SparkleIcon size={24} color={colors.primaryStrong} />
+          </View>
         </Pressable>
       )}
 
@@ -275,6 +292,8 @@ type Props = {
   onOpenPlaces: () => void;
   // Opens the settings menu behind the profile circle, on the same terms.
   onOpenProfile: () => void;
+  // Opens the member assistant; absent where the community has none.
+  onAsk?: () => void;
   // What is showing, so the page starts at its top when it changes.
   scrollKey?: string;
   // Changes when the page grows at its end (the assistant's chat).
@@ -403,6 +422,20 @@ const styles = themedStyles(() => ({
     height: minTouchTarget,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  askButton: {
+    width: 52,
+    height: minTouchTarget,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  askCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primarySoft,
   },
   footerSlot: {
     backgroundColor: colors.background,
