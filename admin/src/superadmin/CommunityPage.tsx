@@ -356,7 +356,8 @@ export function SuperadminCommunityPage() {
                 onConfirm={() =>
                   run(`admin:${admin.id}`, async () => {
                     const reset = await resetAdminPassword(id, admin.id);
-                    setReveal({ email: reset.email, password: reset.temporaryPassword });
+                    if (reset.temporaryPassword) setReveal({ email: reset.email, password: reset.temporaryPassword });
+                    else setNotice(s('community.resetLinkSent', { email: reset.email }));
                   })
                 }
               />
