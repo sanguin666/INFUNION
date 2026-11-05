@@ -98,6 +98,9 @@ export type HubMenu = {
   livestreamInEvents: boolean;
 };
 
+// The assistant pill's purple, on infunion's yellow in both themes.
+const ASK_INK = '#4B2DB8';
+
 /**
  * Who goes where in the bottom menu, from the order the place set in the
  * dashboard and the modules it currently has running.
@@ -209,7 +212,8 @@ export function PoiShell({
       )}
 
       {/* The member assistant (Complete plan), on every page (Seb,
-          5 Nov 2026): a sparkle in a soft circle beside the profile. */}
+          5 Nov 2026): a yellow "Ask" pill beside the profile, option 17
+          of the 20 he was shown. */}
       {onAsk && (
         <Pressable
           accessibilityRole="button"
@@ -217,8 +221,11 @@ export function PoiShell({
           onPress={onAsk}
           style={styles.askButton}
         >
-          <View style={styles.askCircle}>
-            <SparkleIcon size={28} color={colors.primaryText} />
+          <View style={styles.askPill}>
+            <SparkleIcon size={18} color={ASK_INK} />
+            <AccessibleText variant="body" color={ASK_INK} numberOfLines={1} style={styles.askLabel}>
+              {t('assistant.short')}
+            </AccessibleText>
           </View>
         </Pressable>
       )}
@@ -424,18 +431,24 @@ const styles = themedStyles(() => ({
     justifyContent: 'center',
   },
   askButton: {
-    width: 52,
+    minWidth: 52,
     height: minTouchTarget,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  askCircle: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+  // infunion's yellow, the one yellow thing in the banner.
+  askPill: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.primaryFill,
+    gap: 5,
+    height: 44,
+    paddingLeft: 11,
+    paddingRight: 14,
+    borderRadius: 22,
+    backgroundColor: '#F9B800',
+  },
+  askLabel: {
+    fontWeight: '800',
   },
   footerSlot: {
     backgroundColor: colors.background,

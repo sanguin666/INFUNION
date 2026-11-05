@@ -634,6 +634,7 @@ export type Translations = {
   };
   assistant: {
     open: string;
+    short: string;
     title: string;
     subtitle: string;
     intro: string;
@@ -1278,6 +1279,7 @@ const en: Translations = {
   },
   assistant: {
     open: "Ask a question",
+    short: "Ask",
     title: "Ask {{name}}",
     subtitle: "Answers from the community's information",
     intro: "Ask about times, events, news or how to ask the team for something. I answer from what {{name}} has published.",
@@ -1922,6 +1924,7 @@ const es: Translations = {
   },
   assistant: {
     open: "Hacer una pregunta",
+    short: "Pregunta",
     title: "Pregunta a {{name}}",
     subtitle: "Respuestas con la información de la comunidad",
     intro: "Pregunta por horarios, actividades, noticias o cómo pedir algo al equipo. Respondo con lo que {{name}} ha publicado.",
@@ -2566,6 +2569,7 @@ const fr: Translations = {
   },
   assistant: {
     open: "Poser une question",
+    short: "Question",
     title: "Demander à {{name}}",
     subtitle: "Réponses tirées des informations de la communauté",
     intro: "Demandez les horaires, les activités, les actualités ou comment demander quelque chose à l'équipe. Je réponds avec ce que {{name}} a publié.",
@@ -3210,6 +3214,7 @@ const va: Translations = {
   },
   assistant: {
     open: "Fer una pregunta",
+    short: "Pregunta",
     title: "Pregunta a {{name}}",
     subtitle: "Respostes amb la informació de la comunitat",
     intro: "Pregunta per horaris, activitats, notícies o com demanar alguna cosa a l'equip. Responc amb el que {{name}} ha publicat.",
@@ -3854,6 +3859,7 @@ const ca: Translations = {
   },
   assistant: {
     open: "Fer una pregunta",
+    short: "Pregunta",
     title: "Pregunta a {{name}}",
     subtitle: "Respostes amb la informació de la comunitat",
     intro: "Pregunta per horaris, activitats, notícies o com demanar alguna cosa a l'equip. Responc amb el que {{name}} ha publicat.",
@@ -4498,6 +4504,7 @@ const gl: Translations = {
   },
   assistant: {
     open: "Facer unha pregunta",
+    short: "Pregunta",
     title: "Pregúntalle a {{name}}",
     subtitle: "Respostas coa información da comunidade",
     intro: "Pregunta por horarios, actividades, novas ou como pedirlle algo ao equipo. Respondo co que {{name}} publicou.",
@@ -5143,6 +5150,7 @@ const pt: Translations = {
   },
   assistant: {
     open: "Fazer uma pergunta",
+    short: "Pergunta",
     title: "Perguntar a {{name}}",
     subtitle: "Respostas com a informação da comunidade",
     intro: "Pergunte por horários, atividades, notícias ou como pedir algo à equipa. Respondo com o que {{name}} publicou.",
