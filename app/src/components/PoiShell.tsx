@@ -20,6 +20,7 @@ import {
   MegaphoneIcon,
   MoreDotsIcon,
   PlayIcon,
+  SparkleIcon,
 } from './icons';
 import type { ActiveModule, ModuleType, Poi } from '../api/types';
 import type { Me } from '../api/auth';
@@ -97,6 +98,9 @@ export type HubMenu = {
   livestreamInEvents: boolean;
 };
 
+// The assistant pill's purple, on infunion's yellow in both themes.
+const ASK_INK = '#4B2DB8';
+
 /**
  * Who goes where in the bottom menu, from the order the place set in the
  * dashboard and the modules it currently has running.
@@ -139,6 +143,7 @@ export function PoiShell({
   onBack,
   onOpenPlaces,
   onOpenProfile,
+  onAsk,
   scrollKey,
   scrollEndKey,
   children,
@@ -203,6 +208,25 @@ export function PoiShell({
           style={styles.backButton}
         >
           <BackChevronIcon size={26} color={colors.text} />
+        </Pressable>
+      )}
+
+      {/* The member assistant (Complete plan), on every page (Seb,
+          5 Nov 2026): a yellow "Ask" pill beside the profile, option 17
+          of the 20 he was shown. */}
+      {onAsk && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('assistant.open')}
+          onPress={onAsk}
+          style={styles.askButton}
+        >
+          <View style={styles.askPill}>
+            <SparkleIcon size={18} color={ASK_INK} />
+            <AccessibleText variant="body" color={ASK_INK} numberOfLines={1} style={styles.askLabel}>
+              {t('assistant.short')}
+            </AccessibleText>
+          </View>
         </Pressable>
       )}
 
@@ -275,6 +299,8 @@ type Props = {
   onOpenPlaces: () => void;
   // Opens the settings menu behind the profile circle, on the same terms.
   onOpenProfile: () => void;
+  // Opens the member assistant; absent where the community has none.
+  onAsk?: () => void;
   // What is showing, so the page starts at its top when it changes.
   scrollKey?: string;
   // Changes when the page grows at its end (the assistant's chat).
@@ -403,6 +429,26 @@ const styles = themedStyles(() => ({
     height: minTouchTarget,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  askButton: {
+    minWidth: 52,
+    height: minTouchTarget,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // infunion's yellow, the one yellow thing in the banner.
+  askPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    height: 44,
+    paddingLeft: 11,
+    paddingRight: 14,
+    borderRadius: 22,
+    backgroundColor: '#F9B800',
+  },
+  askLabel: {
+    fontWeight: '800',
   },
   footerSlot: {
     backgroundColor: colors.background,
