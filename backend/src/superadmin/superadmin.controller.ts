@@ -27,6 +27,7 @@ import { ModuleType } from '../common/enums/module-type.enum.js';
 import { SuperadminAuthService } from './superadmin-auth.service.js';
 import { SuperadminService } from './superadmin.service.js';
 import {
+  AssistantQuestionsQuery,
   ChangePasswordDto,
   ConfirmNameDto,
   CreateCommunityDto,
@@ -158,6 +159,12 @@ export class SuperadminController {
   @Get('overview')
   overview() {
     return this.service.overview();
+  }
+
+  // What members ask the assistant (Seb, 5 Nov 2026).
+  @Get('assistant-questions')
+  assistantQuestions(@Query() query: AssistantQuestionsQuery) {
+    return this.service.assistantQuestions(Number(query.days ?? 30), query.poiId ?? null);
   }
 
   @Get('pois')
