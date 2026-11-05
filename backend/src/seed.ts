@@ -255,7 +255,7 @@ async function seed() {
       announcementRepository.create({
         poi,
         title: 'This week’s bulletin',
-        body: "This week's readings, choir practice moves to Thursday evenings starting this month, and a reminder that the community office will be closed on Monday for the holiday.",
+        body: "This week's readings, choir practice moves to Thursday evenings starting this month, and a reminder that the team will be away on Monday for the holiday.",
       }),
       announcementRepository.create({
         poi,
@@ -421,7 +421,7 @@ async function seed() {
         position: 3,
         type: PageBlockType.TEXT,
         title: 'Visiting us',
-        body: 'The community office is open weekdays from 9am to 4pm. There is step-free access on the side entrance from the car park, and a hearing loop in the first four rows.',
+        body: 'The team is here weekdays from 9am to 4pm. There is step-free access on the side entrance from the car park, and a hearing loop in the first four rows.',
       }),
       pageBlockRepository.create({
         poi,
@@ -486,12 +486,12 @@ async function seed() {
     [poiRepository, 'name', "St. Mary's Parish", "St. Mary's Community"],
     [poiRepository, 'description', 'A welcoming Catholic parish in the heart of Springfield, serving families for over 80 years.', 'A welcoming community in the heart of Springfield, serving families for over 80 years.'],
     [announcementRepository, 'body', 'Este es un anuncio de muestra para nuestra segunda parroquia, usado para mostrar el panel de administración.', 'Este es un anuncio de muestra para nuestra segunda comunidad, usado para mostrar el panel de administración.'],
-    [announcementRepository, 'body', "This week's readings, choir practice moves to Thursday evenings starting this month, and a reminder that the parish office will be closed on Monday for the holiday.", "This week's readings, choir practice moves to Thursday evenings starting this month, and a reminder that the community office will be closed on Monday for the holiday."],
+    [announcementRepository, 'body', "This week's readings, choir practice moves to Thursday evenings starting this month, and a reminder that the parish office will be closed on Monday for the holiday.", "This week's readings, choir practice moves to Thursday evenings starting this month, and a reminder that the team will be away on Monday for the holiday."],
     [announcementRepository, 'body', 'Our food pantry is running low on canned goods and pasta. Donations can be dropped off at the parish hall any weekday between 9am and 4pm.', 'Our food pantry is running low on canned goods and pasta. Donations can be dropped off at the community hall any weekday between 9am and 4pm.'],
     [eventRepository, 'location', 'Parish Hall', 'Community Hall'],
     [communityCommentRepository, 'message', 'Same here, I leave from the parish hall around 8am.', 'Same here, I leave from the community hall around 8am.'],
     [pageBlockRepository, 'body', 'A welcoming parish in the heart of Springfield. Whether you have been coming for fifty years or are walking in for the first time, there is a seat for you. Sunday Mass is at 10:00, and the doors open half an hour before.', 'A welcoming community in the heart of Springfield. Whether you have been coming for fifty years or are walking in for the first time, there is a seat for you. Sunday Mass is at 10:00, and the doors open half an hour before.'],
-    [pageBlockRepository, 'body', 'The parish office is open weekdays from 9am to 4pm. There is step-free access on the side entrance from the car park, and a hearing loop in the first four rows.', 'The community office is open weekdays from 9am to 4pm. There is step-free access on the side entrance from the car park, and a hearing loop in the first four rows.'],
+    [pageBlockRepository, 'body', 'The parish office is open weekdays from 9am to 4pm. There is step-free access on the side entrance from the car park, and a hearing loop in the first four rows.', 'The team is here weekdays from 9am to 4pm. There is step-free access on the side entrance from the car park, and a hearing loop in the first four rows.'],
     [pageBlockRepository, 'title', 'Support the parish', 'Support the community'],
   ];
   for (const [repository, column, from, to] of rewordings) {
@@ -552,7 +552,7 @@ async function seedChurchModules({
         { title: 'Weekday Mass', weekday: 3, at: [9, 0], category: EventCategory.MASS, location: 'Chapel' },
         { title: 'Confessions', weekday: 5, at: [17, 0], category: EventCategory.CONFESSION, location: 'Chapel' },
         { title: 'Adoration', weekday: 4, at: [20, 0], category: EventCategory.ADORATION, location: 'Chapel' },
-        { title: 'Office open', weekday: 2, at: [10, 0], category: EventCategory.OFFICE_HOURS, location: 'Community office' },
+        { title: 'Opening hours', weekday: 2, at: [10, 0], category: EventCategory.OFFICE_HOURS, location: 'Side entrance' },
       ],
     ],
     [
@@ -561,7 +561,7 @@ async function seedChurchModules({
         { title: 'Misa dominical', weekday: 0, at: [12, 0], category: EventCategory.MASS, location: 'Iglesia' },
         { title: 'Misa', weekday: 4, at: [19, 0], category: EventCategory.MASS, location: 'Capilla' },
         { title: 'Confesiones', weekday: 6, at: [18, 0], category: EventCategory.CONFESSION, location: 'Capilla' },
-        { title: 'Despacho abierto', weekday: 1, at: [18, 0], category: EventCategory.OFFICE_HOURS, location: 'Despacho' },
+        { title: 'Horario de atención', weekday: 1, at: [18, 0], category: EventCategory.OFFICE_HOURS, location: 'Entrada lateral' },
       ],
     ],
   ];
