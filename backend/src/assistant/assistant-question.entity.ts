@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Poi } from '../pois/entities/poi.entity.js';
 
 /**
  * One question asked to the member assistant, kept for statistics (Seb,
@@ -14,6 +15,11 @@ export class AssistantQuestion {
 
   @Column('uuid', { name: 'poi_id' })
   poiId!: string;
+
+  // Gone with the community.
+  @ManyToOne(() => Poi, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'poi_id', foreignKeyConstraintName: 'FK_assistant_questions_poi' })
+  poi?: Poi;
 
   @Column('varchar', { length: 32 })
   topic!: string;
