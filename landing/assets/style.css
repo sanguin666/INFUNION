@@ -1772,3 +1772,80 @@ html[data-for="worship"] .not-worship { display: none; }
     width: 210px;
   }
 }
+
+/* ---------- Team ---------- */
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.team-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.team-photo {
+  display: block;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary);
+}
+
+.team-card h3 {
+  margin: 0 0 4px;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.team-role {
+  margin: 0 0 12px;
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.team-bio {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.team-quote {
+  max-width: 760px;
+  margin: 40px auto 0;
+  text-align: center;
+}
+
+.team-quote blockquote {
+  margin: 0 0 10px;
+  color: var(--primary-dark);
+  font-size: clamp(19px, 2.4vw, 23px);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.team-quote figcaption {
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
