@@ -1,3 +1,4 @@
+import { AuthModule } from '../auth/auth.module.js';
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,6 +22,8 @@ import { PlaceClosureModule } from '../place-closure/place-closure.module.js';
 @Module({
   imports: [
     AuthGuardsModule,
+    // For "Send a reset link" on a community's admin.
+    AuthModule,
     ActiveModulesModule,
     RegistrationsModule,
     PlaceClosureModule,

@@ -1,3 +1,4 @@
+import { PasswordResetService } from '../auth/password-reset.service.js';
 import {
   BadRequestException,
   ConflictException,
@@ -95,6 +96,7 @@ export class SuperadminService {
     @InjectRepository(AuditLog) private readonly audit: Repository<AuditLog>,
     private readonly registrations: RegistrationsService,
     private readonly closure: PlaceClosureService,
+    private readonly passwordReset: PasswordResetService,
   ) {}
 
   private log(actor: Actor, action: string, poi?: Pick<Poi, 'id' | 'name'> | null, details: Record<string, unknown> = {}) {
@@ -635,6 +637,14 @@ export class SuperadminService {
   async resetAdminPassword(actor: Actor, poiId: string, userId: string) {
     const membership = await this.adminMembership(poiId, userId);
     if (membership.user.isSuperadmin) throw new BadRequestException('Not allowed');
+    // The admin gets the "Forgot your password?" email and chooses their own
+    // password (Seb, 5 Nov 2026). Only when no email can leave (no Brevo)
+    // does it fall back to a temporary password shown to the superadmin.
+    const language = membership.user.language ?? membership.poi.language;
+    if (await this.passwordReset.sendLinkFor(userId, language)) {
+      await this.log(actor, 'admin.password_reset_link', membership.poi, { email: membership.user.email });
+      return { email: membership.user.email, linkSent: true as const };
+    }
     const password = temporaryPassword();
     await this.users.update(userId, { passwordHash: await bcrypt.hash(password, 12) });
     await this.log(actor, 'admin.password_reset', membership.poi, { email: membership.user.email });
