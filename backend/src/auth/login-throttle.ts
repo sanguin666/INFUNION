@@ -143,3 +143,7 @@ let backend: ThrottleBackend = new MemoryBackend();
 export function useDatabaseThrottles(dataSource: DataSource): void {
   backend = new DatabaseBackend(dataSource);
 }
+
+// Five wrong admin passwords for one address in 15 minutes locks it for 15
+// (auth.service.ts); a password reset clears it (password-reset.service.ts).
+export const adminLoginThrottle = new LoginThrottle('admin-login', 5, 15 * 60_000, 15 * 60_000);

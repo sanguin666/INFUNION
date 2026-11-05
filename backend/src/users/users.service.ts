@@ -130,6 +130,23 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
+  /**
+   * For "Forgot your password?" (auth/password-reset.service.ts): the
+   * hash is what makes a reset link single-use, so it is read here too.
+   */
+  findByIdForPasswordReset(id: string): Promise<User | null> {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .select(['user.id', 'user.email', 'user.isSuperadmin'])
+      .addSelect('user.passwordHash')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
+
+  async setPasswordHash(id: string, passwordHash: string): Promise<void> {
+    await this.usersRepository.update(id, { passwordHash });
+  }
+
   async markLoggedIn(id: string): Promise<void> {
     const now = new Date();
     await this.usersRepository.update(id, { lastLoginAt: now, lastSeenAt: now });
