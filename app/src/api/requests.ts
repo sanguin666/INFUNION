@@ -81,6 +81,12 @@ export function getMyRequests(poiId: string): Promise<RequestSummary[]> {
   return apiGet<RequestSummary[]>(`${base(poiId)}/mine`);
 }
 
+// An answer not yet read, or a paper still to send: the dot on the
+// Requests menu button.
+export function getRequestsAttention(poiId: string): Promise<{ attention: boolean }> {
+  return apiGet<{ attention: boolean }>(`${base(poiId)}/mine/attention`);
+}
+
 /** Opening a request also marks what the office wrote as read. */
 export function getMyRequest(poiId: string, id: string): Promise<RequestDetail> {
   return apiGet<RequestDetail>(`${base(poiId)}/mine/${encodeURIComponent(id)}`);

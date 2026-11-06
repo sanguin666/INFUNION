@@ -34,6 +34,16 @@ import { useI18n } from '../i18n/I18nContext';
 // are the modules themselves.
 export type HubTab = 'home' | 'more' | ModuleType;
 
+// Modules with something new for the member: a dot on their button, or
+// on More when they sit under it.
+export type MenuAlerts = Partial<Record<ModuleType, boolean>>;
+
+// The words a screen reader adds to a button with a dot, and that More
+// writes next to the row.
+export function alertWord(type: ModuleType, t: Translate): string {
+  return type === 'messages' ? t('hub.newMessages') : t('hub.somethingNew');
+}
+
 // The bar's ceiling. Split evenly across a 390pt phone that is 78pt per
 // button; a sixth would drop every button under `minTouchTarget` and
 // start truncating the labels, which is what used to force the bar to
@@ -140,7 +150,7 @@ export function PoiShell({
   me,
   activeTab,
   onSelectTab,
-  messagesUnread = false,
+  alerts = {},
   onBack,
   onOpenPlaces,
   onOpenProfile,
@@ -260,7 +270,13 @@ export function PoiShell({
               label={label}
               active={tab === highlighted}
               activeColor={poiTheme.accentStrong}
-              dot={messagesUnread && (tab === 'messages' || (tab === 'more' && inMore.includes('messages')))}
+              alert={
+                tab === 'more'
+                  ? inMore.some((type) => alerts[type])
+                  : tab !== 'home' && alerts[tab]
+                    ? alertWord(tab, t)
+                    : null
+              }
               onPress={() => onSelectTab(tab)}
             />
           );
@@ -293,8 +309,8 @@ type Props = {
   me: Me | null;
   activeTab: HubTab;
   onSelectTab: (tab: HubTab) => void;
-  // A dot on Messages, or on More when Messages sits under it.
-  messagesUnread?: boolean;
+  // A dot on a module's button, or on More when the module sits under it.
+  alerts?: MenuAlerts;
   // Where the banner's back chevron goes, or nothing when the screen
   // showing is the place's own home page and there is nowhere back to.
   onBack?: () => void;
@@ -354,14 +370,16 @@ function TabBarItem({
   label,
   active,
   activeColor,
-  dot = false,
+  alert = null,
   onPress,
 }: {
   icon: (color: string) => ReactNode;
   label: string;
   active: boolean;
   activeColor: string;
-  dot?: boolean;
+  // Something new behind this button: the words a screen reader adds,
+  // or true for More, which says only that there is something new.
+  alert?: string | boolean | null;
   onPress: () => void;
 }) {
   const { t } = useI18n();
@@ -371,7 +389,7 @@ function TabBarItem({
     <Pressable
       accessibilityRole="tab"
       accessibilityState={{ selected: active }}
-      accessibilityLabel={dot ? `${label}. ${t('hub.newMessages')}` : label}
+      accessibilityLabel={alert ? `${label}. ${alert === true ? t('hub.somethingNew') : alert}` : label}
       onPress={onPress}
       style={styles.tabBarItem}
     >
@@ -379,7 +397,7 @@ function TabBarItem({
           the bolder weight below — no fill behind it. */}
       <View>
         {icon(color)}
-        {dot && <View style={styles.tabBarDot} />}
+        {!!alert && <View style={styles.tabBarDot} />}
       </View>
       <AccessibleText variant="caption" color={color} numberOfLines={1} style={active ? styles.tabBarLabelActive : styles.tabBarLabel}>
         {label}
