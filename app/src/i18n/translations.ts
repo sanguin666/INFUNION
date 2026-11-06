@@ -596,6 +596,10 @@ export type Translations = {
     lang_fr: string;
     autoTitle: string;
     autoHint: string;
+    offerTitle: string;
+    offerBody: string;
+    offerYes: string;
+    offerNo: string;
   };
   moderation: {
     menuAria: string;
@@ -1241,6 +1245,10 @@ const en: Translations = {
     lang_fr: "French",
     autoTitle: "Translate automatically",
     autoHint: "Posts in other languages open in English",
+    offerTitle: "Translate automatically?",
+    offerBody: "Some texts here are written in {{language}}. Open them already translated into English? You can change this anytime in More › Language.",
+    offerYes: "Translate",
+    offerNo: "No thanks",
   },
   moderation: {
     menuAria: "More options",
@@ -1886,6 +1894,10 @@ const es: Translations = {
     lang_fr: "francés",
     autoTitle: "Traducir automáticamente",
     autoHint: "Las publicaciones en otros idiomas se abren en español",
+    offerTitle: "¿Traducir automáticamente?",
+    offerBody: "Algunos textos están escritos en {{language}}. ¿Abrirlos ya traducidos al español? Puedes cambiarlo cuando quieras en Más › Idioma.",
+    offerYes: "Traducir",
+    offerNo: "No, gracias",
   },
   moderation: {
     menuAria: "Más opciones",
@@ -2531,6 +2543,10 @@ const fr: Translations = {
     lang_fr: "français",
     autoTitle: "Traduire automatiquement",
     autoHint: "Les publications dans d'autres langues s'ouvrent en français",
+    offerTitle: "Traduire automatiquement ?",
+    offerBody: "Certains textes sont écrits en {{language}}. Les ouvrir déjà traduits en français ? Vous pouvez changer cela à tout moment dans Plus › Langue.",
+    offerYes: "Traduire",
+    offerNo: "Non merci",
   },
   moderation: {
     menuAria: "Plus d'options",
@@ -3176,6 +3192,10 @@ const va: Translations = {
     lang_fr: "francés",
     autoTitle: "Traduir automàticament",
     autoHint: "Les publicacions en altres llengües s'obrin en valencià",
+    offerTitle: "Traduir automàticament?",
+    offerBody: "Alguns textos estan escrits en {{language}}. Vols obrir-los ja traduïts al valencià? Pots canviar-ho quan vulgues en Més › Idioma.",
+    offerYes: "Traduir",
+    offerNo: "No, gràcies",
   },
   moderation: {
     menuAria: "Més opcions",
@@ -3821,6 +3841,10 @@ const ca: Translations = {
     lang_fr: "francès",
     autoTitle: "Traduir automàticament",
     autoHint: "Les publicacions en altres llengües s'obren en català",
+    offerTitle: "Traduir automàticament?",
+    offerBody: "Alguns textos estan escrits en {{language}}. Vols obrir-los ja traduïts al català? Pots canviar-ho quan vulguis a Més › Idioma.",
+    offerYes: "Tradueix",
+    offerNo: "No, gràcies",
   },
   moderation: {
     menuAria: "Més opcions",
@@ -4466,6 +4490,10 @@ const gl: Translations = {
     lang_fr: "francés",
     autoTitle: "Traducir automaticamente",
     autoHint: "As publicacións noutras linguas ábrense en galego",
+    offerTitle: "Traducir automaticamente?",
+    offerBody: "Algúns textos están escritos en {{language}}. Queres abrilos xa traducidos ao galego? Podes cambialo cando queiras en Máis › Idioma.",
+    offerYes: "Traducir",
+    offerNo: "Non, grazas",
   },
   moderation: {
     menuAria: "Máis opcións",
@@ -5112,6 +5140,10 @@ const pt: Translations = {
     lang_fr: "francês",
     autoTitle: "Traduzir automaticamente",
     autoHint: "As publicações noutras línguas abrem em português",
+    offerTitle: "Traduzir automaticamente?",
+    offerBody: "Alguns textos estão escritos em {{language}}. Abri-los já traduzidos para português? Pode mudar isto quando quiser em Mais › Idioma.",
+    offerYes: "Traduzir",
+    offerNo: "Não, obrigado",
   },
   moderation: {
     menuAria: "Mais opções",

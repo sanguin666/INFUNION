@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 import { Screen } from './Screen';
+import { AutoTranslateOffer } from './AutoTranslateOffer';
 import { AccessibleText } from './AccessibleText';
 import { Avatar } from './Avatar';
 import { PlaceMark } from './PlaceMark';
@@ -247,21 +248,24 @@ export function PoiShell({
   );
 
   const footer = (
-    <View style={styles.tabBar}>
-      {tabs.map((tab) => {
-        const { icon, label } = describe(tab, t);
-        return (
-          <TabBarItem
-            key={tab}
-            icon={icon}
-            label={label}
-            active={tab === highlighted}
-            activeColor={poiTheme.accentStrong}
-            dot={messagesUnread && (tab === 'messages' || (tab === 'more' && inMore.includes('messages')))}
-            onPress={() => onSelectTab(tab)}
-          />
-        );
-      })}
+    <View>
+      <AutoTranslateOffer />
+      <View style={styles.tabBar}>
+        {tabs.map((tab) => {
+          const { icon, label } = describe(tab, t);
+          return (
+            <TabBarItem
+              key={tab}
+              icon={icon}
+              label={label}
+              active={tab === highlighted}
+              activeColor={poiTheme.accentStrong}
+              dot={messagesUnread && (tab === 'messages' || (tab === 'more' && inMore.includes('messages')))}
+              onPress={() => onSelectTab(tab)}
+            />
+          );
+        })}
+      </View>
     </View>
   );
 
