@@ -15,6 +15,7 @@ import { getBilling } from '../api/billing';
 import { LineIcon, MODULE_ICON, PAGE_ICON } from '../components/moduleIcons';
 import { ClosingBanner } from './ClosingBanner';
 import { WelcomeTour } from '../components/WelcomeTour';
+import { AdminAssistant } from '../components/AdminAssistant';
 import { PageTip, PAGE_TIPS } from '../components/PageTip';
 import { getSuperadminSession } from '../api/client';
 import type { ActiveModule, ModuleType } from '../api/types';
@@ -276,6 +277,8 @@ export function DashboardLayout() {
         {showPageTip && <PageTip page={section} onDismiss={() => dismissTip(`page:${section}`)} />}
         <Outlet context={{ poiId: poiId!, modules, refreshModules } satisfies DashboardContext} />
       </main>
+      {/* Not while the tour runs, nor for a visiting superadmin. */}
+      {memberPoi && !visiting && !showTour && <AdminAssistant poiId={memberPoi.id} />}
       {showTour && (
         <WelcomeTour firstName={user.firstName} communityName={memberPoi!.name} onDone={() => dismissTip('tour')} />
       )}
