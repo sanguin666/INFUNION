@@ -294,5 +294,14 @@ describe('Superadmin (e2e)', () => {
       .expect(200);
     expect(quarter.body.total).toBe(4);
     await client(app).get('/superadmin/assistant-questions').query({ days: '12' }).set(as(superToken)).expect(400);
+
+    await db.query(
+      `INSERT INTO assistant_questions (poi_id, audience, topic, answered, language, question) VALUES ($1, 'admin', 'plans', false, 'es', 'Can we pay by bank transfer?')`,
+      [place.id],
+    );
+    const admins = await client(app).get('/superadmin/assistant-questions').query({ audience: 'admin' }).set(as(superToken)).expect(200);
+    expect(admins.body).toMatchObject({ audience: 'admin', total: 1, answered: 0 });
+    expect(admins.body.topics).toEqual([{ topic: 'plans', total: 1, unanswered: 1 }]);
+    expect((await client(app).get('/superadmin/assistant-questions').set(as(superToken)).expect(200)).body.total).toBe(3);
   });
 });
