@@ -51,6 +51,13 @@ export class ServiceRequestsController {
     return this.service.listMine(poiId, req.userId);
   }
 
+  // Whether the Requests menu button shows its dot: an answer not yet
+  // read, or a paper the team asked for and the member has not sent.
+  @Get('mine/attention')
+  attention(@Param('poiId') poiId: string, @Req() req: AuthenticatedRequest) {
+    return this.service.attentionForMember(poiId, req.userId);
+  }
+
   @Get('mine/:id')
   openMine(@Param('poiId') poiId: string, @Param('id') id: string, @Req() req: AuthenticatedRequest) {
     return this.service.open(poiId, id, 'member', req.userId);
