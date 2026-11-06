@@ -12,6 +12,11 @@ type I18nState = {
   // written in another language opens already translated.
   autoTranslate: boolean;
   setAutoTranslate: (on: boolean) => void;
+  // Asked once (Seb, 6 Nov 2026): the first time a text in another
+  // language shows, a card offers to translate automatically. Null while
+  // nothing is offered, or once the member answered either way.
+  translateOffer: string | null;
+  offerAutoTranslate: (sourceLanguage: string) => void;
   t: <K extends keyof Translations>(
     key: `${K}.${Extract<keyof Translations[K], string>}`,
     params?: Record<string, string | number>,
@@ -43,6 +48,9 @@ function interpolate(text: string, params?: Record<string, string | number>): st
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<SupportedLanguage>('en');
   const [autoTranslate, setAutoTranslateState] = useState(false);
+  // Unknown until storage is read, so nothing is offered before then.
+  const [answered, setAnswered] = useState(true);
+  const [translateOffer, setTranslateOffer] = useState<string | null>(null);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -55,13 +63,22 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         // Fall back to the default language if storage isn't available.
       });
     AsyncStorage.getItem(AUTO_TRANSLATE_KEY)
-      .then((stored) => setAutoTranslateState(stored === 'on'))
+      .then((stored) => {
+        setAutoTranslateState(stored === 'on');
+        setAnswered(stored === 'on' || stored === 'off');
+      })
       .catch(() => undefined);
   }, []);
 
   function setAutoTranslate(on: boolean) {
     setAutoTranslateState(on);
+    setAnswered(true);
+    setTranslateOffer(null);
     AsyncStorage.setItem(AUTO_TRANSLATE_KEY, on ? 'on' : 'off').catch(() => undefined);
+  }
+
+  function offerAutoTranslate(sourceLanguage: string) {
+    if (!answered) setTranslateOffer((current) => current ?? sourceLanguage);
   }
 
   function setLanguage(next: SupportedLanguage) {
@@ -77,7 +94,15 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <I18nContext.Provider value={{ language, setLanguage, autoTranslate, setAutoTranslate, t: t as I18nState['t'] }}>
+    <I18nContext.Provider value={{
+        language,
+        setLanguage,
+        autoTranslate,
+        setAutoTranslate,
+        translateOffer: answered ? null : translateOffer,
+        offerAutoTranslate,
+        t: t as I18nState['t'],
+      }}>
       {children}
     </I18nContext.Provider>
   );
