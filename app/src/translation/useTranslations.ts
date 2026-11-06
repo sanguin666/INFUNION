@@ -36,7 +36,7 @@ export function translationAvailable(poi: Poi, signedIn: boolean): boolean {
  */
 export function useTranslations(poi: Poi, kind: TranslatableKind, ids: string[]): TranslationsHandle {
   const { me } = useAuth();
-  const { language, autoTranslate } = useI18n();
+  const { language, autoTranslate, offerAutoTranslate } = useI18n();
   const available = translationAvailable(poi, !!me);
   const [languages, setLanguages] = useState<Record<string, string>>({});
   // By `${language}:${id}`, so switching language never shows an old one.
@@ -101,6 +101,13 @@ export function useTranslations(poi: Poi, kind: TranslatableKind, ids: string[])
 
   // "Translate automatically": every text in another language, at once.
   const foreignKey = useMemo(() => ids.filter(foreign).join(','), [ids, foreign]);
+  // Not switched on yet: the first text in another language brings the
+  // one-time question (see AutoTranslateOffer).
+  useEffect(() => {
+    if (!autoTranslate && foreignKey) offerAutoTranslate(languages[foreignKey.split(',')[0]]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoTranslate, foreignKey]);
+
   useEffect(() => {
     if (!autoTranslate || !foreignKey) return;
     request(foreignKey.split(','));
