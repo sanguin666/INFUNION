@@ -8,6 +8,7 @@ import { JoinPoiDto } from './dto/join-poi.dto.js';
 import { MemberRole } from '../common/enums/member-role.enum.js';
 import type { Poi } from '../pois/entities/poi.entity.js';
 import { PoiType } from '../common/enums/poi-type.enum.js';
+import { ContactLinkService } from '../contacts/contact-link.service.js';
 
 /** What the app looks for to ask the church question and try again. */
 export const RELIGIOUS_CONSENT_REQUIRED = 'RELIGIOUS_CONSENT_REQUIRED';
@@ -19,6 +20,7 @@ export class UserPoisService {
     private readonly membershipRepository: Repository<UserPoi>,
     private readonly usersService: UsersService,
     private readonly poisService: PoisService,
+    private readonly contactLinks: ContactLinkService,
   ) {}
 
   /**
@@ -51,7 +53,10 @@ export class UserPoisService {
       poi,
       religiousConsentAt: needsConsent ? new Date() : null,
     });
-    return this.membershipRepository.save(membership);
+    const saved = await this.membershipRepository.save(membership);
+    // On the community's own list already: that contact is now them.
+    await this.contactLinks.linkOnJoin(user.id, poi.id, { email: user.email, phone: user.phone });
+    return saved;
   }
 
   // The membership someone already has for the place behind a QR token —
