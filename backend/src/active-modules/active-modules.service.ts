@@ -7,6 +7,8 @@ import { ActivateModuleDto } from './dto/activate-module.dto.js';
 import { UpdateActiveModuleDto } from './dto/update-active-module.dto.js';
 import { ModuleBillingService } from './module-billing.service.js';
 import { moduleFitsPlace } from './module-places.js';
+import { Poi } from '../pois/entities/poi.entity.js';
+import { ModuleType } from '../common/enums/module-type.enum.js';
 
 @Injectable()
 export class ActiveModulesService {
@@ -51,6 +53,19 @@ export class ActiveModulesService {
   // nobody looked is already off when the app asks.
   async findActiveModulesForPoi(poiId: string): Promise<ActiveModule[]> {
     return this.billing.settle(poiId);
+  }
+
+  /**
+   * What the app shows. Contributions stay hidden until the community's
+   * payment account is set up (Seb, 9 Nov 2026): a member must never start
+   * a payment that has nowhere to land. The admin asks for everything.
+   */
+  async findVisibleModulesForPoi(poiId: string, includeUnpaid: boolean): Promise<ActiveModule[]> {
+    const modules = await this.billing.settle(poiId);
+    if (includeUnpaid) return modules;
+    const poi = await this.activeModuleRepository.manager.findOne(Poi, { where: { id: poiId } });
+    if (!poi || poi.paymentsReady) return modules;
+    return modules.filter((m) => m.moduleType !== ModuleType.DONATIONS);
   }
 
   async update(

@@ -4,6 +4,7 @@ import type { Request } from 'express';
 import type Stripe from 'stripe';
 import { DonationsService } from './donations.service.js';
 import { StripeService } from './stripe.service.js';
+import { PayoutsAccountService } from './payouts-account.service.js';
 
 /**
  * Stripe's own notification that a payment finished. Optional: it needs a
@@ -19,6 +20,7 @@ export class StripeWebhookController {
   constructor(
     private readonly stripeService: StripeService,
     private readonly donationsService: DonationsService,
+    private readonly payoutsAccounts: PayoutsAccountService,
   ) {}
 
   @Post('webhook')
@@ -71,10 +73,16 @@ export class StripeWebhookController {
       }
       if (subscriptionId && event.type === 'invoice.upcoming') {
         const chargeAt = new Date((invoice.next_payment_attempt ?? invoice.period_end) * 1000);
-        if (await this.stripeService.cardExpiresBefore(subscriptionId, chargeAt)) {
+        if (await this.stripeService.cardExpiresBefore(subscriptionId, chargeAt, event.account ?? null)) {
           await this.donationsService.markPaymentProblem(subscriptionId, 'card_expiring');
         }
       }
+    }
+
+    // A community's own Stripe account changed: details sent, checks
+    // passed, payouts paused… (Connect endpoint, event.account is set).
+    if (event.type === 'account.updated') {
+      await this.payoutsAccounts.applyAccount(event.data.object);
     }
 
     return { received: true };

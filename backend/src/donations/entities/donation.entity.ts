@@ -89,6 +89,11 @@ export class Donation {
   @Column({ name: 'stripe_payment_intent_id', nullable: true })
   stripePaymentIntentId?: string;
 
+  // The community's own Stripe account the payment was made on (Stripe
+  // Connect). null for gifts made before it, on infunion's account.
+  @Column('varchar', { name: 'stripe_account_id', nullable: true })
+  stripeAccountId?: string | null;
+
   @Column({ name: 'donor_name', nullable: true })
   donorName?: string;
 

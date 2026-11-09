@@ -54,14 +54,19 @@ export class MassIntentionsService {
   ) {}
 
   /** What the app needs before asking: the offering, if the place set one. */
-  async settings(poiId: string): Promise<{ offeringAmount: number | null }> {
+  // paymentsReady false: no payment account yet, so the app asks for no
+  // offering at all (payouts-account.ts).
+  async settings(poiId: string): Promise<{ offeringAmount: number | null; paymentsReady: boolean }> {
     const poi = await this.poisService.findOne(poiId);
-    return { offeringAmount: poi.massIntentionOffering ?? null };
+    return { offeringAmount: poi.massIntentionOffering ?? null, paymentsReady: poi.paymentsReady === true };
   }
 
-  async updateSettings(poiId: string, offeringAmount: number | null): Promise<{ offeringAmount: number | null }> {
+  async updateSettings(
+    poiId: string,
+    offeringAmount: number | null,
+  ): Promise<{ offeringAmount: number | null; paymentsReady: boolean }> {
     const poi = await this.poisService.update(poiId, { massIntentionOffering: offeringAmount });
-    return { offeringAmount: poi.massIntentionOffering ?? null };
+    return { offeringAmount: poi.massIntentionOffering ?? null, paymentsReady: poi.paymentsReady === true };
   }
 
   /**
@@ -87,7 +92,9 @@ export class MassIntentionsService {
       celebrationTitle = event.title;
     }
 
-    const amount = poi.massIntentionOffering ?? dto.offeringAmount ?? 0;
+    // No payment account set up yet (payouts-account.ts): the intention is
+    // still taken, with nothing to pay in the app.
+    const amount = poi.paymentsReady ? (poi.massIntentionOffering ?? dto.offeringAmount ?? 0) : 0;
 
     let checkout: CheckoutResult | null = null;
     if (amount > 0) {

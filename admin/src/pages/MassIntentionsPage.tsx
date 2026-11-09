@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { usePoiId } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
@@ -147,6 +148,8 @@ export function MassIntentionsPage() {
   const [offeringInput, setOfferingInput] = useState('');
   const [savingOffering, setSavingOffering] = useState(false);
   const [offeringSaved, setOfferingSaved] = useState(false);
+  // No payment account yet: offerings can't be paid in the app.
+  const [paymentsReady, setPaymentsReady] = useState(true);
 
   const masses = useMemo(() => upcomingMasses(events), [events]);
   const poiName = user?.adminPois.find((p) => p.id === poiId)?.name ?? '';
@@ -163,7 +166,8 @@ export function MassIntentionsPage() {
       // The picker then only offers "no date" and "another date".
       .catch(() => setEvents([]));
     getIntentionSettings(poiId)
-      .then(({ offeringAmount }) => {
+      .then(({ offeringAmount, paymentsReady: ready }) => {
+        setPaymentsReady(ready !== false);
         setSettingsOffering(offeringAmount);
         setOfferingInput(offeringAmount === null ? '' : String(offeringAmount));
         setOffering(offeringAmount === null ? '' : String(offeringAmount));
@@ -468,6 +472,12 @@ export function MassIntentionsPage() {
           <p className="muted" style={{ margin: '4px 0 0' }}>
             {t('massIntentions.offeringHint')}
           </p>
+          {!paymentsReady && (
+            <p className="payouts-inline-note">
+              {t('payouts.massNote')}{' '}
+              <NavLink to={`/poi/${poiId}/donations`}>{t('payouts.setUp')}</NavLink>
+            </p>
+          )}
           <label>
             {t('massIntentions.offeringLabel', { currency: CURRENCY })}
             <input

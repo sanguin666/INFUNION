@@ -7,6 +7,7 @@ import { CURRENCY } from '../format';
 import { CampaignsSection } from './CampaignsSection';
 import { ReceiptsSection } from './ReceiptsSection';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
+import { PayoutsBanner, PayoutsLock, PayoutsReadyNote, usePayoutsAccount } from '../components/PayoutsBanner';
 
 const TABS = ['overview', 'campaigns', 'receipts'] as const;
 
@@ -306,6 +307,10 @@ export function DonationsPage() {
   const [recent, setRecent] = useState<Donation[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useTab(TABS);
+  const payouts = usePayoutsAccount(poiId);
+  // Greyed out until the community's payment account is set up; while it
+  // loads (or can't be read) the page shows as usual.
+  const locked = payouts.account !== null && !payouts.account.ready;
 
   useEffect(() => {
     setStats(null);
@@ -323,31 +328,40 @@ export function DonationsPage() {
       <h2>{t('donations.title')}</h2>
       <p className="muted">{t('donations.subtitle')}</p>
 
-      <TabBar
-        idPrefix="donations"
-        label={t('tabs.label')}
-        current={tab}
-        onChange={setTab}
-        tabs={[
-          { key: 'overview', label: t('tabs.donationsOverview') },
-          { key: 'campaigns', label: t('tabs.donationsCampaigns') },
-          { key: 'receipts', label: t('tabs.donationsReceipts') },
-        ]}
-      />
+      {payouts.account && (
+        <>
+          <PayoutsBanner poiId={poiId} account={payouts.account} onChange={payouts.setAccount} />
+          <PayoutsReadyNote account={payouts.account} />
+        </>
+      )}
 
-      <TabPanel idPrefix="donations" tabKey="overview" current={tab}>
-        {error && <p className="error-text">{error}</p>}
-        {!error && (!stats || !recent) && <p className="muted">{t('donations.loading')}</p>}
-        {stats && recent && <DonationsOverview stats={stats} recent={recent} />}
-      </TabPanel>
+      <PayoutsLock locked={locked}>
+        <TabBar
+          idPrefix="donations"
+          label={t('tabs.label')}
+          current={tab}
+          onChange={setTab}
+          tabs={[
+            { key: 'overview', label: t('tabs.donationsOverview') },
+            { key: 'campaigns', label: t('tabs.donationsCampaigns') },
+            { key: 'receipts', label: t('tabs.donationsReceipts') },
+          ]}
+        />
 
-      <TabPanel idPrefix="donations" tabKey="campaigns" current={tab}>
-        <CampaignsSection poiId={poiId} />
-      </TabPanel>
+        <TabPanel idPrefix="donations" tabKey="overview" current={tab}>
+          {error && <p className="error-text">{error}</p>}
+          {!error && (!stats || !recent) && <p className="muted">{t('donations.loading')}</p>}
+          {stats && recent && <DonationsOverview stats={stats} recent={recent} />}
+        </TabPanel>
 
-      <TabPanel idPrefix="donations" tabKey="receipts" current={tab}>
-        <ReceiptsSection poiId={poiId} />
-      </TabPanel>
+        <TabPanel idPrefix="donations" tabKey="campaigns" current={tab}>
+          <CampaignsSection poiId={poiId} />
+        </TabPanel>
+
+        <TabPanel idPrefix="donations" tabKey="receipts" current={tab}>
+          <ReceiptsSection poiId={poiId} />
+        </TabPanel>
+      </PayoutsLock>
     </div>
   );
 }
