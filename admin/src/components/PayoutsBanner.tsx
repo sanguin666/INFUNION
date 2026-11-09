@@ -83,7 +83,7 @@ export function PayoutsBanner({
       </div>
       <div className="payouts-banner-body">
         <h3 id="payouts-banner-title">{t("payouts.title")}</h3>
-        <p>{t("payouts.intro", { fee: String(account.feePercent) })}</p>
+        <p>{t("payouts.intro")}</p>
         <p className="payouts-banner-missing">
           <strong>{t("payouts.missingLabel")}</strong>{" "}
           {t(`payouts.state_${account.state}`)}
@@ -133,7 +133,7 @@ export function PayoutsReadyNote({ account }: { account: PayoutsAccount }) {
   if (!account.ready || account.demo) return null;
   return (
     <p className="muted payouts-ready-note">
-      {t("payouts.readyNote", { fee: String(account.feePercent) })}{" "}
+      {t("payouts.readyNote")}{" "}
       <a href="https://dashboard.stripe.com" target="_blank" rel="noreferrer">
         {t("payouts.openStripe")}
       </a>
