@@ -173,7 +173,7 @@ export class OutreachService {
       throw new ForbiddenException({
         statusCode: 403,
         code: 'allowance_exceeded',
-        message: `This message would go over the ${allowance.limit} emails of this month`,
+        message: 'allowance_exceeded',
         left: Math.max(0, allowance.limit - allowance.used),
       });
     }
@@ -388,7 +388,7 @@ export class OutreachService {
 
   private assertKindAllowed(poi: Poi, kind: OutreachKind): void {
     if (kind !== OutreachKind.INVITATION && !sendsNotifications(poi)) {
-      throw new ForbiddenException({ statusCode: 403, code: 'not_in_plan', message: 'Writing to members outside the app comes with Essentials' });
+      throw new ForbiddenException({ statusCode: 403, code: 'not_in_plan', message: 'not_in_plan' });
     }
     if (poi.closingRequestedAt || poi.closedAt) throw new ForbiddenException('This community is closing');
   }
