@@ -6,8 +6,8 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
  * gift was made on. Communities that exist today keep taking demo gifts:
  * they get the demo account, which only counts while no Stripe key is set.
  */
-export class CommunityPayouts1794400000000 implements MigrationInterface {
-  name = 'CommunityPayouts1794400000000';
+export class CommunityPayouts1794500000000 implements MigrationInterface {
+  name = 'CommunityPayouts1794500000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "pois" ADD "stripe_account_id" character varying`);

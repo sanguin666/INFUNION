@@ -53,6 +53,7 @@ describe('PhoneAuthService.demoLoginEnabled', () => {
       { delivers } as never,
       config as never,
       { delivers: false } as never,
+      null as never,
     );
   }
 

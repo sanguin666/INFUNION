@@ -6,6 +6,13 @@ export type EmailMessage = {
   subject: string;
   text: string;
   html: string;
+  // The name the email comes from, when not infunion's own (a community
+  // writing to its members). The address stays EMAIL_FROM.
+  fromName?: string;
+  // Where answers go, when not to the sender address.
+  replyTo?: string;
+  // Extra headers, e.g. List-Unsubscribe on messages to members.
+  headers?: Record<string, string>;
 };
 
 /**
@@ -67,9 +74,11 @@ export class BrevoEmailSender extends EmailSender {
         body: JSON.stringify({
           sender: {
             email: this.config.get<string>('EMAIL_FROM') || 'register@infunion.app',
-            name: this.config.get<string>('EMAIL_FROM_NAME') || 'infunion',
+            name: message.fromName || this.config.get<string>('EMAIL_FROM_NAME') || 'infunion',
           },
           to: [{ email: message.to }],
+          ...(message.replyTo ? { replyTo: { email: message.replyTo } } : {}),
+          ...(message.headers ? { headers: message.headers } : {}),
           subject: message.subject,
           textContent: message.text,
           htmlContent: message.html,
@@ -87,3 +96,14 @@ export class BrevoEmailSender extends EmailSender {
     }
   }
 }
+
+/**
+ * Brevo once BREVO_API_KEY is set, the log otherwise. One provider for
+ * every module that sends email, so they all switch together.
+ */
+export const emailSenderProvider = {
+  provide: EmailSender,
+  inject: [ConfigService],
+  useFactory: (config: ConfigService): EmailSender =>
+    config.get<string>('BREVO_API_KEY') ? new BrevoEmailSender(config) : new ConsoleEmailSender(),
+};

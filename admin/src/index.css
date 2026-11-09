@@ -4272,3 +4272,128 @@ label.link-button:focus-within {
   background: var(--color-primary-soft);
   line-height: 1.5;
 }
+/* ---------- Members not in the app yet (Seb, 9 Nov 2026) ---------- */
+
+/* Someone on the list who has not signed in yet: the same circle, dashed
+   and grey, so the two kinds of member read apart at a glance. */
+.member-initials-waiting {
+  background: none;
+  border: 1.5px dashed var(--color-placeholder);
+  color: var(--color-text-muted);
+}
+
+.contact-status {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.contact-status-waiting { color: #8a5a00; }
+.contact-status-invited { color: var(--color-primary-strong); }
+.contact-status-stopped { color: var(--color-text-muted); }
+
+:root[data-theme='dark'] .contact-status-waiting { color: #f0c46b; }
+
+select.chip {
+  font: inherit;
+  font-size: 17px;
+  appearance: auto;
+}
+
+.import-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  font-weight: 600;
+  color: var(--color-placeholder);
+}
+
+.import-steps .import-step-on { color: var(--color-primary-strong); }
+.import-steps .import-step-done { color: var(--color-text); }
+
+.import-map {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.import-map th {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 0 12px 8px 0;
+}
+
+.import-map td {
+  padding: 10px 12px 10px 0;
+  border-top: 1px solid var(--color-card-border);
+  vertical-align: middle;
+}
+
+.import-map td:first-child { font-weight: 700; }
+.import-map select { font: inherit; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--color-card-border); background: var(--color-surface); color: var(--color-text); }
+
+.import-figure {
+  font-size: 28px;
+  font-weight: 800;
+  min-width: 72px;
+  color: var(--color-primary-strong);
+}
+
+.import-figure-bad { color: var(--color-danger); }
+
+.import-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-weight: 400;
+}
+
+.import-check input { margin-top: 5px; width: 18px; height: 18px; flex: none; }
+
+.write-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .write-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+.email-preview { padding: 0; overflow: hidden; }
+.email-preview-head { padding: 16px 20px; }
+.email-preview-line { height: 4px; background: #f9b800; margin: 0 20px; border-radius: 2px; }
+.email-preview-body { padding: 20px; }
+.email-preview-body h3 { margin: 0 0 10px; font-size: 19px; }
+.email-preview-body p { margin: 0 0 12px; white-space: pre-wrap; }
+.email-preview-button {
+  display: block;
+  text-align: center;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 8px 0 16px;
+}
+.email-preview-foot { font-size: 13px; color: var(--color-text-muted); }
+.email-preview-foot u { text-decoration: underline; }
+.import-actions { margin-top: 16px; }
+
+.outreach-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.outreach-figures b { color: var(--color-text); }

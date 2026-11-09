@@ -118,6 +118,11 @@ export class Donation {
   @JoinColumn({ name: 'donor_id' })
   donor?: Relation<User> | null;
 
+  // The member on the community's own list a contribution link was sent
+  // to, when the gift came from one (contacts, Seb 9 Nov 2026).
+  @Column({ name: 'contact_id', type: 'uuid', nullable: true })
+  contactId?: string | null;
+
   // A monthly gift. The row that started it has no parent; each later
   // month Stripe charges is a row of its own pointing back at it, so every
   // payment still lands on the day it was made in the totals.

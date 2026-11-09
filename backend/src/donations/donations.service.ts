@@ -95,6 +95,10 @@ export type CheckoutOptions = {
   donorUserId?: string;
   // Set by the Mass intentions module for an intention's offering.
   purpose?: DonationPurpose;
+  // A gift from a contribution link sent outside the app (contacts).
+  contactId?: string;
+  // Where Stripe sends the payer back to, when not the app's own page.
+  returnPath?: string;
 };
 
 // What the payer reads on Stripe's page, in the place's own language.
@@ -288,6 +292,7 @@ export class DonationsService {
       campaign,
       message,
       donor: options.donorUserId ? ({ id: options.donorUserId } as User) : null,
+      contactId: options.contactId ?? null,
       recurring,
       wantsReceipt: dto.wantsReceipt === true,
       ...(dto.wantsReceipt
@@ -327,8 +332,8 @@ export class DonationsService {
         purpose,
         campaign: campaign ? { id: campaign.id, title: campaign.title } : null,
         message,
-        successUrl: `${returnUrlBase}/donations/return?status=success`,
-        cancelUrl: `${returnUrlBase}/donations/return?status=cancelled`,
+        successUrl: `${returnUrlBase}${options.returnPath ?? '/donations/return'}?status=success`,
+        cancelUrl: `${returnUrlBase}${options.returnPath ?? '/donations/return'}?status=cancelled`,
         recurring,
         account: connectedAccount(poi),
       });

@@ -7,11 +7,12 @@ import { PhoneAuthService } from './phone-auth.service.js';
 import { PasswordResetService } from './password-reset.service.js';
 import { PhoneVerificationCode } from './entities/phone-verification-code.entity.js';
 import { BrevoSmsSender, ConsoleSmsSender, SmsSender } from './sms/sms-sender.js';
-import { BrevoEmailSender, ConsoleEmailSender, EmailSender } from './email/email-sender.js';
+import { EmailSender, emailSenderProvider } from './email/email-sender.js';
 import { AuthGuardsModule } from './auth-guards.module.js';
 import { UsersModule } from '../users/users.module.js';
 import { UserPoisModule } from '../user-pois/user-pois.module.js';
 import { PoisModule } from '../pois/pois.module.js';
+import { ContactLinkModule } from '../contacts/contact-link.module.js';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PoisModule } from '../pois/pois.module.js';
     // no cycle here.
     PoisModule,
     AuthGuardsModule,
+    ContactLinkModule,
     TypeOrmModule.forFeature([PhoneVerificationCode]),
   ],
   controllers: [AuthController],
@@ -41,14 +43,7 @@ import { PoisModule } from '../pois/pois.module.js';
     },
     // Real emails once BREVO_API_KEY is set; the log otherwise, with the
     // code shown on screen as for SMS.
-    {
-      provide: EmailSender,
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) =>
-        config.get<string>('BREVO_API_KEY')
-          ? new BrevoEmailSender(config)
-          : new ConsoleEmailSender(),
-    },
+    emailSenderProvider,
   ],
   // Re-exported so the modules that already import AuthModule for its
   // guards keep working unchanged.
