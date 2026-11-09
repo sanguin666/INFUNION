@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ActiveModulesService } from './active-modules.service.js';
@@ -25,8 +26,10 @@ export class ActiveModulesController {
   }
 
   @Get()
-  findActiveModulesForPoi(@Param('poiId') poiId: string) {
-    return this.activeModulesService.findActiveModulesForPoi(poiId);
+  findActiveModulesForPoi(@Param('poiId') poiId: string, @Query('all') all?: string) {
+    // ?all=1 (the admin): Contributions too while its payment account
+    // isn't set up, so the admin can show it greyed out.
+    return this.activeModulesService.findVisibleModulesForPoi(poiId, all === '1');
   }
 
   @Patch(':id')

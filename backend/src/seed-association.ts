@@ -116,6 +116,8 @@ async function seedAssociationInMadrid(dataSource: DataSource): Promise<Poi | nu
         description:
           'Acompañamos a niños y niñas con dificultades de aprendizaje y del desarrollo, y a sus familias: logopedia, deporte adaptado, talleres y un grupo de familias.',
         qrCodeToken: ASSOCIATION_QR_TOKEN,
+        // Demo payments account: gifts work with no Stripe key (payouts-account.ts).
+        stripeAccountId: 'demo',
         plan: PlanTier.COMPLETE,
         planOffered: true,
         legalName: 'Asociación Crecer Juntos',

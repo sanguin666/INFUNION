@@ -1,5 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
-import { client, createPlace, createTestApp, resetDatabase, signInWithId } from './harness.js';
+import { client, createPlace, createTestApp, resetDatabase, signInWithId, setUpPayouts } from './harness.js';
 
 /**
  * The treasurer's tools (28 Oct 2026): the community's tax status, the
@@ -33,6 +33,7 @@ describe('Treasurer tools (e2e)', () => {
     await resetDatabase(app);
     ({ token: adminToken } = await signInWithId(app, '+34600700001', 'Admin'));
     place = await createPlace(app, adminToken, 'Crecer Juntos');
+    await setUpPayouts(app, adminToken, place.id);
     ({ token: memberToken } = await signInWithId(app, '+34600700002', 'Ana'));
   });
 
@@ -153,6 +154,7 @@ describe('A community’s own look in the app (e2e)', () => {
     await resetDatabase(app);
     ({ token: adminToken } = await signInWithId(app, '+34600800001', 'Admin'));
     place = await createPlace(app, adminToken, 'Crecer Juntos');
+    await setUpPayouts(app, adminToken, place.id);
     ({ token: memberToken } = await signInWithId(app, '+34600800002', 'Ana'));
   });
 

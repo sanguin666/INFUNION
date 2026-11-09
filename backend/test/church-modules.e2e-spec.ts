@@ -5,6 +5,7 @@ import {
   createTestApp,
   resetDatabase,
   signInWithId,
+  setUpPayouts,
 } from './harness.js';
 
 /**
@@ -29,6 +30,7 @@ describe('Church modules (e2e)', () => {
     await resetDatabase(app);
     ({ token: adminToken } = await signInWithId(app, '+34600200001', 'Admin'));
     place = await createPlace(app, adminToken, 'Santa Ana');
+    await setUpPayouts(app, adminToken, place.id);
     ({ token: memberToken } = await signInWithId(app, '+34600200002', 'Ana'));
     ({ token: strangerToken } = await signInWithId(app, '+34600200003', 'Otro'));
   });

@@ -20,6 +20,7 @@ import { RequestReceiptDto } from './dto/request-receipt.dto.js';
 import { CreateDonationDto } from './dto/create-donation.dto.js';
 import type { CreateCampaignDto, UpdateCampaignDto } from './dto/campaign.dto.js';
 import { StripeService } from './stripe.service.js';
+import { connectedAccount, payoutsReady } from './payouts-account.js';
 import { giftsCsv, groupDonors, type ReceiptDonor } from './receipts.js';
 import { NotificationsService } from '../notifications/notifications.service.js';
 import { text } from '../notifications/texts.js';
@@ -252,6 +253,11 @@ export class DonationsService {
     if (poi.closingRequestedAt || poi.closedAt) {
       throw new ConflictException('This community is closing and no longer takes gifts');
     }
+    // The money goes straight to the community's own payment account
+    // (Seb, 9 Nov 2026): none set up yet, nothing can be paid.
+    if (!payoutsReady(poi, this.stripeService.isConfigured)) {
+      throw new ConflictException('payments_not_set_up');
+    }
     const purpose = options.purpose ?? dto.purpose ?? DonationPurpose.GENERAL;
     const recurring = dto.recurring === true;
 
@@ -311,6 +317,7 @@ export class DonationsService {
         ...fields,
         currency: this.stripeService.currency,
         status: DonationStatus.PENDING,
+        stripeAccountId: connectedAccount(poi),
       }),
     );
 
@@ -328,6 +335,7 @@ export class DonationsService {
         successUrl: `${returnUrlBase}${options.returnPath ?? '/donations/return'}?status=success`,
         cancelUrl: `${returnUrlBase}${options.returnPath ?? '/donations/return'}?status=cancelled`,
         recurring,
+        account: connectedAccount(poi),
       });
     } catch (error) {
       // A bad key or an unreachable Stripe shouldn't read as "the app is
@@ -362,7 +370,7 @@ export class DonationsService {
   /** Re-checks a pending gift with Stripe. A no-op for anything else. */
   async refreshFromStripe(donation: Donation): Promise<void> {
     if (donation.status === DonationStatus.PENDING && donation.stripeSessionId && this.stripeService.isConfigured) {
-      const session = await this.stripeService.retrieveSession(donation.stripeSessionId);
+      const session = await this.stripeService.retrieveSession(donation.stripeSessionId, donation.stripeAccountId);
       await this.applySessionOutcome(donation, session);
     }
   }
@@ -421,6 +429,7 @@ export class DonationsService {
         recurringParentId: first.id,
         stripeSubscriptionId: subscriptionId,
         stripeInvoiceId: invoiceId,
+        stripeAccountId: first.stripeAccountId ?? null,
         wantsReceipt: first.wantsReceipt,
         donorAddress: first.donorAddress,
         donorPostalCode: first.donorPostalCode,
@@ -454,7 +463,7 @@ export class DonationsService {
     if (donation.recurringCancelledAt) return;
     if (donation.stripeSubscriptionId && this.stripeService.isConfigured) {
       try {
-        await this.stripeService.cancelSubscription(donation.stripeSubscriptionId);
+        await this.stripeService.cancelSubscription(donation.stripeSubscriptionId, donation.stripeAccountId);
       } catch (error) {
         this.logger.error(`Stripe cancel failed: ${(error as Error).message}`);
         throw new ServiceUnavailableException('Could not stop the monthly gift');
@@ -477,7 +486,7 @@ export class DonationsService {
     for (const donation of running) {
       if (donation.stripeSubscriptionId && this.stripeService.isConfigured) {
         try {
-          await this.stripeService.cancelSubscription(donation.stripeSubscriptionId);
+          await this.stripeService.cancelSubscription(donation.stripeSubscriptionId, donation.stripeAccountId);
         } catch (error) {
           this.logger.error(`Stripe cancel failed for ${donation.id}: ${(error as Error).message}`);
         }
@@ -723,7 +732,7 @@ export class DonationsService {
       throw new ServiceUnavailableException('Card payments are not set up');
     }
     try {
-      return { url: await this.stripeService.cardUpdateUrl(donation.stripeSubscriptionId, returnUrl) };
+      return { url: await this.stripeService.cardUpdateUrl(donation.stripeSubscriptionId, returnUrl, donation.stripeAccountId) };
     } catch (error) {
       this.logger.error(`Stripe card update page failed: ${(error as Error).message}`);
       throw new ServiceUnavailableException('Could not open the card page');

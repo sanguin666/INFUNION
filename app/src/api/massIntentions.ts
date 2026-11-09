@@ -20,6 +20,9 @@ export type MassIntention = {
 export type MassIntentionSettings = {
   // The offering the community asks for; null lets the person choose.
   offeringAmount: number | null;
+  // false: the community's payment account isn't set up, so no offering
+  // can be paid in the app (missing on servers from before 9 Nov 2026).
+  paymentsReady?: boolean;
 };
 
 export type NewMassIntention = {
