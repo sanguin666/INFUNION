@@ -4,7 +4,8 @@ import { AccessibleButton } from '../components/AccessibleButton';
 import { AccessibleText } from '../components/AccessibleText';
 import { SignInNotice } from '../components/SignInNotice';
 import { ChevronRightIcon } from '../components/icons';
-import { getMyRequests, type RequestStatus, type RequestSummary } from '../api/requests';
+import { getMyRequests, needsMember, type RequestStatus, type RequestSummary } from '../api/requests';
+import { CountBadge } from '../components/PoiShell';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
@@ -52,10 +53,20 @@ export function RequestsScreen({ poi, onNew, onOpen, onSignIn }: Props) {
     };
   }, [poi.id, me]);
 
+  // The same number as on the menu button: requests waiting on the member.
+  const waiting = requests?.filter(needsMember).length ?? 0;
+
   return (
     <>
       <View style={styles.titleBlock}>
-        <AccessibleText variant="title">{t('requests.title')}</AccessibleText>
+        <View style={styles.titleRow}>
+          <AccessibleText variant="title">{t('requests.title')}</AccessibleText>
+          {waiting > 0 && (
+            <View accessible accessibilityLabel={t('hub.newCount', { count: waiting })}>
+              <CountBadge count={waiting} />
+            </View>
+          )}
+        </View>
         <AccessibleText variant="body" color={colors.textMuted}>
           {t(poi.type === 'church' ? 'requests.subtitle' : 'requests.subtitleGeneral')}
         </AccessibleText>
@@ -136,6 +147,11 @@ const styles = themedStyles(() => ({
   titleBlock: {
     gap: spacing.xs,
     marginTop: spacing.sm,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   card: {
     flexDirection: 'row',
