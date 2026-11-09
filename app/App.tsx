@@ -19,8 +19,6 @@ import { I18nProvider, useI18n } from './src/i18n/I18nContext';
 import { enablePush, onNotificationTapped, refreshPush, type PushTarget } from './src/notifications/push';
 import { AuthProvider, useAuth } from './src/auth/AuthContext';
 import {
-  demoSignIn,
-  demoSignInAvailable,
   joinPoi,
   leavePoi,
   needsReligiousConsent,
@@ -29,6 +27,7 @@ import {
 import { getPoi } from './src/api/pois';
 import { forgetPlace, getSavedPlaces, rememberPlace, toSaved, type SavedPlace } from './src/storage/savedPlaces';
 import { landingPoi } from './src/landing';
+import { getGuestChoice, setGuestChoice } from './src/storage/session';
 import { applyColorScheme, colors } from './src/theme/theme';
 import { poiAccent } from './src/theme/poiThemes';
 import { installDesktopFrame } from './src/web/desktopFrame';
@@ -54,13 +53,14 @@ type Route =
  * only has a handful of screens so far, and this keeps native dependencies
  * to a minimum for the demo. Revisit if the screen count grows.
  *
- * Signing in comes before everything else now. Nobody reaches a place, or
- * the scanner, without an account — so the stack below only ever exists
- * for somebody signed in, and signing out empties it back to the welcome
- * screen.
+ * The welcome screen asks first: sign up, sign in, or continue without an
+ * account (Seb, 9 Nov 2026, in place of the demo account). Without one,
+ * every community can be found and read; whatever needs a person (posting,
+ * contributing, notifications) asks to sign in where it is. Signing out
+ * empties the stack back to the welcome screen.
  */
 function AppRoutes() {
-  const { ready, me, refresh, signIn } = useAuth();
+  const { ready, me, refresh } = useAuth();
   // Read so that a switch between light and dark repaints every screen.
   // Dark mode is for the signed-in app only: the welcome and sign-in
   // screens stay light whatever the phone or the choice says.
@@ -69,7 +69,17 @@ function AppRoutes() {
   const [stack, setStack] = useState<Route[]>([]);
   // Whether the opening route has been worked out for this session. The
   // stack alone can't say: "empty" is also what signing out leaves.
-  const [landed, setLanded] = useState(false);
+  // Who the opening route was worked out for: the account's id, 'guest',
+  // or null when it still has to be (at launch, after signing in or out,
+  // after leaving the place on screen).
+  const [landedAs, setLandedAs] = useState<string | null>(null);
+  // Whether this device chose to go on without an account; null until
+  // read back, so the welcome screen doesn't flash at a returning guest.
+  const [guest, setGuest] = useState<boolean | null>(null);
+  const loaded = ready && guest !== null;
+  // The community a guest was looking at, so that signing up from inside
+  // it lands them back in it as a member rather than on "add a community".
+  const guestPoiRef = useRef<Poi | null>(null);
   const current = stack[stack.length - 1];
   // Inside a place, its own accent; everywhere else infunion's purple.
   applyColorScheme(scheme, current?.name === 'hub' ? poiAccent(current.poi) : 'purple');
@@ -125,22 +135,57 @@ function AppRoutes() {
     };
   }, [me]);
 
+  useEffect(() => {
+    getGuestChoice().then(setGuest, () => setGuest(false));
+  }, []);
+
+  // A guest who signs in is a guest no more.
+  useEffect(() => {
+    if (me && guest) {
+      setGuest(false);
+      void setGuestChoice(false);
+    }
+  }, [me?.id, guest]);
+
+  useEffect(() => {
+    if (!me && current?.name === 'hub') guestPoiRef.current = current.poi;
+  }, [me, current]);
+
   // Where the app opens. Runs once the stored session has been checked,
   // and again after signing in or out, since both change the answer.
   useEffect(() => {
-    if (!ready) return;
+    if (!loaded) return;
 
     if (!me) {
-      setStack([]);
-      setLanded(false);
+      if (!guest) {
+        setStack([]);
+        setLandedAs(null);
+        return;
+      }
+      if (landedAs === 'guest') return;
+      // Without an account: the community last opened on this device,
+      // or the screen to find one.
+      setLandedAs('guest');
+      getSavedPlaces()
+        .then(async ([last]) => (last ? getPoi(last.id) : null))
+        .catch(() => null)
+        .then((poi) => setStack(poi ? [{ name: 'hub', poi }] : [{ name: 'addPlace' }]));
       return;
     }
     // Landing waits for the terms, so the church question below comes after.
-    if (landed || me.consentRequired) return;
+    if (landedAs === me.id || me.consentRequired) return;
 
+    setLandedAs(me.id);
     const poi = landingPoi(me);
+    // Signed up while looking at a community as a guest: back into it,
+    // now joining it.
+    const browsed = guestPoiRef.current;
+    guestPoiRef.current = null;
+    if (!poi && browsed) {
+      openPoi(browsed);
+      return;
+    }
     setStack(poi ? [{ name: 'hub', poi }] : [{ name: 'addPlace' }]);
-    setLanded(true);
     // A church membership from before the religious-data question is asked
     // here once; joining again is harmless for everyone else.
     if (poi) {
@@ -148,27 +193,18 @@ function AppRoutes() {
         if (needsReligiousConsent(error)) setConsentPoi(poi);
       });
     }
-  }, [ready, me, landed]);
+  }, [loaded, me, guest, landedAs]);
 
-  // Whether the welcome screen offers the demo account under the real
-  // sign-in. Asked once; a backend that can't answer just hides it.
-  const [demoAvailable, setDemoAvailable] = useState(false);
-  useEffect(() => {
-    demoSignInAvailable().then(setDemoAvailable, () => setDemoAvailable(false));
-  }, []);
+  function continueAsGuest() {
+    setGuest(true);
+    void setGuestChoice(true);
+  }
 
-  /**
-   * Straight into the demo member's account; if that fails, the phone
-   * login as always. Landing is the effect above's job once `me` arrives.
-   */
-  async function startDemoSignIn() {
-    try {
-      await signIn(await demoSignIn());
-      return;
-    } catch {
-      // Fall through to the phone login.
-    }
-    push({ name: 'signIn' });
+  // Back from "add a community" with nowhere else to go: a guest returns
+  // to the welcome screen.
+  function backToWelcome() {
+    setGuest(false);
+    void setGuestChoice(false);
   }
 
   function startSignIn() {
@@ -190,6 +226,10 @@ function AppRoutes() {
    */
   function openPoi(poi: Poi) {
     rememberPlace(poi).then(setPlaces);
+    setStack([{ name: 'hub', poi }]);
+    closeSwitcher();
+    // A guest only keeps the community on this device.
+    if (!me) return;
     // Entering a place is also joining it and marking it as where this
     // person was last, so both follow the account rather than the device.
     // Either failing is harmless — the device list below still remembers
@@ -201,8 +241,6 @@ function AppRoutes() {
       .catch((error) => {
         if (needsReligiousConsent(error)) setConsentPoi(poi);
       });
-    setStack([{ name: 'hub', poi }]);
-    closeSwitcher();
   }
 
   async function agreeToJoin(poi: Poi) {
@@ -236,7 +274,7 @@ function AppRoutes() {
   /**
    * Leaving the place somebody is currently in. The membership goes
    * first, then the device's own copy, and only then does the app work
-   * out where to go: clearing `landed` hands that back to the effect
+   * out where to go: clearing `landedAs` hands that back to the effect
    * above, which lands on another place or on the add-a-place screen
    * exactly as it would at launch.
    *
@@ -245,10 +283,11 @@ function AppRoutes() {
    * membership that is still there.
    */
   async function leaveCurrentPoi(poi: Poi) {
-    await leavePoi(poi.id);
+    if (me) await leavePoi(poi.id);
     setPlaces(await forgetPlace(poi.id));
-    await refresh();
-    setLanded(false);
+    if (me) await refresh();
+    else guestPoiRef.current = null;
+    setLandedAs(null);
   }
 
   // A tapped notification opens its place first, when it isn't the one
@@ -318,23 +357,23 @@ function AppRoutes() {
       {/* Nothing is decided until the stored session has been read back;
           flashing the welcome screen at somebody who is signed in is
           worse than a moment of nothing. */}
-      {!ready && (
+      {(!loaded || (guest && !me && stack.length === 0)) && (
         <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center' }}>
           <ActivityIndicator color={colors.primary} size="large" />
         </View>
       )}
 
-      {ready && !me && current?.name !== 'signIn' && (
+      {loaded && !me && !guest && current?.name !== 'signIn' && (
         <OnboardingScreen
           onSignUp={() => push({ name: 'signIn', signUp: true })}
           onSignIn={startSignIn}
-          onDemoSignIn={demoAvailable ? startDemoSignIn : undefined}
+          onGuest={continueAsGuest}
         />
       )}
 
-      {ready && consenting && <ConsentScreen />}
+      {loaded && consenting && <ConsentScreen />}
 
-      {ready && current?.name === 'signIn' && (
+      {loaded && current?.name === 'signIn' && (
         <PhoneLoginScreen
           signUp={current.signUp}
           onBack={() => setStack((s) => s.filter((route) => route.name !== 'signIn'))}
@@ -344,17 +383,25 @@ function AppRoutes() {
         />
       )}
 
-      {ready && !consenting && me && current?.name === 'addPlace' && (
+      {loaded && !consenting && current?.name === 'addPlace' && (
         <AddPlaceScreen
           onScanQR={() => push({ name: 'scan' })}
           onOpenPoi={openPoi}
           onFindNearby={(origin) => push({ name: 'nearby', origin })}
           onFindByName={(query) => push({ name: 'nearby', origin: null, query })}
-          onBack={stack.length > 1 ? pop : places.length > 0 ? () => setSwitcherOpen(true) : undefined}
+          onBack={
+            stack.length > 1
+              ? pop
+              : places.length > 0
+                ? () => setSwitcherOpen(true)
+                : !me
+                  ? backToWelcome
+                  : undefined
+          }
         />
       )}
 
-      {ready && !consenting && me && current?.name === 'nearby' && (
+      {loaded && !consenting && current?.name === 'nearby' && (
         <NearbyScreen
           key={current.query ?? `${current.origin?.latitude},${current.origin?.longitude}`}
           origin={current.origin}
@@ -365,9 +412,9 @@ function AppRoutes() {
         />
       )}
 
-      {ready && !consenting && current?.name === 'scan' && <ScanQRScreen onBack={pop} onFound={openPoi} />}
+      {loaded && !consenting && current?.name === 'scan' && <ScanQRScreen onBack={pop} onFound={openPoi} />}
 
-      {ready && !consenting && current?.name === 'hub' && (
+      {loaded && !consenting && current?.name === 'hub' && (
         /* Keyed by the place, so entering a different one starts on its
            own home tab rather than wherever the last place was left —
            landing on another place's "More" menu after leaving one reads
@@ -379,13 +426,14 @@ function AppRoutes() {
           onAddPlace={() => push({ name: 'addPlace' })}
           onLeavePlace={() => leaveCurrentPoi(current.poi)}
           onSignIn={startSignIn}
+          onSignUp={() => push({ name: 'signIn', signUp: true })}
           pushTarget={pushTarget?.poiId === current.poi.id ? pushTarget : null}
         />
       )}
 
       {/* Reachable from the hub's banner and from the add-a-place screen
           alike, so it lives outside both rather than inside either. */}
-      {ready && !consenting && me && (
+      {loaded && !consenting && (me || guest) && (
         <PlaceSwitcher
           visible={switcherOpen}
           places={places}

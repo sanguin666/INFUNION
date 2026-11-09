@@ -39,6 +39,8 @@ type Props = {
   onAddPlace: () => void;
   onLeavePlace: () => Promise<void>;
   onSignIn: () => void;
+  // The same screen, titled "Create your account", for a guest.
+  onSignUp: () => void;
   // A tapped notification for this place, to open once it arrives.
   pushTarget?: (PushTarget & { nonce: number }) | null;
 };
@@ -64,7 +66,7 @@ type Drilldown =
  * only what sits between them, so the chrome never moves and the selected
  * button is the one thing that changes.
  */
-export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSignIn, pushTarget }: Props) {
+export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSignIn, onSignUp, pushTarget }: Props) {
   const { isAdminOf, me } = useAuth();
   const isStaff = isAdminOf(poi.id);
   const [modules, setModules] = useState<ActiveModule[] | null>(null);
@@ -312,6 +314,7 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
           onOpenPlaces={onOpenPlaces}
           onAddPlace={onAddPlace}
           onLeavePlace={onLeavePlace}
+          onSignUp={onSignUp}
           onOpenNotifications={() => setDrilldown({ kind: 'notifications' })}
           alerts={{ messages: messagesUnread, requests: requestsAttention }}
         />

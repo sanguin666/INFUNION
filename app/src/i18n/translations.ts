@@ -140,7 +140,9 @@ export type Translations = {
     welcome: string;
     signUp: string;
     signIn: string;
-    demoSignIn: string;
+    // Opens the app with no account: everything can be read, and
+    // posting, contributing or notifications ask to sign in.
+    guest: string;
   };
   addPlace: {
     title: string;
@@ -789,7 +791,7 @@ const en: Translations = {
     welcome: "All your communities,\nin one app",
     signUp: 'Sign up',
     signIn: 'Sign in',
-    demoSignIn: 'Demo sign-in (María García)',
+    guest: 'Continue without an account',
   },
   addPlace: {
     title: "Add the community you belong to.",
@@ -1440,7 +1442,7 @@ const es: Translations = {
     welcome: "Todas tus comunidades,\nen una sola app",
     signUp: 'Crear cuenta',
     signIn: 'Iniciar sesión',
-    demoSignIn: 'Entrar en la demo (María García)',
+    guest: 'Entrar sin cuenta',
   },
   addPlace: {
     title: "Añade la comunidad a la que perteneces.",
@@ -2091,7 +2093,7 @@ const fr: Translations = {
     welcome: "Toutes vos communautés,\ndans une seule app",
     signUp: 'S’inscrire',
     signIn: 'Se connecter',
-    demoSignIn: 'Connexion démo (María García)',
+    guest: 'Continuer sans compte',
   },
   addPlace: {
     title: "Ajoutez la communauté à laquelle vous appartenez.",
@@ -2742,7 +2744,7 @@ const va: Translations = {
     welcome: "Totes les teues comunitats,\nen una sola app",
     signUp: 'Crear un compte',
     signIn: 'Iniciar sessió',
-    demoSignIn: 'Entrar en la demo (María García)',
+    guest: 'Entrar sense compte',
   },
   addPlace: {
     title: "Afig la comunitat a la qual pertanys.",
@@ -3393,7 +3395,7 @@ const ca: Translations = {
     welcome: "Totes les teves comunitats,\nen una sola app",
     signUp: 'Crear un compte',
     signIn: 'Iniciar sessió',
-    demoSignIn: 'Entrar a la demo (María García)',
+    guest: 'Entrar sense compte',
   },
   addPlace: {
     title: "Afegeix la comunitat a la qual pertanys.",
@@ -4044,7 +4046,7 @@ const gl: Translations = {
     welcome: "Todas as túas comunidades,\nnunha soa app",
     signUp: 'Crear conta',
     signIn: 'Iniciar sesión',
-    demoSignIn: 'Entrar na demo (María García)',
+    guest: 'Entrar sen conta',
   },
   addPlace: {
     title: "Engade a comunidade á que pertences.",
@@ -4696,7 +4698,7 @@ const pt: Translations = {
     welcome: "Todas as suas comunidades,\nnuma só app",
     signUp: 'Criar conta',
     signIn: 'Iniciar sessão',
-    demoSignIn: 'Entrar na demo (María García)',
+    guest: 'Continuar sem conta',
   },
   addPlace: {
     title: "Adicione a comunidade a que pertence.",
