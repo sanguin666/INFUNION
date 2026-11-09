@@ -15,6 +15,9 @@ import {
   type MemberConversation,
   type MemberRow,
 } from '../api/members';
+import { getContacts, type ContactRow } from '../api/contacts';
+import { TabBar, useTab } from '../components/Tabs';
+import { ContactsTab } from './ContactsTab';
 
 type T = ReturnType<typeof useI18n>['t'];
 
@@ -78,6 +81,17 @@ export function MembersPage() {
   const offerRef = useRef<HTMLDivElement>(null);
 
   const live = !!modules?.some((m) => m.moduleType === 'messages' && LIVE.has(m.status));
+  // The community's own list: who is on it and not in the app yet.
+  const [contactsLoaded, setContactsLoaded] = useState<{ poiId: string; list: ContactRow[] } | null>(null);
+  const contacts = contactsLoaded && contactsLoaded.poiId === poiId ? contactsLoaded.list : null;
+  const waitingCount = contacts?.filter((c) => !c.userId).length ?? null;
+  const [tab, setTab] = useTab(['app', 'list'] as const);
+
+  useEffect(() => {
+    getContacts(poiId)
+      .then((list) => setContactsLoaded({ poiId, list }))
+      .catch(() => setContactsLoaded({ poiId, list: [] }));
+  }, [poiId]);
 
   useEffect(() => {
     getMembers(poiId)
@@ -164,12 +178,42 @@ export function MembersPage() {
 
   return (
     <div>
-      <h2>{t('members.title')}</h2>
-      <p className="muted">
-        {live ? t('members.subtitleLive') : members ? members.length === 1 ? t('members.subtitleOffOne') : t('members.subtitleOff', { count: members.length }) : ''}
-      </p>
+      <div className="page-head">
+        <div>
+          <h2>{t('members.title')}</h2>
+          <p className="muted">
+            {tab === 'list'
+              ? t('contacts.subtitle')
+              : live ? t('members.subtitleLive') : members ? members.length === 1 ? t('members.subtitleOffOne') : t('members.subtitleOff', { count: members.length }) : ''}
+          </p>
+        </div>
+        <div className="tab-actions" style={{ marginBottom: 0 }}>
+          <Link to="import" className="btn">
+            {t('contacts.import')}
+          </Link>
+          <Link to="write" className="btn btn-primary">
+            {t('contacts.writeTitle')}
+          </Link>
+        </div>
+      </div>
 
-      {modules !== null && !live && (
+      <TabBar
+        tabs={[
+          { key: 'app', label: t('contacts.tabInApp'), count: members?.length ?? null },
+          { key: 'list', label: t('contacts.tabNotInApp'), count: waitingCount },
+        ]}
+        current={tab}
+        onChange={setTab}
+        label={t('members.title')}
+        idPrefix="members"
+      />
+
+      {tab === 'list' && contacts && (
+        <ContactsTab poiId={poiId} contacts={contacts} onChange={(list) => setContactsLoaded({ poiId, list })} />
+      )}
+      {tab === 'list' && !contacts && <p className="muted">{t('members.loading')}</p>}
+
+      {tab === 'app' && modules !== null && !live && (
         <div className="card" ref={offerRef}>
           <p className="card-title">{t('members.promoTitle')}</p>
           <p className="muted" style={{ margin: '4px 0 0' }}>
@@ -183,11 +227,11 @@ export function MembersPage() {
         </div>
       )}
 
-      {error && <p className="error-text">{error}</p>}
-      {members === null && !error && <p className="muted">{t('members.loading')}</p>}
-      {members?.length === 0 && <p className="muted">{t('members.empty')}</p>}
+      {tab === 'app' && error && <p className="error-text">{error}</p>}
+      {tab === 'app' && members === null && !error && <p className="muted">{t('members.loading')}</p>}
+      {tab === 'app' && members?.length === 0 && <p className="muted">{t('members.empty')}</p>}
 
-      {members && members.length > 0 && (
+      {tab === 'app' && members && members.length > 0 && (
         <>
           <div className="card form">
             <label>
