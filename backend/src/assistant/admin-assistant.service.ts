@@ -93,7 +93,10 @@ export class AdminAssistantService {
         language,
         turns,
       });
-      await recordAssistantQuestion(this.dataSource, this.logger, poi.id, 'admin', language, insight);
+      // A visiting superadmin's questions are not the team's: kept out of the stats.
+      if (await this.isTeamAdmin(poi.id, userId)) {
+        await recordAssistantQuestion(this.dataSource, this.logger, poi.id, 'admin', language, insight);
+      }
       return { ...reply, remaining };
     } catch (error) {
       await this.dataSource.query(
@@ -103,6 +106,14 @@ export class AdminAssistantService {
       this.logger.warn(`Admin assistant failed for ${poi.id}: ${(error as Error).message}`);
       throw new ServiceUnavailableException('assistant_failed');
     }
+  }
+
+  private async isTeamAdmin(poiId: string, userId: string): Promise<boolean> {
+    const rows: unknown[] = await this.dataSource.query(
+      `SELECT 1 FROM user_pois WHERE poi_id = $1 AND user_id = $2 AND role = 'admin' LIMIT 1`,
+      [poiId, userId],
+    );
+    return rows.length > 0;
   }
 
   /** The community's plan and modules, and the pages its menu shows. */
