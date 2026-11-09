@@ -15,6 +15,7 @@ import { LivestreamsModule } from './livestreams/livestreams.module.js';
 import { CommunityModule } from './community/community.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { DonationsModule } from './donations/donations.module.js';
+import { ContactsModule } from './contacts/contacts.module.js';
 import { PoiSettingsModule } from './poi-settings/poi-settings.module.js';
 import { PoiPageModule } from './poi-page/poi-page.module.js';
 import { PoiBadgesModule } from './poi-badges/poi-badges.module.js';
@@ -57,6 +58,7 @@ import { AssistantModule } from './assistant/assistant.module.js';
     CommunityModule,
     AuthModule,
     DonationsModule,
+    ContactsModule,
     PoiSettingsModule,
     PoiPageModule,
     PoiBadgesModule,

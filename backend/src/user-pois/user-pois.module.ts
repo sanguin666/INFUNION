@@ -6,9 +6,10 @@ import { UserPoisController } from './user-pois.controller.js';
 import { UsersModule } from '../users/users.module.js';
 import { PoisModule } from '../pois/pois.module.js';
 import { AuthGuardsModule } from '../auth/auth-guards.module.js';
+import { ContactLinkModule } from '../contacts/contact-link.module.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserPoi]), UsersModule, PoisModule, AuthGuardsModule],
+  imports: [TypeOrmModule.forFeature([UserPoi]), UsersModule, PoisModule, AuthGuardsModule, ContactLinkModule],
   controllers: [UserPoisController],
   providers: [UserPoisService],
   exports: [UserPoisService],

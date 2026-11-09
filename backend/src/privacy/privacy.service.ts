@@ -1,3 +1,4 @@
+import { Contact } from '../contacts/entities/contact.entity.js';
 import {
   BadRequestException,
   ConflictException,
@@ -363,6 +364,8 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
     const files = await this.dataSource.transaction(async (manager) => {
       const files = await this.erase(manager, userId, poiId);
       await manager.delete(UserPoi, { id: membership.id });
+      // And off the community's own list (contacts).
+      await manager.delete(Contact, { poi: { id: poiId }, user: { id: userId } });
       return files;
     });
     await removeFiles(files);
@@ -515,6 +518,17 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
       .where('updated_at < :before', { before: new Date(now.getTime() - DAY_MS) })
       .andWhere('(locked_until IS NULL OR locked_until < :now)', { now })
       .andWhere("key NOT LIKE 'geocoder:%'")
+      .execute();
+
+    // People on a community's list who never came to the app and were not
+    // written to for as long: the same storage limit as accounts.
+    await this.dataSource
+      .getRepository(Contact)
+      .createQueryBuilder()
+      .delete()
+      .where('user_id IS NULL')
+      .andWhere('created_at < :inactiveSince', { inactiveSince })
+      .andWhere('(last_written_at IS NULL OR last_written_at < :inactiveSince)', { inactiveSince })
       .execute();
 
     if (accountsDeleted > 0)
