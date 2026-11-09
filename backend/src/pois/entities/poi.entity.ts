@@ -31,6 +31,9 @@ import { payoutsReady } from '../../donations/payouts-account.js';
 // places-map.service.ts searches. Made by a migration (an expression
 // index TypeORM can't describe), so synchronize leaves it alone.
 @Index('IDX_pois_name_search', { synchronize: false })
+// One Stripe account per community, apart from the shared 'demo' one:
+// a partial index made by the CommunityPayouts migration.
+@Index('IDX_pois_stripe_account', { synchronize: false })
 export class Poi {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
