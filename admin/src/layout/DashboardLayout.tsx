@@ -15,6 +15,7 @@ import { getBilling } from '../api/billing';
 import { LineIcon, MODULE_ICON, PAGE_ICON } from '../components/moduleIcons';
 import { ClosingBanner } from './ClosingBanner';
 import { WelcomeTour } from '../components/WelcomeTour';
+import { superadminAskedForTour } from '../components/superadminTour';
 import { AdminAssistant } from '../components/AdminAssistant';
 import { PageTip, PAGE_TIPS } from '../components/PageTip';
 import { getSuperadminSession } from '../api/client';
@@ -164,11 +165,13 @@ export function DashboardLayout() {
   }
 
   // The welcome tour, then a tip on each page the first time it opens
-  // (Seb, 5 Nov 2026): for the community's own team, not the superadmin
-  // visiting. The tour waits for the modules so it lights the full list.
-  const showTour = !!memberPoi && !visiting && modules !== null && !seenTip('tour');
-  const showPageTip =
-    !!memberPoi && !visiting && seenTip('tour') && section in PAGE_TIPS && !seenTip(`page:${section}`);
+  // (Seb, 5 Nov 2026): for the community's own team. The superadmin
+  // visiting gets them only after asking from Settings › "Tour and tips"
+  // (Seb, 9 Nov 2026), for that browser session. The tour waits for the
+  // modules so it lights the full list.
+  const tipsOn = !!memberPoi || (visiting && superadminAskedForTour());
+  const showTour = tipsOn && !!currentPoi && modules !== null && !seenTip('tour');
+  const showPageTip = tipsOn && seenTip('tour') && section in PAGE_TIPS && !seenTip(`page:${section}`);
 
   function handlePoiChange(nextPoiId: string) {
     navigate(`/poi/${nextPoiId}/dashboard`);
@@ -280,7 +283,7 @@ export function DashboardLayout() {
       {/* Not while the tour runs. A visiting superadmin sees it too (Seb, 9 Nov 2026). */}
       {poiId && (memberPoi || visiting) && !showTour && <AdminAssistant poiId={poiId} />}
       {showTour && (
-        <WelcomeTour firstName={user.firstName} communityName={memberPoi!.name} onDone={() => dismissTip('tour')} />
+        <WelcomeTour firstName={user.firstName} communityName={currentPoi!.name} onDone={() => dismissTip('tour')} />
       )}
     </div>
   );

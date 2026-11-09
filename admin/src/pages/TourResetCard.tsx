@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
+import { askForSuperadminTour } from '../components/superadminTour';
 
 /**
  * Settings' "Show the tour and tips again" (Seb, 5 Nov 2026): for his
@@ -10,7 +11,7 @@ import { useI18n } from '../i18n/I18nContext';
  */
 export function TourResetCard() {
   const { t } = useI18n();
-  const { resetTips } = useAuth();
+  const { user, resetTips } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -20,6 +21,7 @@ export function TourResetCard() {
     setFailed(false);
     try {
       await resetTips();
+      if (user?.isSuperadmin) askForSuperadminTour();
       navigate('../dashboard');
     } catch {
       setFailed(true);
