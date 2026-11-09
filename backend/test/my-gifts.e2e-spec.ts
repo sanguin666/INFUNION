@@ -1,5 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
-import { client, createPlace, createTestApp, resetDatabase, signInWithId } from './harness.js';
+import { client, createPlace, createTestApp, resetDatabase, signInWithId, setUpPayouts } from './harness.js';
 
 /**
  * "My gifts" in the app: each of a giver's gifts, with its own tax
@@ -25,6 +25,7 @@ describe('My gifts and their receipts (e2e)', () => {
     await resetDatabase(app);
     ({ token: adminToken } = await signInWithId(app, '+34600600001', 'Admin'));
     place = await createPlace(app, adminToken, 'San Pablo');
+    await setUpPayouts(app, adminToken, place.id);
     ({ token: memberToken } = await signInWithId(app, '+34600600002', 'Ana'));
     ({ token: strangerToken } = await signInWithId(app, '+34600600003', 'Otro'));
   });

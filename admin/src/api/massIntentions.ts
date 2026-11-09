@@ -5,8 +5,8 @@ import type { MassIntention, MassIntentionStatus } from './types';
 // cancelled ones.
 export type IntentionFilter = 'upcoming' | 'all';
 
-export function getIntentionSettings(poiId: string): Promise<{ offeringAmount: number | null }> {
-  return apiGet<{ offeringAmount: number | null }>(`/pois/${poiId}/mass-intentions/settings`);
+export function getIntentionSettings(poiId: string): Promise<{ offeringAmount: number | null; paymentsReady?: boolean }> {
+  return apiGet<{ offeringAmount: number | null; paymentsReady?: boolean }>(`/pois/${poiId}/mass-intentions/settings`);
 }
 
 // null: no set offering, the person asking chooses.

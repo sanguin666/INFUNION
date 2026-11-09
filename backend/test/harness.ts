@@ -110,3 +110,15 @@ export async function createPlace(
   const poi = await app.get(PoisService).createOwnedBy(me.body.id as string, { name, type: PoiType.CHURCH });
   return { id: poi.id, qrCodeToken: poi.qrCodeToken };
 }
+
+/**
+ * Links the place's payment account the way an admin does from
+ * Contributions. The tests run without Stripe, so this is the demo
+ * account: gifts can be made, no money moves.
+ */
+export async function setUpPayouts(app: INestApplication, token: string, poiId: string): Promise<void> {
+  await client(app)
+    .post(`/pois/${poiId}/payouts-account/onboarding`)
+    .set('Authorization', `Bearer ${token}`)
+    .expect(201);
+}

@@ -72,7 +72,10 @@ export function MassIntentionsScreen({ poi }: Props) {
       )
       .catch(() => setMasses([]));
     getMassIntentionSettings(poi.id)
-      .then((settings) => setFixedOffering(settings.offeringAmount))
+      .then((settings) =>
+        // No payment account yet: the intention is asked with no offering.
+        setFixedOffering(settings.paymentsReady === false ? 0 : settings.offeringAmount),
+      )
       .catch(() => {});
     getDonationsConfig()
       .then((config) => setCurrency(config.currency))

@@ -1,4 +1,5 @@
 import {
+  AfterLoad,
   Column,
   CreateDateColumn,
   Entity,
@@ -17,6 +18,7 @@ import { PlanTier } from '../../common/enums/plan-tier.enum.js';
 import { ModuleType } from '../../common/enums/module-type.enum.js';
 import { TaxScheme } from '../../common/enums/tax-scheme.enum.js';
 import { PoiTheme } from '../../common/enums/poi-theme.enum.js';
+import { payoutsReady } from '../../donations/payouts-account.js';
 
 /**
  * A point of interest a user can join: a church today, potentially other
@@ -194,6 +196,34 @@ export class Poi {
 
   @Column('varchar', { name: 'closing_reason', nullable: true })
   closingReason?: string | null;
+
+  // Where this community's contributions are paid (Seb, 9 Nov 2026):
+  // its own Stripe account, linked through Stripe Connect. infunion never
+  // holds the money: each payment lands on this account and only
+  // infunion's fee comes back to the platform. 'demo' marks a community
+  // set up without Stripe (local demo, production before real payments).
+  @Column('varchar', { name: 'stripe_account_id', nullable: true })
+  stripeAccountId?: string | null;
+
+  // Stripe's own word on the account, refreshed from account.updated and
+  // whenever the admin opens Contributions.
+  @Column({ name: 'stripe_charges_enabled', default: false })
+  stripeChargesEnabled!: boolean;
+
+  @Column({ name: 'stripe_payouts_enabled', default: false })
+  stripePayoutsEnabled!: boolean;
+
+  @Column({ name: 'stripe_details_submitted', default: false })
+  stripeDetailsSubmitted!: boolean;
+
+  // Whether members can contribute here: false hides Contributions in the
+  // app and greys it out in the admin. Worked out on load, never stored.
+  paymentsReady?: boolean;
+
+  @AfterLoad()
+  setPaymentsReady() {
+    this.paymentsReady = payoutsReady(this);
+  }
 
   @Column({ nullable: true })
   address?: string;
