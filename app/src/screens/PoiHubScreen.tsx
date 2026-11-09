@@ -283,6 +283,7 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
         visible={profileOpen}
         onClose={() => setProfileOpen(false)}
         onSignIn={onSignIn}
+        onSignUp={onSignUp}
       />
 
       {tab === 'home' && drilldown.kind === 'assistant' && (

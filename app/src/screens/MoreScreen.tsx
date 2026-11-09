@@ -32,7 +32,7 @@ import { useI18n } from '../i18n/I18nContext';
 import { translationAvailable } from '../translation/useTranslations';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
 import { getNotificationPreferences } from '../api/notifications';
-import { getPermissionState } from '../notifications/push';
+import { getPermissionState, pushSupported } from '../notifications/push';
 import { useAuth } from '../auth/AuthContext';
 import { useAppearance, type AppearancePreference } from '../theme/AppearanceContext';
 import { MadeWith } from '../components/MadeWith';
@@ -116,7 +116,8 @@ export function MoreScreen({
   const [notificationsOn, setNotificationsOn] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (!me) return;
+    // Without an account, only a phone that registered has choices to read.
+    if (!me && !pushSupported) return;
     let cancelled = false;
     Promise.all([getPermissionState(), getNotificationPreferences(poi.id)])
       .then(([permission, preferences]) => {

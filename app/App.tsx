@@ -16,7 +16,14 @@ import { IntroAnimation } from './src/components/IntroAnimation';
 import { UpdateBanner } from './src/updates/UpdateBanner';
 import { PreviewApp, previewPoiId } from './src/preview/PreviewApp';
 import { I18nProvider, useI18n } from './src/i18n/I18nContext';
-import { enablePush, onNotificationTapped, refreshPush, type PushTarget } from './src/notifications/push';
+import {
+  enablePush,
+  followAsGuest,
+  onNotificationTapped,
+  refreshPush,
+  unfollowAsGuest,
+  type PushTarget,
+} from './src/notifications/push';
 import { AuthProvider, useAuth } from './src/auth/AuthContext';
 import {
   joinPoi,
@@ -109,6 +116,24 @@ function AppRoutes() {
       }
     })().catch(() => undefined);
   }, [me?.id, language]);
+
+  // Without an account, the same question comes up the first time a
+  // community is open, and the phone then follows each community opened
+  // (Seb, 9 Nov 2026): news and event bells reach guests too.
+  useEffect(() => {
+    if (me || !guest || !currentPoiId) return;
+    const poiId = currentPoiId;
+    (async () => {
+      const asked = await AsyncStorage.getItem(PUSH_ASKED_KEY).catch(() => null);
+      if (asked) {
+        await refreshPush(language);
+      } else {
+        await AsyncStorage.setItem(PUSH_ASKED_KEY, '1').catch(() => undefined);
+        await enablePush(language);
+      }
+      await followAsGuest(poiId, language);
+    })().catch(() => undefined);
+  }, [me?.id, guest, currentPoiId, language]);
 
   // The places this device has visited, merged under the ones the account
   // carries, so the switcher shows both.
@@ -284,6 +309,7 @@ function AppRoutes() {
    */
   async function leaveCurrentPoi(poi: Poi) {
     if (me) await leavePoi(poi.id);
+    else await unfollowAsGuest(poi.id).catch(() => undefined);
     setPlaces(await forgetPlace(poi.id));
     if (me) await refresh();
     else guestPoiRef.current = null;

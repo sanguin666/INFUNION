@@ -325,4 +325,104 @@ describe('Notifications (e2e)', () => {
     await settle();
     expect(sent).toEqual([]);
   });
+
+  describe('phones without an account', () => {
+    const guestPhone = 'ExponentPushToken[guest-phone]';
+    const asPhone = { 'X-Push-Token': guestPhone };
+
+    beforeEach(async () => {
+      await client(app).post('/devices/push-tokens').send({ token: guestPhone, language: 'es' }).expect(204);
+      await client(app).put(`/devices/pois/${place.id}`).set(asPhone).expect(204);
+    });
+
+    it('follows a community and gets its news, until turned off or unfollowed', async () => {
+      const prefs = await client(app).get(`/devices/pois/${place.id}/notifications`).set(asPhone).expect(200);
+      expect(prefs.body).toEqual({ news: true, requests: false, events: true, live: true, readings: true, messages: false });
+
+      const notifications = app.get(NotificationsService);
+      await notifications.notifyPoiMembers(place.id, 'news', { title: 'Fiesta', body: 'Sábado' });
+      expect(sent.map((m) => m.to).sort()).toEqual([anaPhone, guestPhone, luisPhone].sort());
+
+      // Requests are a member's own: never to a phone without an account.
+      sent = [];
+      await notifications.notifyPoiMembers(place.id, 'requests', { title: 'x', body: 'y' });
+      expect(sent.map((m) => m.to)).not.toContain(guestPhone);
+
+      sent = [];
+      await client(app).patch(`/devices/pois/${place.id}/notifications`).set(asPhone).send({ news: false }).expect(200);
+      await notifications.notifyPoiMembers(place.id, 'news', { title: 'Fiesta', body: 'Sábado' });
+      expect(sent.map((m) => m.to)).not.toContain(guestPhone);
+
+      await client(app).delete(`/devices/pois/${place.id}`).set(asPhone).expect(204);
+      const after = await client(app).get(`/devices/pois/${place.id}/notifications`).set(asPhone).expect(200);
+      expect(after.body.events).toBe(false);
+    });
+
+    it('needs a registered phone, and keeps it apart from signed-in phones', async () => {
+      await client(app).get(`/devices/pois/${place.id}/notifications`).expect(400);
+      await client(app)
+        .get(`/devices/pois/${place.id}/notifications`)
+        .set({ 'X-Push-Token': 'ExponentPushToken[never-registered]' })
+        .expect(404);
+      // Ana's phone is Ana's: not reachable as an account-free phone.
+      await client(app).get(`/devices/pois/${place.id}/notifications`).set({ 'X-Push-Token': anaPhone }).expect(404);
+    });
+
+    it('rings its own event bells, and hands them over when the phone signs in', async () => {
+      const startsAt = new Date(Date.now() + 30 * 60 * 1000);
+      const event = await client(app)
+        .post(`/pois/${place.id}/events`)
+        .set(as(adminToken))
+        .send({ title: 'Rosary', startsAt: startsAt.toISOString(), location: 'Chapel' })
+        .expect(201);
+      const eventId = event.body.id as string;
+
+      await client(app).put(`/devices/event-reminders/${eventId}`).set(asPhone).send({}).expect(204);
+      await client(app).put(`/devices/event-reminders/${eventId}`).set(asPhone).send({}).expect(204);
+      const belled = await client(app).get(`/devices/pois/${place.id}/event-reminders`).set(asPhone).expect(200);
+      expect(belled.body).toEqual([{ eventId, onlyDate: null }]);
+
+      // Signs up on this phone: the bell is now the person's.
+      const eva = await signInWithId(app, '+34600400007', 'Eva');
+      await client(app).post('/auth/me/pois').set(as(eva.token)).send({ qrCodeToken: place.qrCodeToken, religiousConsent: true }).expect(201);
+      await client(app).post('/auth/me/push-tokens').set(as(eva.token)).send({ token: guestPhone }).expect(204);
+      const hers = await client(app).get(`/auth/me/pois/${place.id}/event-reminders`).set(as(eva.token)).expect(200);
+      expect(hers.body).toEqual([{ eventId, onlyDate: null }]);
+      const follows = await app.get(DataSource).query('SELECT count(*)::int AS n FROM device_follows');
+      expect(follows[0].n).toBe(0);
+
+      await app.get(NotificationsService).sendDueEventReminders();
+      expect(sent.map((m) => m.to)).toEqual([guestPhone]);
+    });
+
+    it('reminds a phone without an account an hour before', async () => {
+      const startsAt = new Date(Date.now() + 30 * 60 * 1000);
+      const event = await client(app)
+        .post(`/pois/${place.id}/events`)
+        .set(as(adminToken))
+        .send({ title: 'Rosary', startsAt: startsAt.toISOString(), location: 'Chapel' })
+        .expect(201);
+      await client(app).put(`/devices/event-reminders/${event.body.id}`).set(asPhone).send({}).expect(204);
+
+      const notifications = app.get(NotificationsService);
+      await notifications.sendDueEventReminders();
+      await notifications.sendDueEventReminders();
+      expect(sent.map((m) => [m.to, m.title])).toEqual([[guestPhone, 'San Roque']]);
+      expect(sent[0].body).toMatch(/Rosary/);
+
+      await client(app).delete(`/devices/event-reminders/${event.body.id}`).set(asPhone).expect(204);
+      const after = await client(app).get(`/devices/pois/${place.id}/event-reminders`).set(asPhone).expect(200);
+      expect(after.body).toEqual([]);
+    });
+
+    it('takes no bell on the free Basic plan', async () => {
+      await setPlan(place.id, 'basic');
+      const event = await client(app)
+        .post(`/pois/${place.id}/events`)
+        .set(as(adminToken))
+        .send({ title: 'Choir', startsAt: new Date(Date.now() + 2 * 3600_000).toISOString() })
+        .expect(201);
+      await client(app).put(`/devices/event-reminders/${event.body.id}`).set(asPhone).send({}).expect(403);
+    });
+  });
 });

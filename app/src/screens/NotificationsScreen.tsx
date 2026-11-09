@@ -9,7 +9,14 @@ import {
   type NotificationKind,
   type NotificationPreferences,
 } from '../api/notifications';
-import { enablePush, getPermissionState, openPhoneSettings, type PermissionState } from '../notifications/push';
+import {
+  enablePush,
+  followAsGuest,
+  getPermissionState,
+  openPhoneSettings,
+  pushSupported,
+  type PermissionState,
+} from '../notifications/push';
 import { useI18n } from '../i18n/I18nContext';
 import { useAuth } from '../auth/AuthContext';
 import type { Poi } from '../api/types';
@@ -38,10 +45,17 @@ export function NotificationsScreen({ poi }: { poi: Poi }) {
   const [loadFailed, setLoadFailed] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
 
+  // Without an account the phone itself is who follows the community, so
+  // it waits until the phone may show notifications and is registered.
+  const guest = !me;
   useEffect(() => {
-    if (!me) return;
+    if (guest && (!pushSupported || permission !== 'granted')) return;
     let cancelled = false;
-    getNotificationPreferences(poi.id)
+    (guest ? followAsGuest(poi.id, language) : Promise.resolve(true))
+      .then((ready) => {
+        if (!ready) throw new Error('not registered');
+        return getNotificationPreferences(poi.id);
+      })
       .then((result) => {
         if (!cancelled) setPreferences(result);
       })
@@ -51,7 +65,7 @@ export function NotificationsScreen({ poi }: { poi: Poi }) {
     return () => {
       cancelled = true;
     };
-  }, [poi.id, me?.id]);
+  }, [poi.id, me?.id, guest ? permission : null]);
 
   // Coming back from the phone's settings is the usual way permission
   // changes, so look again whenever the app returns to the foreground.
@@ -95,7 +109,7 @@ export function NotificationsScreen({ poi }: { poi: Poi }) {
         </AccessibleText>
       </View>
 
-      {!me ? (
+      {guest && !pushSupported ? (
         <AccessibleText variant="body">{t('notifications.signInFirst')}</AccessibleText>
       ) : phoneBlocks ? (
         <>
@@ -111,7 +125,8 @@ export function NotificationsScreen({ poi }: { poi: Poi }) {
         <ActivityIndicator color={colors.primary} size="large" />
       ) : (
         <FormCard>
-          {KINDS.map(({ kind, label, hint }, index) => (
+          {/* Requests and messages are a member's own: none without an account. */}
+          {KINDS.filter(({ kind }) => !guest || (kind !== 'requests' && kind !== 'messages')).map(({ kind, label, hint }, index) => (
             <View key={kind}>
               {index > 0 && <FormDivider />}
               {/* The whole row flips the switch: a 51pt switch is a small

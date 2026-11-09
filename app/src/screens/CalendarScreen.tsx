@@ -6,6 +6,7 @@ import { RepeatReminderSheet } from '../components/ReminderSheets';
 import { getEvents } from '../api/events';
 import { dayKey, occurrencesOnDay, repeats, startOfWeek, timeKey, type Occurrence } from '../utils/schedule';
 import { useEventReminders } from '../notifications/useEventReminders';
+import { pushSupported } from '../notifications/push';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { useTranslations } from '../translation/useTranslations';
@@ -256,7 +257,7 @@ export function CalendarScreen({ poi }: Props) {
                       )}
                     </View>
                   </View>
-                  {me && sendsNotifications(poi) && o.startsAt > now && (
+                  {(me || pushSupported) && sendsNotifications(poi) && o.startsAt > now && (
                     <Pressable
                       accessibilityRole="button"
                       accessibilityLabel={

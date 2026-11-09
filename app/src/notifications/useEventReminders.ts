@@ -3,7 +3,7 @@ import { getEventReminders, setEventReminder } from '../api/notifications';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { dayKey } from '../utils/schedule';
-import { enablePush } from './push';
+import { enablePush, followAsGuest, pushSupported } from './push';
 
 /**
  * The bells the reader rang in a place, for the Events tab and the
@@ -17,9 +17,11 @@ export function useEventReminders(poiId: string) {
   const [reminders, setReminders] = useState<Map<string, string | null>>(new Map());
 
   useEffect(() => {
-    if (!me) return;
+    if (!me && !pushSupported) return;
     let cancelled = false;
-    getEventReminders(poiId)
+    // Without an account, only once this phone is registered.
+    (me ? Promise.resolve(true) : followAsGuest(poiId, language))
+      .then((ready) => (ready ? getEventReminders(poiId) : []))
       .then((list) => {
         if (!cancelled) setReminders(new Map(list.map((r) => [r.eventId, r.onlyDate])));
       })
@@ -55,6 +57,14 @@ export function useEventReminders(poiId: string) {
     const before = reminders.has(eventId) ? reminders.get(eventId) : undefined;
     put(eventId, onlyDate);
     try {
+      // Without an account the phone is who rings the bell, so it has to
+      // be allowed notifications and registered first.
+      if (!me && onlyDate !== undefined) {
+        if ((await enablePush(language)) !== 'granted' || !(await followAsGuest(poiId, language))) {
+          put(eventId, before);
+          return;
+        }
+      }
       await setEventReminder(eventId, onlyDate === undefined ? null : { onlyDate });
       // A bell is a request for a notification: the moment to ask the
       // phone, if it never has been.
