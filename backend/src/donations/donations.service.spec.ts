@@ -14,7 +14,14 @@ import { NotificationsService } from '../notifications/notifications.service.js'
  * it was paid.
  */
 describe('DonationsService (Stripe checkout)', () => {
-  const poi = { id: 'poi-1', name: "St. Mary's Community" };
+  // The community's own Stripe account, set up and able to take payments.
+  const readyAccount = {
+    stripeAccountId: 'acct_community',
+    stripeChargesEnabled: true,
+    stripePayoutsEnabled: true,
+    stripeDetailsSubmitted: true,
+  };
+  let poi: Record<string, unknown>;
 
   let service: DonationsService;
   let saved: Donation[];
@@ -26,6 +33,7 @@ describe('DonationsService (Stripe checkout)', () => {
   };
 
   beforeEach(async () => {
+    poi = { id: 'poi-1', name: "St. Mary's Community", ...readyAccount };
     saved = [];
     stripe = {
       isConfigured: true,
@@ -100,8 +108,42 @@ describe('DonationsService (Stripe checkout)', () => {
     );
   });
 
+  it('charges on the community\'s own Stripe account, never on infunion\'s', async () => {
+    await service.startCheckout('poi-1', { amount: 50 }, 'http://localhost:3000');
+
+    expect(stripe.createCheckoutSession).toHaveBeenCalledWith(expect.objectContaining({ account: 'acct_community' }));
+    expect(saved[0].stripeAccountId).toBe('acct_community');
+  });
+
+  it('refuses a gift while the community has no payment account', async () => {
+    poi = { id: 'poi-1', name: "St. Mary's Community" };
+
+    await expect(service.startCheckout('poi-1', { amount: 50 }, 'http://localhost:3000')).rejects.toThrow(
+      'payments_not_set_up',
+    );
+    expect(saved).toHaveLength(0);
+    expect(stripe.createCheckoutSession).not.toHaveBeenCalled();
+  });
+
+  it('refuses a gift while Stripe is still checking the community\'s account', async () => {
+    poi = { ...poi, stripeChargesEnabled: false };
+
+    await expect(service.startCheckout('poi-1', { amount: 50 }, 'http://localhost:3000')).rejects.toThrow(
+      'payments_not_set_up',
+    );
+  });
+
+  it('does not take real payments on a demo account', async () => {
+    poi = { id: 'poi-1', name: "St. Mary's Community", stripeAccountId: 'demo' };
+
+    await expect(service.startCheckout('poi-1', { amount: 50 }, 'http://localhost:3000')).rejects.toThrow(
+      'payments_not_set_up',
+    );
+  });
+
   it('records the gift without a payment when Stripe is not configured', async () => {
     stripe.isConfigured = false;
+    poi = { id: 'poi-1', name: "St. Mary's Community", stripeAccountId: 'demo' };
 
     const result = await service.startCheckout('poi-1', { amount: 25 }, 'http://localhost:3000');
 

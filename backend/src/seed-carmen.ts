@@ -189,6 +189,8 @@ async function seedCarmenInMadrid(dataSource: DataSource): Promise<Poi> {
           'Una comunidad viva y acogedora en el centro de L’Eliana. Familias, jóvenes y mayores celebramos juntos la fe cada semana.',
         pictureUrl: picture ?? undefined,
         qrCodeToken: CARMEN_QR_TOKEN,
+        // Demo payments account: gifts work with no Stripe key (payouts-account.ts).
+        stripeAccountId: 'demo',
         massIntentionOffering: 10,
         legalName: 'Comunidad Nuestra Señora del Carmen',
         legalTaxId: 'R4600000J',

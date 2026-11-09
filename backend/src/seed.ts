@@ -157,6 +157,8 @@ async function seed() {
         city: 'Springfield',
         description: 'A welcoming community in the heart of Springfield, serving families for over 80 years.',
         qrCodeToken: DEMO_QR_TOKEN,
+        // Demo payments account: gifts work with no Stripe key (payouts-account.ts).
+        stripeAccountId: 'demo',
       }),
     );
     console.log(`Created demo POI ${poi.id}`);
@@ -178,6 +180,8 @@ async function seed() {
         city: 'Springfield',
         description: 'Una comunidad acogedora de habla hispana en el centro de Springfield.',
         qrCodeToken: DEMO_QR_TOKEN_2,
+        // Demo payments account: gifts work with no Stripe key (payouts-account.ts).
+        stripeAccountId: 'demo',
       }),
     );
     console.log(`Created demo POI ${poi2.id}`);

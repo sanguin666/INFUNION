@@ -4204,3 +4204,71 @@ label.link-button:focus-within {
     display: none;
   }
 }
+
+/* Contributions without a payment account (Seb, 9 Nov 2026): a large
+   banner on top, the module greyed out and unusable underneath. */
+.payouts-banner {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin: 0 0 24px;
+  padding: 24px 28px;
+  border-radius: 16px;
+  border: 2px solid var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-text);
+}
+.payouts-banner-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+}
+.payouts-banner-body {
+  flex: 1;
+  min-width: 0;
+}
+.payouts-banner h3 {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+}
+.payouts-banner p {
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+.payouts-banner-missing {
+  font-size: 1rem;
+}
+.payouts-banner-demo {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+.payouts-banner-cta {
+  margin-top: 8px;
+}
+.payouts-locked {
+  opacity: 0.45;
+  filter: grayscale(1);
+  pointer-events: none;
+  user-select: none;
+}
+.payouts-ready-note {
+  margin: -4px 0 16px;
+}
+@media (max-width: 640px) {
+  .payouts-banner {
+    flex-direction: column;
+    padding: 20px;
+  }
+}
+.payouts-inline-note {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--color-primary-soft);
+  line-height: 1.5;
+}

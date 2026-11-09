@@ -276,6 +276,35 @@ How a gift moves through the system:
 Going live later means swapping the test key for a live one; Stripe's fee in
 Spain is 1.5% + &euro;0.25 per European card.
 
+### Money goes straight to each community (Stripe Connect)
+
+infunion never holds a community's money (Seb, 9 Nov 2026). Each community
+links its **own Stripe account** (a Standard account it owns) from the
+admin's Contributions page; every payment is a *direct charge* on that
+account, so the community receives it minus Stripe's fees, and infunion's
+share (`DONATION_FEE_PERCENT`, 1 % by default) is taken by Stripe as an
+*application fee* and sent to infunion's account.
+
+- Until the account can take payments and pay out (`charges_enabled` and
+  `payouts_enabled`), Contributions is greyed out in the admin under a large
+  "set up your payment account" banner, the app does not show it
+  (`GET /pois/:poiId/active-modules` leaves it out; the admin asks with
+  `?all=1`), a gift is refused with `409 payments_not_set_up`, and Mass
+  intentions are asked with no offering.
+- `GET /pois/:poiId/payouts-account` gives the state; `POST
+  /pois/:poiId/payouts-account/onboarding` creates the account if needed and
+  returns Stripe's hosted sign-up link (back to `ADMIN_URL`).
+- Without `STRIPE_SECRET_KEY`, setting up links a **demo** account instead
+  (no money moves). Existing communities were given the demo account by the
+  `CommunityPayouts` migration; it stops counting once a real key is set.
+
+To switch it on: in the Stripe dashboard turn on **Connect** (platform),
+then add a webhook endpoint for **connected accounts** pointing at
+`/stripe/webhook` with `account.updated`, `checkout.session.completed`,
+`checkout.session.expired`, `invoice.paid`, `invoice.payment_failed` and
+`invoice.upcoming`, and put its signing secret in
+`STRIPE_CONNECT_WEBHOOK_SECRET`.
+
 ## Languages
 
 The app and admin dashboard UI (menus, buttons, labels, error messages — everything that isn't content posted by a POI) is available in English, Spanish, and French.

@@ -32,6 +32,24 @@ export function intlLocale(language: string): string {
 }
 
 export type Translations = {
+  payouts: {
+    title: string;
+    intro: string;
+    missingLabel: string;
+    state_not_linked: string;
+    state_incomplete: string;
+    state_pending: string;
+    state_payouts_paused: string;
+    state_ready: string;
+    demoNote: string;
+    error: string;
+    opening: string;
+    setUp: string;
+    finishSetUp: string;
+    readyNote: string;
+    openStripe: string;
+    massNote: string;
+  };
   tabs: {
     label: string;
     settingsInfo: string;
@@ -1174,6 +1192,24 @@ export type Translations = {
 };
 
 const en: Translations = {
+  payouts: {
+    title: "Set up your payment account to receive contributions",
+    intro: "Members' contributions are paid straight into your community's own Stripe account, then to your bank. Stripe's fees and infunion's {{fee}} % are taken from each payment; infunion never holds your money. Contributions stay off in the app until this is done.",
+    missingLabel: "Missing:",
+    state_not_linked: "your community's Stripe account (bank account, tax ID, legal representative).",
+    state_incomplete: "a few details Stripe still needs to finish your account.",
+    state_pending: "nothing on your side. Stripe is checking your details, usually within a day.",
+    state_payouts_paused: "Stripe has paused payouts to your bank. Finish your account to see why.",
+    state_ready: "nothing.",
+    demoNote: "Demo: no real Stripe account is created and no money moves.",
+    error: "Stripe could not be opened. Please try again.",
+    opening: "Opening Stripe…",
+    setUp: "Set up my payment account",
+    finishSetUp: "Finish setting up",
+    readyNote: "Contributions are paid into your Stripe account, minus Stripe's fees and infunion's {{fee}} %.",
+    openStripe: "Open Stripe",
+    massNote: "Offerings are paid the same way. Until your payment account is set up, members ask for intentions in the app without paying an offering.",
+  },
   tabs: {
     label: "Parts of this page",
     settingsInfo: "Information",
@@ -2317,6 +2353,24 @@ const en: Translations = {
 };
 
 const es: Translations = {
+  payouts: {
+    title: "Configura tu cuenta de cobro para recibir las aportaciones",
+    intro: "Las aportaciones de los miembros se pagan directamente en la cuenta Stripe de tu comunidad y llegan a tu banco. De cada pago se descuentan las comisiones de Stripe y el {{fee}} % de infunion; infunion nunca guarda tu dinero. Las aportaciones no aparecen en la app hasta que esté hecho.",
+    missingLabel: "Falta:",
+    state_not_linked: "la cuenta Stripe de tu comunidad (cuenta bancaria, NIF, representante legal).",
+    state_incomplete: "algunos datos que Stripe aún necesita para terminar tu cuenta.",
+    state_pending: "nada por tu parte. Stripe está revisando tus datos, normalmente en un día.",
+    state_payouts_paused: "Stripe ha pausado las transferencias a tu banco. Completa tu cuenta para ver el motivo.",
+    state_ready: "nada.",
+    demoNote: "Demo: no se crea ninguna cuenta Stripe real y no se mueve dinero.",
+    error: "No se ha podido abrir Stripe. Inténtalo de nuevo.",
+    opening: "Abriendo Stripe…",
+    setUp: "Configurar mi cuenta de cobro",
+    finishSetUp: "Terminar la configuración",
+    readyNote: "Las aportaciones se pagan en tu cuenta Stripe, descontando las comisiones de Stripe y el {{fee}} % de infunion.",
+    openStripe: "Abrir Stripe",
+    massNote: "Los estipendios se pagan igual. Hasta que configures tu cuenta de cobro, los miembros piden intenciones en la app sin pagar estipendio.",
+  },
   tabs: {
     label: "Partes de esta página",
     settingsInfo: "Información",
@@ -3460,6 +3514,24 @@ const es: Translations = {
 };
 
 const fr: Translations = {
+  payouts: {
+    title: "Configurez votre compte de paiement pour recevoir les contributions",
+    intro: "Les contributions des membres sont versées directement sur le compte Stripe de votre communauté, puis sur votre compte bancaire. Les frais Stripe et les {{fee}} % d'infunion sont prélevés sur chaque paiement ; infunion ne détient jamais votre argent. Les contributions restent désactivées dans l'app tant que ce n'est pas fait.",
+    missingLabel: "Il manque :",
+    state_not_linked: "le compte Stripe de votre communauté (compte bancaire, numéro fiscal, représentant légal).",
+    state_incomplete: "quelques informations dont Stripe a encore besoin pour finaliser votre compte.",
+    state_pending: "rien de votre côté. Stripe vérifie vos informations, en général sous 24 h.",
+    state_payouts_paused: "Stripe a suspendu les virements vers votre banque. Finalisez votre compte pour voir pourquoi.",
+    state_ready: "rien.",
+    demoNote: "Démo : aucun vrai compte Stripe n'est créé et aucun argent ne circule.",
+    error: "Impossible d'ouvrir Stripe. Réessayez.",
+    opening: "Ouverture de Stripe…",
+    setUp: "Configurer mon compte de paiement",
+    finishSetUp: "Terminer la configuration",
+    readyNote: "Les contributions sont versées sur votre compte Stripe, après les frais Stripe et les {{fee}} % d'infunion.",
+    openStripe: "Ouvrir Stripe",
+    massNote: "Les offrandes sont payées de la même façon. Tant que votre compte de paiement n'est pas configuré, les membres demandent des intentions dans l'app sans payer d'offrande.",
+  },
   tabs: {
     label: "Parties de cette page",
     settingsInfo: "Informations",
@@ -4603,6 +4675,24 @@ const fr: Translations = {
 };
 
 const va: Translations = {
+  payouts: {
+    title: "Configura el teu compte de cobrament per a rebre les aportacions",
+    intro: "Les aportacions dels membres es paguen directament al compte Stripe de la teua comunitat i arriben al teu banc. De cada pagament es descompten les comissions de Stripe i el {{fee}} % d'infunion; infunion mai guarda els teus diners. Les aportacions no apareixen en l'app fins que estiga fet.",
+    missingLabel: "Falta:",
+    state_not_linked: "el compte Stripe de la teua comunitat (compte bancari, NIF, representant legal).",
+    state_incomplete: "algunes dades que Stripe encara necessita per a acabar el teu compte.",
+    state_pending: "res per part teua. Stripe està revisant les teues dades, normalment en un dia.",
+    state_payouts_paused: "Stripe ha pausat les transferències al teu banc. Completa el teu compte per a vore el motiu.",
+    state_ready: "res.",
+    demoNote: "Demo: no es crea cap compte Stripe real i no es mouen diners.",
+    error: "No s'ha pogut obrir Stripe. Torna-ho a provar.",
+    opening: "Obrint Stripe…",
+    setUp: "Configurar el meu compte de cobrament",
+    finishSetUp: "Acabar la configuració",
+    readyNote: "Les aportacions es paguen al teu compte Stripe, descomptant les comissions de Stripe i el {{fee}} % d'infunion.",
+    openStripe: "Obrir Stripe",
+    massNote: "Les ofrenes es paguen igual. Fins que configures el teu compte de cobrament, els membres demanen intencions en l'app sense pagar ofrena.",
+  },
   tabs: {
     label: "Parts d’esta pàgina",
     settingsInfo: "Informació",
@@ -5746,6 +5836,24 @@ const va: Translations = {
 };
 
 const ca: Translations = {
+  payouts: {
+    title: "Configura el teu compte de cobrament per rebre les aportacions",
+    intro: "Les aportacions dels membres es paguen directament al compte Stripe de la teva comunitat i arriben al teu banc. De cada pagament es descompten les comissions de Stripe i el {{fee}} % d'infunion; infunion mai guarda els teus diners. Les aportacions no apareixen a l'app fins que estigui fet.",
+    missingLabel: "Falta:",
+    state_not_linked: "el compte Stripe de la teva comunitat (compte bancari, NIF, representant legal).",
+    state_incomplete: "algunes dades que Stripe encara necessita per acabar el teu compte.",
+    state_pending: "res per part teva. Stripe està revisant les teves dades, normalment en un dia.",
+    state_payouts_paused: "Stripe ha pausat les transferències al teu banc. Completa el teu compte per veure'n el motiu.",
+    state_ready: "res.",
+    demoNote: "Demo: no es crea cap compte Stripe real i no es mouen diners.",
+    error: "No s'ha pogut obrir Stripe. Torna-ho a provar.",
+    opening: "Obrint Stripe…",
+    setUp: "Configurar el meu compte de cobrament",
+    finishSetUp: "Acabar la configuració",
+    readyNote: "Les aportacions es paguen al teu compte Stripe, descomptant les comissions de Stripe i el {{fee}} % d'infunion.",
+    openStripe: "Obrir Stripe",
+    massNote: "Les ofrenes es paguen igual. Fins que configuris el teu compte de cobrament, els membres demanen intencions a l'app sense pagar ofrena.",
+  },
   tabs: {
     label: "Parts d’aquesta pàgina",
     settingsInfo: "Informació",
@@ -6889,6 +6997,24 @@ const ca: Translations = {
 };
 
 const gl: Translations = {
+  payouts: {
+    title: "Configura a túa conta de cobro para recibir as achegas",
+    intro: "As achegas dos membros páganse directamente na conta Stripe da túa comunidade e chegan ao teu banco. De cada pagamento descóntanse as comisións de Stripe e o {{fee}} % de infunion; infunion nunca garda o teu diñeiro. As achegas non aparecen na app ata que estea feito.",
+    missingLabel: "Falta:",
+    state_not_linked: "a conta Stripe da túa comunidade (conta bancaria, NIF, representante legal).",
+    state_incomplete: "algúns datos que Stripe aínda precisa para rematar a túa conta.",
+    state_pending: "nada pola túa parte. Stripe está a revisar os teus datos, normalmente nun día.",
+    state_payouts_paused: "Stripe pausou as transferencias ao teu banco. Completa a túa conta para ver o motivo.",
+    state_ready: "nada.",
+    demoNote: "Demo: non se crea ningunha conta Stripe real e non se move diñeiro.",
+    error: "Non se puido abrir Stripe. Téntao de novo.",
+    opening: "Abrindo Stripe…",
+    setUp: "Configurar a miña conta de cobro",
+    finishSetUp: "Rematar a configuración",
+    readyNote: "As achegas páganse na túa conta Stripe, descontando as comisións de Stripe e o {{fee}} % de infunion.",
+    openStripe: "Abrir Stripe",
+    massNote: "As ofrendas páganse igual. Ata que configures a túa conta de cobro, os membros piden intencións na app sen pagar ofrenda.",
+  },
   tabs: {
     label: "Partes desta páxina",
     settingsInfo: "Información",
@@ -8032,6 +8158,24 @@ const gl: Translations = {
 };
 
 const pt: Translations = {
+  payouts: {
+    title: "Configure a sua conta de pagamentos para receber contribuições",
+    intro: "As contribuições dos membros são pagas diretamente na conta Stripe da sua comunidade e seguem para o seu banco. Em cada pagamento são descontadas as comissões da Stripe e os {{fee}} % da infunion; a infunion nunca guarda o seu dinheiro. As contribuições ficam desligadas na app até isto estar feito.",
+    missingLabel: "Falta:",
+    state_not_linked: "a conta Stripe da sua comunidade (conta bancária, NIF, representante legal).",
+    state_incomplete: "alguns dados de que a Stripe ainda precisa para concluir a sua conta.",
+    state_pending: "nada da sua parte. A Stripe está a verificar os seus dados, normalmente num dia.",
+    state_payouts_paused: "A Stripe suspendeu as transferências para o seu banco. Conclua a sua conta para ver o motivo.",
+    state_ready: "nada.",
+    demoNote: "Demo: não é criada nenhuma conta Stripe real e não circula dinheiro.",
+    error: "Não foi possível abrir a Stripe. Tente novamente.",
+    opening: "A abrir a Stripe…",
+    setUp: "Configurar a minha conta de pagamentos",
+    finishSetUp: "Concluir a configuração",
+    readyNote: "As contribuições são pagas na sua conta Stripe, descontadas as comissões da Stripe e os {{fee}} % da infunion.",
+    openStripe: "Abrir a Stripe",
+    massNote: "As ofertas são pagas da mesma forma. Até configurar a sua conta de pagamentos, os membros pedem intenções na app sem pagar oferta.",
+  },
   tabs: {
     label: "Partes desta página",
     settingsInfo: "Informações",
