@@ -118,6 +118,18 @@ export class ServiceRequestsService {
   }
 
   /**
+   * Something waiting on the member's side: the team did something they
+   * have not opened yet, or a paper the team asked for on a request still
+   * open has not been sent. Drives the dot on the app's Requests button.
+   */
+  async attentionForMember(poiId: string, userId: string): Promise<{ attention: boolean }> {
+    const views = await this.listMine(poiId, userId);
+    return {
+      attention: views.some((v) => v.unread || (!CLOSED.includes(v.status) && v.documentsPending > 0)),
+    };
+  }
+
+  /**
    * The office's list. `open` (the default) is everything still to deal
    * with; `closed` is what is done or cancelled.
    */

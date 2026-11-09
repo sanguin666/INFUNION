@@ -91,6 +91,7 @@ export type Translations = {
     readingsLabel: string;
     messagesLabel: string;
     newMessages: string;
+    somethingNew: string;
     celebrationTimes: string;
     nextMass: string;
   };
@@ -738,6 +739,7 @@ const en: Translations = {
     readingsLabel: 'Readings',
     messagesLabel: 'Messages',
     newMessages: 'New message',
+    somethingNew: 'Something new',
     celebrationTimes: 'Celebration times',
     nextMass: 'Next Mass',
   },
@@ -1387,6 +1389,7 @@ const es: Translations = {
     readingsLabel: 'Lecturas',
     messagesLabel: 'Mensajes',
     newMessages: 'Mensaje nuevo',
+    somethingNew: 'Novedades',
     celebrationTimes: 'Horarios de celebraciones',
     nextMass: 'Próxima misa',
   },
@@ -2036,6 +2039,7 @@ const fr: Translations = {
     readingsLabel: 'Lectures',
     messagesLabel: 'Messages',
     newMessages: 'Nouveau message',
+    somethingNew: 'Du nouveau',
     celebrationTimes: 'Horaires des célébrations',
     nextMass: 'Prochaine messe',
   },
@@ -2685,6 +2689,7 @@ const va: Translations = {
     readingsLabel: 'Lectures',
     messagesLabel: 'Missatges',
     newMessages: 'Missatge nou',
+    somethingNew: 'Novetats',
     celebrationTimes: 'Horaris de celebracions',
     nextMass: 'Pròxima missa',
   },
@@ -3334,6 +3339,7 @@ const ca: Translations = {
     readingsLabel: 'Lectures',
     messagesLabel: 'Missatges',
     newMessages: 'Missatge nou',
+    somethingNew: 'Novetats',
     celebrationTimes: 'Horaris de celebracions',
     nextMass: 'Pròxima missa',
   },
@@ -3983,6 +3989,7 @@ const gl: Translations = {
     readingsLabel: 'Lecturas',
     messagesLabel: 'Mensaxes',
     newMessages: 'Mensaxe nova',
+    somethingNew: 'Novidades',
     celebrationTimes: 'Horarios das celebracións',
     nextMass: 'Próxima misa',
   },
@@ -4633,6 +4640,7 @@ const pt: Translations = {
     readingsLabel: 'Leituras',
     messagesLabel: 'Mensagens',
     newMessages: 'Nova mensagem',
+    somethingNew: 'Novidades',
     celebrationTimes: 'Horários das celebrações',
     nextMass: 'Próxima missa',
   },

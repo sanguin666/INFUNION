@@ -164,7 +164,7 @@ export class SuperadminController {
   // What members ask the assistant (Seb, 5 Nov 2026).
   @Get('assistant-questions')
   assistantQuestions(@Query() query: AssistantQuestionsQuery) {
-    return this.service.assistantQuestions(Number(query.days ?? 30), query.poiId ?? null);
+    return this.service.assistantQuestions(Number(query.days ?? 30), query.poiId ?? null, query.audience ?? 'member');
   }
 
   @Get('pois')

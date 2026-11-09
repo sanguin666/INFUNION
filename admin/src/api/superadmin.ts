@@ -56,9 +56,11 @@ export type AssistantQuestions = {
   communityOptions: { id: string; name: string }[];
 };
 
-export const getAssistantQuestions = (days: number, poiId?: string) =>
+export const getAssistantQuestions = (days: number, poiId?: string, audience: 'member' | 'admin' = 'member') =>
   guarded(() =>
-    apiGet<AssistantQuestions>(`/superadmin/assistant-questions?days=${days}${poiId ? `&poiId=${encodeURIComponent(poiId)}` : ''}`),
+    apiGet<AssistantQuestions>(
+      `/superadmin/assistant-questions?days=${days}&audience=${audience}${poiId ? `&poiId=${encodeURIComponent(poiId)}` : ''}`,
+    ),
   );
 
 // ---- overview

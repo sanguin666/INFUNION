@@ -15,6 +15,7 @@ export function SuperadminQuestionsPage() {
   const { s, dateTime, error: describe } = sa;
   const [days, setDays] = useState<(typeof PERIODS)[number]>(30);
   const [poiId, setPoiId] = useState('');
+  const [audience, setAudience] = useState<'member' | 'admin'>('member');
   const [onlyUnanswered, setOnlyUnanswered] = useState(false);
   const [limit, setLimit] = useState(20);
   const [data, setData] = useState<AssistantQuestions | null>(null);
@@ -22,12 +23,12 @@ export function SuperadminQuestionsPage() {
 
   useEffect(() => {
     setData(null);
-    getAssistantQuestions(days, poiId || undefined)
+    getAssistantQuestions(days, poiId || undefined, audience)
       .then(setData)
       .catch((err) => setError(describe(err)));
-  }, [days, poiId, describe]);
+  }, [days, poiId, audience, describe]);
 
-  const topic = (key: string) => s(`questionTopics.${key}`);
+  const topic = (key: string) => s(`${audience === 'admin' ? 'adminTopics' : 'questionTopics'}.${key}`);
   const max = Math.max(1, ...(data?.topics ?? []).map((t) => t.total));
   const shown = (data?.questions ?? []).filter((q) => !onlyUnanswered || !q.answered);
   const unanswered = data ? data.total - data.answered : 0;
@@ -36,6 +37,23 @@ export function SuperadminQuestionsPage() {
     <div className="dashboard">
       <h2>{s('questions.title')}</h2>
       <p className="muted">{s('questions.intro')}</p>
+
+      <div className="chips" role="group" aria-label={s('questions.audience')}>
+        {(['member', 'admin'] as const).map((a) => (
+          <button
+            key={a}
+            type="button"
+            className={`chip${audience === a ? ' chip-selected' : ''}`}
+            aria-pressed={audience === a}
+            onClick={() => {
+              setAudience(a);
+              setPoiId('');
+            }}
+          >
+            {s(a === 'member' ? 'questions.fromMembers' : 'questions.fromTeams')}
+          </button>
+        ))}
+      </div>
 
       <div className="sa-questions-filters">
         <div className="chips" role="group" aria-label={s('common.filter')}>

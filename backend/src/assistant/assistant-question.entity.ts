@@ -21,6 +21,10 @@ export class AssistantQuestion {
   @JoinColumn({ name: 'poi_id', foreignKeyConstraintName: 'FK_assistant_questions_poi' })
   poi?: Poi;
 
+  // Who asked: a member in the app, or the team in the dashboard (Seb, 6 Nov 2026).
+  @Column('varchar', { length: 8, default: 'member' })
+  audience!: 'member' | 'admin';
+
   @Column('varchar', { length: 32 })
   topic!: string;
 
