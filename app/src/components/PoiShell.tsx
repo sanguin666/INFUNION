@@ -34,14 +34,37 @@ import { useI18n } from '../i18n/I18nContext';
 // are the modules themselves.
 export type HubTab = 'home' | 'more' | ModuleType;
 
-// Modules with something new for the member: a dot on their button, or
-// on More when they sit under it.
-export type MenuAlerts = Partial<Record<ModuleType, boolean>>;
+// Modules with something new for the member: true for a dot, a number
+// for a count (Requests waiting on the member). Shown on the module's
+// button, or on More when the module sits under it.
+export type MenuAlerts = Partial<Record<ModuleType, boolean | number>>;
 
-// The words a screen reader adds to a button with a dot, and that More
-// writes next to the row.
-export function alertWord(type: ModuleType, t: Translate): string {
+// The words a screen reader adds to a button with a dot or a number, and
+// that More writes next to the Messages row.
+export function alertWord(type: ModuleType, t: Translate, alert: boolean | number = true): string {
+  if (typeof alert === 'number') return t('hub.newCount', { count: alert });
   return type === 'messages' ? t('hub.newMessages') : t('hub.somethingNew');
+}
+
+// What More's own button carries: the numbers under it added up, or a
+// plain dot when what is new there is not counted.
+function moreAlert(inMore: ModuleType[], alerts: MenuAlerts): boolean | number {
+  const count = inMore.reduce((sum, type) => {
+    const alert = alerts[type];
+    return sum + (typeof alert === 'number' ? alert : 0);
+  }, 0);
+  return count > 0 ? count : inMore.some((type) => alerts[type] === true);
+}
+
+// A small round count, the tab bar's dot grown to hold a number.
+export function CountBadge({ count, style }: { count: number; style?: object }) {
+  return (
+    <View style={[styles.countBadge, style]}>
+      <AccessibleText variant="caption" color={colors.primaryText} style={styles.countText} numberOfLines={1}>
+        {count > 99 ? '99+' : String(count)}
+      </AccessibleText>
+    </View>
+  );
 }
 
 // The bar's ceiling. Split evenly across a 390pt phone that is 78pt per
@@ -270,13 +293,8 @@ export function PoiShell({
               label={label}
               active={tab === highlighted}
               activeColor={poiTheme.accentStrong}
-              alert={
-                tab === 'more'
-                  ? inMore.some((type) => alerts[type])
-                  : tab !== 'home' && alerts[tab]
-                    ? alertWord(tab, t)
-                    : null
-              }
+              alert={tab === 'more' ? moreAlert(inMore, alerts) : tab !== 'home' ? (alerts[tab] ?? false) : false}
+              alertType={tab === 'more' || tab === 'home' ? null : tab}
               onPress={() => onSelectTab(tab)}
             />
           );
@@ -370,16 +388,19 @@ function TabBarItem({
   label,
   active,
   activeColor,
-  alert = null,
+  alert = false,
+  alertType = null,
   onPress,
 }: {
   icon: (color: string) => ReactNode;
   label: string;
   active: boolean;
   activeColor: string;
-  // Something new behind this button: the words a screen reader adds,
-  // or true for More, which says only that there is something new.
-  alert?: string | boolean | null;
+  // Something new behind this button: true for a dot, a number for a
+  // count.
+  alert?: boolean | number;
+  // The module behind the button, for the words a screen reader adds.
+  alertType?: ModuleType | null;
   onPress: () => void;
 }) {
   const { t } = useI18n();
@@ -389,7 +410,7 @@ function TabBarItem({
     <Pressable
       accessibilityRole="tab"
       accessibilityState={{ selected: active }}
-      accessibilityLabel={alert ? `${label}. ${alert === true ? t('hub.somethingNew') : alert}` : label}
+      accessibilityLabel={alert ? `${label}. ${alertType ? alertWord(alertType, t, alert) : typeof alert === 'number' ? t('hub.newCount', { count: alert }) : t('hub.somethingNew')}` : label}
       onPress={onPress}
       style={styles.tabBarItem}
     >
@@ -397,7 +418,11 @@ function TabBarItem({
           the bolder weight below — no fill behind it. */}
       <View>
         {icon(color)}
-        {!!alert && <View style={styles.tabBarDot} />}
+        {typeof alert === 'number' && alert > 0 ? (
+          <CountBadge count={alert} style={styles.tabBarCount} />
+        ) : (
+          alert === true && <View style={styles.tabBarDot} />
+        )}
       </View>
       <AccessibleText variant="caption" color={color} numberOfLines={1} style={active ? styles.tabBarLabelActive : styles.tabBarLabel}>
         {label}
@@ -489,6 +514,30 @@ const styles = themedStyles(() => ({
     backgroundColor: colors.surface,
     borderRadius: radii.pill,
     ...floatingShadow,
+  },
+  // A count of things waiting: the dot's colour, with a white number.
+  countBadge: {
+    minWidth: 20,
+    height: 20,
+    paddingHorizontal: 5,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primaryFill,
+  },
+  countText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+  },
+  // On a tab bar icon: pinned to its top-right corner, ringed in white
+  // like the dot so it stands off the icon.
+  tabBarCount: {
+    position: 'absolute',
+    top: -8,
+    right: -12,
+    borderWidth: 1.5,
+    borderColor: colors.surface,
   },
   // Something new under this button: a small orange dot on the icon.
   tabBarDot: {

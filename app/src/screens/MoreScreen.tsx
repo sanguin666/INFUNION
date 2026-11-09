@@ -23,7 +23,7 @@ import {
   PlayIcon,
   PlusIcon,
 } from '../components/icons';
-import { alertWord, hubMenu, type HubTab, type MenuAlerts } from '../components/PoiShell';
+import { alertWord, CountBadge, hubMenu, type HubTab, type MenuAlerts } from '../components/PoiShell';
 import { type ActiveModule, type ModuleType, type Poi, sendsNotifications } from '../api/types';
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { getPoiTheme } from '../theme/poiThemes';
@@ -154,7 +154,7 @@ export function MoreScreen({
         <Pressable
           key={row.type}
           accessibilityRole="button"
-          accessibilityLabel={alerts[row.type] ? `${row.label}. ${alertWord(row.type, t)}` : row.label}
+          accessibilityLabel={alerts[row.type] ? `${row.label}. ${alertWord(row.type, t, alerts[row.type])}` : row.label}
           onPress={() => onSelectTab(row.type)}
           style={styles.row}
         >
@@ -162,16 +162,21 @@ export function MoreScreen({
           <AccessibleText variant="bodyLarge" style={styles.rowLabel} {...ONE_LINE}>
             {row.label}
           </AccessibleText>
-          {/* Messages spells it out; other modules get the tab bar's
-              dot, so a longer name keeps its room. */}
-          {alerts[row.type] &&
-            (row.type === 'messages' ? (
-              <AccessibleText variant="caption" color={colors.primaryStrong} style={styles.newWord}>
-                {alertWord(row.type, t)}
-              </AccessibleText>
-            ) : (
-              <View style={styles.newDot} />
-            ))}
+          {/* Messages spells it out; a counted module (Requests) shows
+              its number, anything else the tab bar's dot, so a longer
+              name keeps its room. */}
+          {(() => {
+            const alert = alerts[row.type];
+            if (!alert) return null;
+            if (typeof alert === 'number') return <CountBadge count={alert} />;
+            if (row.type === 'messages')
+              return (
+                <AccessibleText variant="caption" color={colors.primaryStrong} style={styles.newWord}>
+                  {alertWord(row.type, t)}
+                </AccessibleText>
+              );
+            return <View style={styles.newDot} />;
+          })()}
           <ChevronRightIcon size={22} color={colors.textMuted} />
         </Pressable>
       ))}

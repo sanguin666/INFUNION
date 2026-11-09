@@ -92,6 +92,7 @@ export type Translations = {
     messagesLabel: string;
     newMessages: string;
     somethingNew: string;
+    newCount: string;
     celebrationTimes: string;
     nextMass: string;
   };
@@ -740,6 +741,7 @@ const en: Translations = {
     messagesLabel: 'Messages',
     newMessages: 'New message',
     somethingNew: 'Something new',
+    newCount: '{{count}} new',
     celebrationTimes: 'Celebration times',
     nextMass: 'Next Mass',
   },
@@ -1390,6 +1392,7 @@ const es: Translations = {
     messagesLabel: 'Mensajes',
     newMessages: 'Mensaje nuevo',
     somethingNew: 'Novedades',
+    newCount: '{{count}} novedades',
     celebrationTimes: 'Horarios de celebraciones',
     nextMass: 'Próxima misa',
   },
@@ -2040,6 +2043,7 @@ const fr: Translations = {
     messagesLabel: 'Messages',
     newMessages: 'Nouveau message',
     somethingNew: 'Du nouveau',
+    newCount: '{{count}} nouveautés',
     celebrationTimes: 'Horaires des célébrations',
     nextMass: 'Prochaine messe',
   },
@@ -2690,6 +2694,7 @@ const va: Translations = {
     messagesLabel: 'Missatges',
     newMessages: 'Missatge nou',
     somethingNew: 'Novetats',
+    newCount: '{{count}} novetats',
     celebrationTimes: 'Horaris de celebracions',
     nextMass: 'Pròxima missa',
   },
@@ -3340,6 +3345,7 @@ const ca: Translations = {
     messagesLabel: 'Missatges',
     newMessages: 'Missatge nou',
     somethingNew: 'Novetats',
+    newCount: '{{count}} novetats',
     celebrationTimes: 'Horaris de celebracions',
     nextMass: 'Pròxima missa',
   },
@@ -3990,6 +3996,7 @@ const gl: Translations = {
     messagesLabel: 'Mensaxes',
     newMessages: 'Mensaxe nova',
     somethingNew: 'Novidades',
+    newCount: '{{count}} novidades',
     celebrationTimes: 'Horarios das celebracións',
     nextMass: 'Próxima misa',
   },
@@ -4641,6 +4648,7 @@ const pt: Translations = {
     messagesLabel: 'Mensagens',
     newMessages: 'Nova mensagem',
     somethingNew: 'Novidades',
+    newCount: '{{count}} novidades',
     celebrationTimes: 'Horários das celebrações',
     nextMass: 'Próxima missa',
   },
