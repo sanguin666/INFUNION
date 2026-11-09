@@ -78,6 +78,12 @@ type UploadedFile = { filename: string; originalname: string; mimetype: string }
 // ones and the dashboard hides behind its "closed" filter.
 const CLOSED = [ServiceRequestStatus.COMPLETED, ServiceRequestStatus.CANCELLED];
 
+// A request waiting on the member: something from the team not opened
+// yet, or a paper still to send while the request is open.
+export function needsMember(v: Pick<RequestSummary, 'unread' | 'status' | 'documentsPending'>): boolean {
+  return v.unread || (!CLOSED.includes(v.status) && v.documentsPending > 0);
+}
+
 @Injectable()
 export class ServiceRequestsService {
   constructor(
@@ -115,6 +121,17 @@ export class ServiceRequestsService {
     });
     const views = rows.map((row) => this.summary(row, 'member'));
     return [...views.filter((v) => !CLOSED.includes(v.status)), ...views.filter((v) => CLOSED.includes(v.status))];
+  }
+
+  /**
+   * Something waiting on the member's side: the team did something they
+   * have not opened yet, or a paper the team asked for on a request still
+   * open has not been sent. Drives the dot on the app's Requests button.
+   */
+  async attentionForMember(poiId: string, userId: string): Promise<{ attention: boolean; count: number }> {
+    const views = await this.listMine(poiId, userId);
+    const count = views.filter((v) => needsMember(v)).length;
+    return { attention: count > 0, count };
   }
 
   /**

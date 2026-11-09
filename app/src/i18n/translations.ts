@@ -91,6 +91,8 @@ export type Translations = {
     readingsLabel: string;
     messagesLabel: string;
     newMessages: string;
+    somethingNew: string;
+    newCount: string;
     celebrationTimes: string;
     nextMass: string;
   };
@@ -738,6 +740,8 @@ const en: Translations = {
     readingsLabel: 'Readings',
     messagesLabel: 'Messages',
     newMessages: 'New message',
+    somethingNew: 'Something new',
+    newCount: '{{count}} new',
     celebrationTimes: 'Celebration times',
     nextMass: 'Next Mass',
   },
@@ -1387,6 +1391,8 @@ const es: Translations = {
     readingsLabel: 'Lecturas',
     messagesLabel: 'Mensajes',
     newMessages: 'Mensaje nuevo',
+    somethingNew: 'Novedades',
+    newCount: '{{count}} novedades',
     celebrationTimes: 'Horarios de celebraciones',
     nextMass: 'Próxima misa',
   },
@@ -2036,6 +2042,8 @@ const fr: Translations = {
     readingsLabel: 'Lectures',
     messagesLabel: 'Messages',
     newMessages: 'Nouveau message',
+    somethingNew: 'Du nouveau',
+    newCount: '{{count}} nouveautés',
     celebrationTimes: 'Horaires des célébrations',
     nextMass: 'Prochaine messe',
   },
@@ -2685,6 +2693,8 @@ const va: Translations = {
     readingsLabel: 'Lectures',
     messagesLabel: 'Missatges',
     newMessages: 'Missatge nou',
+    somethingNew: 'Novetats',
+    newCount: '{{count}} novetats',
     celebrationTimes: 'Horaris de celebracions',
     nextMass: 'Pròxima missa',
   },
@@ -3334,6 +3344,8 @@ const ca: Translations = {
     readingsLabel: 'Lectures',
     messagesLabel: 'Missatges',
     newMessages: 'Missatge nou',
+    somethingNew: 'Novetats',
+    newCount: '{{count}} novetats',
     celebrationTimes: 'Horaris de celebracions',
     nextMass: 'Pròxima missa',
   },
@@ -3983,6 +3995,8 @@ const gl: Translations = {
     readingsLabel: 'Lecturas',
     messagesLabel: 'Mensaxes',
     newMessages: 'Mensaxe nova',
+    somethingNew: 'Novidades',
+    newCount: '{{count}} novidades',
     celebrationTimes: 'Horarios das celebracións',
     nextMass: 'Próxima misa',
   },
@@ -4633,6 +4647,8 @@ const pt: Translations = {
     readingsLabel: 'Leituras',
     messagesLabel: 'Mensagens',
     newMessages: 'Nova mensagem',
+    somethingNew: 'Novidades',
+    newCount: '{{count}} novidades',
     celebrationTimes: 'Horários das celebrações',
     nextMass: 'Próxima missa',
   },

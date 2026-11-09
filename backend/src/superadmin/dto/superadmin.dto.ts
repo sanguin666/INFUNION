@@ -147,4 +147,9 @@ export class AssistantQuestionsQuery {
   @IsOptional()
   @IsUUID()
   poiId?: string;
+
+  // Members in the app, or the team in the dashboard (Seb, 6 Nov 2026).
+  @IsOptional()
+  @IsIn(['member', 'admin'])
+  audience?: 'member' | 'admin';
 }

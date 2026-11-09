@@ -1151,6 +1151,26 @@ export type Translations = {
     linkSaved: string;
     linkError: string;
   };
+  assistant: {
+    open: string;
+    short: string;
+    title: string;
+    subtitle: string;
+    intro: string;
+    s1: string;
+    s2: string;
+    s3: string;
+    note: string;
+    inputLabel: string;
+    send: string;
+    thinking: string;
+    error: string;
+    limit: string;
+    left: string;
+    close: string;
+    restart: string;
+    goTo: string;
+  };
 };
 
 const en: Translations = {
@@ -2273,6 +2293,26 @@ const en: Translations = {
     linkSave: 'Save the link',
     linkSaved: 'Link saved.',
     linkError: 'This link isn’t valid. It must start with https://',
+  },
+  assistant: {
+    open: "Ask the AI assistant",
+    short: "Ask",
+    title: "AI assistant",
+    subtitle: "Help with infunion and your dashboard",
+    intro: "I'm an AI assistant. Ask me how to do something in the dashboard, what a module does, or what your plan includes.",
+    s1: "How do I add an activity every week?",
+    s2: "How do members join our community?",
+    s3: "What does the Complete plan add?",
+    note: "Answers are written by AI and can be wrong. For anything important, write to support@infunion.app.",
+    inputLabel: "Your question",
+    send: "Ask",
+    thinking: "Looking…",
+    error: "The assistant can't answer right now. Try again in a moment.",
+    limit: "You have asked all your questions for today. Come back tomorrow, or write to support@infunion.app.",
+    left: "{{n}} questions left today",
+    close: "Close",
+    restart: "New conversation",
+    goTo: "Open {{page}}",
   },
 };
 
@@ -3397,6 +3437,26 @@ const es: Translations = {
     linkSaved: 'Enlace guardado.',
     linkError: 'El enlace no es válido. Debe empezar por https://',
   },
+  assistant: {
+    open: "Pregunta al asistente de IA",
+    short: "Pregunta",
+    title: "Asistente de IA",
+    subtitle: "Ayuda con infunion y tu panel",
+    intro: "Soy un asistente de IA. Pregúntame cómo hacer algo en el panel, para qué sirve un módulo o qué incluye tu plan.",
+    s1: "¿Cómo añado una actividad cada semana?",
+    s2: "¿Cómo se unen los miembros a nuestra comunidad?",
+    s3: "¿Qué añade el plan Completo?",
+    note: "Las respuestas las escribe una IA y pueden equivocarse. Para algo importante, escribe a support@infunion.app.",
+    inputLabel: "Tu pregunta",
+    send: "Preguntar",
+    thinking: "Buscando…",
+    error: "El asistente no puede responder ahora. Vuelve a intentarlo en un momento.",
+    limit: "Ya has hecho todas tus preguntas de hoy. Vuelve mañana o escribe a support@infunion.app.",
+    left: "Te quedan {{n}} preguntas hoy",
+    close: "Cerrar",
+    restart: "Nueva conversación",
+    goTo: "Abrir {{page}}",
+  },
 };
 
 const fr: Translations = {
@@ -4519,6 +4579,26 @@ const fr: Translations = {
     linkSave: 'Enregistrer le lien',
     linkSaved: 'Lien enregistré.',
     linkError: 'Ce lien n’est pas valide. Il doit commencer par https://',
+  },
+  assistant: {
+    open: "Poser une question à l’assistant IA",
+    short: "Question",
+    title: "Assistant IA",
+    subtitle: "De l’aide sur infunion et votre tableau de bord",
+    intro: "Je suis un assistant IA. Demandez-moi comment faire quelque chose dans le tableau de bord, à quoi sert un module ou ce que comprend votre formule.",
+    s1: "Comment ajouter une activité chaque semaine ?",
+    s2: "Comment les membres rejoignent-ils notre communauté ?",
+    s3: "Qu’apporte la formule Complet ?",
+    note: "Les réponses sont écrites par une IA et peuvent se tromper. Pour toute chose importante, écrivez à support@infunion.app.",
+    inputLabel: "Votre question",
+    send: "Demander",
+    thinking: "Recherche…",
+    error: "L’assistant ne peut pas répondre pour le moment. Réessayez dans un instant.",
+    limit: "Vous avez posé toutes vos questions pour aujourd’hui. Revenez demain, ou écrivez à support@infunion.app.",
+    left: "Encore {{n}} questions aujourd’hui",
+    close: "Fermer",
+    restart: "Nouvelle conversation",
+    goTo: "Ouvrir {{page}}",
   },
 };
 
@@ -5643,6 +5723,26 @@ const va: Translations = {
     linkSaved: 'Enllaç guardat.',
     linkError: 'L’enllaç no és vàlid. Ha de començar per https://',
   },
+  assistant: {
+    open: "Pregunta a l’assistent d’IA",
+    short: "Pregunta",
+    title: "Assistent d’IA",
+    subtitle: "Ajuda amb infunion i el teu tauler",
+    intro: "Soc un assistent d’IA. Pregunta’m com fer alguna cosa en el tauler, per a què servix un mòdul o què inclou el teu pla.",
+    s1: "Com afegisc una activitat cada setmana?",
+    s2: "Com s’unixen els membres a la nostra comunitat?",
+    s3: "Què afig el pla Complet?",
+    note: "Les respostes les escriu una IA i poden equivocar-se. Per a una cosa important, escriu a support@infunion.app.",
+    inputLabel: "La teua pregunta",
+    send: "Preguntar",
+    thinking: "Buscant…",
+    error: "L’assistent no pot respondre ara. Torna-ho a provar d’ací a un moment.",
+    limit: "Ja has fet totes les preguntes de hui. Torna demà o escriu a support@infunion.app.",
+    left: "Et queden {{n}} preguntes hui",
+    close: "Tancar",
+    restart: "Conversa nova",
+    goTo: "Obrir {{page}}",
+  },
 };
 
 const ca: Translations = {
@@ -6765,6 +6865,26 @@ const ca: Translations = {
     linkSave: 'Desar l’enllaç',
     linkSaved: 'Enllaç desat.',
     linkError: 'L’enllaç no és vàlid. Ha de començar per https://',
+  },
+  assistant: {
+    open: "Pregunta a l’assistent d’IA",
+    short: "Pregunta",
+    title: "Assistent d’IA",
+    subtitle: "Ajuda amb infunion i el teu tauler",
+    intro: "Soc un assistent d’IA. Pregunta’m com fer alguna cosa al tauler, per a què serveix un mòdul o què inclou el teu pla.",
+    s1: "Com afegeixo una activitat cada setmana?",
+    s2: "Com s’uneixen els membres a la nostra comunitat?",
+    s3: "Què afegeix el pla Complet?",
+    note: "Les respostes les escriu una IA i es poden equivocar. Per a una cosa important, escriu a support@infunion.app.",
+    inputLabel: "La teva pregunta",
+    send: "Preguntar",
+    thinking: "Cercant…",
+    error: "L’assistent no pot respondre ara. Torna-ho a provar d’aquí a un moment.",
+    limit: "Ja has fet totes les preguntes d’avui. Torna demà o escriu a support@infunion.app.",
+    left: "Et queden {{n}} preguntes avui",
+    close: "Tancar",
+    restart: "Conversa nova",
+    goTo: "Obrir {{page}}",
   },
 };
 
@@ -7889,6 +8009,26 @@ const gl: Translations = {
     linkSaved: 'Ligazón gardada.',
     linkError: 'A ligazón non é válida. Debe comezar por https://',
   },
+  assistant: {
+    open: "Pregunta ao asistente de IA",
+    short: "Pregunta",
+    title: "Asistente de IA",
+    subtitle: "Axuda con infunion e o teu panel",
+    intro: "Son un asistente de IA. Pregúntame como facer algo no panel, para que serve un módulo ou que inclúe o teu plan.",
+    s1: "Como engado unha actividade cada semana?",
+    s2: "Como se unen os membros á nosa comunidade?",
+    s3: "Que engade o plan Completo?",
+    note: "As respostas escríbeas unha IA e poden equivocarse. Para algo importante, escribe a support@infunion.app.",
+    inputLabel: "A túa pregunta",
+    send: "Preguntar",
+    thinking: "Buscando…",
+    error: "O asistente non pode responder agora. Téntao de novo nun momento.",
+    limit: "Xa fixeches todas as preguntas de hoxe. Volve mañá ou escribe a support@infunion.app.",
+    left: "Quédanche {{n}} preguntas hoxe",
+    close: "Pechar",
+    restart: "Nova conversa",
+    goTo: "Abrir {{page}}",
+  },
 };
 
 const pt: Translations = {
@@ -9011,6 +9151,26 @@ const pt: Translations = {
     linkSave: 'Guardar a ligação',
     linkSaved: 'Ligação guardada.',
     linkError: 'A ligação não é válida. Tem de começar por https://',
+  },
+  assistant: {
+    open: "Perguntar ao assistente de IA",
+    short: "Pergunta",
+    title: "Assistente de IA",
+    subtitle: "Ajuda com o infunion e o seu painel",
+    intro: "Sou um assistente de IA. Pergunte-me como fazer algo no painel, para que serve um módulo ou o que inclui o seu plano.",
+    s1: "Como adiciono uma atividade todas as semanas?",
+    s2: "Como é que os membros entram na nossa comunidade?",
+    s3: "O que acrescenta o plano Completo?",
+    note: "As respostas são escritas por uma IA e podem estar erradas. Para algo importante, escreva para support@infunion.app.",
+    inputLabel: "A sua pergunta",
+    send: "Perguntar",
+    thinking: "A procurar…",
+    error: "O assistente não pode responder agora. Tente de novo daqui a pouco.",
+    limit: "Já fez todas as perguntas de hoje. Volte amanhã ou escreva para support@infunion.app.",
+    left: "Restam {{n}} perguntas hoje",
+    close: "Fechar",
+    restart: "Nova conversa",
+    goTo: "Abrir {{page}}",
   },
 };
 

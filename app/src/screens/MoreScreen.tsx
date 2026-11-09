@@ -23,7 +23,7 @@ import {
   PlayIcon,
   PlusIcon,
 } from '../components/icons';
-import { hubMenu, type HubTab } from '../components/PoiShell';
+import { alertWord, CountBadge, hubMenu, type HubTab, type MenuAlerts } from '../components/PoiShell';
 import { type ActiveModule, type ModuleType, type Poi, sendsNotifications } from '../api/types';
 import { cardSurface, colors, minTouchTarget, radii, spacing, themedStyles } from '../theme/theme';
 import { getPoiTheme } from '../theme/poiThemes';
@@ -71,8 +71,9 @@ type Props = {
   onOpenPlaces: () => void;
   onAddPlace: () => void;
   onOpenNotifications: () => void;
-  // The office wrote and Messages has not been opened since.
-  messagesUnread?: boolean;
+  // Modules with something new for the member (an unread message, an
+  // answer to a request): their row says so.
+  alerts?: MenuAlerts;
   // Resolves once the membership is gone and the app has moved on, so
   // this screen knows when to stop showing its spinner.
   onLeavePlace: () => Promise<void>;
@@ -93,7 +94,7 @@ export function MoreScreen({
   onAddPlace,
   onLeavePlace,
   onOpenNotifications,
-  messagesUnread = false,
+  alerts = {},
 }: Props) {
   const { t, language, setLanguage, autoTranslate, setAutoTranslate } = useI18n();
   const insets = useSafeAreaInsets();
@@ -153,7 +154,7 @@ export function MoreScreen({
         <Pressable
           key={row.type}
           accessibilityRole="button"
-          accessibilityLabel={row.type === 'messages' && messagesUnread ? `${row.label}. ${t('hub.newMessages')}` : row.label}
+          accessibilityLabel={alerts[row.type] ? `${row.label}. ${alertWord(row.type, t, alerts[row.type])}` : row.label}
           onPress={() => onSelectTab(row.type)}
           style={styles.row}
         >
@@ -161,11 +162,21 @@ export function MoreScreen({
           <AccessibleText variant="bodyLarge" style={styles.rowLabel} {...ONE_LINE}>
             {row.label}
           </AccessibleText>
-          {row.type === 'messages' && messagesUnread && (
-            <AccessibleText variant="caption" color={colors.primaryStrong} style={styles.newWord}>
-              {t('hub.newMessages')}
-            </AccessibleText>
-          )}
+          {/* Messages spells it out; a counted module (Requests) shows
+              its number, anything else the tab bar's dot, so a longer
+              name keeps its room. */}
+          {(() => {
+            const alert = alerts[row.type];
+            if (!alert) return null;
+            if (typeof alert === 'number') return <CountBadge count={alert} />;
+            if (row.type === 'messages')
+              return (
+                <AccessibleText variant="caption" color={colors.primaryStrong} style={styles.newWord}>
+                  {alertWord(row.type, t)}
+                </AccessibleText>
+              );
+            return <View style={styles.newDot} />;
+          })()}
           <ChevronRightIcon size={22} color={colors.textMuted} />
         </Pressable>
       ))}
@@ -526,6 +537,13 @@ const ONE_LINE = { numberOfLines: 1, adjustsFontSizeToFit: true, minimumFontScal
 const styles = themedStyles(() => ({
   newWord: {
     fontWeight: '700',
+  },
+  // Same dot as on the tab bar's buttons.
+  newDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.primary,
   },
   titleBlock: {
     gap: spacing.xs,

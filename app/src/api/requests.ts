@@ -81,6 +81,17 @@ export function getMyRequests(poiId: string): Promise<RequestSummary[]> {
   return apiGet<RequestSummary[]>(`${base(poiId)}/mine`);
 }
 
+// How many requests wait on the member (an answer not yet read, or a
+// paper still to send): the number on the Requests menu button.
+export function getRequestsAttention(poiId: string): Promise<{ attention: boolean; count?: number }> {
+  return apiGet<{ attention: boolean; count?: number }>(`${base(poiId)}/mine/attention`);
+}
+
+// The same rule on the app's side, for the list it already has.
+export function needsMember(request: RequestSummary): boolean {
+  return request.unread || (request.status !== 'completed' && request.status !== 'cancelled' && request.documentsPending > 0);
+}
+
 /** Opening a request also marks what the office wrote as read. */
 export function getMyRequest(poiId: string, id: string): Promise<RequestDetail> {
   return apiGet<RequestDetail>(`${base(poiId)}/mine/${encodeURIComponent(id)}`);

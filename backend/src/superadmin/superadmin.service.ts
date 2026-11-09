@@ -129,12 +129,12 @@ export class SuperadminService {
    * What members asked the assistant: topics, how many it could answer, and
    * the anonymised questions (kept 90 days, never linked to a member).
    */
-  async assistantQuestions(days: number, poiId: string | null) {
-    const params: unknown[] = [days];
-    let where = `q.created_at >= now() - make_interval(days => $1)`;
+  async assistantQuestions(days: number, poiId: string | null, audience: 'member' | 'admin' = 'member') {
+    const params: unknown[] = [days, audience];
+    let where = `q.created_at >= now() - make_interval(days => $1) AND q.audience = $2`;
     if (poiId) {
       params.push(poiId);
-      where += ` AND q.poi_id = $2`;
+      where += ` AND q.poi_id = $3`;
     }
     const [totals]: { total: number; answered: number; communities: number }[] = await this.data.query(
       `SELECT count(*)::int AS total, count(*) FILTER (WHERE q.answered)::int AS answered,
@@ -164,9 +164,10 @@ export class SuperadminService {
       params,
     );
     const communities: { id: string; name: string }[] = await this.data.query(
-      `SELECT DISTINCT p.id, p.name FROM assistant_questions q JOIN pois p ON p.id = q.poi_id ORDER BY p.name`,
+      `SELECT DISTINCT p.id, p.name FROM assistant_questions q JOIN pois p ON p.id = q.poi_id WHERE q.audience = $1 ORDER BY p.name`,
+      [audience],
     );
-    return { days, ...totals, topics, questions, communityOptions: communities };
+    return { days, audience, ...totals, topics, questions, communityOptions: communities };
   }
 
   // ---------------------------------------------------------------- overview

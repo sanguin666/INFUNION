@@ -29,6 +29,7 @@ import { useAuth } from '../auth/AuthContext';
 import { getActiveModules } from '../api/pois';
 import { getAnnouncements } from '../api/announcements';
 import { getMessagesUnread } from '../api/messages';
+import { getRequestsAttention } from '../api/requests';
 import type { PushTarget } from '../notifications/push';
 import type { ActiveModule, Announcement, CommunityPost, Poi } from '../api/types';
 
@@ -79,6 +80,13 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
   const [assistantLeft, setAssistantLeft] = useState<number | null>(null);
   const assistantPossible = translationAvailable(poi, !!me);
   const messagesLive = !!modules?.some((m) => m.moduleType === 'messages' && m.status !== 'expired' && m.status !== 'cancelled');
+  // The team answered a request, or asked for a paper the member has not
+  // sent yet.
+  const [requestsAttention, setRequestsAttention] = useState(0);
+  const requestsLive = !!modules?.some((m) => m.moduleType === 'requests' && m.status !== 'expired' && m.status !== 'cancelled');
+  // Checked again each time the member moves within Requests or leaves
+  // it, so the dot goes once the answer is read or the paper is sent.
+  const requestsStep = tab === 'requests' ? drilldown.kind : 'away';
 
   useEffect(() => {
     setMessagesUnread(false);
@@ -97,6 +105,27 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
       clearInterval(timer);
     };
   }, [poi.id, me, messagesLive]);
+
+  useEffect(() => {
+    if (!me || !requestsLive) {
+      setRequestsAttention(0);
+      return;
+    }
+    let cancelled = false;
+    const check = () =>
+      getRequestsAttention(poi.id)
+        .then((result) => {
+          // An older server sends only `attention`: a dot, counted as one.
+          if (!cancelled) setRequestsAttention(result.count ?? (result.attention ? 1 : 0));
+        })
+        .catch(() => undefined);
+    check();
+    const timer = setInterval(check, 60_000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [poi.id, me, requestsLive, requestsStep]);
 
   useEffect(() => {
     setAssistantOn(false);
@@ -232,7 +261,7 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
       me={me}
       activeTab={tab}
       onSelectTab={selectTab}
-      messagesUnread={messagesUnread}
+      alerts={{ messages: messagesUnread, requests: requestsAttention }}
       onBack={tab === 'home' && drilldown.kind === 'list' ? undefined : goBack}
       onOpenPlaces={onOpenPlaces}
       onOpenProfile={() => setProfileOpen(true)}
@@ -284,7 +313,7 @@ export function PoiHubScreen({ poi, onOpenPlaces, onAddPlace, onLeavePlace, onSi
           onAddPlace={onAddPlace}
           onLeavePlace={onLeavePlace}
           onOpenNotifications={() => setDrilldown({ kind: 'notifications' })}
-          messagesUnread={messagesUnread}
+          alerts={{ messages: messagesUnread, requests: requestsAttention }}
         />
       )}
 
