@@ -15,6 +15,7 @@ import { PhoneVerificationCode } from './entities/phone-verification-code.entity
 import { SmsSender } from './sms/sms-sender.js';
 import { codeSms } from './sms/code-sms.js';
 import { EmailSender } from './email/email-sender.js';
+import { ContactLinkService } from '../contacts/contact-link.service.js';
 import { codeEmail } from './email/code-email.js';
 import { UsersService } from '../users/users.service.js';
 import { DEMO_MEMBER_PHONE } from '../common/demo/demo-account.js';
@@ -94,6 +95,7 @@ export class PhoneAuthService {
     private readonly smsSender: SmsSender,
     private readonly configService: ConfigService,
     private readonly emailSender: EmailSender,
+    private readonly contactLinks: ContactLinkService,
   ) {}
 
   /** The app's one field: "Email or phone number". */
@@ -139,6 +141,7 @@ export class PhoneAuthService {
     const phone = normalizePhone(rawPhone);
     await this.consumeCode({ phone }, code);
     const user = await this.usersService.findOrCreateByPhone(phone, firstName);
+    await this.contactLinks.linkOnSignIn(user.id, { phone });
     return { accessToken: await this.memberToken(user.id) };
   }
 
@@ -156,6 +159,7 @@ export class PhoneAuthService {
     const email = normalizeEmail(rawEmail);
     await this.consumeCode({ email }, code);
     const user = await this.usersService.findOrCreateByEmail(email, firstName);
+    await this.contactLinks.linkOnSignIn(user.id, { email });
     return { accessToken: await this.memberToken(user.id) };
   }
 

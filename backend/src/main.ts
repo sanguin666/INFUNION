@@ -54,6 +54,8 @@ async function bootstrap() {
   // rawBody keeps the untouched request body around for Stripe's webhook
   // signature check, which is computed over the exact bytes Stripe sent.
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
+  // A community's member list arrives as JSON rows (up to 5,000 of them).
+  app.useBodyParser('json', { limit: '2mb' });
   const configService = app.get(ConfigService);
 
   app.enableCors({ origin: corsOrigins(configService) });

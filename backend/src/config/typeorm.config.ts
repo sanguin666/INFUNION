@@ -38,6 +38,9 @@ import { ContentLanguage } from '../translations/entities/content-language.entit
 import { AssistantUsage } from '../assistant/assistant-usage.entity.js';
 import { AssistantQuestion } from '../assistant/assistant-question.entity.js';
 import { AdminAssistantUsage } from '../assistant/admin-assistant-usage.entity.js';
+import { Contact } from '../contacts/entities/contact.entity.js';
+import { Outreach } from '../contacts/entities/outreach.entity.js';
+import { OutreachRecipient } from '../contacts/entities/outreach-recipient.entity.js';
 
 // Every entity the app maps. Exported so the metadata check in
 // typeorm.config.spec.ts, and data-source.ts (which the TypeORM CLI loads
@@ -45,6 +48,9 @@ import { AdminAssistantUsage } from '../assistant/admin-assistant-usage.entity.j
 // runs with — a CLI missing an entity would generate a migration dropping
 // the table it can't see.
 export const ENTITIES = [
+  Contact,
+  Outreach,
+  OutreachRecipient,
   User,
   Poi,
   UserPoi,

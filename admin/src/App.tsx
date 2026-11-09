@@ -12,6 +12,8 @@ import { LivestreamsPage } from './pages/LivestreamsPage';
 import { PrayerRequestsPage } from './pages/PrayerRequestsPage';
 import { CommunityPage } from './pages/CommunityPage';
 import { MemberConversationPage, MembersPage } from './pages/MembersPage';
+import { ImportMembersPage } from './pages/ImportMembersPage';
+import { WriteToMembersPage } from './pages/WriteToMembersPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { ModulesPage } from './pages/ModulesPage';
 import { MyQrPage } from './pages/MyQrPage';
@@ -118,6 +120,8 @@ function AppRoutes() {
         <Route path="prayer-requests" element={<PrayerRequestsPage />} />
         <Route path="community" element={<CommunityPage />} />
         <Route path="members" element={<MembersPage />} />
+        <Route path="members/import" element={<ImportMembersPage />} />
+        <Route path="members/write" element={<WriteToMembersPage />} />
         <Route path="members/:userId" element={<MemberConversationPage />} />
         <Route path="my-qr" element={<MyQrPage />} />
         <Route path="home-page" element={<PoiHomePage />} />
