@@ -1,4 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { AssistantModel } from '../src/assistant/assistant-model.js';
 import { client, createPlace, createTestApp, resetDatabase, signIn } from './harness.js';
 import { totpCode, totpStep } from '../src/superadmin/totp.js';
 
@@ -303,5 +305,26 @@ describe('Superadmin (e2e)', () => {
     expect(admins.body).toMatchObject({ audience: 'admin', total: 1, answered: 0 });
     expect(admins.body.topics).toEqual([{ topic: 'plans', total: 1, unanswered: 1 }]);
     expect((await client(app).get('/superadmin/assistant-questions').set(as(superToken)).expect(200)).body.total).toBe(3);
+  });
+
+  it("opens a community's AI assistant, keeping its questions out of the team's stats", async () => {
+    const { superToken } = await enrolled();
+    const owner = await signIn(app, '+34600900001', 'Owner');
+    const place = await createPlace(app, owner, 'Carmen');
+    const model = app.get(AssistantModel);
+    Object.defineProperty(model, 'adminEnabled', { get: () => true, configurable: true });
+    (model as unknown as { answerAdmin: () => Promise<unknown> }).answerAdmin = async () => ({
+      answer: 'Go to Events.',
+      actions: [],
+      insight: { topic: 'events', answered: true, question: 'How to add an event?' },
+    });
+    await client(app).get(`/pois/${place.id}/admin-assistant`).set(as(superToken)).expect(200);
+    const res = await client(app)
+      .post(`/pois/${place.id}/admin-assistant`)
+      .set(as(superToken))
+      .send({ turns: [{ role: 'member', text: 'How do I add an event?' }], language: 'en' })
+      .expect(201);
+    expect(res.body.answer).toBe('Go to Events.');
+    expect(await app.get(DataSource).query(`SELECT * FROM assistant_questions`)).toHaveLength(0);
   });
 });
