@@ -277,8 +277,8 @@ export function DashboardLayout() {
         {showPageTip && <PageTip page={section} onDismiss={() => dismissTip(`page:${section}`)} />}
         <Outlet context={{ poiId: poiId!, modules, refreshModules } satisfies DashboardContext} />
       </main>
-      {/* Not while the tour runs, nor for a visiting superadmin. */}
-      {memberPoi && !visiting && !showTour && <AdminAssistant poiId={memberPoi.id} />}
+      {/* Not while the tour runs. A visiting superadmin sees it too (Seb, 9 Nov 2026). */}
+      {poiId && (memberPoi || visiting) && !showTour && <AdminAssistant poiId={poiId} />}
       {showTour && (
         <WelcomeTour firstName={user.firstName} communityName={memberPoi!.name} onDone={() => dismissTip('tour')} />
       )}
