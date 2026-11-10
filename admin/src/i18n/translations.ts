@@ -257,6 +257,14 @@ export type Translations = {
     open: string;
     download: string;
     qrAlt: string;
+    print: string;
+    previewTitle: string;
+    flyerHeadline: string;
+    flyerProject: string;
+    flyerAmount: string;
+    flyerScan: string;
+    flyerMethods: string;
+    madeWith: string;
   };
   donations: {
     title: string;
@@ -1648,6 +1656,14 @@ const en: Translations = {
     open: "Open",
     download: "Download QR code",
     qrAlt: "QR code to pay",
+    print: "Print the poster",
+    previewTitle: "Poster preview",
+    flyerHeadline: "Contribute to {{name}}",
+    flyerProject: "For: {{project}}",
+    flyerAmount: "Suggested amount: {{amount}} €",
+    flyerScan: "Scan with your phone's camera and pay in a few seconds. No app needed.",
+    flyerMethods: "Card, Apple Pay or Google Pay",
+    madeWith: "Made with",
   },
   donations: {
     title: "Fees & contributions",
@@ -3040,6 +3056,14 @@ const es: Translations = {
     open: "Abrir",
     download: "Descargar el código QR",
     qrAlt: "Código QR para pagar",
+    print: "Imprimir el cartel",
+    previewTitle: "Vista previa del cartel",
+    flyerHeadline: "Contribuir a {{name}}",
+    flyerProject: "Para: {{project}}",
+    flyerAmount: "Importe sugerido: {{amount}} €",
+    flyerScan: "Escanea con la cámara del móvil y paga en unos segundos. Sin descargar nada.",
+    flyerMethods: "Tarjeta, Apple Pay o Google Pay",
+    madeWith: "Hecho con",
   },
   donations: {
     title: "Cuotas y aportaciones",
@@ -4432,6 +4456,14 @@ const fr: Translations = {
     open: "Ouvrir",
     download: "Télécharger le QR code",
     qrAlt: "QR code pour payer",
+    print: "Imprimer l'affiche",
+    previewTitle: "Aperçu de l'affiche",
+    flyerHeadline: "Contribuer à {{name}}",
+    flyerProject: "Pour : {{project}}",
+    flyerAmount: "Montant suggéré : {{amount}} €",
+    flyerScan: "Scannez avec l'appareil photo de votre téléphone et payez en quelques secondes. Sans application.",
+    flyerMethods: "Carte, Apple Pay ou Google Pay",
+    madeWith: "Réalisé avec",
   },
   donations: {
     title: "Cotisations et contributions",
@@ -5824,6 +5856,14 @@ const va: Translations = {
     open: "Obrir",
     download: "Descarregar el codi QR",
     qrAlt: "Codi QR per a pagar",
+    print: "Imprimir el cartell",
+    previewTitle: "Vista prèvia del cartell",
+    flyerHeadline: "Contribuir a {{name}}",
+    flyerProject: "Per a: {{project}}",
+    flyerAmount: "Import suggerit: {{amount}} €",
+    flyerScan: "Escaneja amb la càmera del mòbil i paga en uns segons. Sense descarregar res.",
+    flyerMethods: "Targeta, Apple Pay o Google Pay",
+    madeWith: "Fet amb",
   },
   donations: {
     title: "Quotes i aportacions",
@@ -7216,6 +7256,14 @@ const ca: Translations = {
     open: "Obrir",
     download: "Descarregar el codi QR",
     qrAlt: "Codi QR per pagar",
+    print: "Imprimir el cartell",
+    previewTitle: "Previsualització del cartell",
+    flyerHeadline: "Contribuir a {{name}}",
+    flyerProject: "Per a: {{project}}",
+    flyerAmount: "Import suggerit: {{amount}} €",
+    flyerScan: "Escaneja amb la càmera del mòbil i paga en pocs segons. Sense descarregar res.",
+    flyerMethods: "Targeta, Apple Pay o Google Pay",
+    madeWith: "Fet amb",
   },
   donations: {
     title: "Quotes i aportacions",
@@ -8608,6 +8656,14 @@ const gl: Translations = {
     open: "Abrir",
     download: "Descargar o código QR",
     qrAlt: "Código QR para pagar",
+    print: "Imprimir o cartaz",
+    previewTitle: "Vista previa do cartaz",
+    flyerHeadline: "Contribuír a {{name}}",
+    flyerProject: "Para: {{project}}",
+    flyerAmount: "Importe suxerido: {{amount}} €",
+    flyerScan: "Escanea coa cámara do móbil e paga nuns segundos. Sen descargar nada.",
+    flyerMethods: "Tarxeta, Apple Pay ou Google Pay",
+    madeWith: "Feito con",
   },
   donations: {
     title: "Cotas e achegas",
@@ -10000,6 +10056,14 @@ const pt: Translations = {
     open: "Abrir",
     download: "Descarregar o código QR",
     qrAlt: "Código QR para pagar",
+    print: "Imprimir o cartaz",
+    previewTitle: "Pré-visualização do cartaz",
+    flyerHeadline: "Contribuir para {{name}}",
+    flyerProject: "Para: {{project}}",
+    flyerAmount: "Montante sugerido: {{amount}} €",
+    flyerScan: "Digitalize com a câmara do telemóvel e pague em poucos segundos. Sem instalar nada.",
+    flyerMethods: "Cartão, Apple Pay ou Google Pay",
+    madeWith: "Feito com",
   },
   donations: {
     title: "Quotas e contribuições",

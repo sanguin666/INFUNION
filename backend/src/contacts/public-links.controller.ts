@@ -16,8 +16,10 @@ import type { DonationCampaign } from '../donations/entities/donation-campaign.e
 const AMOUNTS = [5, 10, 20, 50];
 
 function amountOf(body: Record<string, unknown>): number | null {
-  const chosen = String(body.amount ?? '');
-  const raw = chosen === 'other' ? String(body.other ?? '') : chosen;
+  // A typed amount wins over a chip: typing clears the chips, so a
+  // filled box is what the payer meant.
+  const typed = String(body.other ?? '').trim();
+  const raw = typed || String(body.amount ?? '');
   const amount = Number(raw.replace(',', '.'));
   if (!Number.isFinite(amount) || amount < 1 || amount > 10000) return null;
   return Math.round(amount * 100) / 100;
@@ -271,7 +273,8 @@ export class PublicLinksController {
     const checkedChip = preset === null ? 10 : presetIsChip ? preset : null;
     const otherValue = preset !== null && !presetIsChip ? String(preset) : '';
     const chips = AMOUNTS.map(
-      (a) => `<label><input type="radio" name="amount" value="${a}"${a === checkedChip ? ' checked' : ''}>${a} €</label>`,
+      (a) =>
+        `<label><input type="radio" name="amount" value="${a}"${a === checkedChip ? ' checked' : ''} onchange="document.getElementById('other').value=''">${a} €</label>`,
     ).join('');
     return publicPage({
       lang,
@@ -281,9 +284,7 @@ export class PublicLinksController {
       body: `<p>${escapeHtml(campaign ? fill(words.giveProject, { project: campaign.title }) : words.giveIntro)}</p>
 <form method="post" action="${escapeHtml(action)}">
 <label style="margin-top:8px">${escapeHtml(words.giveAmount)}</label>
-<div class="amounts">${chips}<label><input type="radio" name="amount" value="other"${otherValue ? ' checked' : ''}>${escapeHtml(words.giveOther)}</label></div>
-<label for="other">${escapeHtml(words.giveOther)} (€)</label>
-<input id="other" name="other" inputmode="decimal" placeholder="25" value="${escapeHtml(otherValue)}" oninput="if(this.value)document.querySelector('input[value=other]').checked=true">
+<div class="amounts">${chips}<input class="other" id="other" name="other" inputmode="decimal" aria-label="${escapeHtml(words.giveOther)} (€)" placeholder="${escapeHtml(words.giveOther)}" value="${escapeHtml(otherValue)}" oninput="if(this.value)document.querySelectorAll('.amounts input[type=radio]').forEach(function(r){r.checked=false})"></div>
 <label for="name">${escapeHtml(words.giveName)}</label>
 <input id="name" name="name" maxlength="80" value="${escapeHtml(name ?? '')}" autocomplete="name">
 <button type="submit">${escapeHtml(words.giveButton)}</button>
