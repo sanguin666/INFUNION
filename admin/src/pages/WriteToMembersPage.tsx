@@ -143,6 +143,12 @@ export function WriteToMembersPage() {
   const date = (iso: string) =>
     new Date(iso).toLocaleDateString(intlLocale(language), { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
   const campaign = campaigns.find((c) => c.id === campaignId);
+  const audienceOptions: [Audience, string][] = [
+    ['notInApp', t('contacts.aud_notInApp')],
+    ['notInvited', t('contacts.aud_notInvited')],
+    ...(kind !== 'invitation' ? [['everyone', t('contacts.aud_everyone')] as [Audience, string]] : []),
+    ...(groups.length > 0 ? [['group', t('contacts.aud_group')] as [Audience, string]] : []),
+  ];
 
   return (
     <div>
@@ -156,91 +162,88 @@ export function WriteToMembersPage() {
 
       <div className="write-layout">
         <div>
-          <div className="card form">
-            <p className="card-title" style={{ marginTop: 0 }}>
-              {t('contacts.whatToSend')}
-            </p>
-            <div className="chips">
-              {KINDS.map((k) => (
-                <button
-                  key={k}
-                  type="button"
-                  className={`chip${kind === k ? ' chip-selected' : ''}`}
-                  aria-pressed={kind === k}
-                  onClick={() => chooseKind(k)}
-                >
-                  {t(`contacts.kind_${k}`)}
-                </button>
-              ))}
-            </div>
-            {locked && (
-              <p className="muted" style={{ fontSize: 15 }}>
-                {t('contacts.notInPlan')}{' '}
-                <Link to="../../modules" relative="path">
-                  {t('contacts.seePlans')}
-                </Link>
+          <div className="card write-form">
+            <section className="write-section">
+              <h3 className="write-title">{t('contacts.whatToSend')}</h3>
+              <div className="write-choices" role="radiogroup" aria-label={t('contacts.whatToSend')}>
+                {KINDS.map((k) => (
+                  <label key={k} className={`write-choice${kind === k ? ' write-choice-on' : ''}`}>
+                    <input type="radio" name="write-kind" checked={kind === k} onChange={() => chooseKind(k)} />
+                    <span>{t(`contacts.kind_${k}`)}</span>
+                  </label>
+                ))}
+              </div>
+              {locked && (
+                <p className="muted" style={{ fontSize: 17, margin: '12px 0 0' }}>
+                  {t('contacts.notInPlan')}{' '}
+                  <Link to="../../modules" relative="path">
+                    {t('contacts.seePlans')}
+                  </Link>
+                </p>
+              )}
+            </section>
+
+            <section className="write-section">
+              <h3 className="write-title">{t('contacts.to')}</h3>
+              <div className="write-choices" role="radiogroup" aria-label={t('contacts.to')}>
+                {audienceOptions.map(([value, label]) => (
+                  <label key={value} className={`write-choice${audience === value ? ' write-choice-on' : ''}`}>
+                    <input type="radio" name="write-audience" checked={audience === value} onChange={() => setAudience(value)} />
+                    <span>{label}</span>
+                  </label>
+                ))}
+              </div>
+              {audience === 'group' && (
+                <label className="write-field">
+                  <span>{t('contacts.groupLabel')}</span>
+                  <select value={group} onChange={(e) => setGroup(e.target.value)}>
+                    <option value="">—</option>
+                    {groups.map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              {kind === 'contribution' && (
+                <label className="write-field">
+                  <span>{t('contacts.project')}</span>
+                  <select value={campaignId} onChange={(e) => setCampaignId(e.target.value)}>
+                    <option value="">{t('contacts.projectNone')}</option>
+                    {campaigns.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.title}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              <p className="write-hint">
+                {size === null
+                  ? ' '
+                  : size.withEmail === 0 && size.withoutEmail === 0
+                    ? t('contacts.nobody')
+                    : t('contacts.audienceSize', { count: size.withEmail }) +
+                      (size.withoutEmail > 0 ? ` ${t('contacts.audienceNoEmail', { count: size.withoutEmail })}` : '')}
               </p>
-            )}
+            </section>
 
-            <label className="form-after-rows">
-              {t('contacts.to')}
-              <select value={audience} onChange={(e) => setAudience(e.target.value as Audience)}>
-                <option value="notInApp">{t('contacts.aud_notInApp')}</option>
-                <option value="notInvited">{t('contacts.aud_notInvited')}</option>
-                {kind !== 'invitation' && <option value="everyone">{t('contacts.aud_everyone')}</option>}
-                {groups.length > 0 && <option value="group">{t('contacts.aud_group')}</option>}
-              </select>
-            </label>
-            {audience === 'group' && (
-              <label>
-                {t('contacts.groupLabel')}
-                <select value={group} onChange={(e) => setGroup(e.target.value)}>
-                  <option value="">—</option>
-                  {groups.map((g) => (
-                    <option key={g} value={g}>
-                      {g}
-                    </option>
-                  ))}
-                </select>
+            <section className="write-section">
+              <label className="write-field">
+                <span>{t('contacts.subject')}</span>
+                <input value={subject} maxLength={160} onChange={(e) => setSubject(e.target.value)} />
               </label>
-            )}
-            <p className="field-hint muted" style={{ fontSize: 15, margin: '4px 0 8px' }}>
-              {size === null
-                ? ' '
-                : size.withEmail === 0 && size.withoutEmail === 0
-                  ? t('contacts.nobody')
-                  : t('contacts.audienceSize', { count: size.withEmail }) +
-                    (size.withoutEmail > 0 ? ` ${t('contacts.audienceNoEmail', { count: size.withoutEmail })}` : '')}
-            </p>
-
-            {kind === 'contribution' && (
-              <label>
-                {t('contacts.project')}
-                <select value={campaignId} onChange={(e) => setCampaignId(e.target.value)}>
-                  <option value="">{t('contacts.projectNone')}</option>
-                  {campaigns.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.title}
-                    </option>
-                  ))}
-                </select>
+              <label className="write-field">
+                <span>{t('contacts.message')}</span>
+                <textarea value={body} rows={8} maxLength={5000} onChange={(e) => setBody(e.target.value)} />
               </label>
-            )}
-            <label>
-              {t('contacts.subject')}
-              <input value={subject} maxLength={160} onChange={(e) => setSubject(e.target.value)} />
-            </label>
-            <label>
-              {t('contacts.message')}
-              <textarea value={body} rows={8} maxLength={5000} onChange={(e) => setBody(e.target.value)} />
-            </label>
-            <p className="field-hint muted" style={{ fontSize: 15, margin: '4px 0 0' }}>
-              {t('contacts.nameHint')}
-            </p>
+              <p className="write-hint">{t('contacts.nameHint')}</p>
+            </section>
 
-            {error && <p className="error-text">{error}</p>}
-            {notice && <p className="muted">{notice}</p>}
-            <div className="card-actions">
+            <section className="write-section write-actions">
+              {error && <p className="error-text">{error}</p>}
+              {notice && <p className="muted">{notice}</p>}
               <button
                 type="button"
                 className="btn btn-primary"
@@ -252,12 +255,12 @@ export function WriteToMembersPage() {
               <button type="button" className="btn" disabled={busy || locked || !subject.trim() || !body.trim()} onClick={() => void test()}>
                 {t('contacts.sendTest')}
               </button>
-            </div>
-            {allowance && (
-              <p className="muted" style={{ fontSize: 15 }}>
-                {t('contacts.allowance', { used: allowance.used.toLocaleString(intlLocale(language)), limit: allowance.limit.toLocaleString(intlLocale(language)) })}
-              </p>
-            )}
+              {allowance && (
+                <p className="write-hint" style={{ textAlign: 'center' }}>
+                  {t('contacts.allowance', { used: allowance.used.toLocaleString(intlLocale(language)), limit: allowance.limit.toLocaleString(intlLocale(language)) })}
+                </p>
+              )}
+            </section>
           </div>
         </div>
 
