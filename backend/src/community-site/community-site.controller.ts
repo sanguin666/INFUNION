@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, Param, ParseUUIDPipe, Patch, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
@@ -16,10 +16,11 @@ export class CommunitySitePublicController {
   constructor(private readonly site: CommunitySiteService) {}
 
   @Get(':slug')
-  @Header('Cache-Control', 'public, max-age=60')
   async page(@Param('slug') slug: string, @Req() req: Request, @Res() res: Response): Promise<void> {
     const data = await this.site.data(slug.toLowerCase());
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    // A short cache for the site; none for "not found", so publishing shows at once.
+    res.setHeader('Cache-Control', data ? 'public, max-age=60' : 'no-store');
     if (!data) {
       res.status(404).send(renderNotFound(req.acceptsLanguages('en', 'es', 'fr', 'ca', 'gl', 'pt') || 'es'));
       return;
