@@ -8,7 +8,14 @@ import { AccessibleText } from '../components/AccessibleText';
 import { Avatar } from '../components/Avatar';
 import { FormCard, FormDivider, FormField, FormRow } from '../components/FormCard';
 import { CameraIcon, CloseIcon } from '../components/icons';
-import { deleteMyAccount, getMyDataLink, updateMyProfile, uploadMyAvatar } from '../api/auth';
+import {
+  confirmLoginToAdd,
+  deleteMyAccount,
+  getMyDataLink,
+  requestLoginToAdd,
+  updateMyProfile,
+  uploadMyAvatar,
+} from '../api/auth';
 import { ApiError, uploadUri } from '../api/client';
 import { getHiddenPeople, showPersonAgain, type HiddenPerson } from '../api/moderation';
 import { PRIVACY_URL, TERMS_URL } from '../legal';
@@ -35,13 +42,13 @@ type Props = {
  * in the app.
  */
 export function ProfileScreen({ visible, onClose, onSignIn, onSignUp }: Props) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const insets = useSafeAreaInsets();
   const { me, applyMe, signOut } = useAuth();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [busy, setBusy] = useState<'name' | 'picture' | null>(null);
+  const [busy, setBusy] = useState<'name' | 'picture' | 'add' | null>(null);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -49,6 +56,12 @@ export function ProfileScreen({ visible, onClose, onSignIn, onSignUp }: Props) {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [hiddenPeople, setHiddenPeople] = useState<HiddenPerson[] | null>(null);
+  // Adding an email or phone number to the account: type it, then the code sent there.
+  const [adding, setAdding] = useState<'email' | 'phone' | null>(null);
+  const [addLogin, setAddLogin] = useState('');
+  const [addCode, setAddCode] = useState('');
+  const [addStage, setAddStage] = useState<'enter' | 'code'>('enter');
+  const [addError, setAddError] = useState<string | null>(null);
 
   // Reopening starts from whatever the session says, so an abandoned edit
   // is never waiting there the next time.
@@ -111,6 +124,53 @@ export function ProfileScreen({ visible, onClose, onSignIn, onSignUp }: Props) {
 
   const nameChanged =
     firstName.trim() !== (me?.firstName ?? '') || lastName.trim() !== (me?.lastName ?? '');
+
+  function startAdd(kind: 'email' | 'phone') {
+    setAdding(kind);
+    setAddLogin('');
+    setAddCode('');
+    setAddStage('enter');
+    setAddError(null);
+  }
+
+  function stopAdd() {
+    setAdding(null);
+    setAddError(null);
+  }
+
+  function addFailure(error: unknown) {
+    if (error instanceof ApiError && error.status === 409) return t('profile.addTaken');
+    if (addStage === 'code' && error instanceof ApiError && (error.status === 400 || error.status === 401)) {
+      return t('profile.addWrongCode');
+    }
+    return t('profile.addError');
+  }
+
+  async function sendAddCode() {
+    setBusy('add');
+    setAddError(null);
+    try {
+      await requestLoginToAdd(addLogin.trim(), language);
+      setAddStage('code');
+    } catch (error) {
+      setAddError(addFailure(error));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function confirmAdd() {
+    setBusy('add');
+    setAddError(null);
+    try {
+      applyMe(await confirmLoginToAdd(addLogin.trim(), addCode.trim()));
+      stopAdd();
+    } catch (error) {
+      setAddError(addFailure(error));
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function saveName() {
     setBusy('name');
@@ -296,6 +356,83 @@ export function ProfileScreen({ visible, onClose, onSignIn, onSignUp }: Props) {
                 disabled={busy !== null || !nameChanged}
                 style={nameChanged ? undefined : styles.buttonDisabled}
               />
+
+              {/* Sign-in details: an email and a phone number, either of which
+                  signs the member in (Seb, 10 Nov 2026). Shown only as text;
+                  a missing one is added with a code sent there first. */}
+              <FormCard>
+                <FormRow label={t('profile.emailLabel')}>
+                  {me?.email ? (
+                    <AccessibleText variant="body">{me.email}</AccessibleText>
+                  ) : (
+                    <AccessibleButton
+                      label={t('profile.addEmail')}
+                      onPress={() => startAdd('email')}
+                      disabled={busy !== null || adding !== null}
+                    />
+                  )}
+                </FormRow>
+                <FormDivider />
+                <FormRow label={t('profile.phoneLabel')}>
+                  {me?.phone ? (
+                    <AccessibleText variant="body">{me.phone}</AccessibleText>
+                  ) : (
+                    <AccessibleButton
+                      label={t('profile.addPhone')}
+                      onPress={() => startAdd('phone')}
+                      disabled={busy !== null || adding !== null}
+                    />
+                  )}
+                </FormRow>
+              </FormCard>
+
+              {adding && (
+                <>
+                  <FormCard>
+                    <FormField
+                      label={adding === 'email' ? t('profile.emailLabel') : t('profile.phoneLabel')}
+                      value={addLogin}
+                      onChangeText={setAddLogin}
+                      editable={addStage === 'enter'}
+                      autoCapitalize="none"
+                      keyboardType={adding === 'email' ? 'email-address' : 'phone-pad'}
+                      returnKeyType="next"
+                    />
+                    {addStage === 'code' && (
+                      <>
+                        <FormDivider />
+                        <FormField
+                          label={t('profile.codeLabel')}
+                          value={addCode}
+                          onChangeText={setAddCode}
+                          keyboardType="number-pad"
+                          maxLength={6}
+                          returnKeyType="done"
+                        />
+                      </>
+                    )}
+                  </FormCard>
+                  <AccessibleButton
+                    label={
+                      busy === 'add'
+                        ? t('profile.saving')
+                        : addStage === 'enter'
+                          ? t('profile.sendCode')
+                          : t('profile.confirmCode')
+                    }
+                    onPress={() => void (addStage === 'enter' ? sendAddCode() : confirmAdd())}
+                    disabled={
+                      busy !== null || !addLogin.trim() || (addStage === 'code' && addCode.trim().length !== 6)
+                    }
+                  />
+                  <AccessibleButton label={t('profile.cancelAdd')} variant="secondary" onPress={stopAdd} disabled={busy !== null} />
+                  {addError && (
+                    <AccessibleText variant="body" color={colors.danger}>
+                      {addError}
+                    </AccessibleText>
+                  )}
+                </>
+              )}
 
               {error && (
                 <AccessibleText variant="body" color={colors.danger}>
