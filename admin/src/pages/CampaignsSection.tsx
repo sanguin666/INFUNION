@@ -15,6 +15,7 @@ import type { Campaign, CampaignAllocationLine } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
 import { Dialog } from '../components/Dialog';
 import { CURRENCY, endOfDayFromDateInput, formatMoney, toDateInputValue } from '../format';
+import { hideFromList, useUndo } from '../components/Undo';
 
 // `photo` is a picture picked but not sent yet: it goes up once the
 // project exists, since it is stored against the project.
@@ -275,14 +276,16 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
     }
   }
 
-  async function handleDelete(id: string) {
+  const undo = useUndo();
+
+  function handleDelete(id: string) {
     setError(null);
-    try {
-      await deleteCampaign(poiId, id);
-      setItems((current) => current?.filter((c) => c.id !== id) ?? null);
-    } catch {
-      setError(t('campaigns.deleteError'));
-    }
+    undo.deleteLater({
+      name: items?.find((c) => c.id === id)?.title,
+      hide: () => hideFromList(setItems, id),
+      commit: () => deleteCampaign(poiId, id),
+      onError: () => setError(t('campaigns.deleteError')),
+    });
   }
 
   return (
