@@ -252,6 +252,18 @@ export class Poi {
   @Column({ name: 'map_visible', default: true })
   mapVisible!: boolean;
 
+  // The community's own small website (Seb, 9 Nov 2026, #195): its
+  // address (/c/<slug>), whether it is published, and the parts the team
+  // chose to leave out.
+  @Column('varchar', { name: 'site_slug', length: 40, nullable: true, unique: true })
+  siteSlug?: string | null;
+
+  @Column({ name: 'site_published', default: false })
+  sitePublished!: boolean;
+
+  @Column('jsonb', { name: 'site_hidden', default: () => "'[]'" })
+  siteHidden!: string[];
+
   // Unique token encoded in the QR code printed on the flyer displayed at
   // the POI's entrance, used for automatic onboarding of a user.
   @Column({ name: 'qr_code_token', unique: true })

@@ -4549,3 +4549,50 @@ select.chip {
   .versions-item { flex-wrap: wrap; }
   .versions-actions { flex-direction: row; align-items: center; width: 100%; justify-content: flex-end; }
 }
+
+/* ---------- Community website (#195) ---------- */
+.site-online {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.site-online .card-title,
+.site-online .muted {
+  margin: 0;
+}
+.site-link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--color-card-border);
+  border-bottom: 1px solid var(--color-card-border);
+}
+.site-link .card-actions {
+  margin: 0;
+}
+.site-url {
+  font-weight: 700;
+  word-break: break-all;
+}
+.site-slug {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+}
+.site-slug-prefix {
+  color: var(--color-text-muted, inherit);
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
+}
+.site-slug input {
+  flex: 1;
+  min-width: 0;
+}

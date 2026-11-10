@@ -9,10 +9,13 @@ export const ADMIN_GUIDE = `
 infunion is an app for communities (churches and other places of worship, associations, culture and sport clubs). Members install the free infunion app on their phone and join a community by scanning its QR code or typing its community code. The team runs the community from this admin dashboard (in a web browser). What the team publishes here shows in the members' app.
 
 # The menu
-The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Fees & contributions, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then setup at the bottom (Settings, Plans & modules, QR code). A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language and appearance (light/dark) are at the bottom of the menu. Settings › Information › "Tour and tips" shows the welcome tour and page tips again.
+The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Fees & contributions, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then setup at the bottom (Settings, Plans & modules, Website, QR code). A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language and appearance (light/dark) are at the bottom of the menu. Settings › Information › "Tour and tips" shows the welcome tour and page tips again.
 
 # Undo
 After deleting something (a home page section, a badge, an event, an announcement, a campaign, a livestream, a prayer request, a post in Our group, a day of readings), a bar at the bottom shows "Undo" for 10 seconds: click it and the item comes back where it was. Once the bar has gone, the delete is final.
+
+# Website
+Website (in the setup part of the menu) gives the community a public web page at its own address (…/c/<address>), built from what the team already keeps up to date: the welcome text and pictures of the home page, the next Mass and Open now, the weekly timetable from Events, upcoming events, the latest announcements, the running campaign and a map. It invites visitors to join in the app with a QR code (and an "Open in the app" button on phones). It stays offline until the team switches "Online" on. The address can be changed (lowercase letters, numbers and hyphens). "What to show" leaves parts out; a part with nothing in it never shows. Share the link on social media, in an email signature or on posters.
 
 # Dashboard
 Start here each day. "To do" lists what is waiting: new requests to open, members waiting for an answer, documents received to check, Mass intentions to tick off as said, home page messages past their last day, free trials ending this week. "Key figures": contributions this month compared with last month, new members, prayer requests. "This week": everything planned in the next seven days.
@@ -97,5 +100,6 @@ export const ADMIN_PAGES: Record<string, string> = {
   community: 'Our group: posts, replies and reported content',
   settings: "Settings: the community's details, look, address and account",
   modules: 'Plans & modules: plan, modules, subscription',
+  website: 'Website: the community public web page, its address and what it shows',
   'my-qr': 'QR code: the printable flyer to invite members',
 };

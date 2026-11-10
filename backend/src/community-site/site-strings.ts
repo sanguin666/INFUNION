@@ -1,0 +1,252 @@
+import { Language } from '../common/enums/language.enum.js';
+
+/** The words of a community's website, in the community's own language. */
+export type SiteStrings = {
+  join: string;
+  joinTitle: string;
+  joinBody: string;
+  openApp: string;
+  openAppNote: string;
+  appStore: string;
+  googlePlay: string;
+  timetable: string;
+  news: string;
+  events: string;
+  visit: string;
+  directions: string;
+  campaign: string;
+  raised: string;
+  raisedOf: string;
+  contribute: string;
+  moreInApp: string;
+  nextMass: string;
+  openNow: string;
+  until: string;
+  closed: string;
+  opens: string;
+  today: string;
+  tomorrow: string;
+  important: string;
+  madeWith: string;
+  notFoundTitle: string;
+  notFoundBody: string;
+};
+
+const en: SiteStrings = {
+  join: 'Join us in the app',
+  joinTitle: 'Join us in the app',
+  joinBody: 'Scan with your phone: news, timetable, requests and contributions in one place. Free.',
+  openApp: 'Open in the app',
+  openAppNote: 'Free on iPhone and Android, it takes you straight to {name}.',
+  appStore: 'Download on the',
+  googlePlay: 'Get it on',
+  timetable: 'Weekly timetable',
+  news: 'Latest news',
+  events: 'Coming up',
+  visit: 'Visit us',
+  directions: 'Directions',
+  campaign: 'Campaign',
+  raised: '{amount} raised',
+  raisedOf: '{amount} raised of {goal}',
+  contribute: 'Contribute in the app',
+  moreInApp: 'More in the app',
+  nextMass: 'Next Mass',
+  openNow: 'Open now',
+  until: 'until {time}',
+  closed: 'Closed now',
+  opens: 'opens {when}',
+  today: 'Today',
+  tomorrow: 'Tomorrow',
+  important: 'Important',
+  madeWith: 'Made with infunion',
+  notFoundTitle: 'This page does not exist',
+  notFoundBody: 'The community may have moved its page or not published it yet.',
+};
+
+const es: SiteStrings = {
+  join: 'Únete en la app',
+  joinTitle: 'Únete en la app',
+  joinBody: 'Escanea con tu móvil: noticias, horarios, solicitudes y aportaciones en un solo lugar. Gratis.',
+  openApp: 'Abrir en la app',
+  openAppNote: 'Gratis en iPhone y Android, te lleva directamente a {name}.',
+  appStore: 'Descárgala en',
+  googlePlay: 'Disponible en',
+  timetable: 'Horario semanal',
+  news: 'Últimas noticias',
+  events: 'Próximamente',
+  visit: 'Visítanos',
+  directions: 'Cómo llegar',
+  campaign: 'Campaña',
+  raised: '{amount} recaudados',
+  raisedOf: '{amount} recaudados de {goal}',
+  contribute: 'Colaborar en la app',
+  moreInApp: 'Más en la app',
+  nextMass: 'Próxima misa',
+  openNow: 'Abierto ahora',
+  until: 'hasta las {time}',
+  closed: 'Cerrado ahora',
+  opens: 'abre {when}',
+  today: 'Hoy',
+  tomorrow: 'Mañana',
+  important: 'Importante',
+  madeWith: 'Hecho con infunion',
+  notFoundTitle: 'Esta página no existe',
+  notFoundBody: 'Puede que la comunidad haya cambiado su página o aún no la haya publicado.',
+};
+
+const fr: SiteStrings = {
+  join: 'Rejoignez-nous dans l’app',
+  joinTitle: 'Rejoignez-nous dans l’app',
+  joinBody: 'Scannez avec votre téléphone : actualités, horaires, demandes et contributions au même endroit. Gratuit.',
+  openApp: 'Ouvrir dans l’app',
+  openAppNote: 'Gratuite sur iPhone et Android, elle vous mène directement à {name}.',
+  appStore: 'Télécharger dans',
+  googlePlay: 'Disponible sur',
+  timetable: 'Horaires de la semaine',
+  news: 'Dernières actualités',
+  events: 'À venir',
+  visit: 'Nous trouver',
+  directions: 'Itinéraire',
+  campaign: 'Campagne',
+  raised: '{amount} collectés',
+  raisedOf: '{amount} collectés sur {goal}',
+  contribute: 'Contribuer dans l’app',
+  moreInApp: 'Plus dans l’app',
+  nextMass: 'Prochaine messe',
+  openNow: 'Ouvert',
+  until: 'jusqu’à {time}',
+  closed: 'Fermé',
+  opens: 'ouvre {when}',
+  today: 'Aujourd’hui',
+  tomorrow: 'Demain',
+  important: 'Important',
+  madeWith: 'Réalisé avec infunion',
+  notFoundTitle: 'Cette page n’existe pas',
+  notFoundBody: 'La communauté a peut-être changé son adresse ou ne l’a pas encore publiée.',
+};
+
+const va: SiteStrings = {
+  join: 'Uneix-te a l’app',
+  joinTitle: 'Uneix-te a l’app',
+  joinBody: 'Escaneja amb el mòbil: notícies, horaris, sol·licituds i aportacions en un sol lloc. Gratis.',
+  openApp: 'Obri en l’app',
+  openAppNote: 'Gratis en iPhone i Android, et porta directament a {name}.',
+  appStore: 'Descarrega-la en',
+  googlePlay: 'Disponible en',
+  timetable: 'Horari setmanal',
+  news: 'Últimes notícies',
+  events: 'Pròximament',
+  visit: 'Visita’ns',
+  directions: 'Com arribar',
+  campaign: 'Campanya',
+  raised: '{amount} recaptats',
+  raisedOf: '{amount} recaptats de {goal}',
+  contribute: 'Col·labora en l’app',
+  moreInApp: 'Més en l’app',
+  nextMass: 'Pròxima missa',
+  openNow: 'Obert ara',
+  until: 'fins a les {time}',
+  closed: 'Tancat ara',
+  opens: 'obri {when}',
+  today: 'Hui',
+  tomorrow: 'Demà',
+  important: 'Important',
+  madeWith: 'Fet amb infunion',
+  notFoundTitle: 'Esta pàgina no existeix',
+  notFoundBody: 'Pot ser que la comunitat haja canviat la pàgina o que encara no l’haja publicada.',
+};
+
+const ca: SiteStrings = {
+  ...va,
+  openApp: 'Obre a l’app',
+  openAppNote: 'Gratis a iPhone i Android, et porta directament a {name}.',
+  join: 'Uneix-te a l’app',
+  opens: 'obre {when}',
+  today: 'Avui',
+  nextMass: 'Propera missa',
+  events: 'Properament',
+  contribute: 'Col·labora a l’app',
+  moreInApp: 'Més a l’app',
+  notFoundTitle: 'Aquesta pàgina no existeix',
+  notFoundBody: 'Potser la comunitat ha canviat la pàgina o encara no l’ha publicada.',
+};
+
+const gl: SiteStrings = {
+  join: 'Únete na app',
+  joinTitle: 'Únete na app',
+  joinBody: 'Escanea co teu móbil: novas, horarios, solicitudes e achegas nun só lugar. De balde.',
+  openApp: 'Abrir na app',
+  openAppNote: 'De balde en iPhone e Android, lévate directamente a {name}.',
+  appStore: 'Descárgaa en',
+  googlePlay: 'Dispoñible en',
+  timetable: 'Horario semanal',
+  news: 'Últimas novas',
+  events: 'Proximamente',
+  visit: 'Visítanos',
+  directions: 'Como chegar',
+  campaign: 'Campaña',
+  raised: '{amount} recadados',
+  raisedOf: '{amount} recadados de {goal}',
+  contribute: 'Colaborar na app',
+  moreInApp: 'Máis na app',
+  nextMass: 'Próxima misa',
+  openNow: 'Aberto agora',
+  until: 'ata as {time}',
+  closed: 'Pechado agora',
+  opens: 'abre {when}',
+  today: 'Hoxe',
+  tomorrow: 'Mañá',
+  important: 'Importante',
+  madeWith: 'Feito con infunion',
+  notFoundTitle: 'Esta páxina non existe',
+  notFoundBody: 'Pode que a comunidade cambiase a súa páxina ou aínda non a publicase.',
+};
+
+const pt: SiteStrings = {
+  join: 'Junte-se a nós na app',
+  joinTitle: 'Junte-se a nós na app',
+  joinBody: 'Leia com o telemóvel: notícias, horários, pedidos e contribuições num só lugar. Grátis.',
+  openApp: 'Abrir na app',
+  openAppNote: 'Grátis em iPhone e Android, leva-o diretamente a {name}.',
+  appStore: 'Descarregar na',
+  googlePlay: 'Disponível no',
+  timetable: 'Horário semanal',
+  news: 'Últimas notícias',
+  events: 'Brevemente',
+  visit: 'Visite-nos',
+  directions: 'Como chegar',
+  campaign: 'Campanha',
+  raised: '{amount} angariados',
+  raisedOf: '{amount} angariados de {goal}',
+  contribute: 'Contribuir na app',
+  moreInApp: 'Mais na app',
+  nextMass: 'Próxima missa',
+  openNow: 'Aberto agora',
+  until: 'até às {time}',
+  closed: 'Fechado agora',
+  opens: 'abre {when}',
+  today: 'Hoje',
+  tomorrow: 'Amanhã',
+  important: 'Importante',
+  madeWith: 'Feito com infunion',
+  notFoundTitle: 'Esta página não existe',
+  notFoundBody: 'A comunidade pode ter mudado a página ou ainda não a ter publicado.',
+};
+
+const ALL: Record<string, SiteStrings> = { en, es, fr, va, ca, gl, pt };
+
+export function siteStrings(language: Language | string | null | undefined): SiteStrings {
+  return ALL[language ?? 'es'] ?? es;
+}
+
+/** The locale dates and money are written in. */
+export function siteLocale(language: Language | string | null | undefined): string {
+  if (language === 'en') return 'en-GB';
+  if (language === 'va' || language === 'ca') return 'ca-ES';
+  if (language === 'pt') return 'pt-PT';
+  return language ?? 'es';
+}
+
+export function fill(text: string, values: Record<string, string>): string {
+  return text.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '');
+}
