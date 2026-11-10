@@ -13,6 +13,7 @@ import {
 import { API_BASE_URL } from '../api/client';
 import type { Announcement } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
+import { hideFromList, useUndo } from '../components/Undo';
 
 // `notify` is null until somebody picks: it then follows `important`.
 type Draft = { title: string; body: string; important: boolean; notify: boolean | null; photo: File | null };
@@ -193,13 +194,15 @@ export function AnnouncementsPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    try {
-      await deleteAnnouncement(poiId, id);
-      setItems((current) => current?.filter((a) => a.id !== id) ?? null);
-    } catch {
-      setError(t('announcements.deleteError'));
-    }
+  const undo = useUndo();
+
+  function handleDelete(id: string) {
+    undo.deleteLater({
+      name: items?.find((entry) => entry.id === id)?.title,
+      hide: () => hideFromList(setItems, id),
+      commit: () => deleteAnnouncement(poiId, id),
+      onError: () => setError(t('announcements.deleteError')),
+    });
   }
 
   return (

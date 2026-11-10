@@ -13,6 +13,7 @@ import {
   type ReadingSection,
 } from '../api/readings';
 import { DestructiveButton } from '../components/DestructiveButton';
+import { useUndo } from '../components/Undo';
 
 const KINDS: ReadingKind[] = ['first', 'psalm', 'second', 'gospel', 'other'];
 
@@ -147,18 +148,31 @@ export function ReadingsPage() {
     }
   }
 
-  async function remove() {
+  const undo = useUndo();
+
+  function remove() {
     setError(null);
-    try {
-      await deleteReading(poiId, selected);
-      setDays((map) => {
-        const next = new Map(map ?? []);
-        next.delete(selected);
-        return next;
-      });
-    } catch {
-      setError(t('readings.saveError'));
-    }
+    const day = selected;
+    undo.deleteLater({
+      hide: () => {
+        let kept: DailyReading | undefined;
+        setDays((map) => {
+          const next = new Map(map ?? []);
+          kept = next.get(day);
+          next.delete(day);
+          return next;
+        });
+        return () =>
+          setDays((map) => {
+            if (kept === undefined) return map;
+            const next = new Map(map ?? []);
+            next.set(day, kept);
+            return next;
+          });
+      },
+      commit: () => deleteReading(poiId, day),
+      onError: () => setError(t('readings.saveError')),
+    });
   }
 
   async function saveLink() {

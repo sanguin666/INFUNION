@@ -1319,6 +1319,13 @@ export type Translations = {
     linkSaved: string;
     linkError: string;
   };
+  undo: {
+    deleted: string;
+    deletedItem: string;
+    undo: string;
+    close: string;
+    failed: string;
+  };
   assistant: {
     open: string;
     short: string;
@@ -2629,6 +2636,13 @@ const en: Translations = {
     linkSave: 'Save the link',
     linkSaved: 'Link saved.',
     linkError: 'This link isn’t valid. It must start with https://',
+  },
+  undo: {
+    deleted: "“{{name}}” deleted",
+    deletedItem: "Deleted",
+    undo: "Undo",
+    close: "Close",
+    failed: "It couldn't be deleted, so it's back.",
   },
   assistant: {
     open: "Ask the AI assistant",
@@ -3941,6 +3955,13 @@ const es: Translations = {
     linkSaved: 'Enlace guardado.',
     linkError: 'El enlace no es válido. Debe empezar por https://',
   },
+  undo: {
+    deleted: "Se ha eliminado «{{name}}»",
+    deletedItem: "Eliminado",
+    undo: "Deshacer",
+    close: "Cerrar",
+    failed: "No se ha podido eliminar; ha vuelto a su sitio.",
+  },
   assistant: {
     open: "Pregunta al asistente de IA",
     short: "Pregunta",
@@ -5251,6 +5272,13 @@ const fr: Translations = {
     linkSave: 'Enregistrer le lien',
     linkSaved: 'Lien enregistré.',
     linkError: 'Ce lien n’est pas valide. Il doit commencer par https://',
+  },
+  undo: {
+    deleted: "« {{name}} » a été supprimé",
+    deletedItem: "Supprimé",
+    undo: "Annuler",
+    close: "Fermer",
+    failed: "La suppression a échoué : l’élément est revenu.",
   },
   assistant: {
     open: "Poser une question à l’assistant IA",
@@ -6563,6 +6591,13 @@ const va: Translations = {
     linkSaved: 'Enllaç guardat.',
     linkError: 'L’enllaç no és vàlid. Ha de començar per https://',
   },
+  undo: {
+    deleted: "S’ha eliminat «{{name}}»",
+    deletedItem: "Eliminat",
+    undo: "Desfés",
+    close: "Tanca",
+    failed: "No s’ha pogut eliminar; ha tornat al seu lloc.",
+  },
   assistant: {
     open: "Pregunta a l’assistent d’IA",
     short: "Pregunta",
@@ -7873,6 +7908,13 @@ const ca: Translations = {
     linkSave: 'Desar l’enllaç',
     linkSaved: 'Enllaç desat.',
     linkError: 'L’enllaç no és vàlid. Ha de començar per https://',
+  },
+  undo: {
+    deleted: "S’ha eliminat «{{name}}»",
+    deletedItem: "Eliminat",
+    undo: "Desfés",
+    close: "Tanca",
+    failed: "No s’ha pogut eliminar; ha tornat al seu lloc.",
   },
   assistant: {
     open: "Pregunta a l’assistent d’IA",
@@ -9185,6 +9227,13 @@ const gl: Translations = {
     linkSaved: 'Ligazón gardada.',
     linkError: 'A ligazón non é válida. Debe comezar por https://',
   },
+  undo: {
+    deleted: "Eliminouse «{{name}}»",
+    deletedItem: "Eliminado",
+    undo: "Desfacer",
+    close: "Pechar",
+    failed: "Non se puido eliminar; volveu ao seu sitio.",
+  },
   assistant: {
     open: "Pregunta ao asistente de IA",
     short: "Pregunta",
@@ -10495,6 +10544,13 @@ const pt: Translations = {
     linkSave: 'Guardar a ligação',
     linkSaved: 'Ligação guardada.',
     linkError: 'A ligação não é válida. Tem de começar por https://',
+  },
+  undo: {
+    deleted: "Eliminou «{{name}}»",
+    deletedItem: "Eliminado",
+    undo: "Anular",
+    close: "Fechar",
+    failed: "Não foi possível eliminar; voltou ao seu lugar.",
   },
   assistant: {
     open: "Perguntar ao assistente de IA",
