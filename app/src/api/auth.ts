@@ -39,6 +39,15 @@ export type Me = {
  * an email address or a phone number, the backend tells them apart.
  * `language` is the one the email is written in.
  */
+/** Adds an email or phone number to the signed-in account: a code goes there first (Seb, 10 Nov 2026). */
+export function requestLoginToAdd(login: string, language: string): Promise<RequestCodeResult> {
+  return apiPost<RequestCodeResult>('/auth/me/login/request', { login, language });
+}
+
+export function confirmLoginToAdd(login: string, code: string): Promise<Me> {
+  return apiPost<Me>('/auth/me/login/confirm', { login, code });
+}
+
 export function requestLoginCode(login: string, language: string): Promise<RequestCodeResult> {
   return apiPost<RequestCodeResult>('/auth/code/request', { login, language });
 }
