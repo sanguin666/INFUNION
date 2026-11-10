@@ -17,6 +17,7 @@ import { WriteToMembersPage } from './pages/WriteToMembersPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { ModulesPage } from './pages/ModulesPage';
 import { MyQrPage } from './pages/MyQrPage';
+import { WebsitePage } from './pages/WebsitePage';
 import { PoiHomePage } from './pages/PoiHomePage';
 import { DonationsPage } from './pages/DonationsPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -123,6 +124,7 @@ function AppRoutes() {
         <Route path="members/import" element={<ImportMembersPage />} />
         <Route path="members/write" element={<WriteToMembersPage />} />
         <Route path="members/:userId" element={<MemberConversationPage />} />
+        <Route path="website" element={<WebsitePage />} />
         <Route path="my-qr" element={<MyQrPage />} />
         <Route path="home-page" element={<PoiHomePage />} />
         <Route path="modules" element={<ModulesPage />} />
