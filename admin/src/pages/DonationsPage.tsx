@@ -6,10 +6,11 @@ import type { DailyTotal, Donation, DonationStats } from '../api/types';
 import { CURRENCY } from '../format';
 import { CampaignsSection } from './CampaignsSection';
 import { ReceiptsSection } from './ReceiptsSection';
+import { PayLinkSection } from './PayLinkSection';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 import { PayoutsBanner, PayoutsLock, PayoutsReadyNote, usePayoutsAccount } from '../components/PayoutsBanner';
 
-const TABS = ['overview', 'campaigns', 'receipts'] as const;
+const TABS = ['overview', 'paylink', 'campaigns', 'receipts'] as const;
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -343,6 +344,7 @@ export function DonationsPage() {
           onChange={setTab}
           tabs={[
             { key: 'overview', label: t('tabs.donationsOverview') },
+            { key: 'paylink', label: t('tabs.donationsPayLink') },
             { key: 'campaigns', label: t('tabs.donationsCampaigns') },
             { key: 'receipts', label: t('tabs.donationsReceipts') },
           ]}
@@ -352,6 +354,10 @@ export function DonationsPage() {
           {error && <p className="error-text">{error}</p>}
           {!error && (!stats || !recent) && <p className="muted">{t('donations.loading')}</p>}
           {stats && recent && <DonationsOverview stats={stats} recent={recent} />}
+        </TabPanel>
+
+        <TabPanel idPrefix="donations" tabKey="paylink" current={tab}>
+          <PayLinkSection poiId={poiId} />
         </TabPanel>
 
         <TabPanel idPrefix="donations" tabKey="campaigns" current={tab}>

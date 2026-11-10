@@ -63,6 +63,7 @@ export type Translations = {
     save: string;
     saving: string;
     donationsOverview: string;
+    donationsPayLink: string;
     donationsCampaigns: string;
     donationsReceipts: string;
     eventsRegular: string;
@@ -243,6 +244,19 @@ export type Translations = {
     navModulesHeading: string;
     navManage: string;
     navAddModules: string;
+  };
+  payLink: {
+    intro: string;
+    forLabel: string;
+    general: string;
+    amountLabel: string;
+    amountHint: string;
+    linkLabel: string;
+    copy: string;
+    copied: string;
+    open: string;
+    download: string;
+    qrAlt: string;
   };
   donations: {
     title: string;
@@ -1440,6 +1454,7 @@ const en: Translations = {
     save: "Save",
     saving: "Saving…",
     donationsOverview: "Overview",
+    donationsPayLink: "Pay link & QR code",
     donationsCampaigns: "Campaigns",
     donationsReceipts: "Tax receipts",
     eventsRegular: "Regular",
@@ -1620,6 +1635,19 @@ const en: Translations = {
     navModulesHeading: "Active modules",
     navManage: "Manage",
     navAddModules: "Add modules",
+  },
+  payLink: {
+    intro: "Share this link or QR code anywhere: on a poster, on a screen, on WhatsApp. People pay straight away by card, Apple Pay or Google Pay, with no app and no account. The money goes to your payment account.",
+    forLabel: "What for",
+    general: "Where it is most needed",
+    amountLabel: "Suggested amount (optional)",
+    amountHint: "People can still change it.",
+    linkLabel: "Your link",
+    copy: "Copy link",
+    copied: "Copied",
+    open: "Open",
+    download: "Download QR code",
+    qrAlt: "QR code to pay",
   },
   donations: {
     title: "Fees & contributions",
@@ -2818,6 +2846,7 @@ const es: Translations = {
     save: "Guardar",
     saving: "Guardando…",
     donationsOverview: "Resumen",
+    donationsPayLink: "Enlace y QR de pago",
     donationsCampaigns: "Campañas",
     donationsReceipts: "Certificados",
     eventsRegular: "Habituales",
@@ -2998,6 +3027,19 @@ const es: Translations = {
     navModulesHeading: "Módulos activos",
     navManage: "Gestionar",
     navAddModules: "Añadir módulos",
+  },
+  payLink: {
+    intro: "Comparte este enlace o código QR donde quieras: en un cartel, en una pantalla, por WhatsApp. Se paga al momento con tarjeta, Apple Pay o Google Pay, sin app y sin cuenta. El dinero llega a vuestra cuenta de pagos.",
+    forLabel: "Para qué",
+    general: "Donde más se necesite",
+    amountLabel: "Importe sugerido (opcional)",
+    amountHint: "Se puede cambiar al pagar.",
+    linkLabel: "Vuestro enlace",
+    copy: "Copiar enlace",
+    copied: "Copiado",
+    open: "Abrir",
+    download: "Descargar el código QR",
+    qrAlt: "Código QR para pagar",
   },
   donations: {
     title: "Cuotas y aportaciones",
@@ -4196,6 +4238,7 @@ const fr: Translations = {
     save: "Enregistrer",
     saving: "Enregistrement…",
     donationsOverview: "Vue d’ensemble",
+    donationsPayLink: "Lien et QR de paiement",
     donationsCampaigns: "Campagnes",
     donationsReceipts: "Reçus fiscaux",
     eventsRegular: "Réguliers",
@@ -4376,6 +4419,19 @@ const fr: Translations = {
     navModulesHeading: "Modules actifs",
     navManage: "Gérer",
     navAddModules: "Ajouter des modules",
+  },
+  payLink: {
+    intro: "Partagez ce lien ou ce QR code partout : sur une affiche, sur un écran, sur WhatsApp. On paie tout de suite par carte, Apple Pay ou Google Pay, sans appli ni compte. L’argent arrive sur votre compte de paiement.",
+    forLabel: "Pour quoi",
+    general: "Là où c’est le plus utile",
+    amountLabel: "Montant suggéré (facultatif)",
+    amountHint: "Il reste modifiable au moment de payer.",
+    linkLabel: "Votre lien",
+    copy: "Copier le lien",
+    copied: "Copié",
+    open: "Ouvrir",
+    download: "Télécharger le QR code",
+    qrAlt: "QR code pour payer",
   },
   donations: {
     title: "Cotisations et contributions",
@@ -5574,6 +5630,7 @@ const va: Translations = {
     save: "Guardar",
     saving: "Guardant…",
     donationsOverview: "Resum",
+    donationsPayLink: "Enllaç i QR de pagament",
     donationsCampaigns: "Campanyes",
     donationsReceipts: "Certificats",
     eventsRegular: "Habituals",
@@ -5754,6 +5811,19 @@ const va: Translations = {
     navModulesHeading: "Mòduls actius",
     navManage: "Gestionar",
     navAddModules: "Afegir mòduls",
+  },
+  payLink: {
+    intro: "Compartiu este enllaç o codi QR on vulgueu: en un cartell, en una pantalla, per WhatsApp. Es paga al moment amb targeta, Apple Pay o Google Pay, sense app i sense compte. Els diners arriben al vostre compte de pagaments.",
+    forLabel: "Per a què",
+    general: "On més es necessite",
+    amountLabel: "Import suggerit (opcional)",
+    amountHint: "Es pot canviar en pagar.",
+    linkLabel: "El vostre enllaç",
+    copy: "Copiar l’enllaç",
+    copied: "Copiat",
+    open: "Obrir",
+    download: "Descarregar el codi QR",
+    qrAlt: "Codi QR per a pagar",
   },
   donations: {
     title: "Quotes i aportacions",
@@ -6952,6 +7022,7 @@ const ca: Translations = {
     save: "Desar",
     saving: "Desant…",
     donationsOverview: "Resum",
+    donationsPayLink: "Enllaç i QR de pagament",
     donationsCampaigns: "Campanyes",
     donationsReceipts: "Certificats",
     eventsRegular: "Habituals",
@@ -7132,6 +7203,19 @@ const ca: Translations = {
     navModulesHeading: "Mòduls actius",
     navManage: "Gestiona",
     navAddModules: "Afegeix mòduls",
+  },
+  payLink: {
+    intro: "Compartiu aquest enllaç o codi QR on vulgueu: en un cartell, en una pantalla, per WhatsApp. Es paga al moment amb targeta, Apple Pay o Google Pay, sense app i sense compte. Els diners arriben al vostre compte de pagaments.",
+    forLabel: "Per a què",
+    general: "On més es necessiti",
+    amountLabel: "Import suggerit (opcional)",
+    amountHint: "Es pot canviar en pagar.",
+    linkLabel: "El vostre enllaç",
+    copy: "Copiar l’enllaç",
+    copied: "Copiat",
+    open: "Obrir",
+    download: "Descarregar el codi QR",
+    qrAlt: "Codi QR per pagar",
   },
   donations: {
     title: "Quotes i aportacions",
@@ -8330,6 +8414,7 @@ const gl: Translations = {
     save: "Gardar",
     saving: "Gardando…",
     donationsOverview: "Resumo",
+    donationsPayLink: "Ligazón e QR de pagamento",
     donationsCampaigns: "Campañas",
     donationsReceipts: "Certificados",
     eventsRegular: "Habituais",
@@ -8510,6 +8595,19 @@ const gl: Translations = {
     navModulesHeading: "Módulos activos",
     navManage: "Xestionar",
     navAddModules: "Engadir módulos",
+  },
+  payLink: {
+    intro: "Comparte esta ligazón ou código QR onde queiras: nun cartel, nunha pantalla, por WhatsApp. Págase ao momento con tarxeta, Apple Pay ou Google Pay, sen app e sen conta. O diñeiro chega á vosa conta de pagamentos.",
+    forLabel: "Para que",
+    general: "Onde máis se precise",
+    amountLabel: "Importe suxerido (opcional)",
+    amountHint: "Pódese cambiar ao pagar.",
+    linkLabel: "A vosa ligazón",
+    copy: "Copiar a ligazón",
+    copied: "Copiado",
+    open: "Abrir",
+    download: "Descargar o código QR",
+    qrAlt: "Código QR para pagar",
   },
   donations: {
     title: "Cotas e achegas",
@@ -9708,6 +9806,7 @@ const pt: Translations = {
     save: "Guardar",
     saving: "A guardar…",
     donationsOverview: "Resumo",
+    donationsPayLink: "Link e QR de pagamento",
     donationsCampaigns: "Campanhas",
     donationsReceipts: "Recibos",
     eventsRegular: "Regulares",
@@ -9888,6 +9987,19 @@ const pt: Translations = {
     navModulesHeading: "Módulos ativos",
     navManage: "Gerir",
     navAddModules: "Adicionar módulos",
+  },
+  payLink: {
+    intro: "Partilhe este link ou código QR onde quiser: num cartaz, num ecrã, no WhatsApp. Paga-se logo com cartão, Apple Pay ou Google Pay, sem app e sem conta. O dinheiro vai para a vossa conta de pagamentos.",
+    forLabel: "Para quê",
+    general: "Onde for mais preciso",
+    amountLabel: "Montante sugerido (opcional)",
+    amountHint: "Pode ser alterado ao pagar.",
+    linkLabel: "O vosso link",
+    copy: "Copiar link",
+    copied: "Copiado",
+    open: "Abrir",
+    download: "Descarregar o código QR",
+    qrAlt: "Código QR para pagar",
   },
   donations: {
     title: "Quotas e contribuições",
