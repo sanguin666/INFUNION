@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /tools/
+Disallow: /register.html
+Disallow: /withdraw.html
+
+Sitemap: https://www.infunion.app/sitemap.xml
