@@ -3,10 +3,10 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { usePoiId } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
-import { useAuth } from '../auth/AuthContext';
 import { API_BASE_URL } from '../api/client';
 import { getCampaigns } from '../api/donations';
-import type { Campaign } from '../api/types';
+import type { Campaign, Poi } from '../api/types';
+import { getPoi } from '../api/pois';
 import {
   getAllowance,
   getAudience,
@@ -34,12 +34,12 @@ const KINDS: OutreachKind[] = ['invitation', 'contribution', 'message'];
 export function WriteToMembersPage() {
   const poiId = usePoiId();
   const { t, language } = useI18n();
-  const { user, refreshUser } = useAuth();
-  // The logo may have been added after sign-in: fetch the places again.
+  // Fetched for this community itself, so superadmins (who are not listed as
+  // admins of it) and a freshly added logo both show up.
+  const [community, setCommunity] = useState<Poi | null>(null);
   useEffect(() => {
-    refreshUser().catch(() => undefined);
-  }, [refreshUser]);
-  const community = user?.adminPois.find((p) => p.id === poiId);
+    getPoi(poiId).then(setCommunity, () => setCommunity(null));
+  }, [poiId]);
   const [params] = useSearchParams();
   const initialKind = (KINDS.includes(params.get('kind') as OutreachKind) ? params.get('kind') : 'invitation') as OutreachKind;
   const [kind, setKind] = useState<OutreachKind>(initialKind);
