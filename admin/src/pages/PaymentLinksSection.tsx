@@ -24,13 +24,14 @@ import { Lockup } from '../components/LogoMark';
  * API at /m/pay/:code.
  */
 
-type Draft = { title: string; campaignId: string; fixed: boolean; amount: string; askName: boolean; endsOn: string };
+type Draft = { title: string; message: string; campaignId: string; fixed: boolean; amount: string; askName: boolean; endsOn: string };
 
-const EMPTY: Draft = { title: '', campaignId: '', fixed: false, amount: '', askName: true, endsOn: '' };
+const EMPTY: Draft = { title: '', message: '', campaignId: '', fixed: false, amount: '', askName: true, endsOn: '' };
 
 function draftOf(link: PaymentLink): Draft {
   return {
     title: link.title,
+    message: link.message ?? '',
     campaignId: link.campaignId ?? '',
     fixed: link.amount !== null,
     amount: link.amount !== null ? String(link.amount).replace('.', ',') : '',
@@ -106,7 +107,7 @@ export function PaymentLinksSection({ poiId }: { poiId: string }) {
       }
       amount = Math.round(amount * 100) / 100;
     }
-    return { title, campaignId: draft.campaignId || null, amount, askName: draft.askName, endsOn: draft.endsOn || null };
+    return { title, message: draft.message.trim() || null, campaignId: draft.campaignId || null, amount, askName: draft.askName, endsOn: draft.endsOn || null };
   }
 
   async function save() {
@@ -124,7 +125,7 @@ export function PaymentLinksSection({ poiId }: { poiId: string }) {
         open(created);
       } else if (current) {
         // The community's own link keeps its name and stays general.
-        const changes = current.isDefault ? { amount: body.amount, askName: body.askName } : body;
+        const changes = current.isDefault ? { message: body.message, amount: body.amount, askName: body.askName } : body;
         const updated = await updatePaymentLink(poiId, current.id, changes);
         setLinks((list) => (list ?? []).map((l) => (l.id === updated.id ? updated : l)));
         open(updated);
@@ -242,6 +243,16 @@ export function PaymentLinksSection({ poiId }: { poiId: string }) {
                 </label>
               </>
             )}
+            <label>
+              {t('paymentLinks.messageLabel')}
+              <textarea
+                value={draft.message}
+                maxLength={300}
+                rows={2}
+                placeholder={translatorFor(poi.language)('paymentLinks.messagePlaceholder')}
+                onChange={(e) => setDraft({ ...draft, message: e.target.value })}
+              />
+            </label>
             <div className="form-row">
               {t('paymentLinks.amountLabel')}
               <div className="paylinks-seg" role="radiogroup">
@@ -365,6 +376,7 @@ function ShareLink({ link, poi }: { link: PaymentLink; poi: Poi }) {
               {poi.pictureUrl && <img src={poi.pictureUrl} alt={poi.name} className="qr-flyer-logo" />}
               <p className="qr-flyer-poi-name">{poi.name}</p>
               <h1 className="qr-flyer-headline">{link.title}</h1>
+              {link.message && <p className="qr-flyer-subtext">{link.message}</p>}
               {(link.amount !== null || link.endsOn) && (
                 <p className="qr-flyer-subtext">
                   {[
