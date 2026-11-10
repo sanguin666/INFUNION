@@ -4753,6 +4753,93 @@ select.chip {
   min-width: 0;
 }
 
+/* Contributions › Payment links */
+.paylinks-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.paylinks-scroll {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+.paylinks-table tbody tr {
+  cursor: pointer;
+}
+.paylinks-table tr.paylinks-selected td {
+  background: var(--color-primary-soft);
+}
+.paylinks-name {
+  font: inherit;
+  font-weight: 700;
+  color: var(--color-text);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.paylinks-tag {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 9px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+  vertical-align: 2px;
+}
+.paylinks-tag-muted {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+.paylinks-seg {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+}
+.paylinks-seg button {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-card-border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  min-height: 40px;
+  cursor: pointer;
+}
+.paylinks-seg button.on {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-strong);
+}
+.paylinks-actions {
+  justify-content: space-between;
+}
+.paylinks-share {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--color-card-border);
+  margin-top: 20px;
+  padding-top: 20px;
+}
+.paylinks-share img {
+  border-radius: 12px;
+  border: 1px solid var(--color-card-border);
+}
+.paylinks-share > div {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
 /* Contributions › Pay link & QR code */
 .paylink-grid {
   display: flex;
