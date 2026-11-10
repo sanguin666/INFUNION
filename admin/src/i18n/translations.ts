@@ -279,6 +279,8 @@ export type Translations = {
     flyerEach: string;
     flyerUntil: string;
     ended: string;
+    messageLabel: string;
+    messagePlaceholder: string;
   };
   payLink: {
     intro: string;
@@ -1714,6 +1716,8 @@ const en: Translations = {
     flyerEach: "{{amount}} per person",
     flyerUntil: "until {{date}}",
     ended: "Ended",
+    messageLabel: "Message to payers (optional)",
+    messagePlaceholder: "Thank you for supporting your community.",
   },
   payLink: {
     intro: "Share this link or QR code anywhere: on a poster, on a screen, on WhatsApp. People pay straight away by card, Apple Pay or Google Pay, with no app and no account. The money goes to your payment account.",
@@ -3150,6 +3154,8 @@ const es: Translations = {
     flyerEach: "{{amount}} por persona",
     flyerUntil: "hasta el {{date}}",
     ended: "Terminado",
+    messageLabel: "Mensaje para quien paga (opcional)",
+    messagePlaceholder: "Gracias por apoyar a tu comunidad.",
   },
   payLink: {
     intro: "Comparte este enlace o código QR donde quieras: en un cartel, en una pantalla, por WhatsApp. Se paga al momento con tarjeta, Apple Pay o Google Pay, sin app y sin cuenta. El dinero llega a vuestra cuenta de pagos.",
@@ -4586,6 +4592,8 @@ const fr: Translations = {
     flyerEach: "{{amount}} par personne",
     flyerUntil: "jusqu'au {{date}}",
     ended: "Terminé",
+    messageLabel: "Message pour le payeur (facultatif)",
+    messagePlaceholder: "Merci de soutenir votre communauté.",
   },
   payLink: {
     intro: "Partagez ce lien ou ce QR code partout : sur une affiche, sur un écran, sur WhatsApp. On paie tout de suite par carte, Apple Pay ou Google Pay, sans appli ni compte. L’argent arrive sur votre compte de paiement.",
@@ -6022,6 +6030,8 @@ const va: Translations = {
     flyerEach: "{{amount}} per persona",
     flyerUntil: "fins al {{date}}",
     ended: "Acabat",
+    messageLabel: "Missatge per a qui paga (opcional)",
+    messagePlaceholder: "Gràcies per donar suport a la teua comunitat.",
   },
   payLink: {
     intro: "Compartiu este enllaç o codi QR on vulgueu: en un cartell, en una pantalla, per WhatsApp. Es paga al moment amb targeta, Apple Pay o Google Pay, sense app i sense compte. Els diners arriben al vostre compte de pagaments.",
@@ -7458,6 +7468,8 @@ const ca: Translations = {
     flyerEach: "{{amount}} per persona",
     flyerUntil: "fins al {{date}}",
     ended: "Acabat",
+    messageLabel: "Missatge per a qui paga (opcional)",
+    messagePlaceholder: "Gràcies per donar suport a la teva comunitat.",
   },
   payLink: {
     intro: "Compartiu aquest enllaç o codi QR on vulgueu: en un cartell, en una pantalla, per WhatsApp. Es paga al moment amb targeta, Apple Pay o Google Pay, sense app i sense compte. Els diners arriben al vostre compte de pagaments.",
@@ -8894,6 +8906,8 @@ const gl: Translations = {
     flyerEach: "{{amount}} por persoa",
     flyerUntil: "ata o {{date}}",
     ended: "Rematado",
+    messageLabel: "Mensaxe para quen paga (opcional)",
+    messagePlaceholder: "Grazas por apoiar a túa comunidade.",
   },
   payLink: {
     intro: "Comparte esta ligazón ou código QR onde queiras: nun cartel, nunha pantalla, por WhatsApp. Págase ao momento con tarxeta, Apple Pay ou Google Pay, sen app e sen conta. O diñeiro chega á vosa conta de pagamentos.",
@@ -10330,6 +10344,8 @@ const pt: Translations = {
     flyerEach: "{{amount}} por pessoa",
     flyerUntil: "até {{date}}",
     ended: "Terminado",
+    messageLabel: "Mensagem para quem paga (opcional)",
+    messagePlaceholder: "Obrigado por apoiar a sua comunidade.",
   },
   payLink: {
     intro: "Partilhe este link ou código QR onde quiser: num cartaz, num ecrã, no WhatsApp. Paga-se logo com cartão, Apple Pay ou Google Pay, sem app e sem conta. O dinheiro vai para a vossa conta de pagamentos.",
