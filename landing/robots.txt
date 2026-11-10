@@ -4,3 +4,4 @@ Disallow: /register.html
 Disallow: /withdraw.html
 
 Sitemap: https://www.infunion.app/sitemap.xml
+Sitemap: https://api.infunion.app/c/sitemap.xml
