@@ -9,7 +9,7 @@ export const ADMIN_GUIDE = `
 infunion is an app for communities (churches and other places of worship, associations, culture and sport clubs). Members install the free infunion app on their phone and join a community by scanning its QR code or typing its community code. The team runs the community from this admin dashboard (in a web browser). What the team publishes here shows in the members' app.
 
 # The menu
-The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Fees & contributions, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then three rows at the bottom (Community website, QR code, Plans & modules). There is no Settings page: the community's colour, information and address are tabs of Home page, and its account is a tab of Dashboard. A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language, appearance (light/dark) and sign out are three small buttons on one row at the very bottom of the menu. Dashboard › Account › "Tour and tips" shows the welcome tour and page tips again.
+The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Fees & contributions, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then three rows at the bottom (Community website, QR code to join, Plans & modules). There is no Settings page: the community's colour, information and address are tabs of Home page, and its account is a tab of Dashboard. A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language, appearance (light/dark) and sign out are three small buttons on one row at the very bottom of the menu. Dashboard › Account › "Tour and tips" shows the welcome tour and page tips again.
 
 # Undo
 After deleting something (a home page section, a badge, an event, an announcement, a campaign, a livestream, a prayer request, a post in Our group, a day of readings), a bar at the bottom shows "Undo" for 10 seconds: click it and the item comes back where it was. Once the bar has gone, the delete is final.
@@ -73,7 +73,7 @@ Three plans. A paid plan can be tried free for one month, once per community. Ye
 - Complete, 59 € a month or 590 € a year: everything in Essentials plus Our group, Livestream, Prayer requests and Daily readings (places of worship), Mass intentions (churches), automatic translation of posts for members, and the AI assistant for members.
 Each module in the plan can be shown or hidden in the app at no cost. "Learn more" on a module shows what the team does in the admin and what members get in the app. Sometimes infunion offers a plan: then no payment is needed.
 
-# QR code
+# QR code to join
 A printable flyer with the community's QR code, an editable headline and welcome message. Print it or save as PDF and put it up where people pass by. Scanning it gets people the app and into the community in seconds. Members can also type the community code.
 
 # The members' app (to explain to members)
@@ -99,5 +99,5 @@ export const ADMIN_PAGES: Record<string, string> = {
   community: 'Our group: posts, replies and reported content',
   modules: 'Plans & modules: plan, modules, subscription',
   website: 'Community website: the community public web page, its address and what it shows',
-  'my-qr': 'QR code: the printable flyer to invite members',
+  'my-qr': 'QR code to join: the printable flyer to invite members',
 };
