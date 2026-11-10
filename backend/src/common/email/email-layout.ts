@@ -190,10 +190,11 @@ function headerRow(header: EmailHeader | undefined, c: typeof EMAIL_COLORS): str
   const name = escapeHtml(header.name);
   // The caller passes a full URL (see communityLogoUrl), or none.
   const logo = header.logoUrl || null;
-  const mark = logo
-    ? `<img src="${escapeHtml(logo)}" alt="${name}" style="display:block;max-height:48px;max-width:240px;border:0;font-family:${FONT};font-size:22px;font-weight:bold;color:${c.ink}">`
-    : `<p style="margin:0;font-size:22px;line-height:1.3;font-weight:bold;color:${c.ink}">${name}</p>`;
-  return `<tr><td style="padding:24px 28px 20px">${mark}</td></tr>`;
+  const title = `<p style="margin:0;font-size:22px;line-height:1.3;font-weight:bold;color:${c.ink}">${name}</p>`;
+  if (!logo) return `<tr><td style="padding:24px 28px 20px">${title}</td></tr>`;
+  // Logo and community name side by side; the name alone when there is no logo.
+  const image = `<img src="${escapeHtml(logo)}" alt="" style="display:block;max-height:48px;max-width:240px;border:0">`;
+  return `<tr><td style="padding:24px 28px 20px"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="vertical-align:middle;padding-right:12px">${image}</td><td style="vertical-align:middle">${title}</td></tr></table></td></tr>`;
 }
 
 /** Wraps content blocks (built with the helpers above) in the shared frame. */
