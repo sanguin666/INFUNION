@@ -7,6 +7,7 @@ import { DestructiveButton } from '../components/DestructiveButton';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 import { ReportedPanel } from '../components/ReportedPanel';
 import { getReportCount } from '../api/moderation';
+import { hideFromList, useUndo } from '../components/Undo';
 
 const TABS = ['requests', 'reported'] as const;
 
@@ -29,13 +30,15 @@ export function PrayerRequestsPage() {
 
   useEffect(load, [poiId]);
 
-  async function handleDelete(id: string) {
-    try {
-      await deletePrayerRequest(poiId, id);
-      setItems((current) => current?.filter((r) => r.id !== id) ?? null);
-    } catch {
-      setError(t('prayerRequests.removeError'));
-    }
+  const undo = useUndo();
+
+  function handleDelete(id: string) {
+    undo.deleteLater({
+      name: undefined,
+      hide: () => hideFromList(setItems, id),
+      commit: () => deletePrayerRequest(poiId, id),
+      onError: () => setError(t('prayerRequests.removeError')),
+    });
   }
 
   return (

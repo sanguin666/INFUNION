@@ -55,6 +55,13 @@ export class ApiError extends Error {
   }
 }
 
+// While the page closes, requests are sent with keepalive so a delete that
+// was waiting for its Undo bar still reaches the server.
+let leaving = false;
+export function markLeaving(): void {
+  leaving = true;
+}
+
 async function request<T>(
   path: string,
   options: { method?: string; body?: BodyInit; headers?: Record<string, string> } = {},
@@ -66,6 +73,7 @@ async function request<T>(
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: options.method ?? 'GET',
     body: options.body,
+    keepalive: leaving || undefined,
     headers: {
       ...options.headers,
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

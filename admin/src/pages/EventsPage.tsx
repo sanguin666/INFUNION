@@ -15,6 +15,7 @@ import {
   toLocalInputValue,
 } from '../format';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
+import { hideFromList, useUndo } from '../components/Undo';
 
 const CATEGORIES: EventCategory[] = ['mass', 'confession', 'adoration', 'prayer', 'office_hours', 'other'];
 // Masses, confessions and adoration only make sense for a church (Seb,
@@ -585,15 +586,16 @@ export function EventsPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    try {
-      await deleteEvent(poiId, id);
-      setItems((current) => current?.filter((e) => e.id !== id) ?? null);
-      if (editingKey === id) closeEditor();
-    } catch {
-      setError(t('events.deleteError'));
-      setFormError(t('events.deleteError'));
-    }
+  const undo = useUndo();
+
+  function handleDelete(id: string) {
+    if (editingKey === id) closeEditor();
+    undo.deleteLater({
+      name: items?.find((e) => e.id === id)?.title,
+      hide: () => hideFromList(setItems, id),
+      commit: () => deleteEvent(poiId, id),
+      onError: () => setError(t('events.deleteError')),
+    });
   }
 
   // "from 1 December · until 30 June · except 12 October", the parts of
