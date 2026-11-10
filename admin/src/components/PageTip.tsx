@@ -17,7 +17,6 @@ export const PAGE_TIPS: Record<string, { tip: TipKey; title: `layout.${keyof Tra
   readings: { tip: 'tip_readings', title: 'layout.navReadings' },
   livestreams: { tip: 'tip_livestreams', title: 'layout.navLivestreams' },
   community: { tip: 'tip_community', title: 'layout.navCommunity' },
-  settings: { tip: 'tip_settings', title: 'layout.navSettings' },
   modules: { tip: 'tip_modules', title: 'layout.navModules' },
   website: { tip: 'tip_website', title: 'layout.navWebsite' },
   'my-qr': { tip: 'tip_myQr', title: 'layout.navMyQr' },

@@ -22,9 +22,9 @@ const TEXTS = {
     mailClosingThen:
       'On {date}, content, photos, messages and the member list are erased. Contributions and tax receipts are kept, locked away, as the law requires.',
     mailClosingExport:
-      'Download all your data from Settings › Account before then.',
+      'Download all your data from Dashboard › Account before then.',
     mailClosingUndo:
-      'Changed your mind? Any admin can keep the community from Settings › Account until {date}.',
+      'Changed your mind? Any admin can keep the community from Dashboard › Account until {date}.',
     mailStaysSubject: '{place} is staying on infunion',
     mailStaysHeading: 'The closing was taken back',
     mailStaysIntro:
@@ -33,7 +33,7 @@ const TEXTS = {
     mailClosedHeading: 'Your community’s account is closed',
     mailClosedIntro:
       'The account of {place} closed on {date}. Its content and member list are erased. Contributions and tax receipts are kept locked away, as the law requires; write to privacy@infunion.app if you need them.',
-    openAdmin: 'Open Settings › Account',
+    openAdmin: 'Open Dashboard › Account',
   },
   es: {
     pushClosingTitle: '{place} deja infunion',
@@ -51,9 +51,9 @@ const TEXTS = {
     mailClosingThen:
       'El {date} se borran los contenidos, las fotos, los mensajes y la lista de miembros. Las aportaciones y certificados se conservan, bloqueados, como exige la ley.',
     mailClosingExport:
-      'Antes de esa fecha, descarga todos tus datos desde Ajustes › Cuenta.',
+      'Antes de esa fecha, descarga todos tus datos desde Panel › Cuenta.',
     mailClosingUndo:
-      '¿Has cambiado de idea? Cualquier administrador puede conservar la comunidad desde Ajustes › Cuenta hasta el {date}.',
+      '¿Has cambiado de idea? Cualquier administrador puede conservar la comunidad desde Panel › Cuenta hasta el {date}.',
     mailStaysSubject: '{place} se queda en infunion',
     mailStaysHeading: 'Se ha anulado el cierre',
     mailStaysIntro:
@@ -62,7 +62,7 @@ const TEXTS = {
     mailClosedHeading: 'La cuenta de tu comunidad está cerrada',
     mailClosedIntro:
       'La cuenta de {place} se cerró el {date}. Sus contenidos y su lista de miembros están borrados. Las aportaciones y certificados se conservan bloqueados, como exige la ley; escribe a privacy@infunion.app si los necesitas.',
-    openAdmin: 'Abrir Ajustes › Cuenta',
+    openAdmin: 'Abrir Panel › Cuenta',
   },
   fr: {
     pushClosingTitle: '{place} quitte infunion',
@@ -80,9 +80,9 @@ const TEXTS = {
     mailClosingThen:
       'Le {date}, les contenus, photos, messages et la liste des membres sont effacés. Les contributions et reçus fiscaux sont conservés, bloqués, comme la loi l’exige.',
     mailClosingExport:
-      'Avant cette date, téléchargez toutes vos données depuis Paramètres › Compte.',
+      'Avant cette date, téléchargez toutes vos données depuis Tableau de bord › Compte.',
     mailClosingUndo:
-      'Vous avez changé d’avis ? N’importe quel administrateur peut garder la communauté depuis Paramètres › Compte jusqu’au {date}.',
+      'Vous avez changé d’avis ? N’importe quel administrateur peut garder la communauté depuis Tableau de bord › Compte jusqu’au {date}.',
     mailStaysSubject: '{place} reste sur infunion',
     mailStaysHeading: 'La fermeture est annulée',
     mailStaysIntro:
@@ -91,7 +91,7 @@ const TEXTS = {
     mailClosedHeading: 'Le compte de votre communauté est fermé',
     mailClosedIntro:
       'Le compte de {place} a fermé le {date}. Ses contenus et sa liste de membres sont effacés. Les contributions et reçus fiscaux sont conservés bloqués, comme la loi l’exige ; écrivez à privacy@infunion.app si vous en avez besoin.',
-    openAdmin: 'Ouvrir Paramètres › Compte',
+    openAdmin: 'Ouvrir Tableau de bord › Compte',
   },
   va: {
     pushClosingTitle: '{place} deixa infunion',
@@ -109,9 +109,9 @@ const TEXTS = {
     mailClosingThen:
       'El {date} s’esborren els continguts, les fotos, els missatges i la llista de membres. Les aportacions i certificats es conserven, bloquejats, com exigix la llei.',
     mailClosingExport:
-      'Abans d’eixa data, descarrega totes les teues dades des d’Ajustos › Compte.',
+      'Abans d’eixa data, descarrega totes les teues dades des de Tauler › Compte.',
     mailClosingUndo:
-      'Has canviat d’idea? Qualsevol administrador pot conservar la comunitat des d’Ajustos › Compte fins al {date}.',
+      'Has canviat d’idea? Qualsevol administrador pot conservar la comunitat des de Tauler › Compte fins al {date}.',
     mailStaysSubject: '{place} es queda a infunion',
     mailStaysHeading: 'S’ha anul·lat el tancament',
     mailStaysIntro:
@@ -120,7 +120,7 @@ const TEXTS = {
     mailClosedHeading: 'El compte de la teua comunitat està tancat',
     mailClosedIntro:
       'El compte de {place} es va tancar el {date}. Els seus continguts i la llista de membres estan esborrats. Les aportacions i certificats es conserven bloquejats, com exigix la llei; escriu a privacy@infunion.app si els necessites.',
-    openAdmin: 'Obrir Ajustos › Compte',
+    openAdmin: 'Obrir Tauler › Compte',
   },
   ca: {
     pushClosingTitle: '{place} deixa infunion',
@@ -138,9 +138,9 @@ const TEXTS = {
     mailClosingThen:
       'El {date} s’esborren els continguts, les fotos, els missatges i la llista de membres. Les aportacions i certificats es conserven, bloquejats, com exigeix la llei.',
     mailClosingExport:
-      'Abans d’aquesta data, descarrega totes les teves dades des d’Ajustos › Compte.',
+      'Abans d’aquesta data, descarrega totes les teves dades des de Tauler › Compte.',
     mailClosingUndo:
-      'Has canviat d’idea? Qualsevol administrador pot conservar la comunitat des d’Ajustos › Compte fins al {date}.',
+      'Has canviat d’idea? Qualsevol administrador pot conservar la comunitat des de Tauler › Compte fins al {date}.',
     mailStaysSubject: '{place} es queda a infunion',
     mailStaysHeading: 'S’ha anul·lat el tancament',
     mailStaysIntro:
@@ -149,7 +149,7 @@ const TEXTS = {
     mailClosedHeading: 'El compte de la teva comunitat està tancat',
     mailClosedIntro:
       'El compte de {place} es va tancar el {date}. Els seus continguts i la llista de membres estan esborrats. Les aportacions i certificats es conserven bloquejats, com exigeix la llei; escriu a privacy@infunion.app si els necessites.',
-    openAdmin: 'Obrir Ajustos › Compte',
+    openAdmin: 'Obrir Tauler › Compte',
   },
   gl: {
     pushClosingTitle: '{place} deixa infunion',
@@ -166,9 +166,9 @@ const TEXTS = {
     mailClosingThen:
       'O {date} bórranse os contidos, as fotos, as mensaxes e a lista de membros. As achegas e os certificados consérvanse, bloqueados, como esixe a lei.',
     mailClosingExport:
-      'Antes desa data, descarga todos os teus datos desde Axustes › Conta.',
+      'Antes desa data, descarga todos os teus datos desde Panel › Conta.',
     mailClosingUndo:
-      'Cambiaches de idea? Calquera administrador pode conservar a comunidade desde Axustes › Conta ata o {date}.',
+      'Cambiaches de idea? Calquera administrador pode conservar a comunidade desde Panel › Conta ata o {date}.',
     mailStaysSubject: '{place} queda en infunion',
     mailStaysHeading: 'Anulouse o peche',
     mailStaysIntro:
@@ -177,7 +177,7 @@ const TEXTS = {
     mailClosedHeading: 'A conta da túa comunidade está pechada',
     mailClosedIntro:
       'A conta de {place} pechou o {date}. Os seus contidos e a lista de membros están borrados. As achegas e os certificados consérvanse bloqueados, como esixe a lei; escribe a privacy@infunion.app se os precisas.',
-    openAdmin: 'Abrir Axustes › Conta',
+    openAdmin: 'Abrir Panel › Conta',
   },
   pt: {
     pushClosingTitle: '{place} vai sair do infunion',
@@ -195,9 +195,9 @@ const TEXTS = {
     mailClosingThen:
       'A {date}, os conteúdos, as fotos, as mensagens e a lista de membros são apagados. As contribuições e os recibos são conservados, bloqueados, como exige a lei.',
     mailClosingExport:
-      'Antes dessa data, descarregue todos os seus dados em Definições › Conta.',
+      'Antes dessa data, descarregue todos os seus dados em Painel › Conta.',
     mailClosingUndo:
-      'Mudou de ideias? Qualquer administrador pode manter a comunidade em Definições › Conta até {date}.',
+      'Mudou de ideias? Qualquer administrador pode manter a comunidade em Painel › Conta até {date}.',
     mailStaysSubject: '{place} fica no infunion',
     mailStaysHeading: 'O encerramento foi anulado',
     mailStaysIntro:
@@ -206,7 +206,7 @@ const TEXTS = {
     mailClosedHeading: 'A conta da sua comunidade está fechada',
     mailClosedIntro:
       'A conta de {place} fechou a {date}. Os conteúdos e a lista de membros foram apagados. As contribuições e os recibos são conservados bloqueados, como exige a lei; escreva para privacy@infunion.app se precisar deles.',
-    openAdmin: 'Abrir Definições › Conta',
+    openAdmin: 'Abrir Painel › Conta',
   },
 } satisfies Record<Language, Record<string, string>>;
 
