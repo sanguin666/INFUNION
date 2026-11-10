@@ -1319,6 +1319,32 @@ export type Translations = {
     linkSaved: string;
     linkError: string;
   };
+  homeVersions: {
+    open: string;
+    liveNamed: string;
+    title: string;
+    intro: string;
+    count: string;
+    liveNow: string;
+    auto: string;
+    summary: string;
+    saved: string;
+    autoSaved: string;
+    use: string;
+    rename: string;
+    renameSave: string;
+    delete: string;
+    nameLabel: string;
+    saveLabel: string;
+    namePlaceholder: string;
+    save: string;
+    savedNotice: string;
+    switched: string;
+    full: string;
+    empty: string;
+    loadError: string;
+    error: string;
+  };
   undo: {
     deleted: string;
     deletedItem: string;
@@ -2636,6 +2662,32 @@ const en: Translations = {
     linkSave: 'Save the link',
     linkSaved: 'Link saved.',
     linkError: 'This link isn’t valid. It must start with https://',
+  },
+  homeVersions: {
+    open: "Versions",
+    liveNamed: "Live: {{name}}",
+    title: "Home page versions",
+    intro: "Keep a page for Christmas or a campaign and bring it back when you need it. Switching keeps the current page, so you can always go back.",
+    count: "{{n}} of {{max}} saved",
+    liveNow: "Live now",
+    auto: "Saved automatically",
+    summary: "{{sections}} sections · {{badges}} badges",
+    saved: "Saved {{date}}",
+    autoSaved: "Kept on {{date}}",
+    use: "Use this version",
+    rename: "Rename",
+    renameSave: "Save",
+    delete: "Delete",
+    nameLabel: "Version name",
+    saveLabel: "Save the current page as a version",
+    namePlaceholder: "e.g. Christmas, Bell tower campaign",
+    save: "Save",
+    savedNotice: "“{{name}}” saved and live.",
+    switched: "“{{name}}” is live. Your previous page is kept in this list.",
+    full: "You have {{n}} versions: delete one to save another.",
+    empty: "No versions yet. Save the current page to start.",
+    loadError: "The versions could not be loaded.",
+    error: "That did not work. Please try again.",
   },
   undo: {
     deleted: "“{{name}}” deleted",
@@ -3955,6 +4007,32 @@ const es: Translations = {
     linkSaved: 'Enlace guardado.',
     linkError: 'El enlace no es válido. Debe empezar por https://',
   },
+  homeVersions: {
+    open: "Versiones",
+    liveNamed: "En uso: {{name}}",
+    title: "Versiones de la página de inicio",
+    intro: "Guarda una página para Navidad o una campaña y recupérala cuando la necesites. Al cambiar se guarda la página actual, así que siempre puedes volver.",
+    count: "{{n}} de {{max}} guardadas",
+    liveNow: "En uso",
+    auto: "Guardada automáticamente",
+    summary: "{{sections}} secciones · {{badges}} etiquetas",
+    saved: "Guardada el {{date}}",
+    autoSaved: "Guardada el {{date}}",
+    use: "Usar esta versión",
+    rename: "Cambiar nombre",
+    renameSave: "Guardar",
+    delete: "Eliminar",
+    nameLabel: "Nombre de la versión",
+    saveLabel: "Guardar la página actual como versión",
+    namePlaceholder: "p. ej. Navidad, Campaña del campanario",
+    save: "Guardar",
+    savedNotice: "«{{name}}» guardada y en uso.",
+    switched: "«{{name}}» está en uso. Tu página anterior queda guardada en esta lista.",
+    full: "Tienes {{n}} versiones: elimina una para guardar otra.",
+    empty: "Aún no hay versiones. Guarda la página actual para empezar.",
+    loadError: "No se han podido cargar las versiones.",
+    error: "No ha funcionado. Inténtalo de nuevo.",
+  },
   undo: {
     deleted: "Se ha eliminado «{{name}}»",
     deletedItem: "Eliminado",
@@ -5272,6 +5350,32 @@ const fr: Translations = {
     linkSave: 'Enregistrer le lien',
     linkSaved: 'Lien enregistré.',
     linkError: 'Ce lien n’est pas valide. Il doit commencer par https://',
+  },
+  homeVersions: {
+    open: "Versions",
+    liveNamed: "En ligne : {{name}}",
+    title: "Versions de la page d’accueil",
+    intro: "Gardez une page pour Noël ou une campagne et remettez-la quand vous en avez besoin. En changeant, la page actuelle est gardée : vous pouvez toujours revenir.",
+    count: "{{n}} sur {{max}} enregistrées",
+    liveNow: "En ligne",
+    auto: "Gardée automatiquement",
+    summary: "{{sections}} sections · {{badges}} badges",
+    saved: "Enregistrée le {{date}}",
+    autoSaved: "Gardée le {{date}}",
+    use: "Utiliser cette version",
+    rename: "Renommer",
+    renameSave: "Enregistrer",
+    delete: "Supprimer",
+    nameLabel: "Nom de la version",
+    saveLabel: "Enregistrer la page actuelle comme version",
+    namePlaceholder: "ex. Noël, Campagne du clocher",
+    save: "Enregistrer",
+    savedNotice: "« {{name}} » est enregistrée et en ligne.",
+    switched: "« {{name}} » est en ligne. Votre page précédente est gardée dans cette liste.",
+    full: "Vous avez {{n}} versions : supprimez-en une pour en enregistrer une autre.",
+    empty: "Pas encore de version. Enregistrez la page actuelle pour commencer.",
+    loadError: "Les versions n’ont pas pu être chargées.",
+    error: "Cela n’a pas fonctionné. Réessayez.",
   },
   undo: {
     deleted: "« {{name}} » a été supprimé",
@@ -6591,6 +6695,32 @@ const va: Translations = {
     linkSaved: 'Enllaç guardat.',
     linkError: 'L’enllaç no és vàlid. Ha de començar per https://',
   },
+  homeVersions: {
+    open: "Versions",
+    liveNamed: "En ús: {{name}}",
+    title: "Versions de la pàgina d’inici",
+    intro: "Guarda una pàgina per a Nadal o una campanya i recupera-la quan la necessites. En canviar es guarda la pàgina actual, així que sempre pots tornar.",
+    count: "{{n}} de {{max}} guardades",
+    liveNow: "En ús",
+    auto: "Guardada automàticament",
+    summary: "{{sections}} seccions · {{badges}} etiquetes",
+    saved: "Guardada el {{date}}",
+    autoSaved: "Guardada el {{date}}",
+    use: "Usa esta versió",
+    rename: "Canvia el nom",
+    renameSave: "Guarda",
+    delete: "Elimina",
+    nameLabel: "Nom de la versió",
+    saveLabel: "Guarda la pàgina actual com a versió",
+    namePlaceholder: "p. ex. Nadal, Campanya del campanar",
+    save: "Guarda",
+    savedNotice: "«{{name}}» guardada i en ús.",
+    switched: "«{{name}}» està en ús. La pàgina anterior queda guardada en esta llista.",
+    full: "Tens {{n}} versions: elimina’n una per a guardar-ne una altra.",
+    empty: "Encara no hi ha versions. Guarda la pàgina actual per a començar.",
+    loadError: "No s’han pogut carregar les versions.",
+    error: "No ha funcionat. Torna-ho a provar.",
+  },
   undo: {
     deleted: "S’ha eliminat «{{name}}»",
     deletedItem: "Eliminat",
@@ -7908,6 +8038,32 @@ const ca: Translations = {
     linkSave: 'Desar l’enllaç',
     linkSaved: 'Enllaç desat.',
     linkError: 'L’enllaç no és vàlid. Ha de començar per https://',
+  },
+  homeVersions: {
+    open: "Versions",
+    liveNamed: "En ús: {{name}}",
+    title: "Versions de la pàgina d’inici",
+    intro: "Desa una pàgina per a Nadal o una campanya i recupera-la quan la necessitis. En canviar es desa la pàgina actual, així que sempre pots tornar.",
+    count: "{{n}} de {{max}} desades",
+    liveNow: "En ús",
+    auto: "Desada automàticament",
+    summary: "{{sections}} seccions · {{badges}} etiquetes",
+    saved: "Desada el {{date}}",
+    autoSaved: "Desada el {{date}}",
+    use: "Fes servir aquesta versió",
+    rename: "Canvia el nom",
+    renameSave: "Desa",
+    delete: "Elimina",
+    nameLabel: "Nom de la versió",
+    saveLabel: "Desa la pàgina actual com a versió",
+    namePlaceholder: "p. ex. Nadal, Campanya del campanar",
+    save: "Desa",
+    savedNotice: "«{{name}}» desada i en ús.",
+    switched: "«{{name}}» està en ús. La pàgina anterior queda desada en aquesta llista.",
+    full: "Tens {{n}} versions: elimina’n una per desar-ne una altra.",
+    empty: "Encara no hi ha versions. Desa la pàgina actual per començar.",
+    loadError: "No s’han pogut carregar les versions.",
+    error: "No ha funcionat. Torna-ho a provar.",
   },
   undo: {
     deleted: "S’ha eliminat «{{name}}»",
@@ -9227,6 +9383,32 @@ const gl: Translations = {
     linkSaved: 'Ligazón gardada.',
     linkError: 'A ligazón non é válida. Debe comezar por https://',
   },
+  homeVersions: {
+    open: "Versións",
+    liveNamed: "En uso: {{name}}",
+    title: "Versións da páxina de inicio",
+    intro: "Garda unha páxina para o Nadal ou unha campaña e recupéraa cando a necesites. Ao cambiar gárdase a páxina actual, así que sempre podes volver.",
+    count: "{{n}} de {{max}} gardadas",
+    liveNow: "En uso",
+    auto: "Gardada automaticamente",
+    summary: "{{sections}} seccións · {{badges}} etiquetas",
+    saved: "Gardada o {{date}}",
+    autoSaved: "Gardada o {{date}}",
+    use: "Usar esta versión",
+    rename: "Cambiar nome",
+    renameSave: "Gardar",
+    delete: "Eliminar",
+    nameLabel: "Nome da versión",
+    saveLabel: "Gardar a páxina actual como versión",
+    namePlaceholder: "p. ex. Nadal, Campaña do campanario",
+    save: "Gardar",
+    savedNotice: "«{{name}}» gardada e en uso.",
+    switched: "«{{name}}» está en uso. A páxina anterior queda gardada nesta lista.",
+    full: "Tes {{n}} versións: elimina unha para gardar outra.",
+    empty: "Aínda non hai versións. Garda a páxina actual para comezar.",
+    loadError: "Non se puideron cargar as versións.",
+    error: "Non funcionou. Téntao de novo.",
+  },
   undo: {
     deleted: "Eliminouse «{{name}}»",
     deletedItem: "Eliminado",
@@ -10544,6 +10726,32 @@ const pt: Translations = {
     linkSave: 'Guardar a ligação',
     linkSaved: 'Ligação guardada.',
     linkError: 'A ligação não é válida. Tem de começar por https://',
+  },
+  homeVersions: {
+    open: "Versões",
+    liveNamed: "Em uso: {{name}}",
+    title: "Versões da página inicial",
+    intro: "Guarde uma página para o Natal ou uma campanha e recupere-a quando precisar. Ao mudar, a página atual fica guardada, por isso pode sempre voltar.",
+    count: "{{n}} de {{max}} guardadas",
+    liveNow: "Em uso",
+    auto: "Guardada automaticamente",
+    summary: "{{sections}} secções · {{badges}} etiquetas",
+    saved: "Guardada a {{date}}",
+    autoSaved: "Guardada a {{date}}",
+    use: "Usar esta versão",
+    rename: "Mudar o nome",
+    renameSave: "Guardar",
+    delete: "Eliminar",
+    nameLabel: "Nome da versão",
+    saveLabel: "Guardar a página atual como versão",
+    namePlaceholder: "p. ex. Natal, Campanha do campanário",
+    save: "Guardar",
+    savedNotice: "«{{name}}» guardada e em uso.",
+    switched: "«{{name}}» está em uso. A página anterior fica guardada nesta lista.",
+    full: "Tem {{n}} versões: elimine uma para guardar outra.",
+    empty: "Ainda não há versões. Guarde a página atual para começar.",
+    loadError: "Não foi possível carregar as versões.",
+    error: "Não funcionou. Tente novamente.",
   },
   undo: {
     deleted: "Eliminou «{{name}}»",

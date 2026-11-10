@@ -20,6 +20,7 @@ import type { PoiBadge } from '../api/types';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 import { BottomMenuPanel, initialMenuOrder } from './MenuOrder';
 import { hideFromList, useUndo } from '../components/Undo';
+import { HomeVersionsButton } from '../components/HomeVersions';
 
 const HOME_TABS = ['badges', 'sections', 'menu'] as const;
 
@@ -56,7 +57,26 @@ const ADDABLE_BLOCKS: PageBlockType[] = [
 
 const LIVE_STATUSES = new Set(['trial', 'active']);
 
+/**
+ * Switching to another saved version (#194) replaces the whole page, so
+ * the editor starts again from what the server now has.
+ */
 export function PoiHomePage() {
+  const [round, setRound] = useState(0);
+  const [switched, setSwitched] = useState<string | null>(null);
+  return (
+    <HomePageEditor
+      key={round}
+      switched={switched}
+      onReload={(message) => {
+        setSwitched(message);
+        setRound((n) => n + 1);
+      }}
+    />
+  );
+}
+
+function HomePageEditor({ onReload, switched }: { onReload: (message: string) => void; switched: string | null }) {
   const poiId = usePoiId();
   const { t } = useI18n();
   const [blocks, setBlocks] = useState<PoiPageBlock[] | null>(null);
@@ -248,7 +268,15 @@ export function PoiHomePage() {
     <div className="page-with-preview">
       <div className="page-editor">
         <h2>{t('homePage.title')}</h2>
-        <p className="muted">{t('homePage.subtitle')}</p>
+        <div className="page-subtitle-row">
+          <p className="muted">{t('homePage.subtitle')}</p>
+          <HomeVersionsButton poiId={poiId} onSwitched={onReload} beforeChange={undo.flush} />
+        </div>
+        {switched && (
+          <p className="versions-notice" role="status" style={{ marginBottom: 16 }}>
+            {switched}
+          </p>
+        )}
 
         <TabBar
           idPrefix="home"
