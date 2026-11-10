@@ -9,8 +9,6 @@ type AuthState = {
   /** Signs in and hands back who signed in. */
   login: (email: string, password: string) => Promise<CurrentUser>;
   logout: () => void;
-  /** Fetches the signed-in user again, so places changed since sign-in (a new logo) show up. */
-  refreshUser: () => Promise<void>;
   /** The welcome tour and page tips: seen once, on the account. */
   seenTip: (key: string) => boolean;
   dismissTip: (key: string) => void;
@@ -43,10 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return me;
   }, []);
 
-  const refreshUser = useCallback(async () => {
-    setUser(await getCurrentUser());
-  }, []);
-
   const logout = useCallback(() => {
     setSuperadminSession(null);
     setToken(null);
@@ -70,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, seenTip, dismissTip, resetTips }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, seenTip, dismissTip, resetTips }}>
       {children}
     </AuthContext.Provider>
   );
