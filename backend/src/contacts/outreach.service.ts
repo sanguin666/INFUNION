@@ -5,6 +5,7 @@ import { In, IsNull, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { Contact } from './entities/contact.entity.js';
 import { Outreach, OutreachKind } from './entities/outreach.entity.js';
 import { OutreachRecipient } from './entities/outreach-recipient.entity.js';
+import { ContactsService } from './contacts.service.js';
 import { User } from '../users/entities/user.entity.js';
 import { Poi } from '../pois/entities/poi.entity.js';
 import { PlanTier } from '../common/enums/plan-tier.enum.js';
@@ -86,6 +87,7 @@ export class OutreachService {
     @InjectRepository(Donation) private readonly donations: Repository<Donation>,
     private readonly emailSender: EmailSender,
     private readonly config: ConfigService,
+    private readonly contactsService: ContactsService,
   ) {}
 
   async allowance(poiId: string): Promise<Allowance> {
@@ -412,6 +414,8 @@ export class OutreachService {
     dto: Pick<OutreachDto, 'kind' | 'audience' | 'group' | 'contactIds'>,
     strict: boolean,
   ): Promise<Contact[]> {
+    // Members who joined in the app are on the list too (Seb, 10 Nov 2026).
+    await this.contactsService.syncMemberContacts(poiId);
     const all = await this.contacts.find({
       where: { poi: { id: poiId }, unsubscribedAt: IsNull() },
       relations: { user: true },
