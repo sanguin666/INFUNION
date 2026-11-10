@@ -6,7 +6,7 @@ import type { DailyTotal, Donation, DonationStats } from '../api/types';
 import { CURRENCY } from '../format';
 import { CampaignsSection } from './CampaignsSection';
 import { ReceiptsSection } from './ReceiptsSection';
-import { PayLinkSection } from './PayLinkSection';
+import { PaymentLinksSection } from './PaymentLinksSection';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 import { PayoutsBanner, PayoutsLock, PayoutsReadyNote, usePayoutsAccount } from '../components/PayoutsBanner';
 
@@ -281,12 +281,14 @@ function purposeLabel(donation: Donation, t: ReturnType<typeof useI18n>['t']): s
     case 'collection':
       return t('donations.purposeCollection');
     case 'campaign':
+      if (donation.paymentLinkTitle) return t('donations.purposeLink', { title: donation.paymentLinkTitle });
       return donation.campaign
         ? t('donations.purposeCampaignNamed', { title: donation.campaign.title })
         : t('donations.purposeCampaign');
     case 'mass_intention':
       return t('donations.purposeMassIntention');
     default:
+      if (donation.paymentLinkTitle) return t('donations.purposeLink', { title: donation.paymentLinkTitle });
       return t('donations.purposeGeneral');
   }
 }
@@ -357,7 +359,7 @@ export function DonationsPage() {
         </TabPanel>
 
         <TabPanel idPrefix="donations" tabKey="paylink" current={tab}>
-          <PayLinkSection poiId={poiId} />
+          <PaymentLinksSection poiId={poiId} />
         </TabPanel>
 
         <TabPanel idPrefix="donations" tabKey="campaigns" current={tab}>

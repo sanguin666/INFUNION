@@ -123,6 +123,11 @@ export class Donation {
   @Column({ name: 'contact_id', type: 'uuid', nullable: true })
   contactId?: string | null;
 
+  // The payment link (and its QR code) the gift was made through, when
+  // it came from one (Seb, 10 Nov 2026).
+  @Column({ name: 'payment_link_id', type: 'uuid', nullable: true })
+  paymentLinkId?: string | null;
+
   // A monthly gift. The row that started it has no parent; each later
   // month Stripe charges is a row of its own pointing back at it, so every
   // payment still lands on the day it was made in the totals.

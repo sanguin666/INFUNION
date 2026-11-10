@@ -97,6 +97,10 @@ export type CheckoutOptions = {
   purpose?: DonationPurpose;
   // A gift from a contribution link sent outside the app (contacts).
   contactId?: string;
+  // A gift made through a payment link or its QR code.
+  paymentLinkId?: string;
+  // What the payer reads on Stripe's page, when not the usual words.
+  productName?: string;
   // Where Stripe sends the payer back to, when not the app's own page.
   returnPath?: string;
 };
@@ -293,6 +297,7 @@ export class DonationsService {
       message,
       donor: options.donorUserId ? ({ id: options.donorUserId } as User) : null,
       contactId: options.contactId ?? null,
+      paymentLinkId: options.paymentLinkId ?? null,
       recurring,
       wantsReceipt: dto.wantsReceipt === true,
       ...(dto.wantsReceipt
@@ -325,7 +330,7 @@ export class DonationsService {
     try {
       session = await this.stripeService.createCheckoutSession({
         amount: dto.amount,
-        productName: productName(poi, purpose, recurring, campaign?.title ?? null),
+        productName: options.productName ?? productName(poi, purpose, recurring, campaign?.title ?? null),
         description: message,
         donationId: donation.id,
         poiId: poi.id,
