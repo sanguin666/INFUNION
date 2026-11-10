@@ -207,6 +207,7 @@ export type Translations = {
     tip_settings: string;
     tip_modules: string;
     tip_myQr: string;
+    tip_website: string;
   };
   layout: {
     managing: string;
@@ -229,6 +230,7 @@ export type Translations = {
     navPrayerRequests: string;
     navCommunity: string;
     navMyQr: string;
+    navWebsite: string;
     navModules: string;
     navHomePage: string;
     navDashboard: string;
@@ -1345,6 +1347,33 @@ export type Translations = {
     loadError: string;
     error: string;
   };
+  site: {
+    title: string;
+    subtitle: string;
+    addressLabel: string;
+    copy: string;
+    copied: string;
+    open: string;
+    published: string;
+    publishedOn: string;
+    publishedOff: string;
+    slugHint: string;
+    slugSave: string;
+    slugInvalid: string;
+    slugTaken: string;
+    showTitle: string;
+    showHint: string;
+    part_home: string;
+    part_badges: string;
+    part_timetable: string;
+    part_events: string;
+    part_news: string;
+    part_campaign: string;
+    part_map: string;
+    shareTitle: string;
+    shareHint: string;
+    error: string;
+  },
   undo: {
     deleted: string;
     deletedItem: string;
@@ -1550,6 +1579,7 @@ const en: Translations = {
     tip_settings: "Your community's details: name, language, colour, logo and address. What you change here shows in the app straight away.",
     tip_modules: "Your plan and the modules it includes. Show or hide each module, or change plan whenever you like.",
     tip_myQr: "Print this flyer and put it up where people pass by. Scanning the code gets them the app and into your community in seconds.",
+    tip_website: "Your community's public page. Switch it on, then share the link: visitors see your news and timetable and are invited to join you in the app.",
   },
   layout: {
     managing: 'Managing',
@@ -1572,6 +1602,7 @@ const en: Translations = {
     navPrayerRequests: "Prayer requests",
     navCommunity: "Our group",
     navMyQr: "QR code",
+    navWebsite: "Website",
     navModules: "Plans & modules",
     navHomePage: 'Home page',
     navDashboard: 'Dashboard',
@@ -2689,6 +2720,33 @@ const en: Translations = {
     loadError: "The versions could not be loaded.",
     error: "That did not work. Please try again.",
   },
+  site: {
+    title: "Website",
+    subtitle: "A public page for your community, built from what you already keep up to date in the app. It invites visitors to join you in the app.",
+    addressLabel: "Address",
+    copy: "Copy link",
+    copied: "Copied",
+    open: "Open",
+    published: "Online",
+    publishedOn: "Your website is online. Anyone with the link can see it.",
+    publishedOff: "Not online yet. Switch it on when you are ready.",
+    slugHint: "Lowercase letters, numbers and hyphens.",
+    slugSave: "Save address",
+    slugInvalid: "Use 3 to 40 lowercase letters, numbers or hyphens.",
+    slugTaken: "Another community already uses this address.",
+    showTitle: "What to show",
+    showHint: "Each part only shows when it has something in it, for example the campaign while one is running.",
+    part_home: "Welcome text and pictures",
+    part_badges: "Next Mass and Open now",
+    part_timetable: "Weekly timetable",
+    part_events: "Coming up",
+    part_news: "Latest news",
+    part_campaign: "Campaign",
+    part_map: "Map and address",
+    shareTitle: "Share it",
+    shareHint: "Put the link on social media, in your email signature or on posters. Visitors land on your community and are invited to join you in the app.",
+    error: "Could not save. Try again.",
+  },
   undo: {
     deleted: "“{{name}}” deleted",
     deletedItem: "Deleted",
@@ -2894,6 +2952,7 @@ const es: Translations = {
     tip_settings: "Los datos de tu comunidad: nombre, idioma, color, logotipo y dirección. Lo que cambies aquí se ve en la app al momento.",
     tip_modules: "Tu plan y los módulos que incluye. Muestra u oculta cada módulo, o cambia de plan cuando quieras.",
     tip_myQr: "Imprime este cartel y colócalo donde pase la gente. Al escanear el código, consiguen la app y entran en tu comunidad en segundos.",
+    tip_website: "La página pública de tu comunidad. Actívala y comparte el enlace: quien la visita ve tus noticias y horarios y se le invita a unirse en la app.",
   },
   layout: {
     managing: 'Administrando',
@@ -2916,6 +2975,7 @@ const es: Translations = {
     navPrayerRequests: 'Peticiones de oración',
     navCommunity: "Nuestro grupo",
     navMyQr: "Código QR",
+    navWebsite: "Sitio web",
     navModules: "Planes y módulos",
     navHomePage: 'Página de inicio',
     navDashboard: 'Panel',
@@ -4033,6 +4093,33 @@ const es: Translations = {
     loadError: "No se han podido cargar las versiones.",
     error: "No ha funcionado. Inténtalo de nuevo.",
   },
+  site: {
+    title: "Sitio web",
+    subtitle: "Una página pública para tu comunidad, hecha con lo que ya mantienes al día en la app. Invita a quien la visita a unirse en la app.",
+    addressLabel: "Dirección",
+    copy: "Copiar enlace",
+    copied: "Copiado",
+    open: "Abrir",
+    published: "En línea",
+    publishedOn: "Tu sitio web está en línea. Cualquiera con el enlace puede verlo.",
+    publishedOff: "Aún no está en línea. Actívalo cuando esté listo.",
+    slugHint: "Minúsculas, números y guiones.",
+    slugSave: "Guardar dirección",
+    slugInvalid: "Usa de 3 a 40 minúsculas, números o guiones.",
+    slugTaken: "Otra comunidad ya usa esta dirección.",
+    showTitle: "Qué mostrar",
+    showHint: "Cada parte solo aparece cuando tiene contenido, por ejemplo la campaña mientras hay una en curso.",
+    part_home: "Texto de bienvenida e imágenes",
+    part_badges: "Próxima misa y Abierto ahora",
+    part_timetable: "Horario semanal",
+    part_events: "Próximamente",
+    part_news: "Últimas noticias",
+    part_campaign: "Campaña",
+    part_map: "Mapa y dirección",
+    shareTitle: "Compártelo",
+    shareHint: "Pon el enlace en redes sociales, en tu firma de correo o en carteles. Quien lo visite llega a tu comunidad y se le invita a unirse en la app.",
+    error: "No se ha podido guardar. Inténtalo de nuevo.",
+  },
   undo: {
     deleted: "Se ha eliminado «{{name}}»",
     deletedItem: "Eliminado",
@@ -4238,6 +4325,7 @@ const fr: Translations = {
     tip_settings: "Les informations de votre communauté : nom, langue, couleur, logo et adresse. Ce que vous changez ici apparaît aussitôt dans l'app.",
     tip_modules: "Votre formule et les modules qu'elle comprend. Affichez ou masquez chaque module, ou changez de formule quand vous voulez.",
     tip_myQr: "Imprimez cette affiche et mettez-la là où les gens passent. En scannant le code, ils obtiennent l'app et rejoignent votre communauté en quelques secondes.",
+    tip_website: "La page publique de votre communauté. Activez-la puis partagez le lien : les visiteurs voient vos actualités et horaires et sont invités à vous rejoindre dans l’app.",
   },
   layout: {
     managing: 'Gestion de',
@@ -4260,6 +4348,7 @@ const fr: Translations = {
     navPrayerRequests: 'Intentions de prière',
     navCommunity: "Notre groupe",
     navMyQr: "Code QR",
+    navWebsite: "Site web",
     navModules: "Formules et modules",
     navHomePage: "Page d'accueil",
     navDashboard: 'Tableau de bord',
@@ -5377,6 +5466,33 @@ const fr: Translations = {
     loadError: "Les versions n’ont pas pu être chargées.",
     error: "Cela n’a pas fonctionné. Réessayez.",
   },
+  site: {
+    title: "Site web",
+    subtitle: "Une page publique pour votre communauté, faite à partir de ce que vous tenez déjà à jour dans l’app. Elle invite les visiteurs à vous rejoindre dans l’app.",
+    addressLabel: "Adresse",
+    copy: "Copier le lien",
+    copied: "Copié",
+    open: "Ouvrir",
+    published: "En ligne",
+    publishedOn: "Votre site est en ligne. Toute personne ayant le lien peut le voir.",
+    publishedOff: "Pas encore en ligne. Activez-le quand vous êtes prêts.",
+    slugHint: "Minuscules, chiffres et tirets.",
+    slugSave: "Enregistrer l’adresse",
+    slugInvalid: "Utilisez 3 à 40 minuscules, chiffres ou tirets.",
+    slugTaken: "Une autre communauté utilise déjà cette adresse.",
+    showTitle: "Que montrer",
+    showHint: "Chaque partie n’apparaît que si elle a du contenu, par exemple la campagne pendant qu’elle est en cours.",
+    part_home: "Texte d’accueil et images",
+    part_badges: "Prochaine messe et Ouvert",
+    part_timetable: "Horaires de la semaine",
+    part_events: "À venir",
+    part_news: "Dernières actualités",
+    part_campaign: "Campagne",
+    part_map: "Carte et adresse",
+    shareTitle: "Partagez-le",
+    shareHint: "Mettez le lien sur les réseaux sociaux, dans votre signature d’e-mail ou sur des affiches. Les visiteurs arrivent sur votre communauté et sont invités à vous rejoindre dans l’app.",
+    error: "Enregistrement impossible. Réessayez.",
+  },
   undo: {
     deleted: "« {{name}} » a été supprimé",
     deletedItem: "Supprimé",
@@ -5582,6 +5698,7 @@ const va: Translations = {
     tip_settings: "Les dades de la teua comunitat: nom, idioma, color, logotip i adreça. El que canvies ací es veu en l'aplicació al moment.",
     tip_modules: "El teu pla i els mòduls que inclou. Mostra o amaga cada mòdul, o canvia de pla quan vulgues.",
     tip_myQr: "Imprimix este cartell i posa'l on passe la gent. En escanejar el codi, aconseguixen l'aplicació i entren en la teua comunitat en segons.",
+    tip_website: "La pàgina pública de la teua comunitat. Activa-la i comparteix l’enllaç: qui la visita veu les notícies i horaris i se’l convida a unir-se en l’app.",
   },
   layout: {
     managing: 'Administrant',
@@ -5604,6 +5721,7 @@ const va: Translations = {
     navPrayerRequests: 'Peticions d’oració',
     navCommunity: "El nostre grup",
     navMyQr: "Codi QR",
+    navWebsite: "Pàgina web",
     navModules: "Plans i mòduls",
     navHomePage: 'Pàgina d’inici',
     navDashboard: 'Tauler',
@@ -6721,6 +6839,33 @@ const va: Translations = {
     loadError: "No s’han pogut carregar les versions.",
     error: "No ha funcionat. Torna-ho a provar.",
   },
+  site: {
+    title: "Pàgina web",
+    subtitle: "Una pàgina pública per a la teua comunitat, feta amb el que ja mantens al dia en l’app. Convida qui la visita a unir-se en l’app.",
+    addressLabel: "Adreça",
+    copy: "Copia l’enllaç",
+    copied: "Copiat",
+    open: "Obri",
+    published: "En línia",
+    publishedOn: "La teua pàgina web està en línia. Qualsevol amb l’enllaç la pot vore.",
+    publishedOff: "Encara no està en línia. Activa-la quan estiga llesta.",
+    slugHint: "Minúscules, números i guions.",
+    slugSave: "Guarda l’adreça",
+    slugInvalid: "Usa de 3 a 40 minúscules, números o guions.",
+    slugTaken: "Una altra comunitat ja usa esta adreça.",
+    showTitle: "Què mostrar",
+    showHint: "Cada part només apareix quan té contingut, per exemple la campanya mentre n’hi ha una en curs.",
+    part_home: "Text de benvinguda i imatges",
+    part_badges: "Pròxima missa i Obert ara",
+    part_timetable: "Horari setmanal",
+    part_events: "Pròximament",
+    part_news: "Últimes notícies",
+    part_campaign: "Campanya",
+    part_map: "Mapa i adreça",
+    shareTitle: "Comparteix-la",
+    shareHint: "Posa l’enllaç en les xarxes socials, en la signatura del correu o en cartells. Qui la visita arriba a la teua comunitat i se’l convida a unir-se en l’app.",
+    error: "No s’ha pogut guardar. Torna-ho a provar.",
+  },
   undo: {
     deleted: "S’ha eliminat «{{name}}»",
     deletedItem: "Eliminat",
@@ -6926,6 +7071,7 @@ const ca: Translations = {
     tip_settings: "Les dades de la teva comunitat: nom, idioma, color, logotip i adreça. El que canviïs aquí es veu a l'aplicació al moment.",
     tip_modules: "El teu pla i els mòduls que inclou. Mostra o amaga cada mòdul, o canvia de pla quan vulguis.",
     tip_myQr: "Imprimeix aquest cartell i posa'l on passi la gent. En escanejar el codi, aconsegueixen l'aplicació i entren a la teva comunitat en segons.",
+    tip_website: "La pàgina pública de la teva comunitat. Activa-la i comparteix l’enllaç: qui la visita veu les notícies i horaris i se’l convida a unir-se a l’app.",
   },
   layout: {
     managing: 'Administrant',
@@ -6948,6 +7094,7 @@ const ca: Translations = {
     navPrayerRequests: 'Peticions d’oració',
     navCommunity: "El nostre grup",
     navMyQr: "Codi QR",
+    navWebsite: "Pàgina web",
     navModules: "Plans i mòduls",
     navHomePage: 'Pàgina d’inici',
     navDashboard: 'Tauler',
@@ -8065,6 +8212,33 @@ const ca: Translations = {
     loadError: "No s’han pogut carregar les versions.",
     error: "No ha funcionat. Torna-ho a provar.",
   },
+  site: {
+    title: "Pàgina web",
+    subtitle: "Una pàgina pública per a la teva comunitat, feta amb el que ja mantens al dia a l’app. Convida qui la visita a unir-se a l’app.",
+    addressLabel: "Adreça",
+    copy: "Copia l’enllaç",
+    copied: "Copiat",
+    open: "Obre",
+    published: "En línia",
+    publishedOn: "La teva pàgina web està en línia. Qualsevol amb l’enllaç la pot veure.",
+    publishedOff: "Encara no està en línia. Activa-la quan estigui a punt.",
+    slugHint: "Minúscules, números i guions.",
+    slugSave: "Desa l’adreça",
+    slugInvalid: "Fes servir de 3 a 40 minúscules, números o guions.",
+    slugTaken: "Una altra comunitat ja fa servir aquesta adreça.",
+    showTitle: "Què mostrar",
+    showHint: "Cada part només apareix quan té contingut, per exemple la campanya mentre n’hi ha una en curs.",
+    part_home: "Text de benvinguda i imatges",
+    part_badges: "Propera missa i Obert ara",
+    part_timetable: "Horari setmanal",
+    part_events: "Properament",
+    part_news: "Últimes notícies",
+    part_campaign: "Campanya",
+    part_map: "Mapa i adreça",
+    shareTitle: "Comparteix-la",
+    shareHint: "Posa l’enllaç a les xarxes socials, a la signatura del correu o en cartells. Qui la visita arriba a la teva comunitat i se’l convida a unir-se a l’app.",
+    error: "No s’ha pogut desar. Torna-ho a provar.",
+  },
   undo: {
     deleted: "S’ha eliminat «{{name}}»",
     deletedItem: "Eliminat",
@@ -8270,6 +8444,7 @@ const gl: Translations = {
     tip_settings: "Os datos da túa comunidade: nome, idioma, cor, logotipo e enderezo. O que cambies aquí vese na app ao momento.",
     tip_modules: "O teu plan e os módulos que inclúe. Mostra ou oculta cada módulo, ou cambia de plan cando queiras.",
     tip_myQr: "Imprime este cartel e ponno onde pase a xente. Ao escanear o código, conseguen a app e entran na túa comunidade en segundos.",
+    tip_website: "A páxina pública da túa comunidade. Actívaa e comparte a ligazón: quen a visita ve as novas e horarios e convídaselle a unirse na app.",
   },
   layout: {
     managing: 'Administrando',
@@ -8292,6 +8467,7 @@ const gl: Translations = {
     navPrayerRequests: 'Peticións de oración',
     navCommunity: "O noso grupo",
     navMyQr: "Código QR",
+    navWebsite: "Sitio web",
     navModules: "Plans e módulos",
     navHomePage: 'Páxina de inicio',
     navDashboard: 'Panel',
@@ -9409,6 +9585,33 @@ const gl: Translations = {
     loadError: "Non se puideron cargar as versións.",
     error: "Non funcionou. Téntao de novo.",
   },
+  site: {
+    title: "Sitio web",
+    subtitle: "Unha páxina pública para a túa comunidade, feita co que xa mantés ao día na app. Convida a quen a visita a unirse na app.",
+    addressLabel: "Enderezo",
+    copy: "Copiar ligazón",
+    copied: "Copiado",
+    open: "Abrir",
+    published: "En liña",
+    publishedOn: "O teu sitio web está en liña. Calquera coa ligazón pode velo.",
+    publishedOff: "Aínda non está en liña. Actívao cando estea listo.",
+    slugHint: "Minúsculas, números e guións.",
+    slugSave: "Gardar enderezo",
+    slugInvalid: "Usa de 3 a 40 minúsculas, números ou guións.",
+    slugTaken: "Outra comunidade xa usa este enderezo.",
+    showTitle: "Que mostrar",
+    showHint: "Cada parte só aparece cando ten contido, por exemplo a campaña mentres hai unha en curso.",
+    part_home: "Texto de benvida e imaxes",
+    part_badges: "Próxima misa e Aberto agora",
+    part_timetable: "Horario semanal",
+    part_events: "Proximamente",
+    part_news: "Últimas novas",
+    part_campaign: "Campaña",
+    part_map: "Mapa e enderezo",
+    shareTitle: "Compárteo",
+    shareHint: "Pon a ligazón nas redes sociais, na sinatura do correo ou en carteis. Quen o visita chega á túa comunidade e convídaselle a unirse na app.",
+    error: "Non se puido gardar. Téntao de novo.",
+  },
   undo: {
     deleted: "Eliminouse «{{name}}»",
     deletedItem: "Eliminado",
@@ -9614,6 +9817,7 @@ const pt: Translations = {
     tip_settings: "Os dados da sua comunidade: nome, idioma, cor, logótipo e morada. O que mudar aqui aparece logo na app.",
     tip_modules: "O seu plano e os módulos que inclui. Mostre ou oculte cada módulo, ou mude de plano quando quiser.",
     tip_myQr: "Imprima este cartaz e afixe-o onde as pessoas passam. Ao ler o código, obtêm a app e entram na sua comunidade em segundos.",
+    tip_website: "A página pública da sua comunidade. Ative-a e partilhe a ligação: quem a visita vê as notícias e horários e é convidado a juntar-se na app.",
   },
   layout: {
     managing: 'A gerir',
@@ -9636,6 +9840,7 @@ const pt: Translations = {
     navPrayerRequests: 'Pedidos de oração',
     navCommunity: "O nosso grupo",
     navMyQr: "Código QR",
+    navWebsite: "Site",
     navModules: "Planos e módulos",
     navHomePage: 'Página inicial',
     navDashboard: 'Painel',
@@ -10752,6 +10957,33 @@ const pt: Translations = {
     empty: "Ainda não há versões. Guarde a página atual para começar.",
     loadError: "Não foi possível carregar as versões.",
     error: "Não funcionou. Tente novamente.",
+  },
+  site: {
+    title: "Site",
+    subtitle: "Uma página pública para a sua comunidade, feita com o que já mantém atualizado na app. Convida quem a visita a juntar-se na app.",
+    addressLabel: "Endereço",
+    copy: "Copiar ligação",
+    copied: "Copiado",
+    open: "Abrir",
+    published: "Online",
+    publishedOn: "O seu site está online. Qualquer pessoa com a ligação pode vê-lo.",
+    publishedOff: "Ainda não está online. Ative-o quando estiver pronto.",
+    slugHint: "Minúsculas, números e hífenes.",
+    slugSave: "Guardar endereço",
+    slugInvalid: "Use de 3 a 40 minúsculas, números ou hífenes.",
+    slugTaken: "Outra comunidade já usa este endereço.",
+    showTitle: "O que mostrar",
+    showHint: "Cada parte só aparece quando tem conteúdo, por exemplo a campanha enquanto houver uma a decorrer.",
+    part_home: "Texto de boas-vindas e imagens",
+    part_badges: "Próxima missa e Aberto agora",
+    part_timetable: "Horário semanal",
+    part_events: "Brevemente",
+    part_news: "Últimas notícias",
+    part_campaign: "Campanha",
+    part_map: "Mapa e endereço",
+    shareTitle: "Partilhe-o",
+    shareHint: "Ponha a ligação nas redes sociais, na assinatura de email ou em cartazes. Quem a visita chega à sua comunidade e é convidado a juntar-se na app.",
+    error: "Não foi possível guardar. Tente novamente.",
   },
   undo: {
     deleted: "Eliminou «{{name}}»",
