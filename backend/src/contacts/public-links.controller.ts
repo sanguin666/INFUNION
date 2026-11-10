@@ -9,6 +9,7 @@ import { DonationsService } from '../donations/donations.service.js';
 import { StripeService } from '../donations/stripe.service.js';
 import { DonationPurpose } from '../donations/entities/donation.entity.js';
 import { returnUrlBase } from '../donations/donations.controller.js';
+import { payoutsReady } from '../donations/payouts-account.js';
 import type { Poi } from '../pois/entities/poi.entity.js';
 import type { DonationCampaign } from '../donations/entities/donation-campaign.entity.js';
 
@@ -17,6 +18,14 @@ const AMOUNTS = [5, 10, 20, 50];
 function amountOf(body: Record<string, unknown>): number | null {
   const chosen = String(body.amount ?? '');
   const raw = chosen === 'other' ? String(body.other ?? '') : chosen;
+  const amount = Number(raw.replace(',', '.'));
+  if (!Number.isFinite(amount) || amount < 1 || amount > 10000) return null;
+  return Math.round(amount * 100) / 100;
+}
+
+/** A suggested amount from a pay link's ?amount=, if it is a sensible one. */
+function presetAmount(raw: string | undefined): number | null {
+  if (!raw) return null;
   const amount = Number(raw.replace(',', '.'));
   if (!Number.isFinite(amount) || amount < 1 || amount > 10000) return null;
   return Math.round(amount * 100) / 100;
@@ -151,6 +160,47 @@ export class PublicLinksController {
     await this.checkout(poi, lang, campaign, recipient.contact.id, body, req, res);
   }
 
+  /**
+   * A community's own pay link, the one behind its printed or shared QR
+   * code (Seb, 10 Nov 2026): anyone can open it, no sign-in, and pay by
+   * card, Apple Pay or Google Pay on Stripe's page. Optional ?campaign=
+   * names a project, ?amount= suggests an amount the payer can change.
+   */
+  @Get('pay/:poiId')
+  @Header('Cache-Control', 'no-store')
+  async payPage(
+    @Param('poiId') poiId: string,
+    @Query('campaign') campaignId: string | undefined,
+    @Query('amount') amount: string | undefined,
+    @Res() res: Response,
+  ): Promise<void> {
+    const poi = await this.payablePoi(poiId);
+    if (!poi) {
+      res.type('html').send(this.gone('en'));
+      return;
+    }
+    const campaign = await this.outreach.findCampaign(poi.id, campaignId);
+    const action = `/m/pay/${poi.id}${campaign ? `?campaign=${campaign.id}` : ''}`;
+    res.type('html').send(this.givePage(poi, poi.language, campaign, null, action, presetAmount(amount)));
+  }
+
+  @Post('pay/:poiId')
+  async pay(
+    @Param('poiId') poiId: string,
+    @Query('campaign') campaignId: string | undefined,
+    @Body() body: Record<string, unknown>,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    const poi = await this.payablePoi(poiId);
+    if (!poi) {
+      res.type('html').send(this.gone('en'));
+      return;
+    }
+    const campaign = await this.outreach.findCampaign(poi.id, campaignId);
+    await this.checkout(poi, poi.language, campaign, null, body, req, res);
+  }
+
   /** An email's button. Last, so the named routes above win. */
   @Get(':recipientId')
   @Header('Cache-Control', 'no-store')
@@ -168,6 +218,13 @@ export class PublicLinksController {
   }
 
   // ---- Pages ----
+
+  /** The community, if it takes payments right now. */
+  private async payablePoi(poiId: string): Promise<Poi | null> {
+    const poi = await this.outreach.findPoiPublic(poiId);
+    if (!poi || poi.closingRequestedAt || poi.closedAt) return null;
+    return payoutsReady(poi, this.stripe.isConfigured) ? poi : null;
+  }
 
   private async checkout(
     poi: Poi,
@@ -200,11 +257,21 @@ export class PublicLinksController {
     else res.redirect(303, `/m/done/${encodeURIComponent(lang)}?status=success`);
   }
 
-  private givePage(poi: Poi, lang: string, campaign: DonationCampaign | null, name: string | null, action: string): string {
+  private givePage(
+    poi: Poi,
+    lang: string,
+    campaign: DonationCampaign | null,
+    name: string | null,
+    action: string,
+    preset: number | null = null,
+  ): string {
     const words = outreachText(lang);
     const paymentsLive = this.stripe.isConfigured;
+    const presetIsChip = preset !== null && AMOUNTS.includes(preset);
+    const checkedChip = preset === null ? 10 : presetIsChip ? preset : null;
+    const otherValue = preset !== null && !presetIsChip ? String(preset) : '';
     const chips = AMOUNTS.map(
-      (a, i) => `<label><input type="radio" name="amount" value="${a}"${i === 1 ? ' checked' : ''}>${a} €</label>`,
+      (a) => `<label><input type="radio" name="amount" value="${a}"${a === checkedChip ? ' checked' : ''}>${a} €</label>`,
     ).join('');
     return publicPage({
       lang,
@@ -214,9 +281,9 @@ export class PublicLinksController {
       body: `<p>${escapeHtml(campaign ? fill(words.giveProject, { project: campaign.title }) : words.giveIntro)}</p>
 <form method="post" action="${escapeHtml(action)}">
 <label style="margin-top:8px">${escapeHtml(words.giveAmount)}</label>
-<div class="amounts">${chips}<label><input type="radio" name="amount" value="other">${escapeHtml(words.giveOther)}</label></div>
+<div class="amounts">${chips}<label><input type="radio" name="amount" value="other"${otherValue ? ' checked' : ''}>${escapeHtml(words.giveOther)}</label></div>
 <label for="other">${escapeHtml(words.giveOther)} (€)</label>
-<input id="other" name="other" inputmode="decimal" placeholder="25" oninput="if(this.value)document.querySelector('input[value=other]').checked=true">
+<input id="other" name="other" inputmode="decimal" placeholder="25" value="${escapeHtml(otherValue)}" oninput="if(this.value)document.querySelector('input[value=other]').checked=true">
 <label for="name">${escapeHtml(words.giveName)}</label>
 <input id="name" name="name" maxlength="80" value="${escapeHtml(name ?? '')}" autocomplete="name">
 <button type="submit">${escapeHtml(words.giveButton)}</button>
