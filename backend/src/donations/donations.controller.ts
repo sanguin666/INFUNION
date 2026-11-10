@@ -33,6 +33,7 @@ import {
 } from '../auth/guards/jwt-auth.guard.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
 import { StripeService } from './stripe.service.js';
+import { PaymentLinksService } from './payment-links.service.js';
 import { SignedUrlService } from '../common/signed-url/signed-url.service.js';
 import { PoisService } from '../pois/pois.service.js';
 import { decodeDonorKey, donorsCsv, encodeDonorKey, groupDonors, receiptHtml } from './receipts.js';
@@ -82,6 +83,7 @@ export class DonationsController {
     private readonly donationsService: DonationsService,
     private readonly configService: ConfigService,
     private readonly signedUrls: SignedUrlService,
+    private readonly paymentLinks: PaymentLinksService,
   ) {}
 
   // Public: mirrors the app's demo donate flow (no payment taken).
@@ -226,11 +228,16 @@ export class DonationsController {
   // other modules' public read endpoints.
   @Get()
   @UseGuards(JwtAuthGuard, PoiAdminGuard)
-  findForPoi(
+  async findForPoi(
     @Param('poiId') poiId: string,
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
   ) {
-    return this.donationsService.findForPoi(poiId, limit);
+    const donations = await this.donationsService.findForPoi(poiId, limit);
+    // A gift made through a named payment link says which one.
+    const titles = await this.paymentLinks.namedTitles(
+      donations.flatMap((d) => (d.paymentLinkId ? [d.paymentLinkId] : [])),
+    );
+    return donations.map((d) => ({ ...d, paymentLinkTitle: (d.paymentLinkId && titles.get(d.paymentLinkId)) || null }));
   }
 
   @Get('stats')

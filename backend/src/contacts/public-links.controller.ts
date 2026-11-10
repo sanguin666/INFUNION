@@ -9,6 +9,8 @@ import { DonationsService } from '../donations/donations.service.js';
 import { StripeService } from '../donations/stripe.service.js';
 import { DonationPurpose } from '../donations/entities/donation.entity.js';
 import { returnUrlBase } from '../donations/donations.controller.js';
+import { PaymentLinksService, linkOpen, todayInMadrid } from '../donations/payment-links.service.js';
+import type { PaymentLink } from '../donations/entities/payment-link.entity.js';
 import { payoutsReady } from '../donations/payouts-account.js';
 import type { Poi } from '../pois/entities/poi.entity.js';
 import type { DonationCampaign } from '../donations/entities/donation-campaign.entity.js';
@@ -23,6 +25,12 @@ function amountOf(body: Record<string, unknown>): number | null {
   const amount = Number(raw.replace(',', '.'));
   if (!Number.isFinite(amount) || amount < 1 || amount > 10000) return null;
   return Math.round(amount * 100) / 100;
+}
+
+/** "15,00 €" in the page's language. */
+function formatEuros(amount: number, lang: string): string {
+  const locale = lang === 'va' || lang === 'ca' ? 'ca-ES' : lang === 'pt' ? 'pt-PT' : lang === 'en' ? 'en-IE' : lang;
+  return new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(amount);
 }
 
 /** A suggested amount from a pay link's ?amount=, if it is a sensible one. */
@@ -46,6 +54,7 @@ export class PublicLinksController {
     private readonly outreach: OutreachService,
     private readonly donations: DonationsService,
     private readonly stripe: StripeService,
+    private readonly paymentLinks: PaymentLinksService,
     private readonly config: ConfigService,
   ) {}
 
@@ -163,44 +172,59 @@ export class PublicLinksController {
   }
 
   /**
-   * A community's own pay link, the one behind its printed or shared QR
-   * code (Seb, 10 Nov 2026): anyone can open it, no sign-in, and pay by
-   * card, Apple Pay or Google Pay on Stripe's page. Optional ?campaign=
-   * names a project, ?amount= suggests an amount the payer can change.
+   * A payment link, the one behind a shared or printed QR code (Seb,
+   * 10 Nov 2026): anyone can open it, no sign-in, and pay by card,
+   * Apple Pay or Google Pay on Stripe's page. The first, simpler links
+   * named the community itself (/m/pay/<community id>): those lead to the
+   * community's own "Contribute" link, so printed QR codes keep working.
    */
-  @Get('pay/:poiId')
+  @Get('pay/:key')
   @Header('Cache-Control', 'no-store')
   async payPage(
-    @Param('poiId') poiId: string,
-    @Query('campaign') campaignId: string | undefined,
+    @Param('key') key: string,
     @Query('amount') amount: string | undefined,
     @Res() res: Response,
   ): Promise<void> {
-    const poi = await this.payablePoi(poiId);
-    if (!poi) {
-      res.type('html').send(this.gone('en'));
+    if (/^[0-9a-f-]{36}$/i.test(key)) {
+      const poi = await this.payablePoi(key);
+      if (!poi) {
+        res.type('html').send(this.gone('en'));
+        return;
+      }
+      const link = await this.paymentLinks.ensureDefault(poi.id);
+      const preset = presetAmount(amount);
+      res.redirect(302, `/m/pay/${link.code}${preset ? `?amount=${preset}` : ''}`);
       return;
     }
-    const campaign = await this.outreach.findCampaign(poi.id, campaignId);
-    const action = `/m/pay/${poi.id}${campaign ? `?campaign=${campaign.id}` : ''}`;
-    res.type('html').send(this.givePage(poi, poi.language, campaign, null, action, presetAmount(amount)));
+    const found = await this.payableLink(key);
+    if (!found) {
+      res.type('html').send(await this.linkGone(key));
+      return;
+    }
+    const { link, poi } = found;
+    res.type('html').send(
+      this.givePage(poi, poi.language, link.campaign ?? null, null, `/m/pay/${link.code}`, presetAmount(amount), {
+        title: link.title,
+        fixed: link.amount ?? null,
+        askName: link.askName,
+      }),
+    );
   }
 
-  @Post('pay/:poiId')
+  @Post('pay/:key')
   async pay(
-    @Param('poiId') poiId: string,
-    @Query('campaign') campaignId: string | undefined,
+    @Param('key') key: string,
     @Body() body: Record<string, unknown>,
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    const poi = await this.payablePoi(poiId);
-    if (!poi) {
-      res.type('html').send(this.gone('en'));
+    const found = await this.payableLink(key);
+    if (!found) {
+      res.type('html').send(await this.linkGone(key));
       return;
     }
-    const campaign = await this.outreach.findCampaign(poi.id, campaignId);
-    await this.checkout(poi, poi.language, campaign, null, body, req, res);
+    const { link, poi } = found;
+    await this.checkout(poi, poi.language, link.campaign ?? null, null, body, req, res, link);
   }
 
   /** An email's button. Last, so the named routes above win. */
@@ -228,6 +252,22 @@ export class PublicLinksController {
     return payoutsReady(poi, this.stripe.isConfigured) ? poi : null;
   }
 
+  /** "This link no longer works", in its community's language when known. */
+  private async linkGone(code: string): Promise<string> {
+    const link = await this.paymentLinks.findByCode(code);
+    return this.gone(link?.poi.language ?? 'en');
+  }
+
+  /** A payment link that takes payments right now, with its community. */
+  private async payableLink(code: string): Promise<{ link: PaymentLink; poi: Poi } | null> {
+    const link = await this.paymentLinks.findByCode(code);
+    if (!link || !linkOpen(link, todayInMadrid())) return null;
+    // A project that has ended takes no more contributions.
+    if (link.campaign && !link.campaign.active) return null;
+    const poi = await this.payablePoi(link.poi.id);
+    return poi ? { link, poi } : null;
+  }
+
   private async checkout(
     poi: Poi,
     lang: string,
@@ -236,14 +276,16 @@ export class PublicLinksController {
     body: Record<string, unknown>,
     req: Request,
     res: Response,
+    link: PaymentLink | null = null,
   ): Promise<void> {
-    const amount = amountOf(body);
+    // A fixed amount is the link's, whatever the form sends.
+    const amount = link?.amount ?? amountOf(body);
     const back = req.originalUrl;
     if (!amount) {
       res.redirect(303, back);
       return;
     }
-    const donorName = String(body.name ?? '').trim().slice(0, 80) || undefined;
+    const donorName = link && !link.askName ? undefined : String(body.name ?? '').trim().slice(0, 80) || undefined;
     const result = await this.donations.startCheckout(
       poi.id,
       {
@@ -253,7 +295,13 @@ export class PublicLinksController {
         ...(campaign ? { campaignId: campaign.id } : {}),
       },
       returnUrlBase(this.config, req),
-      { ...(contactId ? { contactId } : {}), returnPath: `/m/done/${encodeURIComponent(lang)}` },
+      {
+        ...(contactId ? { contactId } : {}),
+        ...(link ? { paymentLinkId: link.id } : {}),
+        // A named link reads as itself on Stripe's page ("Christmas lunch — Carmen").
+        ...(link && !link.isDefault ? { productName: `${link.title} — ${poi.name}`.slice(0, 250) } : {}),
+        returnPath: `/m/done/${encodeURIComponent(lang)}`,
+      },
     );
     if (result.mode === 'stripe') res.redirect(303, result.checkoutUrl);
     else res.redirect(303, `/m/done/${encodeURIComponent(lang)}?status=success`);
@@ -266,8 +314,11 @@ export class PublicLinksController {
     name: string | null,
     action: string,
     preset: number | null = null,
+    options: { title?: string; fixed?: number | null; askName?: boolean } = {},
   ): string {
     const words = outreachText(lang);
+    const fixed = options.fixed ?? null;
+    const askName = options.askName ?? true;
     const paymentsLive = this.stripe.isConfigured;
     const presetIsChip = preset !== null && AMOUNTS.includes(preset);
     const checkedChip = preset === null ? 10 : presetIsChip ? preset : null;
@@ -276,18 +327,25 @@ export class PublicLinksController {
       (a) =>
         `<label><input type="radio" name="amount" value="${a}"${a === checkedChip ? ' checked' : ''} onchange="document.getElementById('other').value=''">${a} €</label>`,
     ).join('');
+    const amountBlock =
+      fixed !== null
+        ? `<p class="fixed">${escapeHtml(formatEuros(fixed, lang))}</p>`
+        : `<label style="margin-top:8px">${escapeHtml(words.giveAmount)}</label>
+<div class="amounts">${chips}<input class="other" id="other" name="other" inputmode="decimal" aria-label="${escapeHtml(words.giveOther)} (€)" placeholder="${escapeHtml(words.giveOther)}" value="${escapeHtml(otherValue)}" oninput="if(this.value)document.querySelectorAll('.amounts input[type=radio]').forEach(function(r){r.checked=false})"></div>
+`;
+    const nameBlock = askName
+      ? `<label for="name">${escapeHtml(words.giveName)}</label>
+<input id="name" name="name" maxlength="80" value="${escapeHtml(name ?? '')}" autocomplete="name">
+`
+      : '';
     return publicPage({
       lang,
-      title: fill(words.giveTitle, { community: poi.name }),
+      title: options.title ?? fill(words.giveTitle, { community: poi.name }),
       community: poi.name,
       logoUrl: poi.logoUrl,
       body: `<p>${escapeHtml(campaign ? fill(words.giveProject, { project: campaign.title }) : words.giveIntro)}</p>
 <form method="post" action="${escapeHtml(action)}">
-<label style="margin-top:8px">${escapeHtml(words.giveAmount)}</label>
-<div class="amounts">${chips}<input class="other" id="other" name="other" inputmode="decimal" aria-label="${escapeHtml(words.giveOther)} (€)" placeholder="${escapeHtml(words.giveOther)}" value="${escapeHtml(otherValue)}" oninput="if(this.value)document.querySelectorAll('.amounts input[type=radio]').forEach(function(r){r.checked=false})"></div>
-<label for="name">${escapeHtml(words.giveName)}</label>
-<input id="name" name="name" maxlength="80" value="${escapeHtml(name ?? '')}" autocomplete="name">
-<button type="submit">${escapeHtml(words.giveButton)}</button>
+${amountBlock}${nameBlock}<button type="submit">${escapeHtml(words.giveButton)}</button>
 <p class="small">${escapeHtml(paymentsLive ? words.giveSecure : words.giveDemo)}</p>
 </form>`,
     });
