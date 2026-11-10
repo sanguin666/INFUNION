@@ -7,10 +7,12 @@ import {
 import { Language } from '../enums/language.enum.js';
 import {
   EMAIL_LOGO_URL,
+  EMAIL_MARK_URL,
   communityLogoUrl,
   emailDate,
   emailLayout,
   emailParagraph,
+  emailText,
 } from './email-layout.js';
 
 describe('email layout', () => {
@@ -19,8 +21,21 @@ describe('email layout', () => {
     expect(html).toContain(EMAIL_LOGO_URL);
     expect(html).toContain('alt="infunion"');
     expect(html).toContain('Hello &lt;you&gt;');
-    expect(html).toContain('La unión que te hace comunidad');
+    expect(html).toContain('Hecho con');
+    expect(html).toContain(EMAIL_MARK_URL);
     expect(html).toContain('support@infunion.app');
+  });
+
+  it('ends every email with the same footer, in HTML and in text (10 Nov 2026)', () => {
+    const plain = emailLayout(emailParagraph('A'), Language.EN);
+    const community = emailLayout(emailParagraph('B'), Language.EN, { name: 'Crecer Juntos' });
+    const footer = (html: string) => html.slice(html.indexOf('border-top:1px solid'));
+    expect(footer(plain)).toBe(footer(community));
+    expect(footer(plain)).toContain('Made with');
+    expect(emailText('Hello\n', Language.FR)).toBe(
+      'Hello\n\n--\nRéalisé avec infunion · https://www.infunion.app\nsupport@infunion.app\n',
+    );
+    expect(codeEmail('a@example.com', '123456', 'es').text).toContain('Hecho con infunion');
   });
 
   it('is used by every email', () => {
