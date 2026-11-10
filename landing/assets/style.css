@@ -1849,9 +1849,3 @@ html[data-for="worship"] .not-worship { display: none; }
   font-size: 16px;
   line-height: 1.6;
 }
-
-/* CRM capabilities block under the dashboard rows (10 Nov 2026). */
-.crm-block { max-width: 720px; margin: 56px auto 0; }
-.crm-block h3 { margin: 0 0 10px; }
-.crm-block ul { list-style: none; padding: 0; margin: 16px 0 0; }
-.crm-block li { margin-bottom: 10px; }
