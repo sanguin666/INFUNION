@@ -21,6 +21,7 @@ import {
   MegaphoneIcon,
   PinIcon,
   PlayIcon,
+  PersonIcon,
   PlusIcon,
 } from '../components/icons';
 import { alertWord, CountBadge, hubMenu, type HubTab, type MenuAlerts } from '../components/PoiShell';
@@ -31,7 +32,7 @@ import { useI18n } from '../i18n/I18nContext';
 import { translationAvailable } from '../translation/useTranslations';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n/translations';
 import { getNotificationPreferences } from '../api/notifications';
-import { getPermissionState } from '../notifications/push';
+import { getPermissionState, pushSupported } from '../notifications/push';
 import { useAuth } from '../auth/AuthContext';
 import { useAppearance, type AppearancePreference } from '../theme/AppearanceContext';
 import { MadeWith } from '../components/MadeWith';
@@ -77,6 +78,8 @@ type Props = {
   // Resolves once the membership is gone and the app has moved on, so
   // this screen knows when to stop showing its spinner.
   onLeavePlace: () => Promise<void>;
+  // Shown only without an account: the way to make one.
+  onSignUp: () => void;
 };
 
 /**
@@ -93,6 +96,7 @@ export function MoreScreen({
   onOpenPlaces,
   onAddPlace,
   onLeavePlace,
+  onSignUp,
   onOpenNotifications,
   alerts = {},
 }: Props) {
@@ -112,7 +116,8 @@ export function MoreScreen({
   const [notificationsOn, setNotificationsOn] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (!me) return;
+    // Without an account, only a phone that registered has choices to read.
+    if (!me && !pushSupported) return;
     let cancelled = false;
     Promise.all([getPermissionState(), getNotificationPreferences(poi.id)])
       .then(([permission, preferences]) => {
@@ -149,6 +154,22 @@ export function MoreScreen({
       <View style={styles.titleBlock}>
         <AccessibleText variant="title">{t('more.title')}</AccessibleText>
       </View>
+
+      {/* Browsing without an account: the one thing to offer first. */}
+      {!me && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('onboarding.signUp')}
+          onPress={onSignUp}
+          style={styles.row}
+        >
+          <PersonIcon size={26} color={poiTheme.accentStrong} />
+          <AccessibleText variant="bodyLarge" style={styles.rowLabel} {...ONE_LINE}>
+            {t('onboarding.signUp')}
+          </AccessibleText>
+          <ChevronRightIcon size={22} color={colors.textMuted} />
+        </Pressable>
+      )}
 
       {rows.map((row) => (
         <Pressable

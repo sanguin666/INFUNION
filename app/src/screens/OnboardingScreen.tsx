@@ -1,4 +1,4 @@
-import { ImageBackground, View } from 'react-native';
+import { ImageBackground, Pressable, View } from 'react-native';
 import { useFrameDimensions } from '../web/desktopFrame';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccessibleButton } from '../components/AccessibleButton';
@@ -6,13 +6,13 @@ import { AccessibleText } from '../components/AccessibleText';
 import { HaloBackdrop } from '../components/HaloBackdrop';
 import { LogoMark, Wordmark } from '../components/Logo';
 import { useI18n } from '../i18n/I18nContext';
-import { colors, spacing, themedStyles } from '../theme/theme';
+import { colors, minTouchTarget, spacing, themedStyles } from '../theme/theme';
 
 type Props = {
   onSignUp: () => void;
   onSignIn: () => void;
-  // Only while the backend offers the demo account; absent, no button.
-  onDemoSignIn?: () => void;
+  // Into the app with no account at all (Seb, 9 Nov 2026).
+  onGuest: () => void;
 };
 
 /**
@@ -24,10 +24,14 @@ type Props = {
  * differ only in where somebody lands afterwards, and pressing the wrong
  * one costs nothing.
  *
- * During the demo a third door sits under them: straight into the demo
- * member's account, for showing the app without typing a number.
+ * Under them, a quiet third way in: no account at all. Everything a
+ * community publishes can be read that way; posting, contributing and
+ * notifications ask to sign in when somebody gets to them (Seb, 9 Nov
+ * 2026, replacing the demo account). A link rather than a button: the
+ * app has three buttons and no fourth, and this is the way past the
+ * two doors, not a door of its own.
  */
-export function OnboardingScreen({ onSignUp, onSignIn, onDemoSignIn }: Props) {
+export function OnboardingScreen({ onSignUp, onSignIn, onGuest }: Props) {
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const { width, height } = useFrameDimensions();
@@ -74,10 +78,18 @@ export function OnboardingScreen({ onSignUp, onSignIn, onDemoSignIn }: Props) {
         <View style={styles.buttons}>
           <AccessibleButton label={t('onboarding.signUp')} onPress={onSignUp} />
           <AccessibleButton label={t('onboarding.signIn')} variant="secondary" onPress={onSignIn} />
-          {onDemoSignIn && (
-            <AccessibleButton label={t('onboarding.demoSignIn')} variant="secondary" onPress={onDemoSignIn} />
-          )}
         </View>
+        <Pressable accessibilityRole="link" onPress={onGuest} style={styles.guest}>
+          {({ pressed }) => (
+            <AccessibleText
+              variant="body"
+              color={colors.primaryStrong}
+              style={[styles.guestLabel, pressed && styles.guestPressed]}
+            >
+              {t('onboarding.guest')}
+            </AccessibleText>
+          )}
+        </Pressable>
       </View>
     </ImageBackground>
   );
@@ -112,5 +124,21 @@ const styles = themedStyles(() => ({
     alignSelf: 'stretch',
     gap: spacing.md,
     marginTop: spacing.lg,
+  },
+  guest: {
+    alignSelf: 'stretch',
+    marginHorizontal: -spacing.lg,
+    minHeight: minTouchTarget,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.xs,
+  },
+  guestLabel: {
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+  },
+  guestPressed: {
+    opacity: 0.6,
   },
 }));

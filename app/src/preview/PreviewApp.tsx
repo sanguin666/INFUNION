@@ -107,6 +107,7 @@ export function PreviewApp({ poiId }: { poiId: string }) {
         onAddPlace={() => undefined}
         onLeavePlace={async () => undefined}
         onSignIn={() => undefined}
+        onSignUp={() => undefined}
       />
     </PreviewContext.Provider>
   );
