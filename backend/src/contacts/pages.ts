@@ -1,4 +1,8 @@
 import { escapeHtml } from '../common/email/email-layout.js';
+import { outreachText } from './outreach-texts.js';
+
+// infunion's mark (brand/svg/infunion-mark.svg), for "Made with ⚭ infunion".
+const MARK = '<svg viewBox="0 0 512 512" width="18" height="18" aria-hidden="true"><defs><clipPath id="mk"><rect x="147.38" y="256" width="217.24" height="143.48"/></clipPath></defs><circle cx="177.25" cy="256" r="108.62" fill="none" stroke="#6C4FD9" stroke-width="34.87"/><circle cx="334.75" cy="256" r="108.62" fill="none" stroke="#F9B800" stroke-width="34.87"/><circle cx="177.25" cy="256" r="108.62" fill="none" stroke="#6C4FD9" stroke-width="34.87" clip-path="url(#mk)"/></svg>';
 
 /**
  * The few web pages a member reaches from an email, outside the app: the
@@ -27,14 +31,18 @@ p{margin:0 0 16px;color:#4a4760}
 label{display:block;font-weight:600;margin:16px 0 6px}
 input{width:100%;font:inherit;padding:12px 14px;border:1.5px solid rgba(45,30,110,.25);border-radius:12px;background:#fff;color:inherit}
 input:focus{outline:none;border-color:#6c4fd9}
-.amounts{display:flex;flex-wrap:wrap;gap:8px}
-.amounts label{margin:0;font-weight:600;border:1.5px solid rgba(45,30,110,.25);border-radius:999px;padding:8px 18px;cursor:pointer}
-.amounts input{position:absolute;opacity:0;width:1px;height:1px}
+.amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.amounts label{margin:0;font-weight:600;text-align:center;border:1.5px solid rgba(45,30,110,.25);border-radius:999px;padding:8px 18px;cursor:pointer}
+.amounts input[type=radio]{position:absolute;opacity:0;width:1px;height:1px}
 .amounts label:has(input:checked){background:#ece8fc;border-color:#6c4fd9;color:#5638c7}
 button{margin-top:24px;width:100%;font:inherit;font-weight:700;color:#fff;background:#6c4fd9;border:0;border-radius:999px;padding:14px 20px;cursor:pointer}
 .small{font-size:14px;color:#6b6880;margin:16px 0 0}
 .foot{text-align:center;font-size:13px;color:#8b87a0;margin-top:20px}
-.foot a{color:#5638c7;text-decoration:none}
+.foot a{display:inline-flex;align-items:center;gap:6px;color:#8b87a0;text-decoration:none}
+.foot b{color:#1D1A2D}
+.amounts .other{grid-column:span 2;width:100%;min-width:0;margin:0;border-radius:999px;padding:8px 18px;font-weight:600;text-align:center}
+.amounts .other::placeholder{color:#5638c7;opacity:.8}
+.amounts .other:not(:placeholder-shown){background:#ece8fc;border-color:#6c4fd9;color:#5638c7}
 </style>
 </head>
 <body>
@@ -44,7 +52,7 @@ ${community ? `<div class="top">${logoUrl ? `<img src="${escapeHtml(logoUrl)}" a
 <h1>${escapeHtml(title)}</h1>
 ${body}
 </div>
-<p class="foot"><a href="https://www.infunion.app">infunion</a></p>
+<p class="foot"><a href="https://www.infunion.app">${escapeHtml(outreachText(lang).madeWith)} ${MARK}<b>infunion</b></a></p>
 </main>
 </body>
 </html>`;

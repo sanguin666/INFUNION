@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
-import { useI18n } from '../i18n/I18nContext';
+import { translatorFor, useI18n } from '../i18n/I18nContext';
 import { getCampaigns } from '../api/donations';
 import { API_BASE_URL } from '../api/client';
 import { getPoi } from '../api/pois';
-import type { Campaign } from '../api/types';
+import type { Campaign, Poi } from '../api/types';
+import { Lockup } from '../components/LogoMark';
 
 /**
  * The community's own pay link and its QR code (Seb, 10 Nov 2026):
@@ -19,12 +20,13 @@ export function PayLinkSection({ poiId }: { poiId: string }) {
   const [amount, setAmount] = useState('');
   const [qr, setQr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [communityName, setCommunityName] = useState('');
+  const [poi, setPoi] = useState<Poi | null>(null);
+  const communityName = poi?.name ?? '';
 
   useEffect(() => {
     getPoi(poiId)
-      .then((poi) => setCommunityName(poi.name))
-      .catch(() => setCommunityName(''));
+      .then(setPoi)
+      .catch(() => setPoi(null));
   }, [poiId]);
 
   useEffect(() => {
@@ -104,8 +106,48 @@ export function PayLinkSection({ poiId }: { poiId: string }) {
               {t('payLink.download')}
             </a>
           )}
+          {qr && (
+            <button type="button" className="btn btn-primary" onClick={() => window.print()}>
+              {t('payLink.print')}
+            </button>
+          )}
         </div>
       </div>
+      {poi && qr && <PayFlyer poi={poi} qr={qr} campaign={campaigns.find((c) => c.id === campaignId) ?? null} amount={params.get('amount')} />}
     </div>
+  );
+}
+
+/**
+ * The printed poster, like the "join" one in My QR code (same .qr-flyer
+ * styles, so printing keeps only the poster): in the community's language,
+ * since it is for the people who will scan it.
+ */
+function PayFlyer({ poi, qr, campaign, amount }: { poi: Poi; qr: string; campaign: Campaign | null; amount: string | null }) {
+  const { t } = useI18n();
+  const flyerT = translatorFor(poi.language);
+  return (
+    <>
+      <p className="card-title" style={{ marginTop: 24 }}>
+        {t('payLink.previewTitle')}
+      </p>
+      <div className="qr-flyer">
+        <div className="qr-flyer-inner">
+          {poi.pictureUrl && <img src={poi.pictureUrl} alt={poi.name} className="qr-flyer-logo" />}
+          <p className="qr-flyer-poi-name">{poi.name}</p>
+          <h1 className="qr-flyer-headline">
+            {campaign ? campaign.title : flyerT('payLink.flyerHeadline', { name: poi.name })}
+          </h1>
+          {amount && <p className="qr-flyer-subtext">{flyerT('payLink.flyerAmount', { amount: amount.replace('.', ',') })}</p>}
+          <img src={qr} alt={flyerT('payLink.qrAlt')} className="qr-flyer-code" />
+          <p className="qr-flyer-hint">{flyerT('payLink.flyerScan')}</p>
+          <p className="qr-flyer-subtext">{flyerT('payLink.flyerMethods')}</p>
+          <div className="qr-flyer-footer">
+            <span>{flyerT('payLink.madeWith')}</span>
+            <Lockup height={26} />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
