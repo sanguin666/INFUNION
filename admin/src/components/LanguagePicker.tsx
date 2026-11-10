@@ -8,7 +8,7 @@ import { GlobeIcon, PickerRow, PickerSheet } from './PickerSheet';
  * currently set to, rather than six abbreviations side by side. The
  * list only appears once somebody asks for it.
  */
-export function LanguagePicker() {
+export function LanguagePicker({ compact = false }: { compact?: boolean } = {}) {
   const { t, language, setLanguage } = useI18n();
   const [open, setOpen] = useState(false);
 
@@ -16,7 +16,8 @@ export function LanguagePicker() {
     <>
       <PickerRow
         icon={<GlobeIcon />}
-        label={t('layout.language')}
+        label={compact ? undefined : t('layout.language')}
+        compact={compact}
         value={LANGUAGE_NAMES[language]}
         ariaLabel={`${t('layout.language')}: ${LANGUAGE_NAMES[language]}`}
         onClick={() => setOpen(true)}

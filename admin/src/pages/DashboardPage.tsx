@@ -11,6 +11,10 @@ import type { Campaign, DashboardSummary, DonationStats, Event, ModuleType } fro
 import { formatMoney } from '../format';
 import { typeName } from '../requestTypes';
 import { occurrencesBetween } from '../schedule';
+import { TabBar, TabPanel, useTab } from '../components/Tabs';
+import { DashboardAccountTab } from './DashboardAccountTab';
+
+const DASHBOARD_TABS = ['overview', 'account'] as const;
 
 type T = ReturnType<typeof useI18n>['t'];
 
@@ -159,6 +163,7 @@ export function DashboardPage() {
   const { poiId, modules } = useOutletContext<DashboardContext>();
   const { t, language } = useI18n();
   const { user } = useAuth();
+  const [tab, setTab] = useTab(DASHBOARD_TABS);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [stats, setStats] = useState<DonationStats | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -254,6 +259,23 @@ export function DashboardPage() {
       <h2>{user?.firstName ? t('dashboard.greeting', { name: user.firstName }) : t('dashboard.title')}</h2>
       <p className="muted">{[today.charAt(0).toUpperCase() + today.slice(1), place].filter(Boolean).join(' · ')}</p>
 
+      <TabBar
+        idPrefix="dashboard"
+        label={t('tabs.label')}
+        current={tab}
+        onChange={setTab}
+        tabs={[
+          { key: 'overview', label: t('tabs.donationsOverview') },
+          { key: 'account', label: t('tabs.settingsAccount') },
+        ]}
+      />
+
+      <TabPanel idPrefix="dashboard" tabKey="account" current={tab}>
+        <DashboardAccountTab poiId={poiId} />
+      </TabPanel>
+
+      <TabPanel idPrefix="dashboard" tabKey="overview" current={tab}>
+
       <h3 className="section-title">
         {todos.length ? t('dashboard.todoTitleCount', { n: todos.reduce((n, r) => n + r.count, 0) }) : t('dashboard.todoTitle')}
       </h3>
@@ -345,6 +367,7 @@ export function DashboardPage() {
           </>
         )}
       </div>
+      </TabPanel>
     </div>
   );
 }

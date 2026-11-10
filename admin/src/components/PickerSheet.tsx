@@ -108,15 +108,24 @@ export function PickerRow({
   value,
   ariaLabel,
   onClick,
+  compact,
 }: {
   icon: ReactNode;
   label?: string;
   value: string;
   ariaLabel: string;
   onClick: () => void;
+  /** A small chip (icon + value) for the admin menu's bottom row. */
+  compact?: boolean;
 }) {
   return (
-    <button type="button" className="picker-row" aria-label={ariaLabel} onClick={onClick}>
+    <button
+      type="button"
+      className={compact ? 'picker-row picker-chip' : 'picker-row'}
+      aria-label={ariaLabel}
+      title={compact ? ariaLabel : undefined}
+      onClick={onClick}
+    >
       {icon}
       {label ? (
         <>
@@ -126,7 +135,7 @@ export function PickerRow({
       ) : (
         <span className="picker-row-label">{value}</span>
       )}
-      <ChevronRightIcon />
+      {!compact && <ChevronRightIcon />}
     </button>
   );
 }

@@ -18,11 +18,14 @@ import { BadgesSection } from './BadgesSection';
 import { PhonePreview } from '../components/PhonePreview';
 import type { PoiBadge } from '../api/types';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
+import { PersonalisePanel } from './PersonalisePanel';
+import { CommunityInfoCard } from './CommunityInfoCards';
+import { LocationCard } from './LocationCard';
 import { BottomMenuPanel, initialMenuOrder } from './MenuOrder';
 import { hideFromList, useUndo } from '../components/Undo';
 import { HomeVersionsButton } from '../components/HomeVersions';
 
-const HOME_TABS = ['badges', 'sections', 'menu'] as const;
+const HOME_TABS = ['badges', 'sections', 'menu', 'personalise', 'place'] as const;
 
 // Blocks that fill themselves from a module's content. They have nothing
 // to write, only a count, and they need that module switched on.
@@ -287,6 +290,10 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
             { key: 'badges', label: t('tabs.homeBadges') },
             { key: 'sections', label: t('tabs.homeSections'), count: blocks?.length ?? null },
             { key: 'menu', label: t('tabs.homeMenu') },
+            // What Settings held about the community's look and details
+            // (Seb, 10 Nov 2026).
+            { key: 'personalise', label: t('tabs.settingsPersonalise') },
+            { key: 'place', label: t('tabs.settingsPlace') },
           ]}
         />
 
@@ -455,8 +462,21 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
           )}
           {(!poi || !menuOrder) && <p className="muted">{t('homePage.loading')}</p>}
         </TabPanel>
+
+        {/* The colour, then the name, description and logo. */}
+        <TabPanel idPrefix="home" tabKey="personalise" current={tab}>
+          {poi && modulesLoaded && <PersonalisePanel poi={poi} modules={modules} onSaved={setPoi} preview={false} />}
+          <div style={{ height: 24 }} />
+          {poi && <CommunityInfoCard key={poi.id} poi={poi} onSaved={setPoi} />}
+        </TabPanel>
+
+        <TabPanel idPrefix="home" tabKey="place" current={tab}>
+          {poi && <LocationCard key={poi.id} poi={poi} onSaved={setPoi} />}
+        </TabPanel>
       </div>
       <PhonePreview
+        // A new colour or logo is the app's own to draw: load it again.
+        key={`${poi?.theme ?? ''}|${poi?.logoUrl ?? ''}`}
         poiId={poiId}
         badges={previewBadges?.badges ?? null}
         blocks={blocks}
