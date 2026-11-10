@@ -1380,7 +1380,7 @@
       // The worship variant shows the Carmen demo (a church), the others the
       // Crecer Juntos association; shots without a worship copy stay shared.
       var folder = VARIANT === "worship" && WORSHIP_SHOTS.indexOf(shot) !== -1 ? "/worship/" : "/";
-      el.src = "assets/screens/" + lang + folder + shot + ".webp?v=20261105-wording";
+      el.src = "/assets/screens/" + lang + folder + shot + ".webp?v=20261110-seo";
     });
     document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-alt");
@@ -1401,21 +1401,24 @@
     }
   }
 
-  function initialLang() {
-    var saved = null;
-    try {
-      saved = localStorage.getItem(STORAGE_KEY);
-    } catch (e) {
-      // Ignore: fall back to the default below.
-    }
-    return TRANSLATIONS[saved] ? saved : "es";
+  // Each language has its own address (/en/, /fr/, ... ; Spanish at /), and
+  // the server-built HTML already has the text. The page's own language wins,
+  // so every address stays in its language for search engines.
+  function pageLang() {
+    var lang = document.documentElement.lang;
+    return TRANSLATIONS[lang] ? lang : "es";
+  }
+
+  function homeFor(lang) {
+    return lang === "es" ? "/" : "/" + lang + "/";
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    applyLang(initialLang());
+    applyLang(pageLang());
     document.querySelectorAll("[data-lang-select]").forEach(function (el) {
       el.addEventListener("change", function () {
-        applyLang(el.value);
+        // Go to that language's own page, keeping the audience and join hash.
+        window.location.href = homeFor(el.value) + window.location.search + window.location.hash;
       });
     });
   });
