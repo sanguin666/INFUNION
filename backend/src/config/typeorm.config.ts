@@ -17,6 +17,7 @@ import { PhoneVerificationCode } from '../auth/entities/phone-verification-code.
 import { PoiPageBlock } from '../poi-page/entities/poi-page-block.entity.js';
 import { HomePageVersion } from '../home-versions/home-version.entity.js';
 import { DonationCampaign } from '../donations/entities/donation-campaign.entity.js';
+import { PaymentLink } from '../donations/entities/payment-link.entity.js';
 import { ServiceRequest } from '../service-requests/entities/service-request.entity.js';
 import { ServiceRequestMessage } from '../service-requests/entities/service-request-message.entity.js';
 import { ServiceRequestDocument } from '../service-requests/entities/service-request-document.entity.js';
@@ -67,6 +68,7 @@ export const ENTITIES = [
   CommunityComment,
   Donation,
   DonationCampaign,
+  PaymentLink,
   PoiPageBlock,
   HomePageVersion,
   PhoneVerificationCode,

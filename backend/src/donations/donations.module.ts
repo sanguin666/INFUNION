@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Donation } from './entities/donation.entity.js';
 import { DonationCampaign } from './entities/donation-campaign.entity.js';
+import { PaymentLink } from './entities/payment-link.entity.js';
+import { PaymentLinksService } from './payment-links.service.js';
+import { PaymentLinksController } from './payment-links.controller.js';
 import { DonationsService } from './donations.service.js';
 import {
   CampaignsController,
@@ -20,7 +23,7 @@ import { AuthModule } from '../auth/auth.module.js';
 import { NotificationsModule } from '../notifications/notifications.module.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Donation, DonationCampaign, Poi, User]), PoisModule, AuthModule, NotificationsModule],
+  imports: [TypeOrmModule.forFeature([Donation, DonationCampaign, PaymentLink, Poi, User]), PoisModule, AuthModule, NotificationsModule],
   controllers: [
     DonationsController,
     CampaignsController,
@@ -28,8 +31,9 @@ import { NotificationsModule } from '../notifications/notifications.module.js';
     DonationReturnController,
     StripeWebhookController,
     PayoutsAccountController,
+    PaymentLinksController,
   ],
-  providers: [DonationsService, StripeService, PayoutsAccountService],
-  exports: [DonationsService, StripeService, PayoutsAccountService],
+  providers: [DonationsService, StripeService, PayoutsAccountService, PaymentLinksService],
+  exports: [DonationsService, StripeService, PayoutsAccountService, PaymentLinksService],
 })
 export class DonationsModule {}

@@ -261,6 +261,8 @@ export type Donation = {
   message: string | null;
   // A monthly gift: the first payment and every later month alike.
   recurring: boolean;
+  // The named payment link it was paid through, if any.
+  paymentLinkTitle?: string | null;
   createdAt: string;
 };
 

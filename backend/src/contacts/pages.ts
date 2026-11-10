@@ -31,6 +31,7 @@ p{margin:0 0 16px;color:#4a4760}
 label{display:block;font-weight:600;margin:16px 0 6px}
 input{width:100%;font:inherit;padding:12px 14px;border:1.5px solid rgba(45,30,110,.25);border-radius:12px;background:#fff;color:inherit}
 input:focus{outline:none;border-color:#6c4fd9}
+.fixed{font-size:40px;font-weight:800;line-height:1.1;margin:8px 0 4px;color:#1D1A2D}
 .amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .amounts label{margin:0;font-weight:600;text-align:center;border:1.5px solid rgba(45,30,110,.25);border-radius:999px;padding:8px 18px;cursor:pointer}
 .amounts input[type=radio]{position:absolute;opacity:0;width:1px;height:1px}
