@@ -1332,6 +1332,10 @@
   };
 
   var VARIANT = (function () {
+    // Place pages (/religion/, /asociaciones/, ...) are built with their variant
+    // already in data-for; the ?for= query keeps working on the home page.
+    var attr = document.documentElement.getAttribute("data-for");
+    if (attr && VARIANTS[attr]) return attr;
     var m = /[?&]for=([a-z]+)/.exec(window.location.search);
     return m && VARIANTS[m[1]] ? m[1] : null;
   })();
@@ -1370,7 +1374,9 @@
     }
     if (VARIANT) document.documentElement.setAttribute("data-for", VARIANT);
     showModuleCards();
-    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+    // Place pages (data-static-text) already have their own texts in the HTML.
+    var staticText = document.documentElement.hasAttribute("data-static-text");
+    if (!staticText) document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var key = el.getAttribute("data-i18n");
       if (t[key] !== undefined) el.textContent = t[key];
     });
@@ -1382,11 +1388,11 @@
       var folder = VARIANT === "worship" && WORSHIP_SHOTS.indexOf(shot) !== -1 ? "/worship/" : "/";
       el.src = "/assets/screens/" + lang + folder + shot + ".webp?v=20261110-seo";
     });
-    document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
+    if (!staticText) document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-alt");
       if (t[key] !== undefined) el.alt = t[key];
     });
-    document.querySelectorAll("[data-i18n-label]").forEach(function (el) {
+    if (!staticText) document.querySelectorAll("[data-i18n-label]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-label");
       if (t[key] !== undefined) el.setAttribute("aria-label", t[key]);
     });
