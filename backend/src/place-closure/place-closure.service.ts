@@ -59,6 +59,7 @@ import {
   emailHeading,
   emailLayout,
   emailParagraph,
+  emailText,
 } from '../common/email/email-layout.js';
 import { intlLocale, Language } from '../common/enums/language.enum.js';
 import { fileStore, type FileArea } from '../common/storage/file-store.js';
@@ -895,7 +896,7 @@ export class PlaceClosureService implements OnModuleInit, OnModuleDestroy {
             )),
       language,
     );
-    const text = [heading, ...keys.map(t)].join('\n\n');
+    const text = emailText([heading, ...keys.map(t)].join('\n\n'), language);
     for (const address of to) {
       try {
         await this.emailSender.send({ to: address, subject, text, html });

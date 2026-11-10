@@ -30,6 +30,7 @@ import {
   emailLayout,
   emailParagraph,
   emailQuote,
+  emailText,
 } from '../common/email/email-layout.js';
 import { fill, moderationTexts } from './moderation-texts.js';
 import { countsFrom, OPEN_REPORT_COUNTS_SQL } from './open-report-counts.js';
@@ -477,7 +478,7 @@ export class ModerationService {
             emailButton(t.button, url),
           language,
         );
-        const text = [t.heading, fill(t.intro, values), excerpt, t.soon, url].join('\n\n');
+        const text = emailText([t.heading, fill(t.intro, values), excerpt, t.soon, url].join('\n\n'), language);
         try {
           await this.emailSender.send({ to: user.email, subject, text, html });
         } catch (error) {

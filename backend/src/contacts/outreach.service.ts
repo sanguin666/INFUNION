@@ -12,7 +12,7 @@ import { PlanTier } from '../common/enums/plan-tier.enum.js';
 import { DonationCampaign } from '../donations/entities/donation-campaign.entity.js';
 import { Donation, DonationStatus } from '../donations/entities/donation.entity.js';
 import { EmailSender } from '../auth/email/email-sender.js';
-import { communityLogoUrl, emailButton, emailHeading, emailLayout, emailParagraph, escapeHtml } from '../common/email/email-layout.js';
+import { communityLogoUrl, emailButton, emailHeading, emailLayout, emailParagraph, escapeHtml, emailText } from '../common/email/email-layout.js';
 import { sendsNotifications } from '../active-modules/billing-rules.js';
 import { fill, outreachText } from './outreach-texts.js';
 import type { OutreachDto } from './dto/contacts.dto.js';
@@ -375,7 +375,7 @@ export class OutreachService {
       // The community's own header (Seb, 10 Nov 2026); infunion stays in the footer.
       { name: poi.name, logoUrl: communityLogoUrl(poi.logoUrl, this.config.get<string>('API_PUBLIC_URL')) },
     );
-    const text = [subject, '', body, '', button ? `${button}: ${urls.button}` : '', '', `${why} ${words.stop}: ${urls.stop}`].join('\n');
+    const text = emailText([subject, '', body, '', button ? `${button}: ${urls.button}` : '', '', `${why} ${words.stop}: ${urls.stop}`].join('\n'), language);
     return {
       to: to ?? (test ? actor?.email ?? '' : contact.email ?? ''),
       subject: test ? `[Test] ${subject}` : subject,
