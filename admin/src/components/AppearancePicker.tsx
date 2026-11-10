@@ -28,7 +28,7 @@ function systemIsDark(): boolean {
  * and takes the dark theme off <html> when it goes, so the sign-in page
  * is always light (Seb, 28 Sep 2026: dark mode only after login).
  */
-export function AppearancePicker() {
+export function AppearancePicker({ compact = false }: { compact?: boolean } = {}) {
   const { t } = useI18n();
   const [preference, setPreference] = useState<Preference>(readPreference);
   const [systemDark, setSystemDark] = useState(systemIsDark);
@@ -72,7 +72,8 @@ export function AppearancePicker() {
     <>
       <PickerRow
         icon={<ContrastIcon />}
-        label={t('layout.appearance')}
+        label={compact ? undefined : t('layout.appearance')}
+        compact={compact}
         value={labels[preference]}
         ariaLabel={`${t('layout.appearance')}: ${labels[preference]}`}
         onClick={() => setOpen(true)}
