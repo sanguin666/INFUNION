@@ -1,7 +1,8 @@
 import { Linking, Platform } from 'react-native';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
-import { registerPushToken, removePushToken } from '../api/notifications';
+import { followFromPhone, registerPushToken, removePushToken, unfollowFromPhone } from '../api/notifications';
+import { setDeviceToken } from '../api/client';
 
 /**
  * Push notifications on this phone: asking permission, handing the
@@ -21,6 +22,8 @@ export type PushTarget = {
 export type PermissionState = 'granted' | 'undetermined' | 'denied' | 'unsupported';
 
 const supported = Platform.OS !== 'web';
+// Whether this build can receive notifications at all (not the web one).
+export const pushSupported = supported;
 
 // A notification arriving while the app is open still shows as a banner:
 // otherwise someone looking at the home page would never see it.
@@ -80,6 +83,27 @@ export async function disablePushForSignOut(): Promise<void> {
   const token = registeredToken;
   registeredToken = null;
   if (token) await removePushToken(token).catch(() => undefined);
+  setDeviceToken(null);
+}
+
+/**
+ * Without an account (Seb, 9 Nov 2026): this phone follows a community,
+ * registering first when notifications are allowed but it hasn't yet.
+ * False when the phone can't receive them.
+ */
+export async function followAsGuest(poiId: string, language: string): Promise<boolean> {
+  if (!supported) return false;
+  if (!registeredToken) {
+    if ((await getPermissionState()) !== 'granted') return false;
+    await registerThisPhone(language);
+  }
+  if (!registeredToken) return false;
+  await followFromPhone(poiId);
+  return true;
+}
+
+export async function unfollowAsGuest(poiId: string): Promise<void> {
+  if (registeredToken) await unfollowFromPhone(poiId);
 }
 
 export function openPhoneSettings(): void {
@@ -92,6 +116,7 @@ async function registerThisPhone(language: string): Promise<void> {
       (Constants.expoConfig?.extra?.eas as { projectId?: string } | undefined)?.projectId ??
       Constants.easConfig?.projectId;
     const { data: token } = await Notifications.getExpoPushTokenAsync(projectId ? { projectId } : undefined);
+    setDeviceToken(token);
     await registerPushToken(token, language, Intl.DateTimeFormat().resolvedOptions().timeZone);
     registeredToken = token;
   } catch (error) {

@@ -140,7 +140,9 @@ export type Translations = {
     welcome: string;
     signUp: string;
     signIn: string;
-    demoSignIn: string;
+    // Opens the app with no account: everything can be read, and
+    // posting, contributing or notifications ask to sign in.
+    guest: string;
   };
   addPlace: {
     title: string;
@@ -779,7 +781,7 @@ const en: Translations = {
     saving: 'Saving…',
     saved: 'Saved',
     noName: 'No name yet',
-    signedOutExplainer: 'Sign in to set your name and your picture.',
+    signedOutExplainer: 'With an account you can post, send requests, contribute every month and add your name and picture.',
     laterLabel: 'More settings are coming here later.',
     permissionDenied: 'infunion needs permission to open your photos. You can allow it in your phone settings.',
     pictureError: 'Your picture couldn’t be saved. Please try another photo.',
@@ -789,7 +791,7 @@ const en: Translations = {
     welcome: "All your communities,\nin one app",
     signUp: 'Sign up',
     signIn: 'Sign in',
-    demoSignIn: 'Demo sign-in (María García)',
+    guest: 'Continue without an account',
   },
   addPlace: {
     title: "Add the community you belong to.",
@@ -1430,7 +1432,7 @@ const es: Translations = {
     saving: 'Guardando…',
     saved: 'Guardado',
     noName: 'Todavía sin nombre',
-    signedOutExplainer: 'Inicia sesión para poner tu nombre y tu foto.',
+    signedOutExplainer: 'Con una cuenta puedes publicar, enviar solicitudes, aportar cada mes y poner tu nombre y tu foto.',
     laterLabel: 'Aquí habrá más ajustes más adelante.',
     permissionDenied: 'infunion necesita permiso para abrir tus fotos. Puedes darlo en los ajustes del teléfono.',
     pictureError: 'No se ha podido guardar tu foto. Prueba con otra.',
@@ -1440,7 +1442,7 @@ const es: Translations = {
     welcome: "Todas tus comunidades,\nen una sola app",
     signUp: 'Crear cuenta',
     signIn: 'Iniciar sesión',
-    demoSignIn: 'Entrar en la demo (María García)',
+    guest: 'Entrar sin cuenta',
   },
   addPlace: {
     title: "Añade la comunidad a la que perteneces.",
@@ -2081,7 +2083,7 @@ const fr: Translations = {
     saving: 'Enregistrement…',
     saved: 'Enregistré',
     noName: 'Pas encore de nom',
-    signedOutExplainer: 'Connectez-vous pour indiquer votre nom et votre photo.',
+    signedOutExplainer: 'Avec un compte, vous pouvez publier, envoyer des demandes, contribuer chaque mois et indiquer votre nom et votre photo.',
     laterLabel: 'D’autres réglages arriveront ici plus tard.',
     permissionDenied: 'infunion a besoin d’accéder à vos photos. Vous pouvez l’autoriser dans les réglages du téléphone.',
     pictureError: 'Votre photo n’a pas pu être enregistrée. Essayez avec une autre.',
@@ -2091,7 +2093,7 @@ const fr: Translations = {
     welcome: "Toutes vos communautés,\ndans une seule app",
     signUp: 'S’inscrire',
     signIn: 'Se connecter',
-    demoSignIn: 'Connexion démo (María García)',
+    guest: 'Continuer sans compte',
   },
   addPlace: {
     title: "Ajoutez la communauté à laquelle vous appartenez.",
@@ -2732,7 +2734,7 @@ const va: Translations = {
     saving: 'Guardant…',
     saved: 'Guardat',
     noName: 'Encara sense nom',
-    signedOutExplainer: 'Inicia sessió per a posar el teu nom i la teua foto.',
+    signedOutExplainer: 'Amb un compte pots publicar, enviar sol·licituds, aportar cada mes i posar el teu nom i la teua foto.',
     laterLabel: 'Ací hi haurà més opcions més avant.',
     permissionDenied: 'infunion necessita permís per a obrir les teues fotos. Pots donar-lo en la configuració del telèfon.',
     pictureError: 'No s’ha pogut guardar la teua foto. Prova amb una altra.',
@@ -2742,7 +2744,7 @@ const va: Translations = {
     welcome: "Totes les teues comunitats,\nen una sola app",
     signUp: 'Crear un compte',
     signIn: 'Iniciar sessió',
-    demoSignIn: 'Entrar en la demo (María García)',
+    guest: 'Entrar sense compte',
   },
   addPlace: {
     title: "Afig la comunitat a la qual pertanys.",
@@ -3383,7 +3385,7 @@ const ca: Translations = {
     saving: 'Desant…',
     saved: 'Desat',
     noName: 'Encara sense nom',
-    signedOutExplainer: 'Inicia sessió per posar el teu nom i la teva foto.',
+    signedOutExplainer: 'Amb un compte pots publicar, enviar sol·licituds, aportar cada mes i posar el teu nom i la teva foto.',
     laterLabel: 'Aquí hi haurà més opcions més endavant.',
     permissionDenied: 'infunion necessita permís per obrir les teves fotos. Pots donar-lo a la configuració del telèfon.',
     pictureError: 'No s’ha pogut desar la teva foto. Prova amb una altra.',
@@ -3393,7 +3395,7 @@ const ca: Translations = {
     welcome: "Totes les teves comunitats,\nen una sola app",
     signUp: 'Crear un compte',
     signIn: 'Iniciar sessió',
-    demoSignIn: 'Entrar a la demo (María García)',
+    guest: 'Entrar sense compte',
   },
   addPlace: {
     title: "Afegeix la comunitat a la qual pertanys.",
@@ -4034,7 +4036,7 @@ const gl: Translations = {
     saving: 'Gardando…',
     saved: 'Gardado',
     noName: 'Aínda sen nome',
-    signedOutExplainer: 'Inicia sesión para pór o teu nome e a túa foto.',
+    signedOutExplainer: 'Cunha conta podes publicar, enviar solicitudes, achegar cada mes e pór o teu nome e a túa foto.',
     laterLabel: 'Aquí haberá máis axustes máis adiante.',
     permissionDenied: 'infunion precisa permiso para abrir as túas fotos. Podes dalo nos axustes do teléfono.',
     pictureError: 'Non se puido gardar a túa foto. Proba con outra.',
@@ -4044,7 +4046,7 @@ const gl: Translations = {
     welcome: "Todas as túas comunidades,\nnunha soa app",
     signUp: 'Crear conta',
     signIn: 'Iniciar sesión',
-    demoSignIn: 'Entrar na demo (María García)',
+    guest: 'Entrar sen conta',
   },
   addPlace: {
     title: "Engade a comunidade á que pertences.",
@@ -4686,7 +4688,7 @@ const pt: Translations = {
     saving: 'A guardar…',
     saved: 'Guardado',
     noName: 'Ainda sem nome',
-    signedOutExplainer: 'Inicie sessão para indicar o seu nome e a sua fotografia.',
+    signedOutExplainer: 'Com uma conta pode publicar, enviar pedidos, contribuir todos os meses e indicar o seu nome e a sua fotografia.',
     laterLabel: 'Aqui haverá mais definições mais tarde.',
     permissionDenied: 'A infunion precisa de autorização para abrir as suas fotografias. Pode dá-la nas definições do telemóvel.',
     pictureError: 'Não foi possível guardar a sua fotografia. Experimente outra.',
@@ -4696,7 +4698,7 @@ const pt: Translations = {
     welcome: "Todas as suas comunidades,\nnuma só app",
     signUp: 'Criar conta',
     signIn: 'Iniciar sessão',
-    demoSignIn: 'Entrar na demo (María García)',
+    guest: 'Continuar sem conta',
   },
   addPlace: {
     title: "Adicione a comunidade a que pertence.",

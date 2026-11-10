@@ -7,6 +7,7 @@ import { TimesReminderSheet } from '../components/ReminderSheets';
 import { groupByDay, SummaryDay, SummaryList, SummaryRow } from '../components/SummaryList';
 import { getEvents } from '../api/events';
 import { useEventReminders } from '../notifications/useEventReminders';
+import { pushSupported } from '../notifications/push';
 import { useAuth } from '../auth/AuthContext';
 import {
   regularEvents,
@@ -68,7 +69,7 @@ export function EventsScreen({ poi, onWatchLive, onOpenCalendar }: Props) {
 
   // Signed-in readers only: a bell needs someone to remind, and a place
   // whose plan sends notifications.
-  const canBell = !!me && sendsNotifications(poi);
+  const canBell = (!!me || pushSupported) && sendsNotifications(poi);
   const bells: TimetableBells | undefined = canBell
     ? {
         isSectionOn: (category) => ofCategory(category).some((event) => reminders.isEveryTime(event.id)),

@@ -20,6 +20,10 @@ import { Language } from '../../common/enums/language.enum.js';
  * The token is unique on its own, not per user: a shared phone that signs
  * in as someone else hands its token over, so the previous person stops
  * receiving on a phone they no longer use.
+ *
+ * No user is a phone used without an account (Seb, 9 Nov 2026): it
+ * follows communities through DeviceFollow and rings bells of its own,
+ * and becomes its owner's phone once they sign in.
  */
 @Entity('push_tokens')
 @Index('IDX_push_tokens_user', ['user'])
@@ -27,9 +31,9 @@ export class PushToken {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false })
+  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'user_id' })
-  user!: Relation<User>;
+  user!: Relation<User> | null;
 
   @Column({ unique: true })
   token!: string;

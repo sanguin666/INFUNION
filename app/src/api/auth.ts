@@ -55,22 +55,6 @@ export function verifyLoginCode(
   });
 }
 
-/**
- * Whether the backend offers the demo account (no SMS sender, not in
- * production unless DEMO_LOGIN=on). Decides whether the "demo sign-in"
- * button shows under the real sign-in.
- */
-export async function demoSignInAvailable(): Promise<boolean> {
-  const { enabled } = await apiGet<{ enabled: boolean }>('/auth/demo');
-  return enabled;
-}
-
-/** Straight into the demo member's account, with no code. */
-export async function demoSignIn(): Promise<string> {
-  const { accessToken } = await apiPost<{ accessToken: string }>('/auth/demo', {});
-  return accessToken;
-}
-
 export function getMe(): Promise<Me> {
   return apiGet<Me>('/auth/me');
 }

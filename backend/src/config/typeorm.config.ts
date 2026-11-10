@@ -24,6 +24,7 @@ import { DailyReading } from '../daily-readings/entities/daily-reading.entity.js
 import { PoiBadge } from '../poi-badges/entities/poi-badge.entity.js';
 import { PushToken } from '../notifications/entities/push-token.entity.js';
 import { EventReminder } from '../notifications/entities/event-reminder.entity.js';
+import { DeviceFollow } from '../notifications/entities/device-follow.entity.js';
 import { AuditLog } from '../superadmin/entities/audit-log.entity.js';
 import { MemberConversation } from '../member-messages/entities/member-conversation.entity.js';
 import { MemberMessage } from '../member-messages/entities/member-message.entity.js';
@@ -75,6 +76,7 @@ export const ENTITIES = [
   PoiBadge,
   PushToken,
   EventReminder,
+  DeviceFollow,
   AuditLog,
   PlaceRegistration,
   RegistrationBlock,
