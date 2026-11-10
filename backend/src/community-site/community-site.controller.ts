@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { PoiAdminGuard } from '../auth/guards/poi-admin.guard.js';
 import { CommunitySiteService } from './community-site.service.js';
 import { UpdateSiteDto } from './dto/update-site.dto.js';
-import { renderNotFound, renderSite } from './site-render.js';
+import { esc, renderNotFound, renderSite } from './site-render.js';
 
 function requestBase(req: Request): string {
   return `${req.protocol}://${req.get('host') ?? 'localhost'}`;
@@ -14,6 +14,19 @@ function requestBase(req: Request): string {
 @Controller('c')
 export class CommunitySitePublicController {
   constructor(private readonly site: CommunitySiteService) {}
+
+  /** The sitemap of published communities, for search engines (listed in the landing's robots.txt). */
+  @Get('sitemap.xml')
+  async sitemap(@Req() req: Request, @Res() res: Response): Promise<void> {
+    const base = this.site.baseUrl(requestBase(req));
+    const entries = await this.site.sitemapEntries();
+    const urls = entries
+      .map((e) => `  <url>\n    <loc>${esc(`${base}/c/${e.slug}`)}</loc>\n    <lastmod>${e.updatedAt.toISOString().slice(0, 10)}</lastmod>\n  </url>`)
+      .join('\n');
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+  }
 
   @Get(':slug')
   async page(@Param('slug') slug: string, @Req() req: Request, @Res() res: Response): Promise<void> {

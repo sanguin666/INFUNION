@@ -57,6 +57,16 @@ describe('Community website (e2e)', () => {
     await client(app).get('/c/san-roque').expect(404);
   });
 
+  it('lists the published communities in the sitemap', async () => {
+    await client(app).patch(base()).set(as(adminToken)).send({ published: true }).expect(200);
+    const listed = await client(app).get('/c/sitemap.xml').expect(200);
+    expect(listed.headers['content-type']).toMatch(/application\/xml/);
+    expect(listed.text).toMatch(/\/c\/san-roque<\/loc>/);
+
+    await client(app).patch(base()).set(as(adminToken)).send({ published: false }).expect(200);
+    expect((await client(app).get('/c/sitemap.xml').expect(200)).text).not.toContain('san-roque');
+  });
+
   it('checks the address', async () => {
     await client(app).patch(base()).set(as(adminToken)).send({ slug: 'Bad Slug!' }).expect(400);
     await client(app).patch(base()).set(as(adminToken)).send({ slug: 'admin' }).expect(400);

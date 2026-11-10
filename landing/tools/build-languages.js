@@ -184,7 +184,7 @@ function main() {
     `\n</urlset>\n`;
   fs.writeFileSync(path.join(LANDING, 'sitemap.xml'), sitemap);
   fs.writeFileSync(path.join(LANDING, 'robots.txt'),
-    `User-agent: *\nDisallow: /tools/\nDisallow: /register.html\nDisallow: /withdraw.html\n\nSitemap: ${BASE}/sitemap.xml\n`);
+    `User-agent: *\nDisallow: /tools/\nDisallow: /register.html\nDisallow: /withdraw.html\n\nSitemap: ${BASE}/sitemap.xml\nSitemap: https://api.infunion.app/c/sitemap.xml\n`);
   console.log(`wrote sitemap.xml (${urls.length} addresses) and robots.txt`);
 }
 
