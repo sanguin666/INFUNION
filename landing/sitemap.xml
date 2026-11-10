@@ -78,6 +78,160 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/"/>
   </url>
   <url>
+    <loc>https://www.infunion.app/religion/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/religion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/faith/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/religion/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/religio/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/religio/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/relixion/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/religiao/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/religion/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/en/faith/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/religion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/faith/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/religion/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/religio/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/religio/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/relixion/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/religiao/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/religion/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/fr/religion/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/religion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/faith/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/religion/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/religio/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/religio/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/relixion/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/religiao/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/religion/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/ca/religio/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/religion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/faith/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/religion/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/religio/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/religio/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/relixion/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/religiao/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/religion/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/va/religio/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/religion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/faith/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/religion/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/religio/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/religio/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/relixion/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/religiao/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/religion/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/gl/relixion/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/religion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/faith/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/religion/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/religio/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/religio/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/relixion/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/religiao/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/religion/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/pt/religiao/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/religion/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/faith/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/religion/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/religio/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/religio/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/relixion/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/religiao/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/religion/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/asociaciones/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/asociaciones/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/associations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/associations/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/asociacions/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/associacoes/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/asociaciones/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/en/associations/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/asociaciones/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/associations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/associations/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/asociacions/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/associacoes/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/asociaciones/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/fr/associations/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/asociaciones/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/associations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/associations/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/asociacions/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/associacoes/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/asociaciones/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/ca/associacions/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/asociaciones/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/associations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/associations/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/asociacions/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/associacoes/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/asociaciones/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/va/associacions/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/asociaciones/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/associations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/associations/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/asociacions/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/associacoes/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/asociaciones/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/gl/asociacions/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/asociaciones/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/associations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/associations/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/asociacions/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/associacoes/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/asociaciones/"/>
+  </url>
+  <url>
+    <loc>https://www.infunion.app/pt/associacoes/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.infunion.app/asociaciones/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.infunion.app/en/associations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.infunion.app/fr/associations/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.infunion.app/ca/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="va" href="https://www.infunion.app/va/associacions/"/>
+    <xhtml:link rel="alternate" hreflang="gl" href="https://www.infunion.app/gl/asociacions/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.infunion.app/pt/associacoes/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.infunion.app/asociaciones/"/>
+  </url>
+  <url>
     <loc>https://www.infunion.app/privacy.html</loc>
   </url>
   <url>
