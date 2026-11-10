@@ -3,13 +3,16 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { usePoiId } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
 import { intlLocale } from '../i18n/translations';
-import { Lockup } from '../components/LogoMark';
+import { useAuth } from '../auth/AuthContext';
+import { API_BASE_URL } from '../api/client';
 import { getCampaigns } from '../api/donations';
 import type { Campaign } from '../api/types';
 import {
   getAllowance,
   getAudience,
   getContactGroups,
+  getContacts,
+  type ContactRow,
   getOutreach,
   sendOutreach,
   sendOutreachTest,
@@ -31,12 +34,16 @@ const KINDS: OutreachKind[] = ['invitation', 'contribution', 'message'];
 export function WriteToMembersPage() {
   const poiId = usePoiId();
   const { t, language } = useI18n();
+  const { user } = useAuth();
+  const community = user?.adminPois.find((p) => p.id === poiId);
   const [params] = useSearchParams();
   const initialKind = (KINDS.includes(params.get('kind') as OutreachKind) ? params.get('kind') : 'invitation') as OutreachKind;
   const [kind, setKind] = useState<OutreachKind>(initialKind);
   const [audience, setAudience] = useState<Audience>(initialKind === 'invitation' ? 'notInApp' : 'everyone');
   const [group, setGroup] = useState('');
   const [groups, setGroups] = useState<string[]>([]);
+  const [people, setPeople] = useState<ContactRow[]>([]);
+  const [picked, setPicked] = useState<string[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [campaignId, setCampaignId] = useState('');
   const [subject, setSubject] = useState(t(`contacts.${initialKind === 'invitation' ? 'invite' : initialKind}SubjectDefault`));
@@ -55,11 +62,13 @@ export function WriteToMembersPage() {
     subject,
     body,
     campaignId: kind === 'contribution' && campaignId ? campaignId : null,
+    ...(audience === 'contacts' ? { contactIds: picked } : {}),
   };
   const locked = kind !== 'invitation' && allowance !== null && !allowance.canWrite;
 
   useEffect(() => {
     getContactGroups(poiId).then(setGroups, () => setGroups([]));
+    getContacts(poiId).then(setPeople, () => setPeople([]));
     getCampaigns(poiId).then((list) => setCampaigns(list.filter((c) => c.active)), () => setCampaigns([]));
     getAllowance(poiId).then(setAllowance, () => setAllowance(null));
     getOutreach(poiId).then(setHistory, () => setHistory([]));
@@ -77,12 +86,16 @@ export function WriteToMembersPage() {
       setSize(null);
       return;
     }
+    if (audience === 'contacts' && picked.length === 0) {
+      setSize({ withEmail: 0, withoutEmail: 0 });
+      return;
+    }
     let live = true;
     getAudience(poiId, input).then((s) => live && setSize(s), () => live && setSize(null));
     return () => {
       live = false;
     };
-  }, [poiId, kind, audience, group]);
+  }, [poiId, kind, audience, group, picked]);
 
   function chooseKind(next: OutreachKind) {
     const key = next === 'invitation' ? 'invite' : next;
@@ -90,10 +103,14 @@ export function WriteToMembersPage() {
     // A text the team hasn't touched follows the kind; their own stays.
     if (subject === t(`contacts.${prevKey}SubjectDefault`)) setSubject(t(`contacts.${key}SubjectDefault`));
     if (body === t(`contacts.${prevKey}BodyDefault`)) setBody(t(`contacts.${key}BodyDefault`));
-    if (next === 'invitation' && audience === 'everyone') setAudience('notInApp');
+    if (next === 'invitation' && (audience === 'everyone' || audience === 'contacts')) setAudience('notInApp');
     setKind(next);
     setError(null);
     setNotice(null);
+  }
+
+  function togglePick(id: string) {
+    setPicked((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]));
   }
 
   async function send() {
@@ -147,6 +164,7 @@ export function WriteToMembersPage() {
     ['notInApp', t('contacts.aud_notInApp')],
     ['notInvited', t('contacts.aud_notInvited')],
     ...(kind !== 'invitation' ? [['everyone', t('contacts.aud_everyone')] as [Audience, string]] : []),
+    ...(kind !== 'invitation' ? [['contacts', t('contacts.aud_contacts')] as [Audience, string]] : []),
     ...(groups.length > 0 ? [['group', t('contacts.aud_group')] as [Audience, string]] : []),
   ];
 
@@ -205,6 +223,30 @@ export function WriteToMembersPage() {
                     ))}
                   </select>
                 </label>
+              )}
+              {audience === 'contacts' && (
+                <div className="write-people">
+                  <p className="write-hint" style={{ marginTop: 0 }}>
+                    {t('contacts.contactsPickCount', { count: picked.length })} · {t('contacts.contactsPickHint')}
+                  </p>
+                  <div className="write-choices write-people-list">
+                    {people.map((p) => {
+                      const name = [p.firstName, p.lastName].filter(Boolean).join(' ') || p.email || '—';
+                      const on = picked.includes(p.id);
+                      return (
+                        <label key={p.id} className={`write-choice${on ? ' write-choice-on' : ''}`}>
+                          <input type="checkbox" checked={on} disabled={!p.email} onChange={() => togglePick(p.id)} />
+                          <span>
+                            {name}
+                            <small>
+                              {p.status === 'inApp' ? t('contacts.inAppTag') : t('contacts.notInAppTag')}
+                            </small>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
               {kind === 'contribution' && (
                 <label className="write-field">
@@ -270,7 +312,11 @@ export function WriteToMembersPage() {
           </p>
           <div className="card email-preview" aria-label={t('contacts.previewTitle', { name: sample })}>
             <div className="email-preview-head">
-              <Lockup height={24} />
+              {community?.logoUrl ? (
+                <img className="email-preview-logo" src={`${API_BASE_URL}${community.logoUrl}`} alt={community.name} />
+              ) : (
+                <p className="email-preview-name">{community?.name ?? ''}</p>
+              )}
             </div>
             <div className="email-preview-line" />
             <div className="email-preview-body">
@@ -280,6 +326,7 @@ export function WriteToMembersPage() {
               {button && <span className="email-preview-button">{button}</span>}
               <p className="email-preview-foot">{t('contacts.previewWhy')}</p>
             </div>
+            <p className="email-preview-foot email-preview-infunion">infunion · infunion.app</p>
           </div>
         </div>
       </div>
