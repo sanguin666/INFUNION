@@ -65,6 +65,8 @@ export type PaymentLink = {
   id: string;
   code: string;
   title: string;
+  // Words to the payer under the title; null: the usual thanks.
+  message: string | null;
   campaignId: string | null;
   campaignTitle: string | null;
   // null: the payer chooses.
@@ -80,6 +82,7 @@ export type PaymentLink = {
 
 export type PaymentLinkInput = {
   title: string;
+  message: string | null;
   campaignId: string | null;
   amount: number | null;
   askName: boolean;

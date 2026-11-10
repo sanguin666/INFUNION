@@ -205,6 +205,7 @@ export class PublicLinksController {
     res.type('html').send(
       this.givePage(poi, poi.language, link.campaign ?? null, null, `/m/pay/${link.code}`, presetAmount(amount), {
         title: link.title,
+        intro: link.message ?? undefined,
         fixed: link.amount ?? null,
         askName: link.askName,
       }),
@@ -314,7 +315,7 @@ export class PublicLinksController {
     name: string | null,
     action: string,
     preset: number | null = null,
-    options: { title?: string; fixed?: number | null; askName?: boolean } = {},
+    options: { title?: string; intro?: string; fixed?: number | null; askName?: boolean } = {},
   ): string {
     const words = outreachText(lang);
     const fixed = options.fixed ?? null;
@@ -343,7 +344,7 @@ export class PublicLinksController {
       title: options.title ?? fill(words.giveTitle, { community: poi.name }),
       community: poi.name,
       logoUrl: poi.logoUrl,
-      body: `<p>${escapeHtml(campaign ? fill(words.giveProject, { project: campaign.title }) : words.giveIntro)}</p>
+      body: `<p>${escapeHtml(options.intro ?? (campaign ? fill(words.giveProject, { project: campaign.title }) : words.giveIntro))}</p>
 <form method="post" action="${escapeHtml(action)}">
 ${amountBlock}${nameBlock}<button type="submit">${escapeHtml(words.giveButton)}</button>
 <p class="small">${escapeHtml(paymentsLive ? words.giveSecure : words.giveDemo)}</p>
