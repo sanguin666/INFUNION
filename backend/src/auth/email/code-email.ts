@@ -5,6 +5,7 @@ import {
   emailHeading,
   emailLayout,
   emailParagraph,
+  emailText,
 } from '../../common/email/email-layout.js';
 
 type CodeEmailText = {
@@ -79,7 +80,7 @@ export function codeEmail(
   return {
     to,
     subject: text.subject.replace('{{code}}', code),
-    text: `${text.intro}\n\n${code}\n\n${text.expiry}\n${text.ignore}\n`,
+    text: emailText(`${text.intro}\n\n${code}\n\n${text.expiry}\n${text.ignore}`, language),
     html: emailLayout(
       [
         emailHeading(text.heading),
