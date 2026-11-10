@@ -4469,6 +4469,53 @@ select.chip {
   .write-layout { grid-template-columns: minmax(0, 1fr); }
 }
 
+/* Write to members (Seb, 10 Nov 2026): one white card, four plain
+   sections split by a hairline. Every choice is a visible radio list
+   (never a hidden drop-down); each field has a bold label above it and
+   a thin outline, so it reads as a place to type. */
+.write-form { padding: 0; overflow: hidden; }
+.write-section { padding: 22px 24px; border-top: 1px solid var(--color-card-border); }
+.write-form > .write-section:first-child { border-top: none; }
+.write-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; }
+.write-choices { display: flex; flex-direction: column; gap: 6px; }
+.write-choice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-size: 19px;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.write-choice input { width: 22px; height: 22px; margin: 0; flex: none; accent-color: var(--color-primary); }
+.write-choice-on { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.write-field { display: block; margin-top: 18px; }
+.write-field > span { display: block; font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.write-field input,
+.write-field textarea,
+.write-field select {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 19px;
+  font-weight: 400;
+}
+.write-field textarea { min-height: 240px; line-height: 1.45; resize: vertical; }
+.write-hint { font-size: 16px; color: var(--color-text-muted); margin: 10px 2px 0; }
+.write-actions { display: flex; flex-direction: column; gap: 12px; }
+.write-actions .btn { width: 100%; min-height: 56px; font-size: 19px; }
+.write-actions .error-text,
+.write-actions .muted { margin: 0; font-size: 17px; }
+
 .email-preview { padding: 0; overflow: hidden; }
 .email-preview-head { padding: 16px 20px; }
 .email-preview-line { height: 4px; background: #f9b800; margin: 0 20px; border-radius: 2px; }
