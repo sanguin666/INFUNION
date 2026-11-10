@@ -40,6 +40,11 @@ export class PaymentLink {
   @JoinColumn({ name: 'campaign_id' })
   campaign?: Relation<DonationCampaign> | null;
 
+  // A few words to the payer under the title, in place of the usual
+  // "Thank you for supporting your community." (Seb, 10 Nov 2026).
+  @Column('varchar', { length: 300, nullable: true })
+  message?: string | null;
+
   // A fixed amount (money sharing: 15 € each), or null for the payer's choice.
   @Column('numeric', { precision: 10, scale: 2, nullable: true, transformer: money })
   amount?: number | null;

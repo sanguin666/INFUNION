@@ -30,6 +30,7 @@ export type PaymentLinkView = {
   title: string;
   campaignId: string | null;
   campaignTitle: string | null;
+  message: string | null;
   amount: number | null;
   askName: boolean;
   endsOn: string | null;
@@ -82,6 +83,7 @@ export class PaymentLinksService {
       poi: { id: poiId } as Poi,
       code: await this.freeCode(),
       title: dto.title.trim(),
+      message: dto.message?.trim() || null,
       campaign,
       amount: dto.amount ?? null,
       askName: dto.askName ?? true,
@@ -97,6 +99,7 @@ export class PaymentLinksService {
     if (dto.campaignId !== undefined) link.campaign = await this.campaignFor(poiId, dto.campaignId);
     if (dto.amount !== undefined) link.amount = dto.amount;
     if (dto.askName !== undefined) link.askName = dto.askName;
+    if (dto.message !== undefined) link.message = dto.message?.trim() || null;
     if (dto.endsOn !== undefined) link.endsOn = dto.endsOn;
     const saved = await this.links.save(link);
     const totals = await this.totals([saved.id]);
@@ -183,6 +186,7 @@ export class PaymentLinksService {
       id: link.id,
       code: link.code,
       title: link.title,
+      message: link.message ?? null,
       campaignId: link.campaign?.id ?? null,
       campaignTitle: link.campaign?.title ?? null,
       amount: link.amount ?? null,

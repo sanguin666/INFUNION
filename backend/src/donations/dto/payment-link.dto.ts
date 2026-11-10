@@ -25,6 +25,12 @@ export class CreatePaymentLinkDto {
 
   @IsOptional()
   @ValidateIf((_o, v) => v !== null)
+  @IsString()
+  @MaxLength(300)
+  message?: string | null;
+
+  @IsOptional()
+  @ValidateIf((_o, v) => v !== null)
   @Matches(/^\d{4}-\d{2}-\d{2}$/)
   endsOn?: string | null;
 }
@@ -51,6 +57,12 @@ export class UpdatePaymentLinkDto {
   @IsOptional()
   @IsBoolean()
   askName?: boolean;
+
+  @IsOptional()
+  @ValidateIf((_o, v) => v !== null)
+  @IsString()
+  @MaxLength(300)
+  message?: string | null;
 
   @IsOptional()
   @ValidateIf((_o, v) => v !== null)
