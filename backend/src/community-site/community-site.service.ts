@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { DataSource, IsNull, Not } from 'typeorm';
 import { Poi } from '../pois/entities/poi.entity.js';
 import { Event } from '../events/entities/event.entity.js';
 import { EventCategory, EventRecurrence } from '../events/entities/event-kinds.js';
@@ -131,6 +131,16 @@ export class CommunitySiteService {
   }
 
   /** Everything the public page shows, or null when there is no published site there. */
+  /** The published communities for the sitemap: only those that are open to the public. */
+  async sitemapEntries(): Promise<{ slug: string; updatedAt: Date }[]> {
+    const rows = await this.dataSource.getRepository(Poi).find({
+      where: { sitePublished: true, suspendedAt: IsNull(), closedAt: IsNull(), siteSlug: Not(IsNull()) },
+      select: { siteSlug: true, updatedAt: true },
+      order: { siteSlug: 'ASC' },
+    });
+    return rows.map((row) => ({ slug: row.siteSlug ?? '', updatedAt: row.updatedAt }));
+  }
+
   async data(slug: string): Promise<SiteData | null> {
     if (!SLUG_PATTERN.test(slug)) return null;
     const poi = await this.dataSource.getRepository(Poi).findOne({ where: { siteSlug: slug } });
