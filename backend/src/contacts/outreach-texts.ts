@@ -14,6 +14,7 @@ export type OutreachText = {
   giveProject: string;
   giveAmount: string;
   giveOther: string;
+  madeWith: string;
   giveName: string;
   giveButton: string;
   giveSecure: string;
@@ -42,6 +43,7 @@ const en: OutreachText = {
   giveProject: 'For: {project}',
   giveAmount: 'Amount',
   giveOther: 'Other amount',
+  madeWith: 'Made with',
   giveName: 'Your name (optional)',
   giveButton: 'Continue to payment',
   giveSecure: 'Secure payment with Stripe: card, Apple Pay or Google Pay.',
@@ -70,6 +72,7 @@ const es: OutreachText = {
   giveProject: 'Para: {project}',
   giveAmount: 'Importe',
   giveOther: 'Otro importe',
+  madeWith: 'Hecho con',
   giveName: 'Tu nombre (opcional)',
   giveButton: 'Continuar al pago',
   giveSecure: 'Pago seguro con Stripe: tarjeta, Apple Pay o Google Pay.',
@@ -98,6 +101,7 @@ const fr: OutreachText = {
   giveProject: 'Pour : {project}',
   giveAmount: 'Montant',
   giveOther: 'Autre montant',
+  madeWith: 'Réalisé avec',
   giveName: 'Votre nom (facultatif)',
   giveButton: 'Continuer vers le paiement',
   giveSecure: 'Paiement sécurisé avec Stripe : carte, Apple Pay ou Google Pay.',
@@ -126,6 +130,7 @@ const va: OutreachText = {
   giveProject: 'Per a: {project}',
   giveAmount: 'Import',
   giveOther: 'Un altre import',
+  madeWith: 'Fet amb',
   giveName: 'El teu nom (opcional)',
   giveButton: 'Continuar al pagament',
   giveSecure: 'Pagament segur amb Stripe: targeta, Apple Pay o Google Pay.',
@@ -166,6 +171,7 @@ const gl: OutreachText = {
   giveProject: 'Para: {project}',
   giveAmount: 'Importe',
   giveOther: 'Outro importe',
+  madeWith: 'Feito con',
   giveName: 'O teu nome (opcional)',
   giveButton: 'Continuar ao pagamento',
   giveSecure: 'Pagamento seguro con Stripe: tarxeta, Apple Pay ou Google Pay.',
@@ -194,6 +200,7 @@ const pt: OutreachText = {
   giveProject: 'Para: {project}',
   giveAmount: 'Montante',
   giveOther: 'Outro montante',
+  madeWith: 'Feito com',
   giveName: 'O seu nome (opcional)',
   giveButton: 'Continuar para o pagamento',
   giveSecure: 'Pagamento seguro com a Stripe: cartão, Apple Pay ou Google Pay.',
