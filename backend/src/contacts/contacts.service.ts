@@ -1,8 +1,9 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { randomBytes } from 'node:crypto';
 import { Contact } from './entities/contact.entity.js';
+import { Poi } from '../pois/entities/poi.entity.js';
 import { OutreachRecipient } from './entities/outreach-recipient.entity.js';
 import { UserPoi } from '../user-pois/entities/user-poi.entity.js';
 import { User } from '../users/entities/user.entity.js';
@@ -77,13 +78,76 @@ function statusOf(contact: Contact): ContactRow['status'] {
  */
 @Injectable()
 export class ContactsService {
+  private readonly logger = new Logger('Contacts');
+
   constructor(
     @InjectRepository(Contact) private readonly contacts: Repository<Contact>,
     @InjectRepository(OutreachRecipient) private readonly recipients: Repository<OutreachRecipient>,
     @InjectRepository(UserPoi) private readonly memberships: Repository<UserPoi>,
   ) {}
 
+  /**
+   * Every member of the community gets a row on its list (Seb, 10 Nov 2026),
+   * so "Everyone on your list" and "Choose people" reach people who joined
+   * on their own, not only people from the imported file. Idempotent: a
+   * member already on the list (same account, or same email) is linked, never
+   * copied. Admins are not added. Returns how many rows were added.
+   */
+  async syncMemberContacts(poiId: string): Promise<number> {
+    const memberships = await this.memberships.find({
+      where: { poi: { id: poiId }, role: MemberRole.MEMBER },
+      relations: { user: true },
+    });
+    if (memberships.length === 0) return 0;
+    const current = await this.contacts.find({ where: { poi: { id: poiId } }, relations: { user: true } });
+    const onList = new Set(current.filter((c) => c.user).map((c) => c.user!.id));
+    const byEmail = new Map<string, Contact>();
+    for (const c of current) if (c.email) byEmail.set(c.email.toLowerCase(), c);
+    const now = new Date();
+    const toSave: Contact[] = [];
+    for (const m of memberships) {
+      const user = m.user;
+      if (onList.has(user.id)) continue;
+      const email = user.email?.trim().toLowerCase() || null;
+      const same = email ? byEmail.get(email) : undefined;
+      if (same) {
+        // Someone on the imported file with this email: link them, don't copy.
+        if (same.user) continue;
+        same.user = user;
+        same.linkedAt = same.linkedAt ?? now;
+        toSave.push(same);
+      } else {
+        const created = this.contacts.create({
+          poi: { id: poiId } as Poi,
+          firstName: user.firstName ?? null,
+          lastName: user.lastName ?? null,
+          email,
+          phone: user.phone ?? null,
+          phoneKey: phoneKey(user.phone),
+          language: user.language ?? null,
+          groups: [],
+          token: newToken(),
+          source: 'app',
+          user,
+          linkedAt: m.joinedAt ?? now,
+        });
+        toSave.push(created);
+        if (email) byEmail.set(email, created);
+      }
+      onList.add(user.id);
+    }
+    try {
+      for (let i = 0; i < toSave.length; i += 500) await this.contacts.save(toSave.slice(i, i + 500));
+    } catch (error) {
+      // A concurrent request may have added the same rows; the next call fixes it.
+      this.logger.warn(`Member sync for ${poiId} did not finish: ${(error as Error).message}`);
+      return 0;
+    }
+    return toSave.length;
+  }
+
   async list(poiId: string): Promise<ContactRow[]> {
+    await this.syncMemberContacts(poiId);
     const contacts = await this.contacts.find({
       where: { poi: { id: poiId } },
       relations: { user: true },
