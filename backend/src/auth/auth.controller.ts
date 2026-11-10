@@ -84,8 +84,23 @@ export class AuthController {
   }
 
   // The phone-only login the APKs built before 30 Oct 2026 still call.
+  // Adds an email or phone number to the signed-in member's account (Seb,
+  // 10 Nov 2026). The answer to the confirm step is the whole of `me`.
+  @Post('me/login/request')
+  @UseGuards(JwtAuthGuard)
+  addLoginRequest(@Req() request: AuthenticatedRequest, @Body() dto: RequestLoginCodeDto) {
+    return this.phoneAuthService.addLoginRequest(request.userId, dto.login, dto.language);
+  }
+
+  @Post('me/login/confirm')
+  @UseGuards(JwtAuthGuard)
+  async addLoginConfirm(@Req() request: AuthenticatedRequest, @Body() dto: VerifyLoginCodeDto) {
+    await this.phoneAuthService.addLoginConfirm(request.userId, dto.login, dto.code);
+    return this.authService.me(request.userId);
+  }
+
   @Post('phone/request-code')
-  requestPhoneCode(@Body() dto: RequestPhoneCodeDto) {
+    requestPhoneCode(@Body() dto: RequestPhoneCodeDto) {
     return this.phoneAuthService.requestCode(dto.phone);
   }
 

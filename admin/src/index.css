@@ -4538,6 +4538,7 @@ select.chip {
 }
 .email-preview-foot { font-size: 13px; color: var(--color-text-muted); }
 .email-preview-foot u { text-decoration: underline; }
+.email-preview-brand { display: flex; align-items: center; gap: 12px; }
 .email-preview-logo { display: block; max-height: 48px; max-width: 240px; }
 .email-preview-name { margin: 0; font-size: 22px; line-height: 1.3; font-weight: 700; color: var(--color-text); }
 .email-preview-infunion { padding: 0 20px 16px; margin: 0; }

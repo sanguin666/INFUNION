@@ -30,6 +30,11 @@ export class UsersService {
     return user;
   }
 
+  /** The member adds an email or a phone number to sign in with (Seb, 10 Nov 2026). */
+  async setLogin(id: string, login: { email: string } | { phone: string }): Promise<void> {
+    await this.usersRepository.update(id, login);
+  }
+
   findByPhone(phone: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { phone } });
   }

@@ -34,7 +34,11 @@ const KINDS: OutreachKind[] = ['invitation', 'contribution', 'message'];
 export function WriteToMembersPage() {
   const poiId = usePoiId();
   const { t, language } = useI18n();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+  // The logo may have been added after sign-in: fetch the places again.
+  useEffect(() => {
+    refreshUser().catch(() => undefined);
+  }, [refreshUser]);
   const community = user?.adminPois.find((p) => p.id === poiId);
   const [params] = useSearchParams();
   const initialKind = (KINDS.includes(params.get('kind') as OutreachKind) ? params.get('kind') : 'invitation') as OutreachKind;
@@ -312,11 +316,12 @@ export function WriteToMembersPage() {
           </p>
           <div className="card email-preview" aria-label={t('contacts.previewTitle', { name: sample })}>
             <div className="email-preview-head">
-              {community?.logoUrl ? (
-                <img className="email-preview-logo" src={`${API_BASE_URL}${community.logoUrl}`} alt={community.name} />
-              ) : (
+              <div className="email-preview-brand">
+                {community?.logoUrl && (
+                  <img className="email-preview-logo" src={`${API_BASE_URL}${community.logoUrl}`} alt="" />
+                )}
                 <p className="email-preview-name">{community?.name ?? ''}</p>
-              )}
+              </div>
             </div>
             <div className="email-preview-line" />
             <div className="email-preview-body">
