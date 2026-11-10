@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -161,6 +162,41 @@ export class PhoneAuthService {
     const user = await this.usersService.findOrCreateByEmail(email, firstName);
     await this.contactLinks.linkOnSignIn(user.id, { email });
     return { accessToken: await this.memberToken(user.id) };
+  }
+
+  /**
+   * Adds an email or a phone number to the signed-in member's account
+   * (Seb, 10 Nov 2026), so either can be used to sign in. The new address
+   * or number gets a code first, so nobody can attach someone else's.
+   * Refused when another account already has it.
+   */
+  async addLoginRequest(userId: string, login: string, language?: string): Promise<RequestCodeResult> {
+    await this.assertFreeFor(userId, login);
+    return this.requestLoginCode(login, language);
+  }
+
+  async addLoginConfirm(userId: string, login: string, code: string): Promise<void> {
+    await this.assertFreeFor(userId, login);
+    if (isEmailLogin(login)) {
+      const email = normalizeEmail(login);
+      await this.consumeCode({ email }, code);
+      await this.assertFreeFor(userId, login);
+      await this.usersService.setLogin(userId, { email });
+      await this.contactLinks.linkOnSignIn(userId, { email });
+    } else {
+      const phone = normalizePhone(login);
+      await this.consumeCode({ phone }, code);
+      await this.assertFreeFor(userId, login);
+      await this.usersService.setLogin(userId, { phone });
+      await this.contactLinks.linkOnSignIn(userId, { phone });
+    }
+  }
+
+  private async assertFreeFor(userId: string, login: string): Promise<void> {
+    const owner = isEmailLogin(login)
+      ? await this.usersService.findByEmail(normalizeEmail(login))
+      : await this.usersService.findByPhone(normalizePhone(login));
+    if (owner && owner.id !== userId) throw new ConflictException('already_used');
   }
 
   /**

@@ -118,6 +118,17 @@ export type Translations = {
     title: string;
     openSignedOut: string;
     pictureLabel: string;
+    emailLabel: string;
+    phoneLabel: string;
+    addEmail: string;
+    addPhone: string;
+    sendCode: string;
+    confirmCode: string;
+    cancelAdd: string;
+    codeLabel: string;
+    addTaken: string;
+    addWrongCode: string;
+    addError: string;
     addPicture: string;
     changePicture: string;
     choosePhoto: string;
@@ -766,6 +777,17 @@ const en: Translations = {
     madeWith: "Made with",
   },
   profile: {
+    emailLabel: "Email",
+    phoneLabel: "Phone number",
+    addEmail: "Add an email",
+    addPhone: "Add a phone number",
+    sendCode: "Send me a code",
+    confirmCode: "Confirm",
+    cancelAdd: "Cancel",
+    codeLabel: "Code (6 digits)",
+    addTaken: "That is already used by another account.",
+    addWrongCode: "That code is not right. Check it and try again.",
+    addError: "That did not work. Please try again.",
     title: 'Your settings',
     openSignedOut: 'Sign in',
     pictureLabel: 'Your picture',
@@ -1417,6 +1439,17 @@ const es: Translations = {
     madeWith: "Hecho con",
   },
   profile: {
+    emailLabel: "Correo electrónico",
+    phoneLabel: "Número de teléfono",
+    addEmail: "Añadir un correo",
+    addPhone: "Añadir un teléfono",
+    sendCode: "Enviarme un código",
+    confirmCode: "Confirmar",
+    cancelAdd: "Cancelar",
+    codeLabel: "Código (6 cifras)",
+    addTaken: "Ya lo usa otra cuenta.",
+    addWrongCode: "Ese código no es correcto. Revísalo e inténtalo de nuevo.",
+    addError: "No ha funcionado. Inténtalo de nuevo.",
     title: 'Tus ajustes',
     openSignedOut: 'Iniciar sesión',
     pictureLabel: 'Tu foto',
@@ -2068,6 +2101,17 @@ const fr: Translations = {
     madeWith: "Réalisé avec",
   },
   profile: {
+    emailLabel: "E-mail",
+    phoneLabel: "Numéro de téléphone",
+    addEmail: "Ajouter un e-mail",
+    addPhone: "Ajouter un numéro",
+    sendCode: "Envoyez-moi un code",
+    confirmCode: "Confirmer",
+    cancelAdd: "Annuler",
+    codeLabel: "Code (6 chiffres)",
+    addTaken: "Déjà utilisé par un autre compte.",
+    addWrongCode: "Ce code n’est pas bon. Vérifiez-le et réessayez.",
+    addError: "Cela n’a pas marché. Réessayez.",
     title: 'Vos réglages',
     openSignedOut: 'Se connecter',
     pictureLabel: 'Votre photo',
@@ -2719,6 +2763,17 @@ const va: Translations = {
     madeWith: "Fet amb",
   },
   profile: {
+    emailLabel: "Correu electrònic",
+    phoneLabel: "Número de telèfon",
+    addEmail: "Afegir un correu",
+    addPhone: "Afegir un telèfon",
+    sendCode: "Enviar-me un codi",
+    confirmCode: "Confirmar",
+    cancelAdd: "Cancel·lar",
+    codeLabel: "Codi (6 xifres)",
+    addTaken: "Ja el fa servir un altre compte.",
+    addWrongCode: "Eixe codi no és correcte. Revisa-l i torna-ho a provar.",
+    addError: "No ha funcionat. Torna-ho a provar.",
     title: 'La teua configuració',
     openSignedOut: 'Iniciar sessió',
     pictureLabel: 'La teua foto',
@@ -3370,6 +3425,17 @@ const ca: Translations = {
     madeWith: "Fet amb",
   },
   profile: {
+    emailLabel: "Correu electrònic",
+    phoneLabel: "Número de telèfon",
+    addEmail: "Afegeix un correu",
+    addPhone: "Afegeix un telèfon",
+    sendCode: "Envia'm un codi",
+    confirmCode: "Confirma",
+    cancelAdd: "Cancel·la",
+    codeLabel: "Codi (6 xifres)",
+    addTaken: "Ja l'usa un altre compte.",
+    addWrongCode: "Aquest codi no és correcte. Revisa’l i torna-ho a provar.",
+    addError: "No ha funcionat. Torna-ho a provar.",
     title: 'La teva configuració',
     openSignedOut: 'Iniciar sessió',
     pictureLabel: 'La teva foto',
@@ -4021,6 +4087,17 @@ const gl: Translations = {
     madeWith: "Feito con",
   },
   profile: {
+    emailLabel: "Correo electrónico",
+    phoneLabel: "Número de teléfono",
+    addEmail: "Engadir un correo",
+    addPhone: "Engadir un teléfono",
+    sendCode: "Envíame un código",
+    confirmCode: "Confirmar",
+    cancelAdd: "Cancelar",
+    codeLabel: "Código (6 cifras)",
+    addTaken: "Xa o usa outra conta.",
+    addWrongCode: "Ese código non é correcto. Revísao e téntao de novo.",
+    addError: "Non funcionou. Téntao de novo.",
     title: 'Os teus axustes',
     openSignedOut: 'Iniciar sesión',
     pictureLabel: 'A túa foto',
@@ -4673,6 +4750,17 @@ const pt: Translations = {
     madeWith: "Feito com",
   },
   profile: {
+    emailLabel: "E-mail",
+    phoneLabel: "Número de telefone",
+    addEmail: "Adicionar um e-mail",
+    addPhone: "Adicionar um telefone",
+    sendCode: "Enviar-me um código",
+    confirmCode: "Confirmar",
+    cancelAdd: "Cancelar",
+    codeLabel: "Código (6 dígitos)",
+    addTaken: "Já é usado por outra conta.",
+    addWrongCode: "Esse código não está certo. Verifique e tente de novo.",
+    addError: "Não funcionou. Tente de novo.",
     title: 'As suas definições',
     openSignedOut: 'Iniciar sessão',
     pictureLabel: 'A sua fotografia',
