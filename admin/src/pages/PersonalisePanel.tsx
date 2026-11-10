@@ -17,10 +17,13 @@ export function PersonalisePanel({
   poi,
   modules,
   onSaved,
+  preview = true,
 }: {
   poi: Poi;
   modules: ActiveModule[];
   onSaved: (poi: Poi) => void;
+  /** False on Home page, where the live phone already stands beside it. */
+  preview?: boolean;
 }) {
   const { t } = useI18n();
   const savedTheme = poi.theme ?? 'purple';
@@ -48,7 +51,7 @@ export function PersonalisePanel({
   }
 
   return (
-    <div className="personalise-layout">
+    <div className={preview ? 'personalise-layout' : undefined}>
       <div className="personalise-editor">
         <div className="card">
           <p className="card-title">{t('branding.themeLabel')}</p>
@@ -89,7 +92,7 @@ export function PersonalisePanel({
         {error && <p className="error-text">{error}</p>}
       </div>
 
-      <AppPreview poi={poi} theme={theme} order={order} />
+      {preview && <AppPreview poi={poi} theme={theme} order={order} />}
     </div>
   );
 }

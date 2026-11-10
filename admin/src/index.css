@@ -1083,6 +1083,17 @@ a.btn {
   white-space: nowrap;
 }
 
+/* Beside the live phone the row is short: five tabs fit a laptop with
+   slimmer sides, and wrap rather than hide if they still don't. */
+.page-editor .tab-bar {
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.page-editor .tab {
+  padding: 0 12px;
+}
+
 .tab:hover {
   color: var(--color-text);
 }

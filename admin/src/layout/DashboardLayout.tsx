@@ -53,11 +53,11 @@ const MODULE_NAV: (NavItem & { module: ModuleType })[] = [
   { to: 'community', label: 'layout.navCommunity', module: 'community', icon: MODULE_ICON.community, count: 'community' },
 ];
 
+// What a community shows outside the app, then its plan.
 const SETUP: NavItem[] = [
-  { to: 'settings', label: 'layout.navSettings', icon: PAGE_ICON.settings },
-  { to: 'modules', label: 'layout.navModules', icon: PAGE_ICON.plan },
   { to: 'website', label: 'layout.navWebsite', icon: PAGE_ICON.website },
   { to: 'my-qr', label: 'layout.navMyQr', icon: PAGE_ICON.qr },
+  { to: 'modules', label: 'layout.navModules', icon: PAGE_ICON.plan },
 ];
 
 export function DashboardLayout() {

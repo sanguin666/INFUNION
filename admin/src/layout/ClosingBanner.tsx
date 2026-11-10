@@ -35,7 +35,7 @@ export function ClosingBanner({ poiId }: { poiId: string }) {
   return (
     <div className="closing-banner" role="status">
       <span>{days > 1 ? t('closure.bannerDays', { date, days, name }) : t('closure.bannerLastDay', { date, name })}</span>
-      <NavLink className="btn btn-primary" to={`/poi/${poiId}/settings?tab=account`}>
+      <NavLink className="btn btn-primary" to={`/poi/${poiId}/dashboard?tab=account`}>
         {t('closure.keep')}
       </NavLink>
     </div>
