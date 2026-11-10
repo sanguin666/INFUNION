@@ -3,9 +3,14 @@ import { Language } from '../enums/language.enum.js';
 /**
  * The one look every infunion email shares (Seb, 2 Nov 2026): a white card
  * on the lavender-grey page, the coloured infunion logo on a light header,
- * a thin yellow line under it, the content, then a small footer with the
- * website and the support address. Every email, today's and future ones,
- * goes through `emailLayout` so they all stay the same.
+ * a thin yellow line under it, the content, then the footer. Every email,
+ * today's and future ones, goes through `emailLayout` so they all stay the
+ * same.
+ *
+ * The footer is identical in every email (Seb, 10 Nov 2026): "Made with
+ * ⚭ infunion" with the rings, like the member app, linking to the website,
+ * then the support address. The plain-text version ends the same way
+ * (`emailText`).
  *
  * Inline styles and tables only: that is what mail apps (Gmail, Outlook)
  * reliably render. The logo is a PNG on the landing site because Gmail does
@@ -14,6 +19,9 @@ import { Language } from '../enums/language.enum.js';
 
 export const EMAIL_LOGO_URL =
   'https://www.infunion.app/assets/email/infunion-logo.png?v=20261103';
+// The two rings alone (brand/presentations/infunion-mark.png, cropped), shown 26 × 16.
+export const EMAIL_MARK_URL =
+  'https://www.infunion.app/assets/email/infunion-mark.png?v=20261110';
 export const EMAIL_SITE_URL = 'https://www.infunion.app';
 export const EMAIL_SUPPORT = 'support@infunion.app';
 
@@ -30,16 +38,44 @@ export const EMAIL_COLORS = {
   rule: '#EEEBF6',
 } as const;
 
-// The slogan from Seb's logo kit (3 Nov 2026), in the reader's language.
-const TAGLINE: Record<Language, string> = {
-  [Language.EN]: 'The union that makes you a community',
-  [Language.ES]: 'La unión que te hace comunidad',
-  [Language.FR]: 'L’union qui fait de vous une communauté',
-  [Language.VA]: 'La unió que et fa comunitat',
-  [Language.CA]: 'La unió que et fa comunitat',
-  [Language.GL]: 'A unión que te fai comunidade',
-  [Language.PT]: 'A união que te faz comunidade',
+// "Made with ⚭ infunion", worded as in the member app (more.madeWith).
+const MADE_WITH: Record<Language, string> = {
+  [Language.EN]: 'Made with',
+  [Language.ES]: 'Hecho con',
+  [Language.FR]: 'Réalisé avec',
+  [Language.VA]: 'Fet amb',
+  [Language.CA]: 'Fet amb',
+  [Language.GL]: 'Feito con',
+  [Language.PT]: 'Feito com',
 };
+
+function madeWith(language?: Language | string): string {
+  return MADE_WITH[language as Language] ?? MADE_WITH[Language.EN];
+}
+
+/**
+ * The plain-text version of an email with the shared footer added, so
+ * mail apps that show text only end every email the same way too.
+ */
+export function emailText(text: string, language?: Language | string): string {
+  return `${text.replace(/\s+$/, '')}\n\n--\n${madeWith(language)} infunion · ${EMAIL_SITE_URL}\n${EMAIL_SUPPORT}\n`;
+}
+
+/** The footer every email ends with. */
+function footerRow(language: Language | string | undefined, c: typeof EMAIL_COLORS): string {
+  const made = escapeHtml(madeWith(language));
+  // The image has an empty alt: with images blocked it still reads "Made with infunion".
+  const mark = `<img src="${EMAIL_MARK_URL}" width="26" height="16" alt="" style="display:block;border:0">`;
+  const link = (inner: string) => `<a href="${EMAIL_SITE_URL}" style="color:${c.faint};text-decoration:none">${inner}</a>`;
+  return `<tr><td align="center" style="border-top:1px solid ${c.rule};padding:18px 28px 20px;font-size:13px;line-height:1.6;color:${c.faint}">
+<table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;font-family:${FONT};font-size:13px;line-height:16px;color:${c.faint}"><tr>
+<td style="vertical-align:middle;padding-right:6px">${link(made)}</td>
+<td style="vertical-align:middle;padding-right:5px">${link(mark)}</td>
+<td style="vertical-align:middle">${link(`<b style="color:${c.ink}">infunion</b>`)}</td>
+</tr></table>
+<p style="margin:6px 0 0;font-size:12px;line-height:1.6"><a href="mailto:${EMAIL_SUPPORT}" style="color:${c.faint};text-decoration:none">${EMAIL_SUPPORT}</a></p>
+</td></tr>`;
+}
 
 const FONT = 'Arial,Helvetica,sans-serif';
 
@@ -203,7 +239,6 @@ export function emailLayout(
   language?: Language | string,
   header?: EmailHeader,
 ): string {
-  const tagline = TAGLINE[language as Language] ?? TAGLINE[Language.EN];
   const c = EMAIL_COLORS;
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>
 <body style="margin:0;padding:0;background:${c.page}">
@@ -212,7 +247,7 @@ export function emailLayout(
 ${headerRow(header, c)}
 <tr><td style="padding:0 28px"><div style="height:4px;line-height:4px;font-size:0;background:${c.yellow};border-radius:2px">&nbsp;</div></td></tr>
 <tr><td style="padding:30px 28px 10px">${content}</td></tr>
-<tr><td style="border-top:1px solid ${c.rule};padding:16px 28px;font-size:12px;line-height:1.6;color:${c.faint}">infunion · ${escapeHtml(tagline)}<br><a href="${EMAIL_SITE_URL}" style="color:${c.purple};text-decoration:none">infunion.app</a> · <a href="mailto:${EMAIL_SUPPORT}" style="color:${c.faint};text-decoration:none">${EMAIL_SUPPORT}</a></td></tr>
+${footerRow(language, c)}
 </table>
 </td></tr></table>
 </body></html>`;

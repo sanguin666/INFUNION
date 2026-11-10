@@ -5,6 +5,7 @@ import {
   emailHeading,
   emailLayout,
   emailParagraph,
+  emailText,
 } from '../../common/email/email-layout.js';
 
 type ResetEmailText = {
@@ -102,7 +103,7 @@ export function passwordResetEmail(
   return {
     to,
     subject: text.subject,
-    text: `${intro}\n\n${link}\n\n${text.expiry}\n${text.ignore}\n`,
+    text: emailText(`${intro}\n\n${link}\n\n${text.expiry}\n${text.ignore}`, language),
     html: emailLayout(
       [
         emailHeading(text.heading),

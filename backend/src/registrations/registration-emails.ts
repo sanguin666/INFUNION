@@ -11,6 +11,7 @@ import {
   emailParagraph,
   emailQuote,
   emailRichParagraph,
+  emailText,
 } from '../common/email/email-layout.js';
 
 /**
@@ -397,8 +398,9 @@ function build(
   return {
     to,
     subject,
-    text: [...(heading ? [heading] : []), ...blocks.map((b) => b.text)].join(
-      '\n\n',
+    text: emailText(
+      [...(heading ? [heading] : []), ...blocks.map((b) => b.text)].join('\n\n'),
+      language,
     ),
     html: emailLayout(
       [
