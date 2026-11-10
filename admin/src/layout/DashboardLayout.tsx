@@ -53,11 +53,11 @@ const MODULE_NAV: (NavItem & { module: ModuleType })[] = [
   { to: 'community', label: 'layout.navCommunity', module: 'community', icon: MODULE_ICON.community, count: 'community' },
 ];
 
+// What a community shows outside the app, then its plan.
 const SETUP: NavItem[] = [
-  { to: 'settings', label: 'layout.navSettings', icon: PAGE_ICON.settings },
-  { to: 'modules', label: 'layout.navModules', icon: PAGE_ICON.plan },
   { to: 'website', label: 'layout.navWebsite', icon: PAGE_ICON.website },
   { to: 'my-qr', label: 'layout.navMyQr', icon: PAGE_ICON.qr },
+  { to: 'modules', label: 'layout.navModules', icon: PAGE_ICON.plan },
 ];
 
 export function DashboardLayout() {
@@ -190,7 +190,8 @@ export function DashboardLayout() {
               <span>Admin</span>
             </h1>
           </div>
-          <p className="sidebar-user">{user.firstName ?? user.email}</p>
+          {/* The superadmin's "‹ Superadmin" link already says who is in. */}
+          {!user.isSuperadmin && <p className="sidebar-user">{user.firstName ?? user.email}</p>}
         </div>
 
         <hr className="menu-divider" />
@@ -234,16 +235,19 @@ export function DashboardLayout() {
           currentPoi && <p className="poi-name">{currentPoi.name}</p>
         )}
 
-        <hr className="menu-divider" />
-
+        {/* The way back to the superadmin: a small link under the
+            community's name rather than a row of its own between two
+            lines (compact menu, Seb, 10 Nov 2026). */}
         {user.isSuperadmin && (
-          <>
-            <nav>
-              <NavLink to={visiting ? `/superadmin/communities/${poiId}` : '/superadmin'}>{sa('nav.title')}</NavLink>
-            </nav>
-            <hr className="menu-divider" />
-          </>
+          <Link
+            className="sidebar-back-link"
+            to={visiting ? `/superadmin/communities/${poiId}` : '/superadmin'}
+          >
+            ‹ {sa('nav.title')}
+          </Link>
         )}
+
+        <hr className="menu-divider" />
 
         <div className="sidebar-nav">
           <nav aria-label={currentPoi?.name || undefined}>{TOP.map((item) => navRow(item, true))}</nav>
@@ -270,11 +274,21 @@ export function DashboardLayout() {
         <div className="sidebar-footer">
           <hr className="menu-divider" />
           <nav data-tour="setup">{SETUP.map((item) => navRow(item))}</nav>
-          <LanguagePicker />
-          <AppearancePicker />
-          <button type="button" className="btn btn-destructive btn-block" onClick={logout}>
-            {t('layout.signOut')}
-          </button>
+          {/* Language, appearance and sign out share one row (compact
+              menu, Seb, 10 Nov 2026), so the modules keep the height. */}
+          <div className="sidebar-prefs">
+            <LanguagePicker compact />
+            <AppearancePicker compact />
+            <button
+              type="button"
+              className="sidebar-signout"
+              onClick={logout}
+              aria-label={t('layout.signOut')}
+              title={t('layout.signOut')}
+            >
+              <LineIcon path="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11" />
+            </button>
+          </div>
         </div>
       </aside>
 

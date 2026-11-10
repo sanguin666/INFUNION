@@ -891,7 +891,7 @@ export class PlaceClosureService implements OnModuleInit, OnModuleDestroy {
           ? ''
           : emailButton(
               t('openAdmin'),
-              `${adminUrl}/poi/${poi.id}/settings?tab=account`,
+              `${adminUrl}/poi/${poi.id}/dashboard?tab=account`,
             )),
       language,
     );

@@ -9,23 +9,25 @@ export const ADMIN_GUIDE = `
 infunion is an app for communities (churches and other places of worship, associations, culture and sport clubs). Members install the free infunion app on their phone and join a community by scanning its QR code or typing its community code. The team runs the community from this admin dashboard (in a web browser). What the team publishes here shows in the members' app.
 
 # The menu
-The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Fees & contributions, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then setup at the bottom (Settings, Plans & modules, Website, QR code). A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language and appearance (light/dark) are at the bottom of the menu. Settings › Information › "Tour and tips" shows the welcome tour and page tips again.
+The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Fees & contributions, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then three rows at the bottom (Community website, QR code to join, Plans & modules). There is no Settings page: the community's colour, information and address are tabs of Home page, and its account is a tab of Dashboard. A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language, appearance (light/dark) and sign out are three small buttons on one row at the very bottom of the menu. Dashboard › Account › "Tour and tips" shows the welcome tour and page tips again.
 
 # Undo
 After deleting something (a home page section, a badge, an event, an announcement, a campaign, a livestream, a prayer request, a post in Our group, a day of readings), a bar at the bottom shows "Undo" for 10 seconds: click it and the item comes back where it was. Once the bar has gone, the delete is final.
 
-# Website
-Website (in the setup part of the menu) gives the community a public web page at its own address (…/c/<address>), built from what the team already keeps up to date: the welcome text and pictures of the home page, the next Mass and Open now, the weekly timetable from Events, upcoming events, the latest announcements, the running campaign and a map. It invites visitors to join in the app with a QR code (and an "Open in the app" button on phones). It stays offline until the team switches "Online" on. The address can be changed (lowercase letters, numbers and hyphens). "What to show" leaves parts out; a part with nothing in it never shows. Share the link on social media, in an email signature or on posters.
+# Community website
+Community website (near the bottom of the menu) gives the community a public web page at its own address (…/c/<address>), built from what the team already keeps up to date: the welcome text and pictures of the home page, the next Mass and Open now, the weekly timetable from Events, upcoming events, the latest announcements, the running campaign and a map. It invites visitors to join in the app with a QR code (and an "Open in the app" button on phones). It stays offline until the team switches "Online" on. The address can be changed (lowercase letters, numbers and hyphens). "What to show" leaves parts out; a part with nothing in it never shows. Share the link on social media, in an email signature or on posters.
 
 # Dashboard
-Start here each day. "To do" lists what is waiting: new requests to open, members waiting for an answer, documents received to check, Mass intentions to tick off as said, home page messages past their last day, free trials ending this week. "Key figures": contributions this month compared with last month, new members, prayer requests. "This week": everything planned in the next seven days.
+Start here each day. "To do" lists what is waiting: new requests to open, members waiting for an answer, documents received to check, Mass intentions to tick off as said, home page messages past their last day, free trials ending this week. "Key figures": contributions this month compared with last month, new members, prayer requests. "This week": everything planned in the next seven days. The Dashboard also has an Account tab: the content language (the language the team writes in), "Tour and tips" to see the welcome tour again, download all the community's data as a ZIP, and close the community's account (it disappears for members after 30 days and the closing can be cancelled until then; gifts and tax receipts are kept locked as the law requires).
 
 # Home page
-The first screen members see when they open the community in the app, before they pick anything in the menu. It has three tabs: Badges, Page sections, Bottom menu. A live phone preview on the right shows the result as you type; dashed outlines show what is not saved yet.
-- Page sections: add a section (a text with a heading, an image with a caption, or a section that fills itself: upcoming events, past events, latest announcements, next livestream, donate button, celebration times). Move sections up or down; they show in that order. With no sections, members see the community description from Settings; "Start from the default page" adds a ready-made page. "Celebration times" is built from the weekly events on the Events page (set their kind and "Every week").
+The first screen members see when they open the community in the app, before they pick anything in the menu. It has five tabs: Badges, Page sections, Bottom menu, Personalise, Address & map. A live phone preview on the right shows the result as you type; dashed outlines show what is not saved yet.
+- Page sections: add a section (a text with a heading, an image with a caption, or a section that fills itself: upcoming events, past events, latest announcements, next livestream, donate button, celebration times). Move sections up or down; they show in that order. With no sections, members see the community description from Home page › Personalise; "Start from the default page" adds a ready-made page. "Celebration times" is built from the weekly events on the Events page (set their kind and "Every week").
 - Badges at the top of the page: small tiles such as Next Mass, Open / closed (from the opening hours in the calendar), Next confessions, Campaign (percentage raised). Switch each on or off and order them with the arrows. "+ Add a message" adds a short text badge (e.g. "Closed on Monday 29th"), optionally important (purple), opening a module on tap, and shown until a date.
 - Versions: the "Versions" button under the Home page title (it shows "Live: <name>" once a version is saved). "Save the current page as a version" keeps the sections and badges under a name (e.g. Christmas, a campaign). "Use this version" puts a saved page live; the current page is kept first (in the live version, or an automatic copy), so you can always go back. Up to 5 versions per community; rename or delete them in the list. The bottom menu is the same for every version.
 - Bottom menu: the order of the buttons at the bottom of the app. Home is always first and More always last; the first three modules on the list get a button, the others go under More.
+- Personalise: the colour of buttons, banner and selected tab in the app (purple, ocean, forest, terracotta, ruby, teal, graphite), then the community's name, description and logo (square PNG/JPEG/WebP at least 256 × 256 pixels, shown in a circle in the app header).
+- Address & map: kind of community, which only infunion can change; address; pin on the map; "Visible on the infunion map" so people nearby find it in "Near you".
 
 # Members
 Everyone who joined the community in the app. Search by name or phone. With the Messages module, "Send a private message" writes to one member: they get a notification and can answer in the app; the number in the menu shows messages waiting for an answer. Without the Messages module the page offers it (Essentials plan). A member's data can be exported, and a member can be removed from the community when they ask (their requests, prayer requests, posts and messages there are deleted; contributions stay, as the law requires). To invite people, share the QR code, or use the community's own list:
@@ -64,9 +66,6 @@ Add a title, the link (URL) of a service or gathering streamed live or recorded,
 # Our group (Complete plan)
 Where members post and reply to each other. The team moderates: remove a post or reply. The Reported tab lists what members reported (please decide within 24 hours): keep it, remove it, or remove and block the author from posting. Blocked people still use the app but cannot post, reply or share a prayer request.
 
-# Settings
-Tabs: Information (name, description, logo: square PNG/JPEG/WebP at least 256 × 256 pixels, shown in a circle in the app header; the content language; "Tour and tips" to see the welcome tour again), Personalise (the colour of buttons, banner and selected tab: purple, ocean, forest, terracotta, ruby, teal, graphite), Address & map (kind of community, which only infunion can change; address; pin on the map; "Visible on the infunion map" so people nearby find it in "Near you"), Account (download all the community's data as a ZIP; close the community's account: it disappears for members after 30 days and the closing can be cancelled until then; gifts and tax receipts are kept locked as the law requires).
-
 # Plans & modules
 Three plans. A paid plan can be tried free for one month, once per community. Yearly billing costs ten months (2 months free). Upgrading is immediate (pay the difference for the rest of the period); downgrading applies at renewal, and modules the smaller plan lacks are paused, never deleted. A payment method (card or SEPA direct debit) is added under "Your subscription", with invoices.
 - Basic, free: Events, Fees & contributions. No push notifications.
@@ -74,7 +73,7 @@ Three plans. A paid plan can be tried free for one month, once per community. Ye
 - Complete, 59 € a month or 590 € a year: everything in Essentials plus Our group, Livestream, Prayer requests and Daily readings (places of worship), Mass intentions (churches), automatic translation of posts for members, and the AI assistant for members.
 Each module in the plan can be shown or hidden in the app at no cost. "Learn more" on a module shows what the team does in the admin and what members get in the app. Sometimes infunion offers a plan: then no payment is needed.
 
-# QR code
+# QR code to join
 A printable flyer with the community's QR code, an editable headline and welcome message. Print it or save as PDF and put it up where people pass by. Scanning it gets people the app and into the community in seconds. Members can also type the community code.
 
 # The members' app (to explain to members)
@@ -86,8 +85,8 @@ For anything the guide does not cover (billing problems, changing the kind of co
 
 /** The admin pages the answer may link to, and what each is for. */
 export const ADMIN_PAGES: Record<string, string> = {
-  dashboard: 'Dashboard: what is waiting, key figures, this week',
-  'home-page': 'Home page: sections, badges and bottom menu of the app',
+  dashboard: 'Dashboard: what is waiting, key figures, this week; Account tab (content language, data download, closing the account)',
+  'home-page': "Home page: sections, badges and bottom menu of the app; the community's colour, information, logo and address",
   members: 'Members: the member list and private messages',
   requests: 'Requests: what members ask the team for',
   events: 'Events: calendar, timetable and opening hours',
@@ -98,8 +97,7 @@ export const ADMIN_PAGES: Record<string, string> = {
   readings: 'Daily readings: texts of the day',
   livestreams: 'Livestreams: links to live or recorded services',
   community: 'Our group: posts, replies and reported content',
-  settings: "Settings: the community's details, look, address and account",
   modules: 'Plans & modules: plan, modules, subscription',
-  website: 'Website: the community public web page, its address and what it shows',
-  'my-qr': 'QR code: the printable flyer to invite members',
+  website: 'Community website: the community public web page, its address and what it shows',
+  'my-qr': 'QR code to join: the printable flyer to invite members',
 };
