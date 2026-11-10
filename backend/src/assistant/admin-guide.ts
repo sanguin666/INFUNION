@@ -9,7 +9,7 @@ export const ADMIN_GUIDE = `
 infunion is an app for communities (churches and other places of worship, associations, culture and sport clubs). Members install the free infunion app on their phone and join a community by scanning its QR code or typing its community code. The team runs the community from this admin dashboard (in a web browser). What the team publishes here shows in the members' app.
 
 # The menu
-The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Fees & contributions, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then three rows at the bottom (Community website, QR code to join, Plans & modules). There is no Settings page: the community's colour, information and address are tabs of Home page, and its account is a tab of Dashboard. A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language, appearance (light/dark) and sign out are three small buttons on one row at the very bottom of the menu. Dashboard › Account › "Tour and tips" shows the welcome tour and page tips again.
+The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Donate, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then three rows at the bottom (Community website, QR code to join, Plans & modules). There is no Settings page: the community's colour, information and address are tabs of Home page, and its account is a tab of Dashboard. A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language, appearance (light/dark) and sign out are three small buttons on one row at the very bottom of the menu. Dashboard › Account › "Tour and tips" shows the welcome tour and page tips again.
 
 # Undo
 After deleting something (a home page section, a badge, an event, an announcement, a campaign, a livestream, a prayer request, a post in Our group, a day of readings), a bar at the bottom shows "Undo" for 10 seconds: click it and the item comes back where it was. Once the bar has gone, the delete is final.
@@ -46,7 +46,7 @@ The community's calendar: activities, meetings, celebrations and opening hours. 
 # Announcements (News)
 Post news: title, text, optional photo, optional voice message. Style Normal or Important (stands out). "Notify members on their phones" sends a push notification once, on publishing (paid plans). The newest post shows its photo big at the top of the News tab in the app. Posts can be edited or deleted.
 
-# Fees & contributions (Donations module, free on every plan)
+# Donate (Donations module, free on every plan)
 Members pay a fee or give once or every month from the app, by card. Tabs: Overview (this week, this month, average contribution, daily chart, recent contributions), Campaigns, Tax receipts. infunion keeps a small share of each contribution.
 - Campaigns: a project to raise money for (roof, organ, trip): title, description, optional goal and end date, photo, and optional "Where the money goes" lines that add up to 100 %. Show or hide a campaign in the app; members see how close it is to the goal.
 - Tax receipts: fill in the legal name, tax number and signatory of the legal body that issues the receipts, and the tax scheme (Spain: Ley 49/2002, or foundation/association outside it at 10 %, or no deduction). One receipt a year per person who asked for one when giving; open it to print or save as PDF. Download the list or every gift as CSV, and the Modelo 182 file for the Agencia Tributaria (due by 31 January; givers without a valid NIF or Spanish postcode are listed to fix first).
@@ -68,7 +68,7 @@ Where members post and reply to each other. The team moderates: remove a post or
 
 # Plans & modules
 Three plans. A paid plan can be tried free for one month, once per community. Yearly billing costs ten months (2 months free). Upgrading is immediate (pay the difference for the rest of the period); downgrading applies at renewal, and modules the smaller plan lacks are paused, never deleted. A payment method (card or SEPA direct debit) is added under "Your subscription", with invoices.
-- Basic, free: Events, Fees & contributions. No push notifications.
+- Basic, free: Events, Donate. No push notifications.
 - Essentials, 39 € a month or 390 € a year: everything in Basic plus push notifications (event reminders, new announcements, messages, replies to requests), Announcements, Requests & bookings, Messages.
 - Complete, 59 € a month or 590 € a year: everything in Essentials plus Our group, Livestream, Prayer requests and Daily readings (places of worship), Mass intentions (churches), automatic translation of posts for members, and the AI assistant for members.
 Each module in the plan can be shown or hidden in the app at no cost. "Learn more" on a module shows what the team does in the admin and what members get in the app. Sometimes infunion offers a plan: then no payment is needed.
@@ -91,7 +91,7 @@ export const ADMIN_PAGES: Record<string, string> = {
   requests: 'Requests: what members ask the team for',
   events: 'Events: calendar, timetable and opening hours',
   announcements: 'Announcements: news for members',
-  donations: 'Fees & contributions: overview, campaigns, tax receipts',
+  donations: 'Donate: overview, campaigns, tax receipts',
   'mass-intentions': 'Mass intentions: the register for the celebrant',
   'prayer-requests': 'Prayer requests: moderation',
   readings: 'Daily readings: texts of the day',
