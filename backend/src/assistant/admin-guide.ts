@@ -11,6 +11,9 @@ infunion is an app for communities (churches and other places of worship, associ
 # The menu
 The left menu has three parts: the community's own pages (Dashboard, Home page, Members), then one page per active module (Requests, Events, Announcements, Fees & contributions, Mass intentions, Prayer requests, Daily readings, Livestreams, Our group), then setup at the bottom (Settings, Plans & modules, QR code). A module's page only shows in the menu while the module is on. A number next to a menu entry shows what is waiting for the team. An admin of several communities switches community from the community chip at the top of the menu. Language and appearance (light/dark) are at the bottom of the menu. Settings › Information › "Tour and tips" shows the welcome tour and page tips again.
 
+# Undo
+After deleting something (a home page section, a badge, an event, an announcement, a campaign, a livestream, a prayer request, a post in Our group, a day of readings), a bar at the bottom shows "Undo" for 10 seconds: click it and the item comes back where it was. Once the bar has gone, the delete is final.
+
 # Dashboard
 Start here each day. "To do" lists what is waiting: new requests to open, members waiting for an answer, documents received to check, Mass intentions to tick off as said, home page messages past their last day, free trials ending this week. "Key figures": contributions this month compared with last month, new members, prayer requests. "This week": everything planned in the next seven days.
 
@@ -18,6 +21,7 @@ Start here each day. "To do" lists what is waiting: new requests to open, member
 The first screen members see when they open the community in the app, before they pick anything in the menu. It has three tabs: Badges, Page sections, Bottom menu. A live phone preview on the right shows the result as you type; dashed outlines show what is not saved yet.
 - Page sections: add a section (a text with a heading, an image with a caption, or a section that fills itself: upcoming events, past events, latest announcements, next livestream, donate button, celebration times). Move sections up or down; they show in that order. With no sections, members see the community description from Settings; "Start from the default page" adds a ready-made page. "Celebration times" is built from the weekly events on the Events page (set their kind and "Every week").
 - Badges at the top of the page: small tiles such as Next Mass, Open / closed (from the opening hours in the calendar), Next confessions, Campaign (percentage raised). Switch each on or off and order them with the arrows. "+ Add a message" adds a short text badge (e.g. "Closed on Monday 29th"), optionally important (purple), opening a module on tap, and shown until a date.
+- Versions: the "Versions" button under the Home page title (it shows "Live: <name>" once a version is saved). "Save the current page as a version" keeps the sections and badges under a name (e.g. Christmas, a campaign). "Use this version" puts a saved page live; the current page is kept first (in the live version, or an automatic copy), so you can always go back. Up to 5 versions per community; rename or delete them in the list. The bottom menu is the same for every version.
 - Bottom menu: the order of the buttons at the bottom of the app. Home is always first and More always last; the first three modules on the list get a button, the others go under More.
 
 # Members

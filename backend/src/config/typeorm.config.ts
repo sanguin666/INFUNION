@@ -15,6 +15,7 @@ import { CommunityComment } from '../community/entities/community-comment.entity
 import { Donation } from '../donations/entities/donation.entity.js';
 import { PhoneVerificationCode } from '../auth/entities/phone-verification-code.entity.js';
 import { PoiPageBlock } from '../poi-page/entities/poi-page-block.entity.js';
+import { HomePageVersion } from '../home-versions/home-version.entity.js';
 import { DonationCampaign } from '../donations/entities/donation-campaign.entity.js';
 import { ServiceRequest } from '../service-requests/entities/service-request.entity.js';
 import { ServiceRequestMessage } from '../service-requests/entities/service-request-message.entity.js';
@@ -67,6 +68,7 @@ export const ENTITIES = [
   Donation,
   DonationCampaign,
   PoiPageBlock,
+  HomePageVersion,
   PhoneVerificationCode,
   ServiceRequest,
   ServiceRequestMessage,
