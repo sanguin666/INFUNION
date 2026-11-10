@@ -62,3 +62,27 @@ export async function storeLastLogin(login: LastLogin): Promise<void> {
     // The form just starts empty next time.
   }
 }
+
+const GUEST_KEY = 'infunion.guest.v1';
+
+/**
+ * Whether this device chose "continue without an account" on the welcome
+ * screen, so the app opens straight on the communities next time instead
+ * of asking again. Signing in or out clears it.
+ */
+export async function getGuestChoice(): Promise<boolean> {
+  try {
+    return (await AsyncStorage.getItem(GUEST_KEY)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export async function setGuestChoice(guest: boolean): Promise<void> {
+  try {
+    if (guest) await AsyncStorage.setItem(GUEST_KEY, '1');
+    else await AsyncStorage.removeItem(GUEST_KEY);
+  } catch {
+    // Asked again at the next launch, which is harmless.
+  }
+}

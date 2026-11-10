@@ -22,6 +22,7 @@ type Props = {
   // Signing in is a screen of its own, so the settings menu hands that
   // over rather than growing a second login form.
   onSignIn: () => void;
+  onSignUp: () => void;
 };
 
 /**
@@ -33,7 +34,7 @@ type Props = {
  * full-width target and the fields are the same size as everywhere else
  * in the app.
  */
-export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
+export function ProfileScreen({ visible, onClose, onSignIn, onSignUp }: Props) {
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
   const { me, applyMe, signOut } = useAuth();
@@ -195,8 +196,19 @@ export function ProfileScreen({ visible, onClose, onSignIn }: Props) {
             <FormCard>
               <FormRow label={t('profile.title')}>
                 <AccessibleText variant="body">{t('profile.signedOutExplainer')}</AccessibleText>
+                {/* Without an account, this is where to make one (Seb,
+                    9 Nov 2026); signing in is the way for those who have one. */}
                 <AccessibleButton
-                  label={t('home.signInButton')}
+                  label={t('onboarding.signUp')}
+                  style={styles.rowAction}
+                  onPress={() => {
+                    onClose();
+                    onSignUp();
+                  }}
+                />
+                <AccessibleButton
+                  label={t('onboarding.signIn')}
+                  variant="secondary"
                   style={styles.rowAction}
                   onPress={() => {
                     onClose();

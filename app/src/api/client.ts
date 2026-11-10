@@ -61,8 +61,26 @@ export function setUnauthorizedHandler(handler: (() => void) | null): void {
   onUnauthorized = handler;
 }
 
+/**
+ * A phone used without an account is known by its Expo push token alone
+ * (Seb, 9 Nov 2026): set once it registers, sent only while nobody is
+ * signed in, for the `/devices` notification routes.
+ */
+let deviceToken: string | null = null;
+
+export function setDeviceToken(token: string | null): void {
+  deviceToken = token;
+}
+
+export function isSignedIn(): boolean {
+  return !!authToken;
+}
+
 function withAuth(init?: RequestInit): RequestInit | undefined {
-  if (!authToken) return init;
+  if (!authToken) {
+    if (!deviceToken) return init;
+    return { ...init, headers: { ...init?.headers, 'X-Push-Token': deviceToken } };
+  }
   return {
     ...init,
     headers: { ...init?.headers, Authorization: `Bearer ${authToken}` },

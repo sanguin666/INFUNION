@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, Primary
 import type { Relation } from 'typeorm';
 import { User } from '../../users/entities/user.entity.js';
 import { Event } from '../../events/entities/event.entity.js';
+import { PushToken } from './push-token.entity.js';
 
 /**
  * Someone rang the bell on an event: they get a push an hour before it
@@ -17,15 +18,22 @@ import { Event } from '../../events/entities/event.entity.js';
  */
 @Entity('event_reminders')
 @Index(['user', 'event'], { unique: true })
+@Index('IDX_event_reminders_push_token_event', ['pushToken', 'event'], { unique: true, where: '"push_token_id" IS NOT NULL' })
 @Index('IDX_event_reminders_event', ['event'])
 @Index('IDX_event_reminders_next_check_at', ['nextCheckAt'])
 export class EventReminder {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false })
+  // Exactly one of the two: a person's bell, or the bell of a phone used
+  // without an account.
+  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'user_id' })
-  user!: Relation<User>;
+  user!: Relation<User> | null;
+
+  @ManyToOne(() => PushToken, { onDelete: 'CASCADE', nullable: true })
+  @JoinColumn({ name: 'push_token_id' })
+  pushToken!: Relation<PushToken> | null;
 
   @ManyToOne(() => Event, { onDelete: 'CASCADE', nullable: false })
   @JoinColumn({ name: 'event_id' })
