@@ -30,6 +30,9 @@ export type SiteStrings = {
   madeWith: string;
   notFoundTitle: string;
   notFoundBody: string;
+  getApp: string;
+  discover: string;
+  claim: string;
 };
 
 const en: SiteStrings = {
@@ -59,8 +62,11 @@ const en: SiteStrings = {
   tomorrow: 'Tomorrow',
   important: 'Important',
   madeWith: 'Made with infunion',
-  notFoundTitle: 'This page does not exist',
-  notFoundBody: 'The community may have moved its page or not published it yet.',
+  notFoundTitle: 'We couldn’t find this community page',
+  notFoundBody: 'It may have moved to a new address, or the team hasn’t put it online yet. In the app you can find the communities near you.',
+  getApp: 'Get the app',
+  discover: 'What is infunion?',
+  claim: 'The union that makes you a community',
 };
 
 const es: SiteStrings = {
@@ -90,8 +96,11 @@ const es: SiteStrings = {
   tomorrow: 'Mañana',
   important: 'Importante',
   madeWith: 'Hecho con infunion',
-  notFoundTitle: 'Esta página no existe',
-  notFoundBody: 'Puede que la comunidad haya cambiado su página o aún no la haya publicado.',
+  notFoundTitle: 'No hemos encontrado esta página',
+  notFoundBody: 'Puede que la comunidad haya cambiado de dirección o que su equipo aún no la haya puesto en línea. En la app encontrarás las comunidades cerca de ti.',
+  getApp: 'Descargar la app',
+  discover: '¿Qué es infunion?',
+  claim: 'La unión que te hace comunidad',
 };
 
 const fr: SiteStrings = {
@@ -121,8 +130,11 @@ const fr: SiteStrings = {
   tomorrow: 'Demain',
   important: 'Important',
   madeWith: 'Réalisé avec infunion',
-  notFoundTitle: 'Cette page n’existe pas',
-  notFoundBody: 'La communauté a peut-être changé son adresse ou ne l’a pas encore publiée.',
+  notFoundTitle: 'Nous n’avons pas trouvé cette page',
+  notFoundBody: 'La communauté a peut-être changé d’adresse, ou son équipe ne l’a pas encore mise en ligne. Dans l’app, vous trouverez les communautés près de chez vous.',
+  getApp: 'Télécharger l’app',
+  discover: 'Qu’est-ce qu’infunion ?',
+  claim: 'L’union qui fait de vous une communauté',
 };
 
 const va: SiteStrings = {
@@ -152,8 +164,11 @@ const va: SiteStrings = {
   tomorrow: 'Demà',
   important: 'Important',
   madeWith: 'Fet amb infunion',
-  notFoundTitle: 'Esta pàgina no existeix',
-  notFoundBody: 'Pot ser que la comunitat haja canviat la pàgina o que encara no l’haja publicada.',
+  notFoundTitle: 'No hem trobat esta pàgina',
+  notFoundBody: 'Pot ser que la comunitat haja canviat d’adreça o que el seu equip encara no l’haja posada en línia. En l’app trobaràs les comunitats prop de tu.',
+  getApp: 'Descarrega l’app',
+  discover: 'Què és infunion?',
+  claim: 'La unió que et fa comunitat',
 };
 
 const ca: SiteStrings = {
@@ -167,8 +182,11 @@ const ca: SiteStrings = {
   events: 'Properament',
   contribute: 'Col·labora a l’app',
   moreInApp: 'Més a l’app',
-  notFoundTitle: 'Aquesta pàgina no existeix',
-  notFoundBody: 'Potser la comunitat ha canviat la pàgina o encara no l’ha publicada.',
+  notFoundTitle: 'No hem trobat aquesta pàgina',
+  notFoundBody: 'Potser la comunitat ha canviat d’adreça o el seu equip encara no l’ha posada en línia. A l’app trobaràs les comunitats a prop teu.',
+  getApp: 'Descarrega l’app',
+  discover: 'Què és infunion?',
+  claim: 'La unió que et fa comunitat',
 };
 
 const gl: SiteStrings = {
@@ -198,8 +216,11 @@ const gl: SiteStrings = {
   tomorrow: 'Mañá',
   important: 'Importante',
   madeWith: 'Feito con infunion',
-  notFoundTitle: 'Esta páxina non existe',
-  notFoundBody: 'Pode que a comunidade cambiase a súa páxina ou aínda non a publicase.',
+  notFoundTitle: 'Non atopamos esta páxina',
+  notFoundBody: 'Pode que a comunidade cambiase de enderezo ou que o seu equipo aínda non a puxese en liña. Na app atoparás as comunidades preto de ti.',
+  getApp: 'Descargar a app',
+  discover: 'Que é infunion?',
+  claim: 'A unión que te fai comunidade',
 };
 
 const pt: SiteStrings = {
@@ -229,8 +250,11 @@ const pt: SiteStrings = {
   tomorrow: 'Amanhã',
   important: 'Importante',
   madeWith: 'Feito com infunion',
-  notFoundTitle: 'Esta página não existe',
-  notFoundBody: 'A comunidade pode ter mudado a página ou ainda não a ter publicado.',
+  notFoundTitle: 'Não encontrámos esta página',
+  notFoundBody: 'A comunidade pode ter mudado de endereço ou a equipa ainda não a colocou online. Na app encontra as comunidades perto de si.',
+  getApp: 'Descarregar a app',
+  discover: 'O que é a infunion?',
+  claim: 'A união que te faz comunidade',
 };
 
 const ALL: Record<string, SiteStrings> = { en, es, fr, va, ca, gl, pt };

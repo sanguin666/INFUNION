@@ -1,3 +1,4 @@
+import { INFUNION_LOGO_ON_PURPLE } from './logo.js';
 import QRCode from 'qrcode';
 import { localTime } from '../events/occurrences.js';
 import type { SiteData, SiteSlot } from './community-site.service.js';
@@ -79,7 +80,8 @@ export async function renderSite(data: SiteData, siteUrl: string): Promise<strin
   const welcome = poi.description?.trim() ? undefined : data.blocks.find((b) => b.type === 'text');
   const picture = data.blocks.find((b) => b.type === 'image' && b.imageUrl)?.imageUrl ?? null;
   const intro = poi.description?.trim() || welcome?.body || '';
-  const restBlocks = data.blocks.filter((b) => b !== welcome);
+  // The hero already shows the welcome text and the first picture.
+  const restBlocks = data.blocks.filter((b) => b !== welcome && !(b.type === 'image' && b.imageUrl === picture));
 
   // Chips: next Mass and open / closed, like the app's badges.
   const chips: string[] = [];
@@ -109,17 +111,17 @@ export async function renderSite(data: SiteData, siteUrl: string): Promise<strin
   const timetable =
     hidden.has('timetable') || days.size === 0
       ? ''
-      : `<section class="box" id="timetable"><h2>${esc(s.timetable)}</h2>${[...days.values()]
+      : `<section class="box" id="timetable"><h2>${esc(s.timetable)}</h2><div class="week">${[...days.values()]
           .map(
             (day) =>
               `<div class="day"><h3>${esc(day.label)}</h3><ul>${day.slots
                 .map(
                   (slot) =>
-                    `<li><span>${esc(slot.title)}</span><b>${esc(time(slot.start))}${slot.end && slot.category === 'office_hours' ? `–${esc(time(slot.end))}` : ''}</b></li>`,
+                    `<li><b>${esc(time(slot.start))}${slot.end && slot.category === 'office_hours' ? `–${esc(time(slot.end))}` : ''}</b> ${esc(slot.title)}</li>`,
                 )
                 .join('')}</ul></div>`,
           )
-          .join('')}</section>`;
+          .join('')}</div></section>`;
 
   const events =
     hidden.has('events') || data.upcoming.length === 0
@@ -247,17 +249,19 @@ main{max-width:1080px;margin:0 auto;padding:28px 20px 40px}
 .store{background:var(--ink);color:#fff;text-decoration:none;border-radius:9px;padding:6px 12px;font-size:11px;line-height:1.15}
 .store b{font-size:14px;display:block}
 .phone-only{display:none}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;align-items:start}
+.grid + .grid{margin-top:18px}
 .box{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:0}
 .box h2{font-size:18px;margin:0 0 12px}
 .box p{margin:0 0 10px}
 .muted{color:var(--muted)}
-.day h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--cs);margin:12px 0 4px}
-.day:first-of-type h3{margin-top:0}
+#timetable{margin-top:18px}
+.week{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px 24px}
+.day{padding-top:10px;border-top:1px dashed var(--line)}
+.day h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--cs);margin:0 0 4px}
 .day ul,.list{list-style:none;margin:0;padding:0}
-.day li{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:15px}
-.day li:last-child{border-bottom:0}
-.day li span{color:var(--muted)}
+.day li{font-size:14px;color:var(--muted);line-height:1.4;padding:1px 0}
+.day li b{color:var(--ink);font-variant-numeric:tabular-nums;margin-right:4px}
 .list li{display:flex;gap:12px;align-items:center;margin-bottom:12px}
 .list b{display:block;line-height:1.25}
 .list small{color:var(--muted)}
@@ -295,9 +299,9 @@ ${!hidden.has('home') && intro ? `<div class="intro">${paragraphs(intro)}</div>`
 ${chips.length ? `<div class="chips">${chips.join('')}</div>` : ''}
 ${joinBox(s, join, qr, poi.name)}
 </div>${picture && !hidden.has('home') ? `<img class="photo" src="${esc(picture)}" alt="">` : ''}</div>
-<div class="grid">${timetable}${news || events}${campaign || map}</div>
-${news && events ? `<div class="extra">${events}${campaign && map ? map : ''}</div>` : campaign && map ? `<div class="extra">${map}</div>` : ''}
-${more ? `<div class="extra">${more}</div>` : ''}
+${more || map ? `<div class="grid">${more}${map}</div>` : ''}
+${news || campaign || events ? `<div class="grid">${news}${campaign}${events}</div>` : ''}
+${timetable}
 </main>
 <footer><span>© ${esc(poi.name)}</span><a href="https://infunion.app" rel="noopener">${esc(s.madeWith)}</a></footer>
 </body>
@@ -310,5 +314,32 @@ function joinBox(s: SiteStrings, join: string, qr: string, name: string): string
 
 export function renderNotFound(language: string | null | undefined): string {
   const s = siteStrings(language);
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${esc(s.notFoundTitle)}</title><style>body{margin:0;font:16px/1.5 system-ui,sans-serif;color:#1D1A2D;background:#f7f6fa;display:grid;place-items:center;min-height:100vh;padding:20px}main{max-width:420px;text-align:center}a{color:#5638C7}</style></head><body><main><h1>${esc(s.notFoundTitle)}</h1><p>${esc(s.notFoundBody)}</p><p><a href="https://infunion.app">infunion</a></p></main></body></html>`;
+  const lang = language && ['en', 'es', 'fr', 'va', 'ca', 'gl', 'pt'].includes(language) ? language : 'es';
+  return `<!doctype html>
+<html lang="${lang === 'va' ? 'ca' : lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>${esc(s.notFoundTitle)} · infunion</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;background:#F7F6FA;color:#1D1A2D;font:17px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.brand{background:#6C4FD9;color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+.brand svg{height:44px;width:auto;max-width:100%;align-self:flex-start}
+.brand .claim{color:#fff;font-size:clamp(22px,2.4vw,28px);font-weight:600;line-height:1.3;max-width:360px;margin:0}
+.brand a{color:#fff;opacity:.75;text-decoration:none;font-size:15px}
+main{padding:56px;display:flex;flex-direction:column;justify-content:center;max-width:600px}
+h1{font-size:clamp(28px,3.4vw,40px);line-height:1.15;margin:0 0 14px}
+p{color:#5b5770;margin:0 0 28px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;border-radius:999px;padding:12px 24px;font-weight:700;text-decoration:none;white-space:nowrap}
+.p{background:#6C4FD9;color:#fff}.g{border:2px solid #1D1A2D;color:#1D1A2D}
+@media (max-width:760px){body{grid-template-columns:1fr;grid-template-rows:auto 1fr}.brand{padding:28px 24px;gap:18px}.brand a{display:none}main{padding:36px 24px;justify-content:flex-start}}
+</style>
+</head>
+<body><aside class="brand">${INFUNION_LOGO_ON_PURPLE}<p class="claim">${esc(s.claim)}</p><a href="https://infunion.app">infunion.app</a></aside>
+<main><h1>${esc(s.notFoundTitle)}</h1><p>${esc(s.notFoundBody)}</p>
+<div class="row"><a class="btn p" href="https://infunion.app/#join">${esc(s.getApp)}</a><a class="btn g" href="https://infunion.app">${esc(s.discover)}</a></div></main></body>
+</html>`;
 }
