@@ -56,6 +56,7 @@ const MODULE_NAV: (NavItem & { module: ModuleType })[] = [
 const SETUP: NavItem[] = [
   { to: 'settings', label: 'layout.navSettings', icon: PAGE_ICON.settings },
   { to: 'modules', label: 'layout.navModules', icon: PAGE_ICON.plan },
+  { to: 'website', label: 'layout.navWebsite', icon: PAGE_ICON.website },
   { to: 'my-qr', label: 'layout.navMyQr', icon: PAGE_ICON.qr },
 ];
 

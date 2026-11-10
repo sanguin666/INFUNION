@@ -20,6 +20,7 @@ const PAGE_LABEL: Record<string, string> = {
   community: 'layout.navCommunity',
   settings: 'layout.navSettings',
   modules: 'layout.navModules',
+  website: 'layout.navWebsite',
   'my-qr': 'layout.navMyQr',
 };
 

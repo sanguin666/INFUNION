@@ -19,6 +19,7 @@ import { ContactsModule } from './contacts/contacts.module.js';
 import { PoiSettingsModule } from './poi-settings/poi-settings.module.js';
 import { PoiPageModule } from './poi-page/poi-page.module.js';
 import { HomeVersionsModule } from './home-versions/home-versions.module.js';
+import { CommunitySiteModule } from './community-site/community-site.module.js';
 import { PoiBadgesModule } from './poi-badges/poi-badges.module.js';
 import { DashboardModule } from './dashboard/dashboard.module.js';
 import { ServiceRequestsModule } from './service-requests/service-requests.module.js';
@@ -63,6 +64,7 @@ import { AssistantModule } from './assistant/assistant.module.js';
     PoiSettingsModule,
     PoiPageModule,
     HomeVersionsModule,
+    CommunitySiteModule,
     PoiBadgesModule,
     DashboardModule,
     ServiceRequestsModule,
