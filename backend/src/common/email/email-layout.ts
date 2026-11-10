@@ -161,10 +161,46 @@ export function emailButton(label: string, url: string): string {
   return `<p style="margin:8px 0 20px"><a href="${escapeHtml(url)}" style="display:inline-block;background:${EMAIL_COLORS.purple};color:#ffffff;padding:12px 22px;border-radius:12px;font-family:${FONT};font-size:16px;font-weight:bold;text-decoration:none">${escapeHtml(label)}</a></p>`;
 }
 
+/**
+ * The header of an email sent for a community (Seb, 10 Nov 2026): the
+ * community's own logo, or its name when it has no logo. infunion then
+ * appears only in the footer. `logoUrl` is a full URL.
+ */
+export type EmailHeader = { name: string; logoUrl?: string | null };
+
+/**
+ * A community's logo as a full URL. Logos are stored as paths on the API
+ * ("/uploads/..."), so they need the API's public address; without
+ * API_PUBLIC_URL the header shows the name instead.
+ */
+export function communityLogoUrl(
+  logoUrl: string | null | undefined,
+  apiPublicUrl: string | undefined,
+): string | null {
+  if (!logoUrl) return null;
+  if (/^https?:\/\//.test(logoUrl)) return logoUrl;
+  const base = apiPublicUrl?.trim().replace(/\/$/, '');
+  return base ? `${base}${logoUrl}` : null;
+}
+
+function headerRow(header: EmailHeader | undefined, c: typeof EMAIL_COLORS): string {
+  if (!header) {
+    return `<tr><td style="padding:24px 28px 20px"><a href="${EMAIL_SITE_URL}" style="text-decoration:none"><img src="${EMAIL_LOGO_URL}" width="174" height="30" alt="infunion" style="display:block;border:0;font-family:${FONT};font-size:22px;font-weight:bold;color:${c.purple}"></a></td></tr>`;
+  }
+  const name = escapeHtml(header.name);
+  // The caller passes a full URL (see communityLogoUrl), or none.
+  const logo = header.logoUrl || null;
+  const mark = logo
+    ? `<img src="${escapeHtml(logo)}" alt="${name}" style="display:block;max-height:48px;max-width:240px;border:0;font-family:${FONT};font-size:22px;font-weight:bold;color:${c.ink}">`
+    : `<p style="margin:0;font-size:22px;line-height:1.3;font-weight:bold;color:${c.ink}">${name}</p>`;
+  return `<tr><td style="padding:24px 28px 20px">${mark}</td></tr>`;
+}
+
 /** Wraps content blocks (built with the helpers above) in the shared frame. */
 export function emailLayout(
   content: string,
   language?: Language | string,
+  header?: EmailHeader,
 ): string {
   const tagline = TAGLINE[language as Language] ?? TAGLINE[Language.EN];
   const c = EMAIL_COLORS;
@@ -172,7 +208,7 @@ export function emailLayout(
 <body style="margin:0;padding:0;background:${c.page}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${c.page}"><tr><td align="center" style="padding:32px 12px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;background:#ffffff;border:1px solid ${c.border};border-radius:16px;font-family:${FONT};color:${c.ink}">
-<tr><td style="padding:24px 28px 20px"><a href="${EMAIL_SITE_URL}" style="text-decoration:none"><img src="${EMAIL_LOGO_URL}" width="174" height="30" alt="infunion" style="display:block;border:0;font-family:${FONT};font-size:22px;font-weight:bold;color:${c.purple}"></a></td></tr>
+${headerRow(header, c)}
 <tr><td style="padding:0 28px"><div style="height:4px;line-height:4px;font-size:0;background:${c.yellow};border-radius:2px">&nbsp;</div></td></tr>
 <tr><td style="padding:30px 28px 10px">${content}</td></tr>
 <tr><td style="border-top:1px solid ${c.rule};padding:16px 28px;font-size:12px;line-height:1.6;color:${c.faint}">infunion · ${escapeHtml(tagline)}<br><a href="${EMAIL_SITE_URL}" style="color:${c.purple};text-decoration:none">infunion.app</a> · <a href="mailto:${EMAIL_SUPPORT}" style="color:${c.faint};text-decoration:none">${EMAIL_SUPPORT}</a></td></tr>

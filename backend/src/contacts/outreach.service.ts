@@ -11,7 +11,7 @@ import { PlanTier } from '../common/enums/plan-tier.enum.js';
 import { DonationCampaign } from '../donations/entities/donation-campaign.entity.js';
 import { Donation, DonationStatus } from '../donations/entities/donation.entity.js';
 import { EmailSender } from '../auth/email/email-sender.js';
-import { emailButton, emailHeading, emailLayout, emailParagraph, escapeHtml } from '../common/email/email-layout.js';
+import { communityLogoUrl, emailButton, emailHeading, emailLayout, emailParagraph, escapeHtml } from '../common/email/email-layout.js';
 import { sendsNotifications } from '../active-modules/billing-rules.js';
 import { fill, outreachText } from './outreach-texts.js';
 import type { OutreachDto } from './dto/contacts.dto.js';
@@ -370,6 +370,8 @@ export class OutreachService {
         `<p style="margin:16px 0 0;font-size:13px;line-height:1.6;color:#6b6880">${escapeHtml(why)} <a href="${escapeHtml(urls.stop)}" style="color:#6b6880">${escapeHtml(words.stop)}</a></p>`,
       ].join(''),
       language,
+      // The community's own header (Seb, 10 Nov 2026); infunion stays in the footer.
+      { name: poi.name, logoUrl: communityLogoUrl(poi.logoUrl, this.config.get<string>('API_PUBLIC_URL')) },
     );
     const text = [subject, '', body, '', button ? `${button}: ${urls.button}` : '', '', `${why} ${words.stop}: ${urls.stop}`].join('\n');
     return {

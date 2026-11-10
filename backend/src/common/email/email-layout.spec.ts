@@ -7,6 +7,7 @@ import {
 import { Language } from '../enums/language.enum.js';
 import {
   EMAIL_LOGO_URL,
+  communityLogoUrl,
   emailDate,
   emailLayout,
   emailParagraph,
@@ -64,5 +65,27 @@ describe('email layout', () => {
     expect(ready.text).toContain('https://infunion.app/withdraw.html');
     expect(emailDate('2026-11-04', Language.ES)).toBe('4 de noviembre de 2026');
     expect(emailDate('2026-11-04', Language.EN)).toBe('4 November 2026');
+  });
+});
+
+describe('community header (10 Nov 2026)', () => {
+  it('shows the community name in the header and infunion only in the footer', () => {
+    const html = emailLayout(emailParagraph('Hi'), Language.EN, { name: 'Nuestra Señora del Carmen' });
+    expect(html).toContain('Nuestra Señora del Carmen');
+    expect(html).not.toContain(EMAIL_LOGO_URL);
+    expect(html.match(/infunion/g)?.length).toBeGreaterThan(0);
+    expect(html.indexOf('Nuestra Señora')).toBeLessThan(html.indexOf('infunion.app'));
+  });
+
+  it('shows the community logo when it has one', () => {
+    const logo = communityLogoUrl('/uploads/places/carmen.png', 'https://api.example.org/');
+    expect(logo).toBe('https://api.example.org/uploads/places/carmen.png');
+    const html = emailLayout(emailParagraph('Hi'), Language.EN, { name: 'Carmen', logoUrl: logo });
+    expect(html).toContain('src="https://api.example.org/uploads/places/carmen.png"');
+  });
+
+  it('falls back to the name when the logo cannot be given a public address', () => {
+    expect(communityLogoUrl('/uploads/places/carmen.png', undefined)).toBeNull();
+    expect(communityLogoUrl(null, 'https://api.example.org')).toBeNull();
   });
 });

@@ -4511,6 +4511,10 @@ select.chip {
 }
 .write-field textarea { min-height: 240px; line-height: 1.45; resize: vertical; }
 .write-hint { font-size: 16px; color: var(--color-text-muted); margin: 10px 2px 0; }
+.write-people-list { max-height: 360px; overflow-y: auto; padding-right: 4px; }
+.write-people .write-choice small { display: block; font-size: 15px; color: var(--color-text-muted); margin-top: 2px; }
+.write-choice input[type='checkbox'] { accent-color: var(--color-primary); }
+.write-choice input:disabled { opacity: 0.4; }
 .write-actions { display: flex; flex-direction: column; gap: 12px; }
 .write-actions .btn { width: 100%; min-height: 56px; font-size: 19px; }
 .write-actions .error-text,
@@ -4534,6 +4538,9 @@ select.chip {
 }
 .email-preview-foot { font-size: 13px; color: var(--color-text-muted); }
 .email-preview-foot u { text-decoration: underline; }
+.email-preview-logo { display: block; max-height: 48px; max-width: 240px; }
+.email-preview-name { margin: 0; font-size: 22px; line-height: 1.3; font-weight: 700; color: var(--color-text); }
+.email-preview-infunion { padding: 0 20px 16px; margin: 0; }
 .import-actions { margin-top: 16px; }
 
 .outreach-figures {

@@ -1231,6 +1231,11 @@ export type Translations = {
     aud_notInApp: string;
     aud_notInvited: string;
     aud_everyone: string;
+    aud_contacts: string;
+    contactsPickHint: string;
+    contactsPickCount: string;
+    inAppTag: string;
+    notInAppTag: string;
     aud_group: string;
     audienceSize: string;
     audienceNoEmail: string;
@@ -2604,6 +2609,11 @@ const en: Translations = {
     aud_notInApp: "Everyone not in the app yet",
     aud_notInvited: "Not invited yet",
     aud_everyone: "Everyone on your list",
+    aud_contacts: "Choose people",
+    contactsPickHint: "Tick the people to write to. Each line shows whether they are in the app.",
+    contactsPickCount: "{{count}} chosen",
+    inAppTag: "In the app",
+    notInAppTag: "Not in the app yet",
     aud_group: "A group",
     audienceSize: "{{count}} people will get this email.",
     audienceNoEmail: "No email for {{count}} of them: invite them by WhatsApp from the list.",
@@ -3977,6 +3987,11 @@ const es: Translations = {
     aud_notInApp: "Todos los que aún no están en la app",
     aud_notInvited: "Sin invitar todavía",
     aud_everyone: "Todas las personas de tu lista",
+    aud_contacts: "Elegir personas",
+    contactsPickHint: "Marca a las personas a las que escribir. Cada fila dice si están en la app.",
+    contactsPickCount: "{{count}} elegidas",
+    inAppTag: "En la app",
+    notInAppTag: "Aún no está en la app",
     aud_group: "Un grupo",
     audienceSize: "{{count}} personas recibirán este correo.",
     audienceNoEmail: "{{count}} no tienen correo: invítalas por WhatsApp desde la lista.",
@@ -5350,6 +5365,11 @@ const fr: Translations = {
     aud_notInApp: "Tous ceux qui ne sont pas encore dans l'app",
     aud_notInvited: "Pas encore invités",
     aud_everyone: "Toutes les personnes de votre liste",
+    aud_contacts: "Choisir des personnes",
+    contactsPickHint: "Cochez les personnes à qui écrire. Chaque ligne indique si elles sont dans l’application.",
+    contactsPickCount: "{{count}} choisie(s)",
+    inAppTag: "Dans l’application",
+    notInAppTag: "Pas encore dans l’application",
     aud_group: "Un groupe",
     audienceSize: "{{count}} personnes recevront cet e-mail.",
     audienceNoEmail: "{{count}} n'ont pas d'e-mail : invitez-les par WhatsApp depuis la liste.",
@@ -6723,6 +6743,11 @@ const va: Translations = {
     aud_notInApp: "Tots els que encara no estan en l’aplicació",
     aud_notInvited: "Sense convidar encara",
     aud_everyone: "Totes les persones de la teua llista",
+    aud_contacts: "Triar persones",
+    contactsPickHint: "Marca les persones a qui escriure. Cada fila indica si són a l’aplicació.",
+    contactsPickCount: "{{count}} triades",
+    inAppTag: "A l’aplicació",
+    notInAppTag: "Encara no és a l’aplicació",
     aud_group: "Un grup",
     audienceSize: "{{count}} persones rebran este correu.",
     audienceNoEmail: "{{count}} no tenen correu: convida-les per WhatsApp des de la llista.",
@@ -8096,6 +8121,11 @@ const ca: Translations = {
     aud_notInApp: "Tots els que encara no són a l’aplicació",
     aud_notInvited: "Sense convidar encara",
     aud_everyone: "Totes les persones de la teva llista",
+    aud_contacts: "Triar persones",
+    contactsPickHint: "Marca les persones a qui escriure. Cada fila indica si són a l’aplicació.",
+    contactsPickCount: "{{count}} triades",
+    inAppTag: "A l’aplicació",
+    notInAppTag: "Encara no és a l’aplicació",
     aud_group: "Un grup",
     audienceSize: "{{count}} persones rebran aquest correu.",
     audienceNoEmail: "{{count}} no tenen correu: convida-les per WhatsApp des de la llista.",
@@ -9469,6 +9499,11 @@ const gl: Translations = {
     aud_notInApp: "Todos os que aínda non están na app",
     aud_notInvited: "Sen convidar aínda",
     aud_everyone: "Todas as persoas da túa lista",
+    aud_contacts: "Escoller persoas",
+    contactsPickHint: "Marca as persoas ás que escribir. Cada liña indica se están na app.",
+    contactsPickCount: "{{count}} escollidas",
+    inAppTag: "Na app",
+    notInAppTag: "Aínda non está na app",
     aud_group: "Un grupo",
     audienceSize: "{{count}} persoas recibirán este correo.",
     audienceNoEmail: "{{count}} non teñen correo: convídaas por WhatsApp desde a lista.",
@@ -10842,6 +10877,11 @@ const pt: Translations = {
     aud_notInApp: "Todos os que ainda não estão na aplicação",
     aud_notInvited: "Ainda por convidar",
     aud_everyone: "Todas as pessoas da sua lista",
+    aud_contacts: "Escolher pessoas",
+    contactsPickHint: "Marque as pessoas para quem quer escrever. Cada linha mostra se estão na app.",
+    contactsPickCount: "{{count}} escolhidas",
+    inAppTag: "Na app",
+    notInAppTag: "Ainda não está na app",
     aud_group: "Um grupo",
     audienceSize: "{{count}} pessoas vão receber este e-mail.",
     audienceNoEmail: "{{count}} não têm e-mail: convide-as por WhatsApp a partir da lista.",
