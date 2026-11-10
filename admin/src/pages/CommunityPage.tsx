@@ -7,6 +7,7 @@ import { DestructiveButton } from '../components/DestructiveButton';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 import { ReportedPanel } from '../components/ReportedPanel';
 import { getReportCount } from '../api/moderation';
+import { hideFromList, useUndo } from '../components/Undo';
 
 const TABS = ['posts', 'reported'] as const;
 
@@ -46,17 +47,18 @@ export function CommunityPage() {
     }
   }
 
-  async function handleDeletePost(id: string) {
-    try {
-      await deletePost(poiId, id);
-      setPosts((current) => current?.filter((p) => p.id !== id) ?? null);
-      if (expandedId === id) {
-        setExpandedId(null);
-        setComments(null);
-      }
-    } catch {
-      setError(t('community.removePostError'));
+  const undo = useUndo();
+
+  function handleDeletePost(id: string) {
+    if (expandedId === id) {
+      setExpandedId(null);
+      setComments(null);
     }
+    undo.deleteLater({
+      hide: () => hideFromList(setPosts, id),
+      commit: () => deletePost(poiId, id),
+      onError: () => setError(t('community.removePostError')),
+    });
   }
 
   async function handleDeleteComment(postId: string, commentId: string) {

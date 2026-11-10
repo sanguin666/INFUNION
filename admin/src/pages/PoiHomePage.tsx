@@ -19,6 +19,7 @@ import { PhonePreview } from '../components/PhonePreview';
 import type { PoiBadge } from '../api/types';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 import { BottomMenuPanel, initialMenuOrder } from './MenuOrder';
+import { hideFromList, useUndo } from '../components/Undo';
 
 const HOME_TABS = ['badges', 'sections', 'menu'] as const;
 
@@ -184,18 +185,25 @@ export function PoiHomePage() {
     }
   }
 
-  async function remove(id: string) {
+  const undo = useUndo();
+
+  function remove(id: string) {
     setError(null);
-    try {
-      await deletePageBlock(poiId, id);
-      adopt(await getPageBlocks(poiId));
-    } catch {
-      setError(t('homePage.saveError'));
-    }
+    undo.deleteLater({
+      name: blocks?.find((b) => b.id === id)?.title ?? undefined,
+      hide: () => hideFromList(setBlocks, id),
+      commit: async () => {
+        await deletePageBlock(poiId, id);
+        adopt(await getPageBlocks(poiId));
+      },
+      onError: () => setError(t('homePage.saveError')),
+    });
   }
 
   async function move(index: number, delta: number) {
     if (!blocks) return;
+    // The order must list every section: a delete still waiting goes first.
+    await undo.flush();
     const target = index + delta;
     if (target < 0 || target >= blocks.length) return;
     const next = [...blocks];

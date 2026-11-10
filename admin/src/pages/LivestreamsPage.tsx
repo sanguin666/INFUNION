@@ -9,6 +9,7 @@ import {
 } from '../api/livestreams';
 import type { Livestream, LivestreamStatus } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
+import { hideFromList, useUndo } from '../components/Undo';
 
 const STATUS_OPTIONS: LivestreamStatus[] = ['upcoming', 'live', 'ended'];
 
@@ -70,13 +71,15 @@ export function LivestreamsPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    try {
-      await deleteLivestream(poiId, id);
-      setItems((current) => current?.filter((s) => s.id !== id) ?? null);
-    } catch {
-      setError(t('livestreams.deleteError'));
-    }
+  const undo = useUndo();
+
+  function handleDelete(id: string) {
+    undo.deleteLater({
+      name: items?.find((entry) => entry.id === id)?.title,
+      hide: () => hideFromList(setItems, id),
+      commit: () => deleteLivestream(poiId, id),
+      onError: () => setError(t('livestreams.deleteError')),
+    });
   }
 
   return (

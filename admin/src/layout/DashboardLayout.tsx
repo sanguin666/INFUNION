@@ -17,6 +17,7 @@ import { ClosingBanner } from './ClosingBanner';
 import { WelcomeTour } from '../components/WelcomeTour';
 import { superadminAskedForTour } from '../components/superadminTour';
 import { AdminAssistant } from '../components/AdminAssistant';
+import { UndoProvider } from '../components/Undo';
 import { PageTip, PAGE_TIPS } from '../components/PageTip';
 import { getSuperadminSession } from '../api/client';
 import type { ActiveModule, ModuleType } from '../api/types';
@@ -178,6 +179,7 @@ export function DashboardLayout() {
   }
 
   return (
+    <UndoProvider>
     <div className="layout">
       <aside className="sidebar">
         <div>
@@ -286,5 +288,6 @@ export function DashboardLayout() {
         <WelcomeTour firstName={user.firstName} communityName={currentPoi!.name} onDone={() => dismissTip('tour')} />
       )}
     </div>
+    </UndoProvider>
   );
 }

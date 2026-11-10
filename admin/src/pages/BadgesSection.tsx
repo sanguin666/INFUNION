@@ -7,6 +7,7 @@ import type { ActiveModule, BadgeKind, Campaign, ModuleType, PoiBadge } from '..
 import { DestructiveButton } from '../components/DestructiveButton';
 import { toDateInputValue } from '../format';
 import { moduleName } from './MenuOrder';
+import { hideFromList, useUndo } from '../components/Undo';
 
 // Kept in step with the backend's MAX_BADGE_TEXT.
 const MAX_TEXT = 40;
@@ -221,15 +222,17 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
     }
   }
 
-  async function handleDelete(id: string) {
+  const undo = useUndo();
+
+  function handleDelete(id: string) {
     setError(null);
-    try {
-      await deleteBadge(poiId, id);
-      setBadges((current) => current?.filter((b) => b.id !== id) ?? null);
-      if (editingId === id) resetForm();
-    } catch {
-      setError(t('badges.deleteError'));
-    }
+    if (editingId === id) resetForm();
+    undo.deleteLater({
+      name: badges?.find((b) => b.id === id)?.text ?? undefined,
+      hide: () => hideFromList(setBadges, id),
+      commit: () => deleteBadge(poiId, id),
+      onError: () => setError(t('badges.deleteError')),
+    });
   }
 
   // The modules switched on, plus the one a message already opens if it
