@@ -1,0 +1,30 @@
+name: IndexNow
+
+# Tells Bing, Yandex and other IndexNow engines about the landing's pages:
+# runs by itself after a push to `production` that touches the landing, and
+# on demand from the Actions tab. It sends the addresses listed in
+# landing/sitemap.xml (see landing/tools/indexnow.js). The key file is
+# landing/indexnow-key.txt, served at https://www.infunion.app/indexnow-key.txt.
+#
+# Needs no secrets. A failed send fails the run, so it shows in the Actions tab.
+
+on:
+  push:
+    branches: [production]
+    paths: ['landing/**', '.github/workflows/indexnow.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Send the landing pages to IndexNow
+        run: node landing/tools/indexnow.js
