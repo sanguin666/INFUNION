@@ -22,7 +22,7 @@ import {
 import { LoginThrottle } from '../auth/login-throttle.js';
 import { requireJwtSecret } from '../auth/jwt-secret.js';
 import { generateTotpSecret, otpauthUrl, verifyTotp } from './totp.js';
-import { open, seal } from './secret-box.js';
+import { isLegacy, open, seal } from './secret-box.js';
 import { MIN_SUPERADMIN_PASSWORD } from './superadmin-bootstrap.service.js';
 
 // Five wrong codes (or passwords) in 15 minutes locks the superadmin for 15.
@@ -132,7 +132,12 @@ export class SuperadminAuthService {
       throw new UnauthorizedException('wrong_code');
     }
     await codeThrottle.succeed(key);
-    await this.users.update(identity.userId, { totpLastStep: String(step) });
+    const material = this.material();
+    await this.users.update(identity.userId, {
+      totpLastStep: String(step),
+      // Sealed before the rename: seal it again with the current key.
+      ...(isLegacy(user.totpSecret, material) ? { totpSecret: seal(open(user.totpSecret, material), material) } : {}),
+    });
     await this.access.record({ action: 'superadmin.login', actorId: identity.userId, actorEmail: identity.email, request });
     return this.issue(identity);
   }
