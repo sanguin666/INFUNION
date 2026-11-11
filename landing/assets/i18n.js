@@ -1361,7 +1361,7 @@
   }
 
   var WORSHIP_SHOTS = ["home", "calendar", "donate", "requests", "admin", "admin-requests", "admin-home"];
-  var STORAGE_KEY = "ansae-landing-language";
+  var STORAGE_KEY = "infunion-landing-language";
 
   function applyLang(lang) {
     var t = TRANSLATIONS[lang] || TRANSLATIONS.es;

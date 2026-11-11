@@ -23,7 +23,7 @@ export class SignedUrlService {
 
   constructor(configService: ConfigService) {
     this.key = createHmac('sha256', requireJwtSecret(configService))
-      .update('ansae:signed-urls')
+      .update('infunion:signed-urls')
       .digest();
   }
 

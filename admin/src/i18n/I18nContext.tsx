@@ -3,7 +3,7 @@ import { getToken } from '../api/client';
 import { updateMyLanguage } from '../api/auth';
 import { SUPPORTED_LANGUAGES, translations, type SupportedLanguage, type Translations } from './translations';
 
-const STORAGE_KEY = 'ansae-admin-language';
+const STORAGE_KEY = 'infunion-admin-language';
 
 type I18nState = {
   language: SupportedLanguage;

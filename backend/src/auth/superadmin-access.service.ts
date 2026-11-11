@@ -14,7 +14,7 @@ import { extractBearerToken } from './bearer.js';
  * it apart: an ordinary admin or member token has none, so it can never
  * pass for one.
  */
-export const SUPERADMIN_AUDIENCE = 'ansae-superadmin';
+export const SUPERADMIN_AUDIENCE = 'infunion-superadmin';
 export const SUPERADMIN_SESSION_SECONDS = 60 * 60;
 const LAST_SEEN_EVERY_MS = 60 * 60 * 1000;
 
