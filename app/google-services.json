@@ -1,32 +1,13 @@
 {
   "project_info": {
-    "project_number": "65779941006",
-    "project_id": "ansae-c3b65",
-    "storage_bucket": "ansae-c3b65.firebasestorage.app"
+    "project_number": "506833746183",
+    "project_id": "infunion",
+    "storage_bucket": "infunion.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:65779941006:android:777f860241e3a5524e93df",
-        "android_client_info": {
-          "package_name": "com.ansae.app"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDuOJ7xCgjT8ByO8IW4A3RGV51LtRShsoU"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:65779941006:android:c0ab286a72dae3464e93df",
+        "mobilesdk_app_id": "1:506833746183:android:021287628b7482e747eda2",
         "android_client_info": {
           "package_name": "com.infunion.app"
         }
@@ -34,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDuOJ7xCgjT8ByO8IW4A3RGV51LtRShsoU"
+          "current_key": "AIzaSyADpSueTbaUg4fLkLw9jTyrAi6T-pqCpA0"
         }
       ],
       "services": {
