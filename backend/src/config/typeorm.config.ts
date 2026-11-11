@@ -110,9 +110,9 @@ export function buildTypeOrmConfig(
     url,
     host: configService.get<string>('DB_HOST', 'localhost'),
     port: configService.get<number>('DB_PORT', 5432),
-    username: configService.get<string>('DB_USERNAME', 'ansae'),
-    password: configService.get<string>('DB_PASSWORD', 'ansae'),
-    database: configService.get<string>('DB_NAME', 'ansae'),
+    username: configService.get<string>('DB_USERNAME', 'infunion'),
+    password: configService.get<string>('DB_PASSWORD', 'infunion'),
+    database: configService.get<string>('DB_NAME', 'infunion'),
     entities: ENTITIES,
     migrations: ['dist/migrations/*.js'],
     // Development keeps building the schema straight from the entities, so

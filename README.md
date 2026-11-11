@@ -40,16 +40,16 @@ With Docker (recommended):
 docker compose up -d
 ```
 
-This starts a local Postgres on `localhost:5432` (database `ansae`, user `ansae` / password `ansae`).
+This starts a local Postgres on `localhost:5432` (database `infunion`, user `infunion` / password `infunion`).
 
-> **Coming from the old `mypeople` database?** Postgres only creates the
+> **Coming from an older database name?** Postgres only creates the
 > database and role named in `docker-compose.yml` the first time its volume
-> is initialised, so an existing volume still holds `mypeople` and the
+> is initialised, so an existing volume still holds the old name and the
 > backend won't be able to connect. Run `docker compose down -v` once, then
 > `docker compose up -d` and re-run the seed below — everything in there is
 > demo data, so nothing real is lost.
 
-> No Docker handy? A local PostgreSQL install (`apt install postgresql`) also works: create an `ansae` user and database matching `backend/.env.example`.
+> No Docker handy? A local PostgreSQL install (`apt install postgresql`) also works: create an `infunion` user and database matching `backend/.env.example`.
 
 ### 2. Backend (NestJS)
 
@@ -395,7 +395,7 @@ cd app && npm test            # pure logic (QR parsing); npm run typecheck for t
 cd admin && npm run build     # tsc -b, so this is the typecheck too
 ```
 
-The e2e tests use the database named by `DB_NAME`, defaulting to `ansae_test`, and **truncate every table between tests** — never point them at your development database. Create it once with `createdb ansae_test` (or `docker compose exec db createdb -U ansae ansae_test`). They run one file at a time for that reason.
+The e2e tests use the database named by `DB_NAME`, defaulting to `infunion_test`, and **truncate every table between tests** — never point them at your development database. Create it once with `createdb infunion_test` (or `docker compose exec db createdb -U infunion infunion_test`). They run one file at a time for that reason.
 
 What's covered is the part that can break quietly: the login flow (one-shot codes, expiry, throttling, a number spelled two ways), and the access-control table above, as tests that call the real endpoints. A guard that stops applying is not something a type checker or a lint rule notices.
 

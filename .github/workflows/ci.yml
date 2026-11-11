@@ -19,15 +19,15 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: ansae
-          POSTGRES_PASSWORD: ansae
-          POSTGRES_DB: ansae_test
+          POSTGRES_USER: infunion
+          POSTGRES_PASSWORD: infunion
+          POSTGRES_DB: infunion_test
         ports:
           - 5432:5432
         # Without this the job can start running tests before Postgres is
         # accepting connections.
         options: >-
-          --health-cmd "pg_isready -U ansae"
+          --health-cmd "pg_isready -U infunion"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -35,9 +35,9 @@ jobs:
     env:
       DB_HOST: 127.0.0.1
       DB_PORT: 5432
-      DB_USERNAME: ansae
-      DB_PASSWORD: ansae
-      DB_NAME: ansae_test
+      DB_USERNAME: infunion
+      DB_PASSWORD: infunion
+      DB_NAME: infunion_test
       NODE_ENV: test
 
     defaults:
@@ -80,13 +80,13 @@ jobs:
       - name: Migrations match the entities
         run: |
           set -o pipefail
-          psql "postgresql://ansae:ansae@127.0.0.1:5432/postgres" -c "CREATE DATABASE ansae_migrations;"
-          DB_NAME=ansae_migrations npx typeorm migration:run -d dist/data-source.js
+          psql "postgresql://infunion:infunion@127.0.0.1:5432/postgres" -c "CREATE DATABASE infunion_migrations;"
+          DB_NAME=infunion_migrations npx typeorm migration:run -d dist/data-source.js
           # TypeORM writes a migration when it finds a difference and exits
           # non-zero when it finds none, so the wanted outcome is the
           # failure — matched on its message rather than its exit code, so
           # that a connection error isn't read as "no changes".
-          output=$(DB_NAME=ansae_migrations npx typeorm migration:generate \
+          output=$(DB_NAME=infunion_migrations npx typeorm migration:generate \
             -d dist/data-source.js src/migrations/ShouldNotExist 2>&1 || true)
           echo "$output"
           if ! grep -q "No changes in database schema were found" <<< "$output"; then

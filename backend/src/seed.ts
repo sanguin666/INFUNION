@@ -60,9 +60,9 @@ const dataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST ?? 'localhost',
   port: Number(process.env.DB_PORT ?? 5432),
-  username: process.env.DB_USERNAME ?? 'ansae',
-  password: process.env.DB_PASSWORD ?? 'ansae',
-  database: process.env.DB_NAME ?? 'ansae',
+  username: process.env.DB_USERNAME ?? 'infunion',
+  password: process.env.DB_PASSWORD ?? 'infunion',
+  database: process.env.DB_NAME ?? 'infunion',
   // The app's own list, so a new table can never be missing here.
   entities: ENTITIES,
   synchronize: true,
