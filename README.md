@@ -132,7 +132,7 @@ The whole stack runs in three places, and every change goes through them in orde
 
 1. Finished work is merged into `dev` (the default branch). Check out `dev` and run `start.bat` to try it on this PC.
 2. Once it works in development, `staging` is fast-forwarded to `dev`. Railway deploys it to `infunion-api-staging`, `infunion-admin-staging` and `infunion-app-staging` (`.up.railway.app`).
-3. After sign-off on staging, `production` is fast-forwarded to `staging`. Railway deploys it to `ansae-api`, `ansae-admin` and `ansae-app`, which is what the demo APK uses.
+3. After sign-off on staging, `production` is fast-forwarded to `staging`. Railway deploys it to the INFUNION project's "production" environment: the API at `api.infunion.app`, the app at `web.infunion.app`, the admin at `admin.infunion.app` and the landing at `www.infunion.app`.
 
 Nothing skips a step: `staging` only ever receives what is on `dev`, and `production` only what is on `staging`. CI runs on pushes to all three branches and on pull requests.
 
