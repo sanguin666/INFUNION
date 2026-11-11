@@ -615,6 +615,58 @@ section {
   grid-template-columns: repeat(3, 1fr);
 }
 
+/* Under the dashboard rows: the smaller things the dashboard does. */
+.also-title {
+  margin: 64px 0 20px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.also-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.also-grid > div {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.also-grid strong {
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.also-grid span {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.pay-media {
+  display: flex;
+  justify-content: center;
+}
+
+.member-grid {
+  margin: 56px 0 8px;
+}
+
+.member-grid .feature-card {
+  background: var(--surface);
+}
+
+#app .member-grid .feature-card h3 {
+  margin-top: 0;
+}
+
 .steps {
   list-style: none;
   padding: 0;
@@ -994,6 +1046,7 @@ section {
 }
 
 @media (max-width: 960px) {
+  .also-grid,
   .why-grid,
   .steps {
     grid-template-columns: 1fr;

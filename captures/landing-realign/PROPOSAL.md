@@ -1,6 +1,6 @@
 # Landing page realignment: proposal
 
-Status: proposal only, nothing changed in `landing/` yet. Waiting for Seb's approval.
+Status: approved by Seb on 11 Nov 2026 with the default answers (all three rows kept, Basic lists import and invitations, pay page and website shown in each landing language). Implemented in `landing/` in the same PR.
 
 The landing page still describes the product as it was at the end of October. Since then infunion has shipped pay links with QR codes, contributions paid straight to each community's Stripe account, guest access, member import and Write to members, automatic translation, the member and team AI assistants, undo and home page versions, a website for each community and GDPR self-service. The landing mentions almost none of it, and the Complete card still says the team assistant is "coming soon" although it is live on every plan.
 
