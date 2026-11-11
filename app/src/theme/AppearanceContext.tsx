@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStoredItem } from '../storage/legacyKeys';
 import { applyColorScheme, type ColorScheme } from './theme';
 
-const STORAGE_KEY = 'ansae.appearance.v1';
+const STORAGE_KEY = 'infunion.appearance.v1';
 
 /** What the member picked in More. "auto" follows the phone's setting. */
 export type AppearancePreference = 'auto' | 'light' | 'dark';
@@ -37,7 +38,7 @@ export function AppearanceProvider({ children, forced }: { children: ReactNode; 
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
+    getStoredItem(STORAGE_KEY)
       .then((stored) => {
         if (stored && PREFERENCES.includes(stored as AppearancePreference)) {
           setPreferenceState(stored as AppearancePreference);

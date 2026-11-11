@@ -1,7 +1,7 @@
 export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
-const TOKEN_STORAGE_KEY = 'ansae-admin-token';
+const TOKEN_STORAGE_KEY = 'infunion-admin-token';
 
-const SUPERADMIN_STORAGE_KEY = 'ansae-superadmin-session';
+const SUPERADMIN_STORAGE_KEY = 'infunion-superadmin-session';
 
 export type SuperadminSession = { token: string; expiresAt: string };
 

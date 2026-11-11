@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStoredItem } from './legacyKeys';
 
-const STORAGE_KEY = 'ansae.session.v1';
+const STORAGE_KEY = 'infunion.session.v1';
 
 /**
  * The signed-in congregant's access token, kept on the device so someone
@@ -11,7 +12,7 @@ const STORAGE_KEY = 'ansae.session.v1';
  */
 export async function getStoredToken(): Promise<string | null> {
   try {
-    return await AsyncStorage.getItem(STORAGE_KEY);
+    return await getStoredItem(STORAGE_KEY);
   } catch {
     // Storage unavailable (a locked device, a browser with storage
     // blocked): treat it as signed out rather than failing to start.
@@ -35,7 +36,7 @@ export async function clearStoredToken(): Promise<void> {
   }
 }
 
-const LAST_LOGIN_KEY = 'ansae.last-login.v1';
+const LAST_LOGIN_KEY = 'infunion.last-login.v1';
 
 // `phone` holds whatever was typed to sign in, an email address or a
 // number; the name stays for the sessions stored before email sign-in.
@@ -48,7 +49,7 @@ export type LastLogin = { phone: string; firstName: string };
  */
 export async function getLastLogin(): Promise<LastLogin | null> {
   try {
-    const raw = await AsyncStorage.getItem(LAST_LOGIN_KEY);
+    const raw = await getStoredItem(LAST_LOGIN_KEY);
     return raw ? (JSON.parse(raw) as LastLogin) : null;
   } catch {
     return null;

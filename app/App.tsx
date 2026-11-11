@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStoredItem } from './src/storage/legacyKeys';
 import { ActivityIndicator, BackHandler, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -44,7 +45,7 @@ import type { MapPlace, Origin } from './src/api/placesMap';
 
 // Set once this phone has been asked about notifications, so the question
 // comes up the first time someone is signed in and never again uninvited.
-const PUSH_ASKED_KEY = 'ansae.push.asked.v1';
+const PUSH_ASKED_KEY = 'infunion.push.asked.v1';
 
 type Route =
   | { name: 'addPlace' }
@@ -107,7 +108,7 @@ function AppRoutes() {
   useEffect(() => {
     if (!me) return;
     (async () => {
-      const asked = await AsyncStorage.getItem(PUSH_ASKED_KEY).catch(() => null);
+      const asked = await getStoredItem(PUSH_ASKED_KEY).catch(() => null);
       if (asked) {
         await refreshPush(language);
       } else {
@@ -124,7 +125,7 @@ function AppRoutes() {
     if (me || !guest || !currentPoiId) return;
     const poiId = currentPoiId;
     (async () => {
-      const asked = await AsyncStorage.getItem(PUSH_ASKED_KEY).catch(() => null);
+      const asked = await getStoredItem(PUSH_ASKED_KEY).catch(() => null);
       if (asked) {
         await refreshPush(language);
       } else {

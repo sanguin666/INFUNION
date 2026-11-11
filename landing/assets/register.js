@@ -3,7 +3,7 @@
 // Plain script like the rest of this folder. Nothing it sends exists
 // anywhere until the superadmin checks and approves it.
 (function () {
-  var STORAGE_KEY = "ansae-landing-language"; // shared with i18n.js
+  var STORAGE_KEY = "infunion-landing-language"; // shared with i18n.js
   var MAX_FILE = 10 * 1024 * 1024;
   var KINDS = [
     ["church", "#B8502E"],

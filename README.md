@@ -40,16 +40,16 @@ With Docker (recommended):
 docker compose up -d
 ```
 
-This starts a local Postgres on `localhost:5432` (database `ansae`, user `ansae` / password `ansae`).
+This starts a local Postgres on `localhost:5432` (database `infunion`, user `infunion` / password `infunion`).
 
-> **Coming from the old `mypeople` database?** Postgres only creates the
+> **Coming from an older database name?** Postgres only creates the
 > database and role named in `docker-compose.yml` the first time its volume
-> is initialised, so an existing volume still holds `mypeople` and the
+> is initialised, so an existing volume still holds the old name and the
 > backend won't be able to connect. Run `docker compose down -v` once, then
 > `docker compose up -d` and re-run the seed below — everything in there is
 > demo data, so nothing real is lost.
 
-> No Docker handy? A local PostgreSQL install (`apt install postgresql`) also works: create an `ansae` user and database matching `backend/.env.example`.
+> No Docker handy? A local PostgreSQL install (`apt install postgresql`) also works: create an `infunion` user and database matching `backend/.env.example`.
 
 ### 2. Backend (NestJS)
 
@@ -132,7 +132,7 @@ The whole stack runs in three places, and every change goes through them in orde
 
 1. Finished work is merged into `dev` (the default branch). Check out `dev` and run `start.bat` to try it on this PC.
 2. Once it works in development, `staging` is fast-forwarded to `dev`. Railway deploys it to `infunion-api-staging`, `infunion-admin-staging` and `infunion-app-staging` (`.up.railway.app`).
-3. After sign-off on staging, `production` is fast-forwarded to `staging`. Railway deploys it to `ansae-api`, `ansae-admin` and `ansae-app`, which is what the demo APK uses.
+3. After sign-off on staging, `production` is fast-forwarded to `staging`. Railway deploys it to the INFUNION project's "production" environment: the API at `api.infunion.app`, the app at `web.infunion.app`, the admin at `admin.infunion.app` and the landing at `www.infunion.app`.
 
 Nothing skips a step: `staging` only ever receives what is on `dev`, and `production` only what is on `staging`. CI runs on pushes to all three branches and on pull requests.
 
@@ -329,7 +329,7 @@ How it is locked:
 
 - **One account, named by the server.** `SUPERADMIN_EMAIL` on the backend is the superadmin. On every boot `SuperadminBootstrap` flags that account and unflags any other; nothing in the API can set the flag, and every check also compares the email to the variable, so the database alone can't make someone superadmin.
 - **First sign-in.** If the account doesn't exist, it is created with `SUPERADMIN_INITIAL_PASSWORD` (12 characters or more). Remove that variable once signed in and the password changed (Santé technique shows a warning while it is set).
-- **Password, then a six-digit code.** After the ordinary sign-in, the admin asks for a code from an authenticator app (Google Authenticator, 1Password...). Setting up the app asks for the password again. The code buys a separate superadmin token (`aud: ansae-superadmin`) good for one hour, kept in the browser tab's session storage only. Ordinary tokens never pass `SuperadminGuard`. Each code works once.
+- **Password, then a six-digit code.** After the ordinary sign-in, the admin asks for a code from an authenticator app (Google Authenticator, 1Password...). Setting up the app asks for the password again. The code buys a separate superadmin token (`aud: infunion-superadmin`) good for one hour, kept in the browser tab's session storage only. Ordinary tokens never pass `SuperadminGuard`. Each code works once.
 - **Code switched off.** `SUPERADMIN_2FA=off` (Seb, 3 Nov 2026) skips the code: the password sign-in alone opens the section, still with a one-hour superadmin token. Remove the variable to bring the code back (Technical health shows a warning while it is off).
 - **Lost phone.** Set `SUPERADMIN_RESET_2FA=yes`, restart, set the app up again, then remove the variable.
 - **Guessing.** Five wrong passwords on an admin address, or five wrong superadmin codes, lock it for 15 minutes.
@@ -395,7 +395,7 @@ cd app && npm test            # pure logic (QR parsing); npm run typecheck for t
 cd admin && npm run build     # tsc -b, so this is the typecheck too
 ```
 
-The e2e tests use the database named by `DB_NAME`, defaulting to `ansae_test`, and **truncate every table between tests** — never point them at your development database. Create it once with `createdb ansae_test` (or `docker compose exec db createdb -U ansae ansae_test`). They run one file at a time for that reason.
+The e2e tests use the database named by `DB_NAME`, defaulting to `infunion_test`, and **truncate every table between tests** — never point them at your development database. Create it once with `createdb infunion_test` (or `docker compose exec db createdb -U infunion infunion_test`). They run one file at a time for that reason.
 
 What's covered is the part that can break quietly: the login flow (one-shot codes, expiry, throttling, a number spelled two ways), and the access-control table above, as tests that call the real endpoints. A guard that stops applying is not something a type checker or a lint rule notices.
 

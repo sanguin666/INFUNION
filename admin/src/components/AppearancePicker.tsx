@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 import { ContrastIcon, PickerRow, PickerSheet } from './PickerSheet';
 
-const STORAGE_KEY = 'ansae-admin-appearance';
+const STORAGE_KEY = 'infunion-admin-appearance';
 
 type Preference = 'auto' | 'light' | 'dark';
 const PREFERENCES: Preference[] = ['auto', 'light', 'dark'];

@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStoredItem } from './legacyKeys';
 import type { Poi } from '../api/types';
 
-const STORAGE_KEY = 'ansae.saved-places.v1';
+const STORAGE_KEY = 'infunion.saved-places.v1';
 
 /**
  * A place the user has opened at least once, kept on the device so the
@@ -49,7 +50,7 @@ function parse(raw: string | null): SavedPlace[] {
 
 export async function getSavedPlaces(): Promise<SavedPlace[]> {
   try {
-    return parse(await AsyncStorage.getItem(STORAGE_KEY));
+    return parse(await getStoredItem(STORAGE_KEY));
   } catch {
     return [];
   }
