@@ -10,13 +10,13 @@ import { PoiType } from '../src/common/enums/poi-type.enum.js';
  * login codes and unique constraints, none of which a mocked repository
  * would reproduce faithfully.
  *
- * The database is whatever DB_NAME says, defaulting to `ansae_test` — never
+ * The database is whatever DB_NAME says, defaulting to `infunion_test` — never
  * the development database, since every test wipes every table. Schema comes
  * from `synchronize`, which is on outside production.
  */
 export async function createTestApp(): Promise<INestApplication> {
   process.env.NODE_ENV ??= 'test';
-  process.env.DB_NAME ??= 'ansae_test';
+  process.env.DB_NAME ??= 'infunion_test';
   process.env.DB_HOST ??= '127.0.0.1';
 
   // Imported after the env is set: AppModule builds its database config as

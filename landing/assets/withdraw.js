@@ -4,7 +4,7 @@
 // online in two clicks: this page, then "Confirm withdrawal" (Directive
 // 2023/2673). The email code proves it is the person who registered.
 (function () {
-  var STORAGE_KEY = "ansae-landing-language"; // shared with i18n.js
+  var STORAGE_KEY = "infunion-landing-language"; // shared with i18n.js
 
   var T = {
     en: {

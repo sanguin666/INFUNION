@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getStoredItem } from '../storage/legacyKeys';
 import { SUPPORTED_LANGUAGES, translations, type SupportedLanguage, type Translations } from './translations';
 
-const STORAGE_KEY = 'ansae-language';
+const STORAGE_KEY = 'infunion-language';
 const AUTO_TRANSLATE_KEY = 'infunion-auto-translate';
 
 type I18nState = {
@@ -53,7 +54,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [translateOffer, setTranslateOffer] = useState<string | null>(null);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
+    getStoredItem(STORAGE_KEY)
       .then((stored) => {
         if (stored && SUPPORTED_LANGUAGES.includes(stored as SupportedLanguage)) {
           setLanguageState(stored as SupportedLanguage);

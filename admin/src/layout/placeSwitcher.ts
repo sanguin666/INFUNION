@@ -1,6 +1,6 @@
 import { apiGet } from '../api/client';
 
-const LAST_PLACE_KEY = 'ansae-admin-last-poi';
+const LAST_PLACE_KEY = 'infunion-admin-last-poi';
 
 /** The place an admin of several places used last, to open it again. */
 export function lastPlace(): string | null {
