@@ -694,6 +694,21 @@ select {
   cursor: pointer;
 }
 
+/* The open list of every drop-down. A select's own background is
+   transparent, so the browser paints the list in its default white while
+   the options take the select's light text in dark mode: unreadable.
+   Give the list the theme's box colour and text in both themes. */
+select option,
+select optgroup {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 400;
+}
+
+select option:checked {
+  background-color: var(--color-primary-soft);
+}
+
 /* ---------- Buttons: three, and no fourth ---------- */
 
 /* .btn-primary is the orange button of the landing page, and it is every
