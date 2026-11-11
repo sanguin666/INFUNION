@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "infunion",
-    "slug": "ansae",
+    "slug": "infunion",
     "version": "1.0.0",
     "runtimeVersion": {
       "policy": "fingerprint"
@@ -82,8 +82,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "e9a2035d-efca-4296-a18f-97b3646be40f"
+        "projectId": "93d58333-b919-463f-ab07-6c999892f649"
       }
-    }
+    },
+    "owner": "sanguin666"
   }
 }
