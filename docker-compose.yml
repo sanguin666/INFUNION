@@ -1,12 +1,12 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: ansae-postgres
+    container_name: infunion-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ansae
-      POSTGRES_PASSWORD: ansae
-      POSTGRES_DB: ansae
+      POSTGRES_USER: infunion
+      POSTGRES_PASSWORD: infunion
+      POSTGRES_DB: infunion
     ports:
       - "5432:5432"
     volumes:
