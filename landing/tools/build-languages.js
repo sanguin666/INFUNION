@@ -18,7 +18,7 @@ const path = require('path');
 
 const LANDING = path.resolve(__dirname, '..');
 const BASE = 'https://www.infunion.app';
-const ASSET_VERSION = '20261111-realign';
+const ASSET_VERSION = '20261112-donate';
 const LANGS = ['es', 'en', 'fr', 'ca', 'va', 'gl', 'pt'];
 const LEGAL = ['privacy.html', 'terms.html', 'dpa.html', 'delete-account.html'];
 // Screenshots of the worship variant come from the worship folder.
