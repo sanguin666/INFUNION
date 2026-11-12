@@ -18,7 +18,7 @@ const path = require('path');
 
 const LANDING = path.resolve(__dirname, '..');
 const BASE = 'https://www.infunion.app';
-const ASSET_VERSION = '20261110-shots5';
+const ASSET_VERSION = '20261111-realign';
 const LANGS = ['es', 'en', 'fr', 'ca', 'va', 'gl', 'pt'];
 const LEGAL = ['privacy.html', 'terms.html', 'dpa.html', 'delete-account.html'];
 // Screenshots of the worship variant come from the worship folder.
@@ -38,37 +38,37 @@ const PLACE_VARIANT = { religious: 'worship', associations: 'ngo' };
 const SEO = {
   es: {
     title: 'infunion — La aplicación de tu comunidad, operativa en un día',
-    description: 'infunion es la app de tu comunidad: tus miembros tienen horarios, solicitudes y donativos en el bolsillo, y tu equipo lo gestiona todo desde un solo panel. Plan base gratuito y módulos de pago a la carta.',
+    description: 'infunion es la app de tu comunidad: tus miembros tienen horarios, solicitudes y donativos en el bolsillo, y tu equipo lo gestiona todo desde un solo panel. Plan Basic gratuito y planes Essentials y Complete.',
     ogLocale: 'es_ES',
   },
   en: {
     title: 'infunion — The app for your community, up and running in a day',
-    description: 'infunion is the app for your community: members have schedules, requests and contributions in their pocket, and your team runs everything from one dashboard. Free Basic plan, paid modules à la carte.',
+    description: 'infunion is the app for your community: members have schedules, requests and contributions in their pocket, and your team runs everything from one dashboard. Free Basic plan, Essentials and Complete plans.',
     ogLocale: 'en_GB',
   },
   fr: {
     title: 'infunion — L’application de votre communauté, opérationnelle en un jour',
-    description: 'infunion est l’application de votre communauté : vos membres ont horaires, demandes et contributions dans la poche, et votre équipe gère tout depuis un seul tableau de bord. Forfait Basic gratuit, modules payants à la carte.',
+    description: 'infunion est l’application de votre communauté : vos membres ont horaires, demandes et contributions dans la poche, et votre équipe gère tout depuis un seul tableau de bord. Forfait Basic gratuit, formules Essentials et Complete.',
     ogLocale: 'fr_FR',
   },
   ca: {
     title: 'infunion — L’aplicació de la teva comunitat, en marxa en un dia',
-    description: 'infunion és l’aplicació de la teva comunitat: els membres tenen horaris, sol·licituds i aportacions al mòbil, i l’equip ho gestiona tot des d’un sol panell. Pla Basic gratuït i mòduls de pagament a la carta.',
+    description: 'infunion és l’aplicació de la teva comunitat: els membres tenen horaris, sol·licituds i aportacions al mòbil, i l’equip ho gestiona tot des d’un sol panell. Pla Basic gratuït i plans Essentials i Complete.',
     ogLocale: 'ca_ES',
   },
   va: {
     title: 'infunion — L’aplicació de la teua comunitat, operativa en un dia',
-    description: 'infunion és l’aplicació de la teua comunitat: els membres tenen horaris, sol·licituds i aportacions al mòbil, i l’equip ho gestiona tot des d’un únic panell. Pla Basic gratuït i mòduls de pagament a la carta.',
+    description: 'infunion és l’aplicació de la teua comunitat: els membres tenen horaris, sol·licituds i aportacions al mòbil, i l’equip ho gestiona tot des d’un únic panell. Pla Basic gratuït i plans Essentials i Complete.',
     ogLocale: 'ca_ES',
   },
   gl: {
     title: 'infunion — A aplicación da túa comunidade, operativa nun día',
-    description: 'infunion é a aplicación da túa comunidade: os membros teñen horarios, solicitudes e achegas no móbil, e o equipo xestiónao todo desde un único panel. Plan Basic gratuíto e módulos de pago á carta.',
+    description: 'infunion é a aplicación da túa comunidade: os membros teñen horarios, solicitudes e achegas no móbil, e o equipo xestiónao todo desde un único panel. Plan Basic gratuíto e plans Essentials e Complete.',
     ogLocale: 'gl_ES',
   },
   pt: {
     title: 'infunion — A aplicação da sua comunidade, operacional num dia',
-    description: 'infunion é a aplicação da sua comunidade: os membros têm horários, pedidos e contribuições no telemóvel, e a equipa gere tudo a partir de um painel único. Plano Basic gratuito e módulos pagos à la carte.',
+    description: 'infunion é a aplicação da sua comunidade: os membros têm horários, pedidos e contribuições no telemóvel, e a equipa gere tudo a partir de um painel único. Plano Basic gratuito e planos Essentials e Complete.',
     ogLocale: 'pt_PT',
   },
 };
