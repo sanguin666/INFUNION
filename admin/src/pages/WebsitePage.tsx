@@ -3,6 +3,7 @@ import { usePoiId } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
 import { ApiError } from '../api/client';
 import { getSite, updateSite, SITE_PARTS, type SiteSettings, type SitePart } from '../api/site';
+import { getPoi } from '../api/pois';
 
 const SLUG = /^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$/;
 
@@ -19,6 +20,15 @@ export function WebsitePage() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
+  // Only a church's site shows the next Mass (the API leaves it out for the
+  // others), so the chip names it for churches only.
+  const [isChurch, setIsChurch] = useState(false);
+
+  useEffect(() => {
+    getPoi(poiId)
+      .then((poi) => setIsChurch(poi.type === 'church'))
+      .catch(() => setIsChurch(false));
+  }, [poiId]);
 
   useEffect(() => {
     getSite(poiId)
@@ -145,7 +155,7 @@ export function WebsitePage() {
                 onClick={() => toggle(part)}
               >
                 {shown ? '✓ ' : ''}
-                {t(`site.part_${part}`)}
+                {t(part === 'badges' && !isChurch ? 'site.part_badges_other' : `site.part_${part}`)}
               </button>
             );
           })}
