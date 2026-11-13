@@ -1631,7 +1631,7 @@
       // The worship variant shows the Carmen demo (a church), the others the
       // Crecer Juntos association; shots without a worship copy stay shared.
       var folder = VARIANT === "worship" && WORSHIP_SHOTS.indexOf(shot) !== -1 ? "/worship/" : "/";
-      el.src = "/assets/screens/" + lang + folder + shot + ".webp?v=20261111-realign";
+      el.src = "/assets/screens/" + lang + folder + shot + ".webp?v=20261112-donate";
     });
     if (!staticText) document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
       var key = el.getAttribute("data-i18n-alt");
