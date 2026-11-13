@@ -1430,6 +1430,7 @@ export type Translations = {
     showHint: string;
     part_home: string;
     part_badges: string;
+    part_badges_other: string;
     part_timetable: string;
     part_events: string;
     part_news: string;
@@ -2868,6 +2869,7 @@ const en: Translations = {
     showHint: "Each part only shows when it has something in it, for example the campaign while one is running.",
     part_home: "Welcome text and pictures",
     part_badges: "Next Mass and Open now",
+    part_badges_other: "Notices and Open now",
     part_timetable: "Weekly timetable",
     part_events: "Coming up",
     part_news: "Latest news",
@@ -4306,6 +4308,7 @@ const es: Translations = {
     showHint: "Cada parte solo aparece cuando tiene contenido, por ejemplo la campaña mientras hay una en curso.",
     part_home: "Texto de bienvenida e imágenes",
     part_badges: "Próxima misa y Abierto ahora",
+    part_badges_other: "Avisos y Abierto ahora",
     part_timetable: "Horario semanal",
     part_events: "Próximamente",
     part_news: "Últimas noticias",
@@ -5744,6 +5747,7 @@ const fr: Translations = {
     showHint: "Chaque partie n’apparaît que si elle a du contenu, par exemple la campagne pendant qu’elle est en cours.",
     part_home: "Texte d’accueil et images",
     part_badges: "Prochaine messe et Ouvert",
+    part_badges_other: "Annonces et Ouvert",
     part_timetable: "Horaires de la semaine",
     part_events: "À venir",
     part_news: "Dernières actualités",
@@ -7182,6 +7186,7 @@ const va: Translations = {
     showHint: "Cada part només apareix quan té contingut, per exemple la campanya mentre n’hi ha una en curs.",
     part_home: "Text de benvinguda i imatges",
     part_badges: "Pròxima missa i Obert ara",
+    part_badges_other: "Avisos i Obert ara",
     part_timetable: "Horari setmanal",
     part_events: "Pròximament",
     part_news: "Últimes notícies",
@@ -8620,6 +8625,7 @@ const ca: Translations = {
     showHint: "Cada part només apareix quan té contingut, per exemple la campanya mentre n’hi ha una en curs.",
     part_home: "Text de benvinguda i imatges",
     part_badges: "Propera missa i Obert ara",
+    part_badges_other: "Avisos i Obert ara",
     part_timetable: "Horari setmanal",
     part_events: "Properament",
     part_news: "Últimes notícies",
@@ -10058,6 +10064,7 @@ const gl: Translations = {
     showHint: "Cada parte só aparece cando ten contido, por exemplo a campaña mentres hai unha en curso.",
     part_home: "Texto de benvida e imaxes",
     part_badges: "Próxima misa e Aberto agora",
+    part_badges_other: "Avisos e Aberto agora",
     part_timetable: "Horario semanal",
     part_events: "Proximamente",
     part_news: "Últimas novas",
@@ -11496,6 +11503,7 @@ const pt: Translations = {
     showHint: "Cada parte só aparece quando tem conteúdo, por exemplo a campanha enquanto houver uma a decorrer.",
     part_home: "Texto de boas-vindas e imagens",
     part_badges: "Próxima missa e Aberto agora",
+    part_badges_other: "Avisos e Aberto agora",
     part_timetable: "Horário semanal",
     part_events: "Brevemente",
     part_news: "Últimas notícias",
