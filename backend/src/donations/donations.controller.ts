@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -111,6 +112,45 @@ export class DonationsController {
     return this.donationsService.startCheckout(poiId, dto, returnUrlBase(this.configService, request), {
       donorUserId: request.userId,
     });
+  }
+
+  /**
+   * Public: starts a Bizum to the community's own number (Seb, 16 Nov
+   * 2026). Returns the number, the amount and the concept to write.
+   */
+  @Post('bizum')
+  @UseGuards(OptionalJwtAuthGuard)
+  startBizum(
+    @Param('poiId') poiId: string,
+    @Body() dto: CreateDonationDto,
+    @Req() request: MaybeAuthenticatedRequest,
+  ) {
+    return this.donationsService.startBizum(poiId, dto, { donorUserId: request.userId });
+  }
+
+  /** Public: the member says they sent it. Knowing the gift's id is enough. */
+  @Post('bizum/:donationId/sent')
+  bizumSent(@Param('poiId') poiId: string, @Param('donationId', ParseUUIDPipe) donationId: string) {
+    return this.donationsService.markBizumSent(poiId, donationId);
+  }
+
+  /** The team's list of Bizums to look for on the bank statement. */
+  @Get('bizum/pending')
+  @UseGuards(JwtAuthGuard, PoiAdminGuard)
+  bizumPending(@Param('poiId') poiId: string) {
+    return this.donationsService.listBizumPending(poiId);
+  }
+
+  @Post('bizum/:donationId/received')
+  @UseGuards(JwtAuthGuard, PoiAdminGuard)
+  bizumReceived(@Param('poiId') poiId: string, @Param('donationId', ParseUUIDPipe) donationId: string) {
+    return this.donationsService.confirmBizum(poiId, donationId, true);
+  }
+
+  @Post('bizum/:donationId/not-received')
+  @UseGuards(JwtAuthGuard, PoiAdminGuard)
+  bizumNotReceived(@Param('poiId') poiId: string, @Param('donationId', ParseUUIDPipe) donationId: string) {
+    return this.donationsService.confirmBizum(poiId, donationId, false);
   }
 
   // ---- The signed-in giver's own ----

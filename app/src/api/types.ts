@@ -32,6 +32,11 @@ export type Poi = {
   // Set while the place's admins are closing its account (Seb, 2 Nov
   // 2026): the date its content and member list are erased.
   closesAt?: string | null;
+  // Card payments (card, Apple Pay, Google Pay, PayPal) can land here: the
+  // community's own payment account is set up.
+  paymentsReady?: boolean;
+  // The community's own Bizum number (Seb, 16 Nov 2026), or null.
+  bizumPhone?: string | null;
   createdAt: string;
   updatedAt: string;
 };

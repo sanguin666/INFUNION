@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "./client";
+import { apiGet, apiPost, apiPut } from "./client";
 
 /** Where a community stands with its own payment account (Stripe Connect). */
 export type PayoutsState =
@@ -15,6 +15,8 @@ export type PayoutsAccount = {
   demo: boolean;
   requirements: string[];
   feePercent: number;
+  // The community's own Bizum number, as people read it, or null.
+  bizumPhone: string | null;
 };
 
 export function getPayoutsAccount(poiId: string): Promise<PayoutsAccount> {
@@ -28,4 +30,9 @@ export function startPayoutsOnboarding(
   return apiPost<{ url: string | null; status: PayoutsAccount }>(
     `/pois/${poiId}/payouts-account/onboarding`,
   );
+}
+
+/** Sets the community's Bizum number; empty turns Bizum off. */
+export function setBizumPhone(poiId: string, phone: string): Promise<PayoutsAccount> {
+  return apiPut<PayoutsAccount>(`/pois/${poiId}/payouts-account/bizum`, { phone });
 }
