@@ -42,6 +42,16 @@ button{margin-top:24px;width:100%;font:inherit;font-weight:700;color:#fff;backgr
 .foot a{display:inline-flex;align-items:center;gap:6px;color:#8b87a0;text-decoration:none}
 .foot b{color:#1D1A2D}
 .amounts .other{grid-column:span 2;width:100%;min-width:0;margin:0;border-radius:999px;padding:8px 18px;font-weight:600;text-align:center}
+.alt{margin-top:12px;background:#fff;color:#1D1A2D;border:1.5px solid rgba(45,30,110,.25)}
+.bizum-tag{display:inline-block;margin-left:6px;padding:0 8px;border-radius:6px;background:#05c3dd;color:#fff;font-size:13px;font-weight:700;vertical-align:1px}
+.steps{list-style:none;padding:0;margin:8px 0 0}
+.steps li{display:flex;gap:14px;padding:14px 0;border-bottom:1px dashed rgba(45,30,110,.14)}
+.steps li:last-child{border-bottom:0}
+.steps .n{flex:none;width:28px;height:28px;border-radius:50%;background:#6c4fd9;color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.steps .k{font-size:14px;color:#6b6880}
+.steps .v{font-size:24px;font-weight:800;color:#1D1A2D;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.copy{margin:0;width:auto;padding:4px 14px;font-size:14px;background:#fff;color:#1D1A2D;border:1.5px solid #1D1A2D}
+.waiting{background:#fff6dc;border-radius:12px;padding:10px 14px;color:#1D1A2D;font-size:15px}
 .amounts .other::placeholder{color:#5638c7;opacity:.8}
 .amounts .other:not(:placeholder-shown){background:#ece8fc;border-color:#6c4fd9;color:#5638c7}
 </style>
