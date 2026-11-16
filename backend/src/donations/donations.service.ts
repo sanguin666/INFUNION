@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import type Stripe from 'stripe';
 import { InjectRepository } from '@nestjs/typeorm';
-import { And, In, IsNull, LessThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { And, In, IsNull, LessThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { Donation, DonationPurpose, DonationStatus, type PaymentProblem } from './entities/donation.entity.js';
 import { DonationCampaign, type CampaignAllocationLine } from './entities/donation-campaign.entity.js';
 import { PoisService } from '../pois/pois.service.js';
@@ -21,6 +21,7 @@ import { CreateDonationDto } from './dto/create-donation.dto.js';
 import type { CreateCampaignDto, UpdateCampaignDto } from './dto/campaign.dto.js';
 import { StripeService } from './stripe.service.js';
 import { connectedAccount, payoutsReady } from './payouts-account.js';
+import { BIZUM_KEEP_DAYS, BIZUM_UNSENT_HOURS, formatBizumPhone, newBizumCode } from './bizum.js';
 import { giftsCsv, groupDonors, type ReceiptDonor } from './receipts.js';
 import { NotificationsService } from '../notifications/notifications.service.js';
 import { text } from '../notifications/texts.js';
@@ -40,6 +41,27 @@ export type DailyTotal = { date: string; total: number; count: number };
 export type CheckoutResult =
   | { mode: 'demo'; donationId: string }
   | { mode: 'stripe'; donationId: string; checkoutUrl: string };
+
+/** What the member needs to send a Bizum by hand (donations/bizum.ts). */
+export type BizumStart = {
+  mode: 'bizum';
+  donationId: string;
+  phone: string;
+  amount: number;
+  code: string;
+  communityName: string;
+};
+
+/** A Bizum the team has to look for on their bank statement. */
+export type BizumPending = {
+  id: string;
+  amount: number;
+  code: string;
+  donorName: string | null;
+  sentAt: Date;
+  campaignTitle: string | null;
+  paymentLinkId: string | null;
+};
 
 /** A campaign as the app and the dashboard show it: with what it has raised. */
 export type CampaignView = {
@@ -253,62 +275,13 @@ export class DonationsService {
     options: CheckoutOptions = {},
   ): Promise<CheckoutResult> {
     const poi = await this.poisService.findOne(poiId);
-    // A place closing its account takes no more gifts (place-closure).
-    if (poi.closingRequestedAt || poi.closedAt) {
-      throw new ConflictException('This community is closing and no longer takes gifts');
-    }
+    this.assertOpen(poi);
     // The money goes straight to the community's own payment account
     // (Seb, 9 Nov 2026): none set up yet, nothing can be paid.
     if (!payoutsReady(poi, this.stripeService.isConfigured)) {
       throw new ConflictException('payments_not_set_up');
     }
-    const purpose = options.purpose ?? dto.purpose ?? DonationPurpose.GENERAL;
-    const recurring = dto.recurring === true;
-
-    // A project is supported with a gift, not a standing order: it ends,
-    // and a monthly payment would outlive it.
-    if (recurring && purpose === DonationPurpose.CAMPAIGN) {
-      throw new BadRequestException('A project takes one-off gifts');
-    }
-
-    // A monthly gift has to belong to someone who can come back and stop it.
-    if (recurring && !options.donorUserId) {
-      throw new UnauthorizedException('Sign in to give every month');
-    }
-
-    let campaign: DonationCampaign | null = null;
-    if (purpose === DonationPurpose.CAMPAIGN) {
-      campaign = await this.campaignsRepository.findOne({
-        where: { id: dto.campaignId, poi: { id: poiId }, active: true },
-      });
-      if (!campaign) throw new BadRequestException('This campaign is not open for gifts');
-    }
-
-    // A note only goes with a gift to where it is most needed: a project
-    // already says what the money is for.
-    const message = purpose === DonationPurpose.GENERAL ? dto.message?.trim() || null : null;
-
-    const fields: Partial<Donation> = {
-      amount: dto.amount,
-      donorName: dto.donorName,
-      poi,
-      purpose,
-      campaign,
-      message,
-      donor: options.donorUserId ? ({ id: options.donorUserId } as User) : null,
-      contactId: options.contactId ?? null,
-      paymentLinkId: options.paymentLinkId ?? null,
-      recurring,
-      wantsReceipt: dto.wantsReceipt === true,
-      ...(dto.wantsReceipt
-        ? {
-            donorAddress: dto.donorAddress,
-            donorPostalCode: dto.donorPostalCode,
-            donorCity: dto.donorCity,
-            donorTaxId: dto.donorTaxId ?? null,
-          }
-        : {}),
-    };
+    const { fields, purpose, recurring, campaign, message } = await this.giftFields(poi, dto, options);
 
     if (!this.stripeService.isConfigured) {
       const donation = await this.donationsRepository.save(
@@ -356,6 +329,202 @@ export class DonationsService {
       throw new ServiceUnavailableException('Stripe did not return a checkout URL');
     }
     return { mode: 'stripe', donationId: donation.id, checkoutUrl: session.url };
+  }
+
+  /** A place closing its account takes no more gifts (place-closure). */
+  private assertOpen(poi: Poi): void {
+    if (poi.closingRequestedAt || poi.closedAt) {
+      throw new ConflictException('This community is closing and no longer takes gifts');
+    }
+  }
+
+  /** What every new gift row starts from, whichever way it is paid. */
+  private async giftFields(poi: Poi, dto: CreateDonationDto, options: CheckoutOptions) {
+    const poiId = poi.id;
+    const purpose = options.purpose ?? dto.purpose ?? DonationPurpose.GENERAL;
+    const recurring = dto.recurring === true;
+
+    // A project is supported with a gift, not a standing order: it ends,
+    // and a monthly payment would outlive it.
+    if (recurring && purpose === DonationPurpose.CAMPAIGN) {
+      throw new BadRequestException('A project takes one-off gifts');
+    }
+
+    // A monthly gift has to belong to someone who can come back and stop it.
+    if (recurring && !options.donorUserId) {
+      throw new UnauthorizedException('Sign in to give every month');
+    }
+
+    let campaign: DonationCampaign | null = null;
+    if (purpose === DonationPurpose.CAMPAIGN) {
+      campaign = await this.campaignsRepository.findOne({
+        where: { id: dto.campaignId, poi: { id: poiId }, active: true },
+      });
+      if (!campaign) throw new BadRequestException('This campaign is not open for gifts');
+    }
+
+    // A note only goes with a gift to where it is most needed: a project
+    // already says what the money is for.
+    const message = purpose === DonationPurpose.GENERAL ? dto.message?.trim() || null : null;
+
+    const fields: Partial<Donation> = {
+      amount: dto.amount,
+      donorName: dto.donorName,
+      poi,
+      purpose,
+      campaign,
+      message,
+      donor: options.donorUserId ? ({ id: options.donorUserId } as User) : null,
+      contactId: options.contactId ?? null,
+      paymentLinkId: options.paymentLinkId ?? null,
+      recurring,
+      wantsReceipt: dto.wantsReceipt === true,
+      ...(dto.wantsReceipt
+        ? {
+            donorAddress: dto.donorAddress,
+            donorPostalCode: dto.donorPostalCode,
+            donorCity: dto.donorCity,
+            donorTaxId: dto.donorTaxId ?? null,
+          }
+        : {}),
+    };
+    return { fields, purpose, recurring, campaign, message };
+  }
+
+  // ---- Bizum by number (Seb, 16 Nov 2026, see bizum.ts) ----
+
+  /**
+   * Starts a Bizum: a PENDING gift with a concept of its own. Nothing is
+   * asked of the team until the member says they have sent it.
+   */
+  async startBizum(poiId: string, dto: CreateDonationDto, options: CheckoutOptions = {}): Promise<BizumStart> {
+    const poi = await this.poisService.findOne(poiId);
+    this.assertOpen(poi);
+    if (!poi.bizumPhone) throw new ConflictException('bizum_not_set_up');
+    // Bizum has no standing orders, on any bank.
+    if (dto.recurring) throw new BadRequestException('Bizum is for one-off contributions');
+    const { fields } = await this.giftFields(poi, dto, options);
+    await this.removeStaleBizum(poiId);
+    const code = await this.freeBizumCode(poiId);
+    const donation = await this.donationsRepository.save(
+      this.donationsRepository.create({
+        ...fields,
+        status: DonationStatus.PENDING,
+        paymentMethod: 'bizum',
+        bizumCode: code,
+        // Paid straight to the community's own number: nothing for infunion.
+        platformFee: 0,
+      }),
+    );
+    return {
+      mode: 'bizum',
+      donationId: donation.id,
+      phone: formatBizumPhone(poi.bizumPhone),
+      amount: donation.amount,
+      code,
+      communityName: poi.name,
+    };
+  }
+
+  /** The member tapped "I've sent it": now the team is asked to look. */
+  async markBizumSent(
+    poiId: string,
+    donationId: string,
+  ): Promise<{ status: DonationStatus; code: string; amount: number }> {
+    const donation = await this.findBizum(poiId, donationId);
+    if (donation.status === DonationStatus.PENDING && !donation.bizumSentAt) {
+      donation.bizumSentAt = new Date();
+      await this.donationsRepository.save(donation);
+    }
+    return { status: donation.status, code: donation.bizumCode ?? '', amount: donation.amount };
+  }
+
+  /** Bizums sent and waiting for the team, oldest first. */
+  async listBizumPending(poiId: string): Promise<BizumPending[]> {
+    await this.removeStaleBizum(poiId);
+    const rows = await this.donationsRepository.find({
+      where: {
+        poi: { id: poiId },
+        paymentMethod: 'bizum',
+        status: DonationStatus.PENDING,
+        bizumSentAt: Not(IsNull()),
+      },
+      relations: { campaign: true, donor: true },
+      order: { bizumSentAt: 'ASC' },
+    });
+    return rows.map((d) => ({
+      id: d.id,
+      amount: d.amount,
+      code: d.bizumCode ?? '',
+      donorName: d.donorName || d.donor?.firstName || null,
+      sentAt: d.bizumSentAt!,
+      campaignTitle: d.campaign?.title ?? null,
+      paymentLinkId: d.paymentLinkId ?? null,
+    }));
+  }
+
+  /**
+   * The team found it on their statement (received) or not. Received, it
+   * joins the totals and the tax receipts, and the member is told.
+   */
+  async confirmBizum(poiId: string, donationId: string, received: boolean): Promise<{ status: DonationStatus }> {
+    const donation = await this.findBizum(poiId, donationId, true);
+    if (donation.status !== DonationStatus.PENDING) return { status: donation.status };
+    donation.status = received ? DonationStatus.COMPLETED : DonationStatus.FAILED;
+    await this.donationsRepository.save(donation);
+    if (received && donation.donor) {
+      const poi = donation.poi;
+      const donorId = donation.donor.id;
+      this.notificationsService.fireAndForget(() =>
+        this.notificationsService.notifyUserAlways(donorId, poi.id, (reader) => ({
+          title: poi.name,
+          body: text(reader.language, 'bizumReceived', { amount: formatEuros(donation.amount) }),
+          data: { screen: 'donations' },
+        })),
+      );
+    }
+    return { status: donation.status };
+  }
+
+  private async findBizum(poiId: string, donationId: string, withPeople = false): Promise<Donation> {
+    const donation = await this.donationsRepository.findOne({
+      where: { id: donationId, poi: { id: poiId }, paymentMethod: 'bizum' },
+      relations: withPeople ? { poi: true, donor: true } : {},
+    });
+    if (!donation) throw new NotFoundException('Donation not found');
+    return donation;
+  }
+
+  /**
+   * Removes Bizums nobody confirmed: sent ones after BIZUM_KEEP_DAYS, and
+   * ones never marked sent after BIZUM_UNSENT_HOURS. They never counted.
+   */
+  async removeStaleBizum(poiId: string, now = new Date()): Promise<void> {
+    const sentBefore = new Date(now.getTime() - BIZUM_KEEP_DAYS * 24 * 60 * 60 * 1000);
+    const startedBefore = new Date(now.getTime() - BIZUM_UNSENT_HOURS * 60 * 60 * 1000);
+    await this.donationsRepository
+      .createQueryBuilder()
+      .delete()
+      .where('poi_id = :poiId', { poiId })
+      .andWhere("payment_method = 'bizum'")
+      .andWhere('status = :pending', { pending: DonationStatus.PENDING })
+      .andWhere(
+        '((bizum_sent_at IS NOT NULL AND bizum_sent_at < :sentBefore) OR (bizum_sent_at IS NULL AND created_at < :startedBefore))',
+        { sentBefore, startedBefore },
+      )
+      .execute();
+  }
+
+  /** A concept no other waiting Bizum of this community is using. */
+  private async freeBizumCode(poiId: string): Promise<string> {
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const code = newBizumCode();
+      const taken = await this.donationsRepository.exists({
+        where: { poi: { id: poiId }, bizumCode: code, status: DonationStatus.PENDING },
+      });
+      if (!taken) return code;
+    }
+    return newBizumCode();
   }
 
   /**

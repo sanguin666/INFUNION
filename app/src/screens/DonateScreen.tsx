@@ -1,6 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Image, Platform, Pressable, TextInput, View } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
+import * as Clipboard from 'expo-clipboard';
 import { openPayment } from '../utils/openPayment';
 import { AccessibleText } from '../components/AccessibleText';
 import { AccessibleButton } from '../components/AccessibleButton';
@@ -15,9 +16,13 @@ import {
   getMyGifts,
   getMyMonthlyGifts,
   getMyTaxContext,
+  markBizumSent,
   requestGiftReceipt,
+  startBizum,
   startDonationCheckout,
   stopMonthlyGift,
+  type BizumStart,
+  type CheckoutBody,
   type Campaign,
   type DonationProject,
   type MonthlyGift,
@@ -70,7 +75,17 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   // A project takes one-off gifts only: a monthly payment would outlive it.
   const [monthlyChoice, setMonthly] = useState(false);
-  const monthly = monthlyChoice && !project;
+  // How it is paid (Seb, 16 Nov 2026): Stripe's page (card, Apple Pay,
+  // Google Pay, PayPal) or a Bizum to the community's own number, which
+  // has no monthly. A community with only one of them shows no choice.
+  const cardReady = poi.paymentsReady !== false;
+  const bizumReady = !!poi.bizumPhone;
+  const [methodChoice, setMethod] = useState<'card' | 'bizum'>('card');
+  const monthly = monthlyChoice && !project && cardReady;
+  const method: 'card' | 'bizum' = !bizumReady ? 'card' : !cardReady ? 'bizum' : monthly ? 'card' : methodChoice;
+  const [bizum, setBizum] = useState<BizumStart | null>(null);
+  const [bizumSent, setBizumSent] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
   const [wantsReceipt, setWantsReceipt] = useState(false);
   const [receipt, setReceipt] = useState<Receipt>({
     name: [me?.firstName, me?.lastName].filter(Boolean).join(' '),
@@ -177,7 +192,7 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
     setSubmitting(true);
     setError(false);
     try {
-      const result = await startDonationCheckout(poi.id, {
+      const body: CheckoutBody = {
         amount,
         purpose: project?.kind ?? 'general',
         campaignId: project?.kind === 'campaign' ? project.campaign.id : undefined,
@@ -193,7 +208,12 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
               donorTaxId: receipt.taxId.trim() || null,
             }
           : {}),
-      });
+      };
+      if (method === 'bizum') {
+        setBizum(await startBizum(poi.id, { ...body, recurring: undefined }));
+        return;
+      }
+      const result = await startDonationCheckout(poi.id, body);
       if (result.mode === 'demo') {
         paidAmount.current = amount;
         setDonated(true);
@@ -267,8 +287,149 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
     }
   }
 
+  async function sentBizum() {
+    if (!bizum) return;
+    setSubmitting(true);
+    setError(false);
+    try {
+      await markBizumSent(poi.id, bizum.donationId);
+      setBizumSent(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function copy(value: string) {
+    Clipboard.setStringAsync(value.replace(/\s/g, ''))
+      .then(() => setCopied(value))
+      .catch(() => {});
+  }
+
+  function leaveBizum() {
+    setBizum(null);
+    setBizumSent(false);
+    setCopied(null);
+  }
+
   const askingGift = gifts.find((gift) => gift.id === askingReceipt) ?? null;
   const blockedOnSignIn = monthly && !me;
+
+  if (bizum && bizumSent) {
+    return (
+      <>
+        <View style={styles.confirmationIcon}>
+          <HeartIcon size={32} color={colors.primary} />
+        </View>
+        <AccessibleText variant="title" style={styles.centerText}>
+          {t('donate.thankYou')}
+        </AccessibleText>
+        <AccessibleText variant="body" style={styles.centerText}>
+          {t('donate.bizumThanks', { amount: formatted(bizum.amount), poiName: poi.name })}
+        </AccessibleText>
+        <AccessibleText variant="body" color={colors.textMuted} style={styles.centerText}>
+          {t('donate.bizumThanksNote')}
+          {me ? ` ${t('donate.bizumNotify')}` : ''}
+        </AccessibleText>
+        <View style={styles.waitingTag}>
+          <AccessibleText variant="body">
+            {t('donate.bizumWaiting')} · <AccessibleText variant="body" style={styles.bold}>{bizum.code.replace(' ', '\u00A0')}</AccessibleText>
+          </AccessibleText>
+        </View>
+        <View style={styles.spacer} />
+        <AccessibleButton
+          label={t('donate.doneButton')}
+          onPress={() => {
+            leaveBizum();
+            onDone();
+          }}
+        />
+      </>
+    );
+  }
+
+  if (bizum) {
+    const steps: { key: string; label?: string; value?: string; copyable?: boolean; note?: string; text?: string }[] = [
+      { key: '1', text: t('donate.bizumStep1') },
+      { key: '2', label: t('donate.bizumSendTo'), value: bizum.phone, copyable: true, note: poi.name },
+      { key: '3', label: t('donate.bizumAmount'), value: formatted(bizum.amount) },
+      { key: '4', label: t('donate.bizumConcept'), value: bizum.code, copyable: true, note: t('donate.bizumConceptWhy') },
+    ];
+    return (
+      <>
+        <AccessibleText variant="title" style={styles.title}>
+          {t('donate.bizumTitle', { amount: formatted(bizum.amount) })}
+        </AccessibleText>
+        <FormCard>
+          {steps.map((step, index) => (
+            <View key={step.key}>
+              {index > 0 && <FormDivider />}
+              <View style={styles.bizumStep}>
+                <View style={styles.stepNumber}>
+                  <AccessibleText variant="caption" color="#fff" style={styles.bold}>
+                    {step.key}
+                  </AccessibleText>
+                </View>
+                <View style={styles.flex}>
+                  {step.text ? <AccessibleText variant="body">{step.text}</AccessibleText> : null}
+                  {step.label ? (
+                    <AccessibleText variant="caption" color={colors.textMuted}>
+                      {step.label}
+                    </AccessibleText>
+                  ) : null}
+                  {step.value ? (
+                    <View style={styles.stepValueRow}>
+                      <AccessibleText variant="title" selectable>
+                        {step.value}
+                      </AccessibleText>
+                      {step.copyable ? (
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel={`${t('donate.copy')} ${step.value}`}
+                          onPress={() => copy(step.value!)}
+                          style={styles.copyButton}
+                        >
+                          <AccessibleText variant="caption" style={styles.bold}>
+                            {copied === step.value ? t('donate.copied') : t('donate.copy')}
+                          </AccessibleText>
+                        </Pressable>
+                      ) : null}
+                    </View>
+                  ) : null}
+                  {step.note ? (
+                    <AccessibleText variant="caption" color={colors.textMuted}>
+                      {step.note}
+                    </AccessibleText>
+                  ) : null}
+                </View>
+              </View>
+            </View>
+          ))}
+        </FormCard>
+        {error ? (
+          <AccessibleText variant="body" color={colors.primaryStrong} style={styles.centerText}>
+            {t('donate.error')}
+          </AccessibleText>
+        ) : null}
+        <AccessibleButton
+          label={submitting ? t('donate.processingButton') : t('donate.bizumSent')}
+          onPress={sentBizum}
+          disabled={submitting}
+        />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('donate.cancelButton')}
+          onPress={leaveBizum}
+          style={styles.textButton}
+        >
+          <AccessibleText variant="body" color={colors.textMuted}>
+            {t('donate.cancelButton')}
+          </AccessibleText>
+        </Pressable>
+      </>
+    );
+  }
 
   if (donated) {
     return (
@@ -355,7 +516,7 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
   const giveForm = (
     <>
       <FormCard>
-        {!isProject && (
+        {!isProject && cardReady && (
           <>
             <View style={styles.choiceRow} accessibilityRole="radiogroup">
               {[false, true].map((isMonthly) => {
@@ -443,6 +604,35 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
             onChange={(patch) => setReceipt((current) => ({ ...current, ...patch }))}
           />
         )}
+        {cardReady && bizumReady && (
+          <>
+            <FormDivider />
+            <AccessibleText variant="body" color={colors.primaryStrong} style={styles.bold}>
+              {t('donate.howToPay')}
+            </AccessibleText>
+            <View style={styles.methods} accessibilityRole="radiogroup">
+              <MethodOption
+                title={t('donate.payCard')}
+                hint={t('donate.payCardHint')}
+                selected={method === 'card'}
+                onPress={() => setMethod('card')}
+              />
+              <MethodOption
+                title={t('donate.payBizum')}
+                badge="bizum"
+                hint={t('donate.payBizumHint')}
+                selected={method === 'bizum'}
+                disabled={monthly}
+                onPress={() => setMethod('bizum')}
+              />
+            </View>
+            {monthly && (
+              <AccessibleText variant="caption" color={colors.textMuted}>
+                {t('donate.bizumOneOff')}
+              </AccessibleText>
+            )}
+          </>
+        )}
       </FormCard>
 
       {blockedOnSignIn && (
@@ -462,7 +652,9 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
         label={
           submitting
             ? t('donate.processingButton')
-            : t(
+            : method === 'bizum'
+              ? t('donate.bizumContinue')
+              : t(
                 campaign ? 'donate.projectButton' : monthly && !isProject ? 'donate.donateMonthlyButton' : 'donate.donateButton',
                 { amount: formatted(amount) },
               )
@@ -471,9 +663,11 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
         disabled={submitting || amount <= 0 || !receiptReady(wantsReceipt, receipt) || blockedOnSignIn}
       />
 
-      <AccessibleText variant="caption" style={styles.footnote}>
-        {t(paymentsEnabled ? 'donate.footnote' : 'donate.demoFootnote')}
-      </AccessibleText>
+      {method === 'card' && (
+        <AccessibleText variant="caption" style={styles.footnote}>
+          {t(paymentsEnabled ? 'donate.footnote' : 'donate.demoFootnote')}
+        </AccessibleText>
+      )}
     </>
   );
 
@@ -711,6 +905,53 @@ function giftLabel(gift: MyGift, t: ReturnType<typeof useI18n>['t']): string {
 }
 
 /** One of a few side-by-side choices: the chosen one in the coral wash. */
+/** One way to pay, as a radio card: title, a word on how, the dot. */
+function MethodOption({
+  title,
+  hint,
+  badge,
+  selected,
+  disabled,
+  onPress,
+}: {
+  title: string;
+  hint: string;
+  badge?: string;
+  selected: boolean;
+  disabled?: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="radio"
+      accessibilityState={{ checked: selected, disabled: !!disabled }}
+      accessibilityLabel={`${title}. ${hint}`}
+      onPress={onPress}
+      disabled={disabled}
+      style={[styles.method, selected && styles.choiceSelected, disabled && styles.methodDisabled]}
+    >
+      <View style={[styles.radio, selected && styles.radioOn]}>{selected && <View style={styles.radioDot} />}</View>
+      <View style={styles.flex}>
+        <View style={styles.stepValueRow}>
+          <AccessibleText variant="body" style={styles.bold}>
+            {title}
+          </AccessibleText>
+          {badge ? (
+            <View style={styles.bizumBadge}>
+              <AccessibleText variant="caption" color="#fff" style={styles.bold}>
+                {badge}
+              </AccessibleText>
+            </View>
+          ) : null}
+        </View>
+        <AccessibleText variant="caption" color={colors.textMuted}>
+          {hint}
+        </AccessibleText>
+      </View>
+    </Pressable>
+  );
+}
+
 function Choice({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
     <Pressable
@@ -925,6 +1166,78 @@ function ProjectRow({
 const styles = themedStyles(() => ({
   flex: {
     flex: 1,
+  },
+  methods: {
+    gap: spacing.sm,
+  },
+  method: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    borderWidth: 1.5,
+    borderColor: colors.cardBorder,
+    minHeight: minTouchTarget,
+  },
+  methodDisabled: {
+    opacity: 0.45,
+  },
+  radio: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: colors.text,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioOn: {
+    borderColor: colors.primary,
+  },
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.primary,
+  },
+  bizumBadge: {
+    backgroundColor: '#05C3DD',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+  },
+  bizumStep: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  stepNumber: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  copyButton: {
+    borderWidth: 1.5,
+    borderColor: colors.text,
+    borderRadius: 999,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+  },
+  waitingTag: {
+    alignSelf: 'center',
+    backgroundColor: '#FFF6DC',
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
   },
   bold: {
     fontWeight: '700',

@@ -64,7 +64,8 @@ export class ActiveModulesService {
     const modules = await this.billing.settle(poiId);
     if (includeUnpaid) return modules;
     const poi = await this.activeModuleRepository.manager.findOne(Poi, { where: { id: poiId } });
-    if (!poi || poi.paymentsReady) return modules;
+    // A Bizum number is a way to pay too (Seb, 16 Nov 2026).
+    if (!poi || poi.paymentsReady || poi.bizumPhone) return modules;
     return modules.filter((m) => m.moduleType !== ModuleType.DONATIONS);
   }
 

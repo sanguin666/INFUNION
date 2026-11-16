@@ -263,6 +263,8 @@ export type Donation = {
   recurring: boolean;
   // The named payment link it was paid through, if any.
   paymentLinkTitle?: string | null;
+  // 'bizum': sent to the community's own number and confirmed by the team.
+  paymentMethod?: 'card' | 'bizum';
   createdAt: string;
 };
 
