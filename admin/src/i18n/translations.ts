@@ -1440,6 +1440,33 @@ export type Translations = {
     shareHint: string;
     error: string;
   },
+  bizum: {
+    methodsTitle: string;
+    cardLabel: string;
+    cardThrough: string;
+    cardReady: string;
+    cardNotReady: string;
+    numberLabel: string;
+    numberHint: string;
+    numberPlaceholder: string;
+    save: string;
+    saved: string;
+    remove: string;
+    invalid: string;
+    saveError: string;
+    pendingTitle: string;
+    pendingIntro: string;
+    who: string;
+    concept: string;
+    amount: string;
+    sent: string;
+    received: string;
+    notReceived: string;
+    guest: string;
+    pendingFoot: string;
+    yesterday: string;
+    methodBizum: string;
+  };
   undo: {
     deleted: string;
     deletedItem: string;
@@ -2878,6 +2905,33 @@ const en: Translations = {
     shareTitle: "Share it",
     shareHint: "Put the link on social media, in your email signature or on posters. Visitors land on your community and are invited to join you in the app.",
     error: "Could not save. Try again.",
+  },
+  bizum: {
+    methodsTitle: "How members can pay",
+    cardLabel: "Card, Apple Pay, Google Pay, PayPal",
+    cardThrough: "Through your Stripe account",
+    cardReady: "Ready",
+    cardNotReady: "Not set up yet",
+    numberLabel: "Your community’s Bizum number (optional)",
+    numberHint: "Members send the Bizum from their bank straight to this number. Use the number your bank set up for Bizum.",
+    numberPlaceholder: "600 123 456",
+    save: "Save",
+    saved: "Saved",
+    remove: "Remove",
+    invalid: "This is not a Spanish mobile number (9 digits starting with 6 or 7).",
+    saveError: "Could not save. Try again.",
+    pendingTitle: "Bizum to confirm",
+    pendingIntro: "Check your bank: when a Bizum with this concept has arrived, mark it received.",
+    who: "Who",
+    concept: "Concept",
+    amount: "Amount",
+    sent: "Sent",
+    received: "Received",
+    notReceived: "Not received",
+    guest: "Guest",
+    pendingFoot: "Not confirmed after 7 days: removed automatically. Received ones join the totals and the tax receipts.",
+    yesterday: "Yesterday",
+    methodBizum: "Bizum",
   },
   undo: {
     deleted: "“{{name}}” deleted",
@@ -4318,6 +4372,33 @@ const es: Translations = {
     shareHint: "Pon el enlace en redes sociales, en tu firma de correo o en carteles. Quien lo visite llega a tu comunidad y se le invita a unirse en la app.",
     error: "No se ha podido guardar. Inténtalo de nuevo.",
   },
+  bizum: {
+    methodsTitle: "Cómo pueden pagar los miembros",
+    cardLabel: "Tarjeta, Apple Pay, Google Pay, PayPal",
+    cardThrough: "A través de tu cuenta de Stripe",
+    cardReady: "Lista",
+    cardNotReady: "Aún sin configurar",
+    numberLabel: "Número de Bizum de tu comunidad (opcional)",
+    numberHint: "Los miembros envían el Bizum desde su banco directamente a este número. Usa el número que tu banco tiene dado de alta en Bizum.",
+    numberPlaceholder: "600 123 456",
+    save: "Guardar",
+    saved: "Guardado",
+    remove: "Quitar",
+    invalid: "No es un móvil español (9 cifras que empiezan por 6 o 7).",
+    saveError: "No se ha podido guardar. Inténtalo de nuevo.",
+    pendingTitle: "Bizum por confirmar",
+    pendingIntro: "Revisa tu banco: cuando llegue un Bizum con este concepto, márcalo como recibido.",
+    who: "Quién",
+    concept: "Concepto",
+    amount: "Importe",
+    sent: "Enviado",
+    received: "Recibido",
+    notReceived: "No recibido",
+    guest: "Invitado",
+    pendingFoot: "Sin confirmar tras 7 días: se eliminan solos. Los recibidos se suman a los totales y a los certificados fiscales.",
+    yesterday: "Ayer",
+    methodBizum: "Bizum",
+  },
   undo: {
     deleted: "Se ha eliminado «{{name}}»",
     deletedItem: "Eliminado",
@@ -5756,6 +5837,33 @@ const fr: Translations = {
     shareTitle: "Partagez-le",
     shareHint: "Mettez le lien sur les réseaux sociaux, dans votre signature d’e-mail ou sur des affiches. Les visiteurs arrivent sur votre communauté et sont invités à vous rejoindre dans l’app.",
     error: "Enregistrement impossible. Réessayez.",
+  },
+  bizum: {
+    methodsTitle: "Comment les membres peuvent payer",
+    cardLabel: "Carte, Apple Pay, Google Pay, PayPal",
+    cardThrough: "Via votre compte Stripe",
+    cardReady: "Prêt",
+    cardNotReady: "Pas encore configuré",
+    numberLabel: "Numéro Bizum de votre communauté (facultatif)",
+    numberHint: "Les membres envoient le Bizum depuis leur banque directement à ce numéro. Utilisez le numéro que votre banque a inscrit à Bizum.",
+    numberPlaceholder: "600 123 456",
+    save: "Enregistrer",
+    saved: "Enregistré",
+    remove: "Retirer",
+    invalid: "Ce n’est pas un mobile espagnol (9 chiffres commençant par 6 ou 7).",
+    saveError: "Enregistrement impossible. Réessayez.",
+    pendingTitle: "Bizum à confirmer",
+    pendingIntro: "Vérifiez votre banque : quand un Bizum avec ce motif est arrivé, marquez-le reçu.",
+    who: "Qui",
+    concept: "Motif",
+    amount: "Montant",
+    sent: "Envoyé",
+    received: "Reçu",
+    notReceived: "Pas reçu",
+    guest: "Invité",
+    pendingFoot: "Non confirmés après 7 jours : supprimés automatiquement. Les reçus s’ajoutent aux totaux et aux reçus fiscaux.",
+    yesterday: "Hier",
+    methodBizum: "Bizum",
   },
   undo: {
     deleted: "« {{name}} » a été supprimé",
@@ -7196,6 +7304,33 @@ const va: Translations = {
     shareHint: "Posa l’enllaç en les xarxes socials, en la signatura del correu o en cartells. Qui la visita arriba a la teua comunitat i se’l convida a unir-se en l’app.",
     error: "No s’ha pogut guardar. Torna-ho a provar.",
   },
+  bizum: {
+    methodsTitle: "Com poden pagar els membres",
+    cardLabel: "Targeta, Apple Pay, Google Pay, PayPal",
+    cardThrough: "A través del vostre compte de Stripe",
+    cardReady: "Llest",
+    cardNotReady: "Encara sense configurar",
+    numberLabel: "Número de Bizum de la vostra comunitat (opcional)",
+    numberHint: "Els membres envien el Bizum des del seu banc directament a este número. Useu el número que el vostre banc té donat d’alta en Bizum.",
+    numberPlaceholder: "600 123 456",
+    save: "Guardar",
+    saved: "Guardat",
+    remove: "Llevar",
+    invalid: "No és un mòbil espanyol (9 xifres que comencen per 6 o 7).",
+    saveError: "No s’ha pogut guardar. Torneu-ho a provar.",
+    pendingTitle: "Bizum per confirmar",
+    pendingIntro: "Reviseu el banc: quan arribe un Bizum amb este concepte, marqueu-lo com a rebut.",
+    who: "Qui",
+    concept: "Concepte",
+    amount: "Import",
+    sent: "Enviat",
+    received: "Rebut",
+    notReceived: "No rebut",
+    guest: "Convidat",
+    pendingFoot: "Sense confirmar després de 7 dies: s’eliminen sols. Els rebuts se sumen als totals i als certificats fiscals.",
+    yesterday: "Ahir",
+    methodBizum: "Bizum",
+  },
   undo: {
     deleted: "S’ha eliminat «{{name}}»",
     deletedItem: "Eliminat",
@@ -8634,6 +8769,33 @@ const ca: Translations = {
     shareTitle: "Comparteix-la",
     shareHint: "Posa l’enllaç a les xarxes socials, a la signatura del correu o en cartells. Qui la visita arriba a la teva comunitat i se’l convida a unir-se a l’app.",
     error: "No s’ha pogut desar. Torna-ho a provar.",
+  },
+  bizum: {
+    methodsTitle: "Com poden pagar els membres",
+    cardLabel: "Targeta, Apple Pay, Google Pay, PayPal",
+    cardThrough: "A través del vostre compte de Stripe",
+    cardReady: "Llest",
+    cardNotReady: "Encara sense configurar",
+    numberLabel: "Número de Bizum de la vostra comunitat (opcional)",
+    numberHint: "Els membres envien el Bizum des del seu banc directament a aquest número. Feu servir el número que el vostre banc té donat d’alta a Bizum.",
+    numberPlaceholder: "600 123 456",
+    save: "Desar",
+    saved: "Desat",
+    remove: "Treure",
+    invalid: "No és un mòbil espanyol (9 xifres que comencen per 6 o 7).",
+    saveError: "No s’ha pogut desar. Torneu-ho a provar.",
+    pendingTitle: "Bizum per confirmar",
+    pendingIntro: "Reviseu el banc: quan arribi un Bizum amb aquest concepte, marqueu-lo com a rebut.",
+    who: "Qui",
+    concept: "Concepte",
+    amount: "Import",
+    sent: "Enviat",
+    received: "Rebut",
+    notReceived: "No rebut",
+    guest: "Convidat",
+    pendingFoot: "Sense confirmar després de 7 dies: s’eliminen sols. Els rebuts se sumen als totals i als certificats fiscals.",
+    yesterday: "Ahir",
+    methodBizum: "Bizum",
   },
   undo: {
     deleted: "S’ha eliminat «{{name}}»",
@@ -10074,6 +10236,33 @@ const gl: Translations = {
     shareHint: "Pon a ligazón nas redes sociais, na sinatura do correo ou en carteis. Quen o visita chega á túa comunidade e convídaselle a unirse na app.",
     error: "Non se puido gardar. Téntao de novo.",
   },
+  bizum: {
+    methodsTitle: "Como poden pagar os membros",
+    cardLabel: "Tarxeta, Apple Pay, Google Pay, PayPal",
+    cardThrough: "A través da vosa conta de Stripe",
+    cardReady: "Lista",
+    cardNotReady: "Aínda sen configurar",
+    numberLabel: "Número de Bizum da vosa comunidade (opcional)",
+    numberHint: "Os membros envían o Bizum desde o seu banco directamente a este número. Usade o número que o voso banco ten dado de alta en Bizum.",
+    numberPlaceholder: "600 123 456",
+    save: "Gardar",
+    saved: "Gardado",
+    remove: "Quitar",
+    invalid: "Non é un móbil español (9 díxitos que comezan por 6 ou 7).",
+    saveError: "Non se puido gardar. Téntao de novo.",
+    pendingTitle: "Bizum por confirmar",
+    pendingIntro: "Revisade o banco: cando chegue un Bizum con este concepto, marcádeo como recibido.",
+    who: "Quen",
+    concept: "Concepto",
+    amount: "Importe",
+    sent: "Enviado",
+    received: "Recibido",
+    notReceived: "Non recibido",
+    guest: "Convidado",
+    pendingFoot: "Sen confirmar tras 7 días: elimínanse sós. Os recibidos súmanse aos totais e aos certificados fiscais.",
+    yesterday: "Onte",
+    methodBizum: "Bizum",
+  },
   undo: {
     deleted: "Eliminouse «{{name}}»",
     deletedItem: "Eliminado",
@@ -11512,6 +11701,33 @@ const pt: Translations = {
     shareTitle: "Partilhe-o",
     shareHint: "Ponha a ligação nas redes sociais, na assinatura de email ou em cartazes. Quem a visita chega à sua comunidade e é convidado a juntar-se na app.",
     error: "Não foi possível guardar. Tente novamente.",
+  },
+  bizum: {
+    methodsTitle: "Como os membros podem pagar",
+    cardLabel: "Cartão, Apple Pay, Google Pay, PayPal",
+    cardThrough: "Através da vossa conta Stripe",
+    cardReady: "Pronto",
+    cardNotReady: "Ainda não configurado",
+    numberLabel: "Número Bizum da vossa comunidade (opcional)",
+    numberHint: "Os membros enviam o Bizum a partir do banco diretamente para este número. Usem o número que o vosso banco registou no Bizum.",
+    numberPlaceholder: "600 123 456",
+    save: "Guardar",
+    saved: "Guardado",
+    remove: "Remover",
+    invalid: "Não é um telemóvel espanhol (9 dígitos a começar por 6 ou 7).",
+    saveError: "Não foi possível guardar. Tente de novo.",
+    pendingTitle: "Bizum por confirmar",
+    pendingIntro: "Verifiquem o banco: quando chegar um Bizum com este conceito, marquem-no como recebido.",
+    who: "Quem",
+    concept: "Conceito",
+    amount: "Montante",
+    sent: "Enviado",
+    received: "Recebido",
+    notReceived: "Não recebido",
+    guest: "Convidado",
+    pendingFoot: "Sem confirmação após 7 dias: removidos automaticamente. Os recebidos juntam-se aos totais e aos recibos fiscais.",
+    yesterday: "Ontem",
+    methodBizum: "Bizum",
   },
   undo: {
     deleted: "Eliminou «{{name}}»",
