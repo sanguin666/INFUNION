@@ -4880,3 +4880,115 @@ select.chip {
   word-break: break-all;
   user-select: all;
 }
+
+/* How members can pay + Bizum to confirm (Seb, 16 Nov 2026) */
+.pay-methods h3 {
+  margin: 0 0 8px;
+}
+.pay-methods-row {
+  padding: 12px 0;
+  border-top: 1px solid var(--color-card-border);
+}
+.pay-methods-row:first-of-type {
+  border-top: 0;
+}
+.pay-methods-value {
+  display: block;
+  font-size: 19px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.pay-methods-label {
+  display: block;
+  font-weight: 400;
+}
+.pay-methods-input {
+  display: block;
+  margin-top: 6px;
+  width: 100%;
+  max-width: 260px;
+  font: inherit;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  padding: 10px 14px;
+  border: 1.5px solid var(--color-card-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.pay-methods-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+.pay-methods-hint {
+  margin: 8px 0 12px;
+  font-size: 15px;
+}
+.pay-methods-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.bizum-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+.bizum-table th {
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  padding: 8px;
+  border-bottom: 1px solid var(--color-card-border);
+}
+.bizum-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--color-card-border);
+  vertical-align: middle;
+}
+.bizum-code {
+  font-weight: 700;
+  color: var(--color-primary-strong);
+  background: var(--color-primary-soft);
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.bizum-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+.bizum-actions .btn + .btn {
+  margin-left: 8px;
+}
+.bizum-foot {
+  margin: 12px 0 0;
+  font-size: 15px;
+}
+.bizum-badge {
+  background: #05c3dd;
+  color: #fff;
+}
+@media (max-width: 720px) {
+  .bizum-table thead {
+    display: none;
+  }
+  .bizum-table tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-card-border);
+  }
+  .bizum-table td {
+    border: 0;
+    padding: 0;
+  }
+  .bizum-actions {
+    grid-column: 1 / -1;
+    text-align: left;
+    margin-top: 8px;
+  }
+}

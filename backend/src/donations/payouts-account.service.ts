@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +9,7 @@ import { Language } from '../common/enums/language.enum.js';
 import { StripeService } from './stripe.service.js';
 import { DEMO_ACCOUNT, connectedAccount, payoutsState, type PayoutsState } from './payouts-account.js';
 import { donationFeePercent } from './platform-fee.js';
+import { formatBizumPhone, normalizeBizumPhone } from './bizum.js';
 
 export type PayoutsAccountView = {
   state: PayoutsState;
@@ -19,6 +20,8 @@ export type PayoutsAccountView = {
   requirements: string[];
   // infunion's share of each contribution, in percent.
   feePercent: number;
+  // The community's own Bizum number, as people read it, or null.
+  bizumPhone: string | null;
 };
 
 /**
@@ -95,6 +98,20 @@ export class PayoutsAccountService {
   }
 
   /** Stripe's account.updated: keep the community's flags in step. */
+  /** Sets or clears the community's Bizum number (Seb, 16 Nov 2026). */
+  async setBizumPhone(poiId: string, phone: string | null): Promise<PayoutsAccountView> {
+    const poi = await this.findPoi(poiId);
+    if (phone && phone.trim()) {
+      const normalized = normalizeBizumPhone(phone);
+      if (!normalized) throw new BadRequestException('bizum_phone_invalid');
+      poi.bizumPhone = normalized;
+    } else {
+      poi.bizumPhone = null;
+    }
+    await this.pois.save(poi);
+    return this.view(poi, []);
+  }
+
   async applyAccount(account: Stripe.Account): Promise<void> {
     const poi = await this.pois.findOne({ where: { stripeAccountId: account.id } });
     if (poi) await this.save(poi, account);
@@ -118,6 +135,7 @@ export class PayoutsAccountService {
       demo: !this.stripe.isConfigured,
       requirements,
       feePercent: donationFeePercent(),
+      bizumPhone: poi.bizumPhone ? formatBizumPhone(poi.bizumPhone) : null,
     };
   }
 

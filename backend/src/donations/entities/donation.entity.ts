@@ -41,6 +41,8 @@ export enum DonationPurpose {
 
 export type PaymentProblem = 'failed' | 'card_expiring';
 
+export type PaymentMethod = 'card' | 'bizum';
+
 /**
  * A single gift to a POI. Gifts go through Stripe Checkout when the backend
  * has a Stripe key configured (see donations/stripe.service.ts); without one
@@ -88,6 +90,20 @@ export class Donation {
 
   @Column({ name: 'stripe_payment_intent_id', nullable: true })
   stripePaymentIntentId?: string;
+
+  // How it was paid: 'card' is Stripe's page (card, Apple Pay, Google Pay,
+  // PayPal); 'bizum' is a Bizum sent to the community's own number, which
+  // stays PENDING until the team marks it received (donations/bizum.ts).
+  @Column('varchar', { name: 'payment_method', length: 10, default: 'card' })
+  paymentMethod!: PaymentMethod;
+
+  // The concept the member writes on their Bizum ("INF 4821").
+  @Column('varchar', { name: 'bizum_code', length: 12, nullable: true })
+  bizumCode?: string | null;
+
+  // When the member said they had sent it. Until then the team isn't asked.
+  @Column('timestamptz', { name: 'bizum_sent_at', nullable: true })
+  bizumSentAt?: Date | null;
 
   // The community's own Stripe account the payment was made on (Stripe
   // Connect). null for gifts made before it, on infunion's account.

@@ -22,6 +22,7 @@ const TEXTS = {
     office: 'The team',
     monthlyGiftFailed: 'Your monthly contribution of {amount} didn’t go through. Open the app to update your card.',
     monthlyGiftCardExpiring: 'The card for your monthly contribution of {amount} expires before the next payment. Open the app to update it.',
+    bizumReceived: 'The team received your Bizum of {amount}. Thank you!',
   },
   es: {
     live: 'En directo: {title}',
@@ -37,6 +38,7 @@ const TEXTS = {
     office: 'El equipo',
     monthlyGiftFailed: 'Tu aportación mensual de {amount} no se ha podido cobrar. Abre la aplicación para actualizar tu tarjeta.',
     monthlyGiftCardExpiring: 'La tarjeta de tu aportación mensual de {amount} caduca antes del próximo cobro. Abre la aplicación para actualizarla.',
+    bizumReceived: 'El equipo ha recibido tu Bizum de {amount}. ¡Gracias!',
   },
   fr: {
     live: 'En direct : {title}',
@@ -52,6 +54,7 @@ const TEXTS = {
     office: 'L’équipe',
     monthlyGiftFailed: 'Votre contribution mensuelle de {amount} n’a pas pu être prélevée. Ouvrez l’application pour mettre à jour votre carte.',
     monthlyGiftCardExpiring: 'La carte de votre contribution mensuelle de {amount} expire avant le prochain prélèvement. Ouvrez l’application pour la mettre à jour.',
+    bizumReceived: 'L’équipe a bien reçu votre Bizum de {amount}. Merci !',
   },
   va: {
     live: 'En directe: {title}',
@@ -67,6 +70,7 @@ const TEXTS = {
     office: 'L’equip',
     monthlyGiftFailed: 'La teua aportació mensual de {amount} no s’ha pogut cobrar. Obri l’aplicació per a actualitzar la teua targeta.',
     monthlyGiftCardExpiring: 'La targeta de la teua aportació mensual de {amount} caduca abans del pròxim cobrament. Obri l’aplicació per a actualitzar-la.',
+    bizumReceived: 'L’equip ha rebut el teu Bizum de {amount}. Gràcies!',
   },
   ca: {
     live: 'En directe: {title}',
@@ -82,6 +86,7 @@ const TEXTS = {
     office: 'L’equip',
     monthlyGiftFailed: 'La teva aportació mensual de {amount} no s’ha pogut cobrar. Obre l’aplicació per actualitzar la teva targeta.',
     monthlyGiftCardExpiring: 'La targeta de la teva aportació mensual de {amount} caduca abans del pròxim cobrament. Obre l’aplicació per actualitzar-la.',
+    bizumReceived: 'L’equip ha rebut el teu Bizum de {amount}. Gràcies!',
   },
   gl: {
     live: 'En directo: {title}',
@@ -97,6 +102,7 @@ const TEXTS = {
     office: 'O equipo',
     monthlyGiftFailed: 'Non se puido cobrar a túa achega mensual de {amount}. Abre a aplicación para actualizar a túa tarxeta.',
     monthlyGiftCardExpiring: 'A tarxeta da túa achega mensual de {amount} caduca antes do próximo cobro. Abre a aplicación para actualizala.',
+    bizumReceived: 'O equipo recibiu o teu Bizum de {amount}. Grazas!',
   },
   pt: {
     live: 'Em direto: {title}',
@@ -112,6 +118,7 @@ const TEXTS = {
     office: 'A equipa',
     monthlyGiftFailed: 'Não foi possível cobrar a sua contribuição mensal de {amount}. Abra a aplicação para atualizar o seu cartão.',
     monthlyGiftCardExpiring: 'O cartão da sua contribuição mensal de {amount} expira antes do próximo pagamento. Abra a aplicação para o atualizar.',
+    bizumReceived: 'A equipa recebeu o seu Bizum de {amount}. Obrigado!',
   },
 } satisfies Record<Language, Record<string, string>>;
 

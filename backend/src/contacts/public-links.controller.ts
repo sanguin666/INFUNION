@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Header, Param, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Header, Param, ParseUUIDPipe, Post, Query, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { OutreachService } from './outreach.service.js';
 import { OutreachKind } from './entities/outreach.entity.js';
 import { outreachText, fill, type OutreachText } from './outreach-texts.js';
 import { publicPage, escapeHtml } from './pages.js';
-import { DonationsService } from '../donations/donations.service.js';
+import { DonationsService, type BizumStart } from '../donations/donations.service.js';
 import { StripeService } from '../donations/stripe.service.js';
 import { DonationPurpose } from '../donations/entities/donation.entity.js';
 import { returnUrlBase } from '../donations/donations.controller.js';
@@ -228,6 +228,34 @@ export class PublicLinksController {
     await this.checkout(poi, poi.language, link.campaign ?? null, null, body, req, res, link);
   }
 
+  /** The payer says their Bizum is sent: the team is asked to confirm it. */
+  @Post('bizum/:poiId/:donationId/sent')
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  async bizumSent(
+    @Param('poiId', ParseUUIDPipe) poiId: string,
+    @Param('donationId', ParseUUIDPipe) donationId: string,
+    @Query('lang') langParam: string | undefined,
+  ): Promise<string> {
+    const poi = await this.outreach.findPoiPublic(poiId);
+    const lang = langParam ?? poi?.language ?? 'en';
+    if (!poi) return this.gone(lang);
+    const words = outreachText(lang);
+    let sent: { code: string; amount: number };
+    try {
+      sent = await this.donations.markBizumSent(poiId, donationId);
+    } catch {
+      return this.gone(lang);
+    }
+    return publicPage({
+      lang,
+      title: words.bizumThanksTitle,
+      community: poi.name,
+      logoUrl: poi.logoUrl,
+      body: `<p>${escapeHtml(fill(words.bizumThanksText, { amount: formatEuros(sent.amount, lang), community: poi.name }))}</p>
+<p class="waiting">${escapeHtml(words.bizumWaiting)} · <b>${escapeHtml(sent.code)}</b></p>`,
+    });
+  }
+
   /** An email's button. Last, so the named routes above win. */
   @Get(':recipientId')
   @Header('Cache-Control', 'no-store')
@@ -250,7 +278,8 @@ export class PublicLinksController {
   private async payablePoi(poiId: string): Promise<Poi | null> {
     const poi = await this.outreach.findPoiPublic(poiId);
     if (!poi || poi.closingRequestedAt || poi.closedAt) return null;
-    return payoutsReady(poi, this.stripe.isConfigured) ? poi : null;
+    // A Bizum number is a way to pay too (Seb, 16 Nov 2026).
+    return payoutsReady(poi, this.stripe.isConfigured) || poi.bizumPhone ? poi : null;
   }
 
   /** "This link no longer works", in its community's language when known. */
@@ -287,18 +316,30 @@ export class PublicLinksController {
       return;
     }
     const donorName = link && !link.askName ? undefined : String(body.name ?? '').trim().slice(0, 80) || undefined;
+    const gift = {
+      amount,
+      donorName,
+      purpose: campaign ? DonationPurpose.CAMPAIGN : DonationPurpose.GENERAL,
+      ...(campaign ? { campaignId: campaign.id } : {}),
+    };
+    const giftOptions = {
+      ...(contactId ? { contactId } : {}),
+      ...(link ? { paymentLinkId: link.id } : {}),
+    };
+    // Bizum to the community's own number (Seb, 16 Nov 2026): the payer
+    // gets the number, the amount and the concept to write.
+    const card = payoutsReady(poi, this.stripe.isConfigured);
+    if (poi.bizumPhone && (body.method === 'bizum' || !card)) {
+      const bizum = await this.donations.startBizum(poi.id, gift, giftOptions);
+      res.type('html').send(this.bizumPage(poi, lang, bizum));
+      return;
+    }
     const result = await this.donations.startCheckout(
       poi.id,
-      {
-        amount,
-        donorName,
-        purpose: campaign ? DonationPurpose.CAMPAIGN : DonationPurpose.GENERAL,
-        ...(campaign ? { campaignId: campaign.id } : {}),
-      },
+      gift,
       returnUrlBase(this.config, req),
       {
-        ...(contactId ? { contactId } : {}),
-        ...(link ? { paymentLinkId: link.id } : {}),
+        ...giftOptions,
         // A named link reads as itself on Stripe's page ("Christmas lunch — Carmen").
         ...(link && !link.isDefault ? { productName: `${link.title} — ${poi.name}`.slice(0, 250) } : {}),
         returnPath: `/m/done/${encodeURIComponent(lang)}`,
@@ -321,6 +362,15 @@ export class PublicLinksController {
     const fixed = options.fixed ?? null;
     const askName = options.askName ?? true;
     const paymentsLive = this.stripe.isConfigured;
+    const card = payoutsReady(poi, paymentsLive);
+    const bizum = !!poi.bizumPhone;
+    const buttons = [
+      card ? `<button type="submit" name="method" value="card">${escapeHtml(words.giveButton)}</button>` : '',
+      bizum
+        ? `<button type="submit" name="method" value="bizum"${card ? ' class="alt"' : ''}>${escapeHtml(words.bizumButton)} <span class="bizum-tag">bizum</span></button>`
+        : '',
+      card ? `<p class="small">${escapeHtml(paymentsLive ? words.giveSecure : words.giveDemo)}</p>` : '',
+    ].join('\n');
     const presetIsChip = preset !== null && AMOUNTS.includes(preset);
     const checkedChip = preset === null ? 10 : presetIsChip ? preset : null;
     const otherValue = preset !== null && !presetIsChip ? String(preset) : '';
@@ -346,8 +396,30 @@ export class PublicLinksController {
       logoUrl: poi.logoUrl,
       body: `<p>${escapeHtml(options.intro ?? (campaign ? fill(words.giveProject, { project: campaign.title }) : words.giveIntro))}</p>
 <form method="post" action="${escapeHtml(action)}">
-${amountBlock}${nameBlock}<button type="submit">${escapeHtml(words.giveButton)}</button>
-<p class="small">${escapeHtml(paymentsLive ? words.giveSecure : words.giveDemo)}</p>
+${amountBlock}${nameBlock}${buttons}
+</form>`,
+    });
+  }
+
+  /** The steps to send a Bizum by hand, then "I've sent it". */
+  private bizumPage(poi: Poi, lang: string, bizum: BizumStart): string {
+    const words = outreachText(lang);
+    const amount = formatEuros(bizum.amount, lang);
+    const copy = (value: string) =>
+      `<button type="button" class="copy" onclick="navigator.clipboard&&navigator.clipboard.writeText('${escapeHtml(value.replace(/\s/g, ''))}');this.textContent='${escapeHtml(words.copied).replace(/'/g, '&#39;')}'">${escapeHtml(words.copy)}</button>`;
+    return publicPage({
+      lang,
+      title: fill(words.bizumTitle, { amount }),
+      community: poi.name,
+      logoUrl: poi.logoUrl,
+      body: `<ol class="steps">
+<li><span class="n">1</span><div>${escapeHtml(words.bizumStep1)}</div></li>
+<li><span class="n">2</span><div><div class="k">${escapeHtml(words.bizumSendTo)}</div><div class="v">${escapeHtml(bizum.phone)} ${copy(bizum.phone)}</div><div class="k">${escapeHtml(poi.name)}</div></div></li>
+<li><span class="n">3</span><div><div class="k">${escapeHtml(words.bizumAmount)}</div><div class="v">${escapeHtml(amount)}</div></div></li>
+<li><span class="n">4</span><div><div class="k">${escapeHtml(words.bizumConcept)}</div><div class="v">${escapeHtml(bizum.code)} ${copy(bizum.code)}</div><div class="k">${escapeHtml(words.bizumConceptWhy)}</div></div></li>
+</ol>
+<form method="post" action="/m/bizum/${escapeHtml(poi.id)}/${escapeHtml(bizum.donationId)}/sent?lang=${encodeURIComponent(lang)}">
+<button type="submit">${escapeHtml(words.bizumSent)}</button>
 </form>`,
     });
   }

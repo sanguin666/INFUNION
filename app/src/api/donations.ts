@@ -100,6 +100,27 @@ export function startDonationCheckout(
   return apiPost<CheckoutResult>(`/pois/${encodeURIComponent(poiId)}/donations/checkout`, body);
 }
 
+/** A Bizum to send by hand to the community's own number. */
+export type BizumStart = {
+  mode: 'bizum';
+  donationId: string;
+  phone: string;
+  amount: number;
+  code: string;
+  communityName: string;
+};
+
+export function startBizum(poiId: string, body: CheckoutBody): Promise<BizumStart> {
+  return apiPost<BizumStart>(`/pois/${encodeURIComponent(poiId)}/donations/bizum`, body);
+}
+
+/** The member says it is sent: the team is asked to confirm it. */
+export function markBizumSent(poiId: string, donationId: string): Promise<{ code: string }> {
+  return apiPost<{ code: string }>(
+    `/pois/${encodeURIComponent(poiId)}/donations/bizum/${encodeURIComponent(donationId)}/sent`,
+  );
+}
+
 export function getDonationStatus(poiId: string, donationId: string): Promise<DonationStatus> {
   return apiGet<DonationStatus>(
     `/pois/${encodeURIComponent(poiId)}/donations/${encodeURIComponent(donationId)}/status`,
