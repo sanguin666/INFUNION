@@ -31,6 +31,19 @@ export type OutreachText = {
   goneTitle: string;
   goneText: string;
   whatsappInvite: string;
+  bizumButton: string;
+  bizumTitle: string;
+  bizumStep1: string;
+  bizumSendTo: string;
+  bizumAmount: string;
+  bizumConcept: string;
+  bizumConceptWhy: string;
+  bizumSent: string;
+  bizumThanksTitle: string;
+  bizumThanksText: string;
+  bizumWaiting: string;
+  copy: string;
+  copied: string;
 };
 
 const en: OutreachText = {
@@ -46,7 +59,7 @@ const en: OutreachText = {
   madeWith: 'Made with',
   giveName: 'Your name (optional)',
   giveButton: 'Continue to payment',
-  giveSecure: 'Secure payment with Stripe: card, Apple Pay or Google Pay.',
+  giveSecure: 'Secure payment with Stripe: card, Apple Pay, Google Pay or PayPal.',
   giveDemo: 'Demo: no money is taken.',
   thanksTitle: 'Thank you!',
   thanksText: 'Your contribution went through. You can close this page.',
@@ -60,6 +73,19 @@ const en: OutreachText = {
   goneTitle: 'This link no longer works',
   goneText: 'It may have been removed by the community.',
   whatsappInvite: 'Hello {name}, {community} is now on infunion: times, news and contributions on your phone. Join us here: {link}',
+  bizumButton: 'Pay with Bizum',
+  bizumTitle: 'Send {amount} by Bizum',
+  bizumStep1: 'Open your bank app and go to Bizum › Send money.',
+  bizumSendTo: 'Send to',
+  bizumAmount: 'Amount',
+  bizumConcept: 'In the concept, write',
+  bizumConceptWhy: 'So the team knows it’s you.',
+  bizumSent: 'I’ve sent it',
+  bizumThanksTitle: 'Thank you!',
+  bizumThanksText: 'Your Bizum of {amount} is on its way to {community}. The team will confirm it once it reaches their account.',
+  bizumWaiting: 'Waiting for confirmation',
+  copy: 'Copy',
+  copied: 'Copied',
 };
 
 const es: OutreachText = {
@@ -75,7 +101,7 @@ const es: OutreachText = {
   madeWith: 'Hecho con',
   giveName: 'Tu nombre (opcional)',
   giveButton: 'Continuar al pago',
-  giveSecure: 'Pago seguro con Stripe: tarjeta, Apple Pay o Google Pay.',
+  giveSecure: 'Pago seguro con Stripe: tarjeta, Apple Pay, Google Pay o PayPal.',
   giveDemo: 'Demostración: no se cobra nada.',
   thanksTitle: '¡Gracias!',
   thanksText: 'Tu contribución se ha realizado. Ya puedes cerrar esta página.',
@@ -89,6 +115,19 @@ const es: OutreachText = {
   goneTitle: 'Este enlace ya no funciona',
   goneText: 'Es posible que la comunidad lo haya eliminado.',
   whatsappInvite: 'Hola {name}, {community} ya está en infunion: horarios, avisos y contribuciones en tu móvil. Únete aquí: {link}',
+  bizumButton: 'Pagar con Bizum',
+  bizumTitle: 'Envía {amount} por Bizum',
+  bizumStep1: 'Abre la app de tu banco y ve a Bizum › Enviar dinero.',
+  bizumSendTo: 'Envíalo a',
+  bizumAmount: 'Importe',
+  bizumConcept: 'En el concepto, escribe',
+  bizumConceptWhy: 'Así el equipo sabrá que eres tú.',
+  bizumSent: 'Ya lo he enviado',
+  bizumThanksTitle: '¡Gracias!',
+  bizumThanksText: 'Tu Bizum de {amount} va de camino a {community}. El equipo lo confirmará cuando llegue a su cuenta.',
+  bizumWaiting: 'Pendiente de confirmación',
+  copy: 'Copiar',
+  copied: 'Copiado',
 };
 
 const fr: OutreachText = {
@@ -104,7 +143,7 @@ const fr: OutreachText = {
   madeWith: 'Réalisé avec',
   giveName: 'Votre nom (facultatif)',
   giveButton: 'Continuer vers le paiement',
-  giveSecure: 'Paiement sécurisé avec Stripe : carte, Apple Pay ou Google Pay.',
+  giveSecure: 'Paiement sécurisé avec Stripe : carte, Apple Pay, Google Pay ou PayPal.',
   giveDemo: 'Démonstration : aucun montant n’est prélevé.',
   thanksTitle: 'Merci !',
   thanksText: 'Votre contribution a bien été effectuée. Vous pouvez fermer cette page.',
@@ -118,6 +157,19 @@ const fr: OutreachText = {
   goneTitle: 'Ce lien ne fonctionne plus',
   goneText: 'La communauté l’a peut-être supprimé.',
   whatsappInvite: 'Bonjour {name}, {community} est maintenant sur infunion : horaires, nouvelles et contributions sur votre téléphone. Rejoignez-nous ici : {link}',
+  bizumButton: 'Payer avec Bizum',
+  bizumTitle: 'Envoyez {amount} par Bizum',
+  bizumStep1: 'Ouvrez l’application de votre banque, puis Bizum › Envoyer de l’argent.',
+  bizumSendTo: 'Envoyez à',
+  bizumAmount: 'Montant',
+  bizumConcept: 'Dans le motif, écrivez',
+  bizumConceptWhy: 'Ainsi l’équipe saura que c’est vous.',
+  bizumSent: 'Je l’ai envoyé',
+  bizumThanksTitle: 'Merci !',
+  bizumThanksText: 'Votre Bizum de {amount} est en route vers {community}. L’équipe le confirmera dès qu’il arrivera sur son compte.',
+  bizumWaiting: 'En attente de confirmation',
+  copy: 'Copier',
+  copied: 'Copié',
 };
 
 const va: OutreachText = {
@@ -133,7 +185,7 @@ const va: OutreachText = {
   madeWith: 'Fet amb',
   giveName: 'El teu nom (opcional)',
   giveButton: 'Continuar al pagament',
-  giveSecure: 'Pagament segur amb Stripe: targeta, Apple Pay o Google Pay.',
+  giveSecure: 'Pagament segur amb Stripe: targeta, Apple Pay, Google Pay o PayPal.',
   giveDemo: 'Demostració: no es cobra res.',
   thanksTitle: 'Gràcies!',
   thanksText: 'La teua contribució s’ha fet. Ja pots tancar esta pàgina.',
@@ -147,6 +199,19 @@ const va: OutreachText = {
   goneTitle: 'Este enllaç ja no funciona',
   goneText: 'És possible que la comunitat l’haja eliminat.',
   whatsappInvite: 'Hola {name}, {community} ja està en infunion: horaris, avisos i contribucions en el teu mòbil. Uneix-te ací: {link}',
+  bizumButton: 'Pagar amb Bizum',
+  bizumTitle: 'Envia {amount} per Bizum',
+  bizumStep1: 'Obri l’app del teu banc i ves a Bizum › Enviar diners.',
+  bizumSendTo: 'Envia’l a',
+  bizumAmount: 'Import',
+  bizumConcept: 'En el concepte, escriu',
+  bizumConceptWhy: 'Així l’equip sabrà que eres tu.',
+  bizumSent: 'Ja l’he enviat',
+  bizumThanksTitle: 'Gràcies!',
+  bizumThanksText: 'El teu Bizum de {amount} va cap a {community}. L’equip el confirmarà quan arribe al seu compte.',
+  bizumWaiting: 'Pendent de confirmació',
+  copy: 'Copiar',
+  copied: 'Copiat',
 };
 
 const ca: OutreachText = {
@@ -159,6 +224,19 @@ const ca: OutreachText = {
   goneTitle: 'Aquest enllaç ja no funciona',
   goneText: 'És possible que la comunitat l’hagi eliminat.',
   whatsappInvite: 'Hola {name}, {community} ja és a infunion: horaris, avisos i contribucions al teu mòbil. Uneix-t’hi aquí: {link}',
+  bizumButton: 'Pagar amb Bizum',
+  bizumTitle: 'Envia {amount} per Bizum',
+  bizumStep1: 'Obre l’app del teu banc i ves a Bizum › Enviar diners.',
+  bizumSendTo: 'Envia’l a',
+  bizumAmount: 'Import',
+  bizumConcept: 'Al concepte, escriu',
+  bizumConceptWhy: 'Així l’equip sabrà que ets tu.',
+  bizumSent: 'Ja l’he enviat',
+  bizumThanksTitle: 'Gràcies!',
+  bizumThanksText: 'El teu Bizum de {amount} va cap a {community}. L’equip el confirmarà quan arribi al seu compte.',
+  bizumWaiting: 'Pendent de confirmació',
+  copy: 'Copiar',
+  copied: 'Copiat',
 };
 
 const gl: OutreachText = {
@@ -174,7 +252,7 @@ const gl: OutreachText = {
   madeWith: 'Feito con',
   giveName: 'O teu nome (opcional)',
   giveButton: 'Continuar ao pagamento',
-  giveSecure: 'Pagamento seguro con Stripe: tarxeta, Apple Pay ou Google Pay.',
+  giveSecure: 'Pagamento seguro con Stripe: tarxeta, Apple Pay, Google Pay ou PayPal.',
   giveDemo: 'Demostración: non se cobra nada.',
   thanksTitle: 'Grazas!',
   thanksText: 'A túa contribución realizouse. Xa podes pechar esta páxina.',
@@ -188,6 +266,19 @@ const gl: OutreachText = {
   goneTitle: 'Esta ligazón xa non funciona',
   goneText: 'É posible que a comunidade a eliminase.',
   whatsappInvite: 'Ola {name}, {community} xa está en infunion: horarios, avisos e contribucións no teu móbil. Únete aquí: {link}',
+  bizumButton: 'Pagar con Bizum',
+  bizumTitle: 'Envía {amount} por Bizum',
+  bizumStep1: 'Abre a app do teu banco e vai a Bizum › Enviar diñeiro.',
+  bizumSendTo: 'Envíao a',
+  bizumAmount: 'Importe',
+  bizumConcept: 'No concepto, escribe',
+  bizumConceptWhy: 'Así o equipo saberá que es ti.',
+  bizumSent: 'Xa o enviei',
+  bizumThanksTitle: 'Grazas!',
+  bizumThanksText: 'O teu Bizum de {amount} vai camiño de {community}. O equipo confirmarao cando chegue á súa conta.',
+  bizumWaiting: 'Pendente de confirmación',
+  copy: 'Copiar',
+  copied: 'Copiado',
 };
 
 const pt: OutreachText = {
@@ -203,7 +294,7 @@ const pt: OutreachText = {
   madeWith: 'Feito com',
   giveName: 'O seu nome (opcional)',
   giveButton: 'Continuar para o pagamento',
-  giveSecure: 'Pagamento seguro com a Stripe: cartão, Apple Pay ou Google Pay.',
+  giveSecure: 'Pagamento seguro com a Stripe: cartão, Apple Pay, Google Pay ou PayPal.',
   giveDemo: 'Demonstração: nada é cobrado.',
   thanksTitle: 'Obrigado!',
   thanksText: 'A sua contribuição foi feita. Já pode fechar esta página.',
@@ -217,6 +308,19 @@ const pt: OutreachText = {
   goneTitle: 'Esta ligação já não funciona',
   goneText: 'A comunidade pode tê-la removido.',
   whatsappInvite: 'Olá {name}, {community} já está no infunion: horários, avisos e contribuições no seu telemóvel. Junte-se aqui: {link}',
+  bizumButton: 'Pagar com Bizum',
+  bizumTitle: 'Envie {amount} por Bizum',
+  bizumStep1: 'Abra a app do seu banco e vá a Bizum › Enviar dinheiro.',
+  bizumSendTo: 'Envie para',
+  bizumAmount: 'Montante',
+  bizumConcept: 'No conceito, escreva',
+  bizumConceptWhy: 'Assim a equipa saberá que é você.',
+  bizumSent: 'Já enviei',
+  bizumThanksTitle: 'Obrigado!',
+  bizumThanksText: 'O seu Bizum de {amount} está a caminho de {community}. A equipa vai confirmá-lo quando chegar à conta.',
+  bizumWaiting: 'A aguardar confirmação',
+  copy: 'Copiar',
+  copied: 'Copiado',
 };
 
 const TEXTS: Record<string, OutreachText> = { en, es, fr, va, ca, gl, pt };

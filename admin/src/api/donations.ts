@@ -9,6 +9,25 @@ export function getRecentDonations(poiId: string, limit = 8): Promise<Donation[]
   return apiGet<Donation[]>(`/pois/${poiId}/donations?limit=${limit}`);
 }
 
+// ---- Bizum by number (Seb, 16 Nov 2026) ----
+
+export type BizumPending = {
+  id: string;
+  amount: number;
+  code: string;
+  donorName: string | null;
+  sentAt: string;
+  campaignTitle: string | null;
+};
+
+export function getBizumPending(poiId: string): Promise<BizumPending[]> {
+  return apiGet<BizumPending[]>(`/pois/${poiId}/donations/bizum/pending`);
+}
+
+export function confirmBizum(poiId: string, id: string, received: boolean): Promise<{ status: string }> {
+  return apiPost<{ status: string }>(`/pois/${poiId}/donations/bizum/${id}/${received ? 'received' : 'not-received'}`);
+}
+
 // ---- Campaigns ----
 
 export type CampaignInput = {

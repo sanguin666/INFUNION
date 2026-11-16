@@ -9,6 +9,7 @@ import { ReceiptsSection } from './ReceiptsSection';
 import { PaymentLinksSection } from './PaymentLinksSection';
 import { TabBar, TabPanel, useTab } from '../components/Tabs';
 import { PayoutsBanner, PayoutsLock, PayoutsReadyNote, usePayoutsAccount } from '../components/PayoutsBanner';
+import { BizumToConfirm, PaymentMethodsCard } from '../components/BizumSection';
 
 const TABS = ['overview', 'paylink', 'campaigns', 'receipts'] as const;
 
@@ -313,18 +314,22 @@ export function DonationsPage() {
   const payouts = usePayoutsAccount(poiId);
   // Greyed out until the community's payment account is set up; while it
   // loads (or can't be read) the page shows as usual.
-  const locked = payouts.account !== null && !payouts.account.ready;
+  // A Bizum number is a way to pay too (Seb, 16 Nov 2026).
+  const locked = payouts.account !== null && !payouts.account.ready && !payouts.account.bizumPhone;
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
-    setStats(null);
-    setRecent(null);
+    if (reload === 0) {
+      setStats(null);
+      setRecent(null);
+    }
     Promise.all([getDonationStats(poiId), getRecentDonations(poiId)])
       .then(([statsResult, recentResult]) => {
         setStats(statsResult);
         setRecent(recentResult);
       })
       .catch(() => setError(t('donations.loadError')));
-  }, [poiId]);
+  }, [poiId, reload]);
 
   return (
     <div>
@@ -335,6 +340,7 @@ export function DonationsPage() {
         <>
           <PayoutsBanner poiId={poiId} account={payouts.account} onChange={payouts.setAccount} />
           <PayoutsReadyNote account={payouts.account} />
+          <PaymentMethodsCard poiId={poiId} account={payouts.account} onChange={payouts.setAccount} />
         </>
       )}
 
@@ -353,6 +359,7 @@ export function DonationsPage() {
         />
 
         <TabPanel idPrefix="donations" tabKey="overview" current={tab}>
+          {payouts.account?.bizumPhone && <BizumToConfirm poiId={poiId} onConfirmed={() => setReload((n) => n + 1)} />}
           {error && <p className="error-text">{error}</p>}
           {!error && (!stats || !recent) && <p className="muted">{t('donations.loading')}</p>}
           {stats && recent && <DonationsOverview stats={stats} recent={recent} />}
@@ -423,6 +430,12 @@ function DonationsOverview({ stats, recent }: { stats: DonationStats; recent: Do
                   {donation.donorName ?? t('donations.anonymous')}
                   <span className="card-meta" style={{ display: 'block' }}>
                     {purposeLabel(donation, t)}
+                    {donation.paymentMethod === 'bizum' && (
+                      <>
+                        {' · '}
+                        <span className="badge bizum-badge">{t('bizum.methodBizum')}</span>
+                      </>
+                    )}
                     {donation.recurring && (
                       <>
                         {' · '}

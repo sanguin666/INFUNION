@@ -219,6 +219,12 @@ export class Poi {
   @Column({ name: 'stripe_details_submitted', default: false })
   stripeDetailsSubmitted!: boolean;
 
+  // The community's own Bizum number (Seb, 16 Nov 2026), 9 digits. Members
+  // send a Bizum straight to it from their bank app and the team confirms
+  // it in the admin (donations/bizum.ts). null: Bizum is not offered.
+  @Column('varchar', { name: 'bizum_phone', length: 20, nullable: true })
+  bizumPhone?: string | null;
+
   // Whether members can contribute here: false hides Contributions in the
   // app and greys it out in the admin. Worked out on load, never stored.
   paymentsReady?: boolean;
