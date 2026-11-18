@@ -28,5 +28,65 @@
       "title": "Web y QR",
       "duration": 17.4
     }
+  },
+  "en": {
+    "dashboard": {
+      "title": "Dashboard",
+      "duration": 18.3
+    },
+    "home-page": {
+      "title": "Home page",
+      "duration": 18.7
+    },
+    "members": {
+      "title": "Members",
+      "duration": 16.7
+    },
+    "requests": {
+      "title": "Requests",
+      "duration": 14.2
+    },
+    "events": {
+      "title": "Events",
+      "duration": 17.8
+    },
+    "donations": {
+      "title": "Donate",
+      "duration": 16.7
+    },
+    "website": {
+      "title": "Website and QR",
+      "duration": 17.4
+    }
+  },
+  "fr": {
+    "dashboard": {
+      "title": "Tableau de bord",
+      "duration": 18.3
+    },
+    "home-page": {
+      "title": "Page d'accueil",
+      "duration": 18.7
+    },
+    "members": {
+      "title": "Membres",
+      "duration": 16.7
+    },
+    "requests": {
+      "title": "Demandes",
+      "duration": 14.2
+    },
+    "events": {
+      "title": "Événements",
+      "duration": 17.6
+    },
+    "donations": {
+      "title": "Faire un don",
+      "duration": 16.7
+    },
+    "website": {
+      "title": "Site et QR code",
+      "duration": 17.4
+    }
   }
 }
