@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "title": "Tableau de bord",
+    "intro": "Le tableau de bord : ce qui vous attend aujourd'hui",
+    "todo": "Ce qui attend une réponse reste en haut",
+    "open": "Un clic et vous y êtes",
+    "figures": "Vos chiffres clés d'un coup d'œil",
+    "week": "Et le programme de la semaine"
+  },
+  "home-page": {
+    "title": "Page d'accueil",
+    "intro": "Ce que les membres voient en premier dans l'app",
+    "phone": "Le téléphone montre le résultat aussitôt",
+    "order": "Classez les badges avec les flèches",
+    "toggle": "Affichez ou masquez chacun",
+    "sections": "Et ajoutez textes, photos et bouton de don"
+  },
+  "members": {
+    "title": "Membres",
+    "intro": "Chaque personne qui rejoint l'app apparaît ici",
+    "member": "Chaque membre, avec son dernier message",
+    "private": "Répondez en privé, comme dans un chat",
+    "all": "Ou écrivez à tous en même temps"
+  },
+  "requests": {
+    "title": "Demandes",
+    "intro": "Ce que les membres vous demandent depuis l'app",
+    "waiting": "Ce qui attend une réponse passe en premier",
+    "open": "Ouvrez une demande pour y répondre",
+    "detail": "Changez le statut, fixez un rendez-vous ou demandez un document"
+  },
+  "events": {
+    "title": "Événements",
+    "intro": "Votre semaine habituelle, telle que l'app la montre",
+    "new": "Ajoutez un nouvel événement",
+    "type": "Donnez-lui un nom, une date et une heure",
+    "repeat": "Il peut se répéter chaque semaine",
+    "sample": "Concert de Noël"
+  },
+  "donations": {
+    "title": "Faire un don",
+    "intro": "Comment les membres peuvent donner",
+    "bizum": "Carte, Bizum et PayPal depuis l'app",
+    "figures": "Suivez les dons semaine après semaine",
+    "campaigns": "Et lancez une campagne avec son objectif"
+  },
+  "website": {
+    "title": "Site et QR code",
+    "intro": "Un site public fait avec ce que vous publiez déjà",
+    "online": "Mettez-le en ligne quand il est prêt",
+    "parts": "Chaque partie apparaît quand elle a du contenu",
+    "qr": "Le QR code pour rejoindre",
+    "print": "Imprimez l'affiche et placez-la bien en vue"
+  }
+}
