@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "intro": "The dashboard: what is waiting for you today",
+    "todo": "Whatever needs an answer stays at the top",
+    "open": "One click takes you straight to it",
+    "figures": "Your key figures at a glance",
+    "week": "And everything happening this week"
+  },
+  "home-page": {
+    "title": "Home page",
+    "intro": "The first thing members see in the app",
+    "phone": "The phone shows the result straight away",
+    "order": "Put the badges in order with the arrows",
+    "toggle": "Show or hide each one",
+    "sections": "And add texts, photos and a donate button"
+  },
+  "members": {
+    "title": "Members",
+    "intro": "Everyone who joins from the app is here",
+    "member": "Each member, with their last message",
+    "private": "Reply in private, like a chat",
+    "all": "Or write to everyone at once"
+  },
+  "requests": {
+    "title": "Requests",
+    "intro": "What members ask you for from the app",
+    "waiting": "What needs an answer comes first",
+    "open": "Open a request to answer it",
+    "detail": "Change its status, set a date or ask for a document"
+  },
+  "events": {
+    "title": "Events",
+    "intro": "Your usual week, as the app shows it",
+    "new": "Add a new event",
+    "type": "Give it a name, a date and a time",
+    "repeat": "It can repeat every week",
+    "sample": "Christmas concert"
+  },
+  "donations": {
+    "title": "Donate",
+    "intro": "How members can give",
+    "bizum": "Card, Bizum and PayPal from the app",
+    "figures": "Follow donations week by week",
+    "campaigns": "And start a campaign with a goal"
+  },
+  "website": {
+    "title": "Website and QR",
+    "intro": "A public website made from what you already publish",
+    "online": "Put it online when it is ready",
+    "parts": "Each part shows once it has content",
+    "qr": "The QR code to join",
+    "print": "Print the flyer and put it up where people see it"
+  }
+}
