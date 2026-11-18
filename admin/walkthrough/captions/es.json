@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "title": "Panel",
+    "intro": "El Panel: lo que te espera hoy",
+    "todo": "Lo que espera una respuesta, siempre arriba",
+    "open": "Un clic y estás en lo que falta",
+    "figures": "Tus cifras clave de un vistazo",
+    "week": "Y la agenda de esta semana"
+  },
+  "home-page": {
+    "title": "Página de inicio",
+    "intro": "Lo primero que ven los miembros en la app",
+    "phone": "El móvil muestra el resultado al momento",
+    "order": "Ordena los avisos con las flechas",
+    "toggle": "Muestra u oculta cada uno",
+    "sections": "Y añade textos, fotos y un botón de donar"
+  },
+  "members": {
+    "title": "Miembros",
+    "intro": "Quien se une desde la app aparece aquí",
+    "member": "Cada miembro, con su último mensaje",
+    "private": "Contesta en privado, como en un chat",
+    "all": "O escribe a todos a la vez"
+  },
+  "requests": {
+    "title": "Solicitudes",
+    "intro": "Lo que los miembros piden desde la app",
+    "waiting": "Lo que necesita respuesta va primero",
+    "open": "Abre una solicitud para contestar",
+    "detail": "Cambia el estado, fija una cita o pide un documento"
+  },
+  "events": {
+    "title": "Eventos",
+    "intro": "Tu semana habitual, tal como la ve la app",
+    "new": "Añade un evento nuevo",
+    "type": "Ponle un nombre, una fecha y una hora",
+    "repeat": "Puede repetirse cada semana",
+    "sample": "Concierto de Navidad"
+  },
+  "donations": {
+    "title": "Donar",
+    "intro": "Cómo pueden donar los miembros",
+    "bizum": "Tarjeta, Bizum y PayPal desde la app",
+    "figures": "Sigue las donaciones semana a semana",
+    "campaigns": "Y lanza una campaña con su objetivo"
+  },
+  "website": {
+    "title": "Web y QR",
+    "intro": "Una web pública hecha con lo que ya publicas",
+    "online": "Actívala cuando esté lista",
+    "parts": "Cada parte aparece cuando tiene contenido",
+    "qr": "El código QR para unirse",
+    "print": "Imprime el folleto y colócalo a la vista"
+  }
+}
