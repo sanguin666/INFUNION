@@ -1,0 +1,32 @@
+{
+  "es": {
+    "dashboard": {
+      "title": "Panel",
+      "duration": 18.3
+    },
+    "home-page": {
+      "title": "Página de inicio",
+      "duration": 18.7
+    },
+    "members": {
+      "title": "Miembros",
+      "duration": 16.7
+    },
+    "requests": {
+      "title": "Solicitudes",
+      "duration": 14.2
+    },
+    "events": {
+      "title": "Eventos",
+      "duration": 18
+    },
+    "donations": {
+      "title": "Donar",
+      "duration": 16.7
+    },
+    "website": {
+      "title": "Web y QR",
+      "duration": 17.4
+    }
+  }
+}

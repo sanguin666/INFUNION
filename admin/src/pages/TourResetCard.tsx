@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n } from '../i18n/I18nContext';
 import { askForSuperadminTour } from '../components/superadminTour';
+import { openHowTo, useHowToClips } from '../components/howTo';
 
 /**
  * Settings' "Show the tour and tips again" (Seb, 5 Nov 2026): for his
@@ -15,6 +16,7 @@ export function TourResetCard() {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  const clips = useHowToClips();
 
   async function reset() {
     setBusy(true);
@@ -38,6 +40,12 @@ export function TourResetCard() {
         <button type="button" className="btn btn-primary" disabled={busy} onClick={reset}>
           {t('tour.resetButton')}
         </button>
+        {clips && clips.length > 0 && (
+          <button type="button" className="link-button" onClick={() => openHowTo()}>
+            <span aria-hidden="true">▶ </span>
+            {t('tour.videosReplay')}
+          </button>
+        )}
       </div>
       {failed && <p className="error-text">{t('tour.resetFailed')}</p>}
     </div>
