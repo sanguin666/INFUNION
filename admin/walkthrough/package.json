@@ -1,0 +1,12 @@
+{
+  "name": "admin-walkthrough",
+  "private": true,
+  "type": "module",
+  "description": "Records the admin's how-to clips from the real admin (see README.md).",
+  "scripts": {
+    "record": "node record.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.56.0"
+  }
+}
