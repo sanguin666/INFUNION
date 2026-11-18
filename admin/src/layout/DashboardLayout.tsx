@@ -19,6 +19,8 @@ import { superadminAskedForTour } from '../components/superadminTour';
 import { AdminAssistant } from '../components/AdminAssistant';
 import { UndoProvider } from '../components/Undo';
 import { PageTip, PAGE_TIPS } from '../components/PageTip';
+import { HowToPlayer } from '../components/HowToPlayer';
+import { clipForPage, formatDuration, useHowToClips, useOpenHowTo } from '../components/howTo';
 import { getSuperadminSession } from '../api/client';
 import type { ActiveModule, ModuleType } from '../api/types';
 import type { Translations } from '../i18n/translations';
@@ -68,6 +70,11 @@ export function DashboardLayout() {
   const location = useLocation();
   const { poiId } = useParams<{ poiId: string }>();
   const [poiPickerOpen, setPoiPickerOpen] = useState(false);
+  // The how-to clips: undefined while the list loads. `playing` is the
+  // clip the player opened on (null: the first), undefined when closed.
+  const howTo = useHowToClips();
+  const [playing, setPlaying] = useState<string | null | undefined>(undefined);
+  useOpenHowTo(useCallback((clipId: string | null) => setPlaying(clipId), []));
   // Kept with the place they belong to, so switching places never shows
   // the last place's pages while the new list loads.
   const [loaded, setLoaded] = useState<{ poiId: string; modules: ActiveModule[] } | null>(null);
@@ -172,7 +179,12 @@ export function DashboardLayout() {
   // (Seb, 9 Nov 2026), for that browser session. The tour waits for the
   // modules so it lights the full list.
   const tipsOn = !!memberPoi || (visiting && superadminAskedForTour());
-  const showTour = tipsOn && !!currentPoi && modules !== null && !seenTip('tour');
+  const showWelcome = tipsOn && !!currentPoi && modules !== null && !seenTip('tour');
+  // In a language with recorded clips, the first sign-in plays them
+  // instead of the tour (Seb, 18 Nov 2026); the others keep the tour.
+  const showVideos = showWelcome && !!howTo && howTo.length > 0;
+  const showTour = showWelcome && howTo !== undefined && !showVideos;
+  const pageClip = clipForPage(howTo, section);
   const showPageTip = tipsOn && seenTip('tour') && section in PAGE_TIPS && !seenTip(`page:${section}`);
 
   function handlePoiChange(nextPoiId: string) {
@@ -294,11 +306,34 @@ export function DashboardLayout() {
 
       <main className="main">
         {poiId && <ClosingBanner poiId={poiId} />}
-        {showPageTip && <PageTip page={section} onDismiss={() => dismissTip(`page:${section}`)} />}
+        {showPageTip && (
+          <PageTip
+            page={section}
+            onDismiss={() => dismissTip(`page:${section}`)}
+            watch={pageClip && { duration: formatDuration(pageClip.duration), onWatch: () => setPlaying(pageClip.id) }}
+          />
+        )}
         <Outlet context={{ poiId: poiId!, modules, refreshModules } satisfies DashboardContext} />
       </main>
       {/* Not while the tour runs. A visiting superadmin sees it too (Seb, 9 Nov 2026). */}
-      {poiId && (memberPoi || visiting) && !showTour && <AdminAssistant poiId={poiId} />}
+      {poiId && (memberPoi || visiting) && !showWelcome && playing === undefined && <AdminAssistant poiId={poiId} />}
+      {howTo && howTo.length > 0 && (showVideos || playing !== undefined) && (
+        <HowToPlayer
+          clips={howTo}
+          startAt={playing}
+          heading={
+            showVideos
+              ? user.firstName
+                ? t('tour.welcomeTitle', { name: user.firstName })
+                : t('tour.welcomeTitleNoName')
+              : undefined
+          }
+          onClose={() => {
+            if (showVideos) dismissTip('tour');
+            setPlaying(undefined);
+          }}
+        />
+      )}
       {showTour && (
         <WelcomeTour firstName={user.firstName} communityName={currentPoi!.name} onDone={() => dismissTip('tour')} />
       )}
