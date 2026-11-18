@@ -194,6 +194,9 @@ export type Translations = {
     resetText: string;
     resetButton: string;
     resetFailed: string;
+    videosTitle: string;
+    videosWatch: string;
+    videosReplay: string;
     tip_homePage: string;
     tip_members: string;
     tip_requests: string;
@@ -1659,6 +1662,9 @@ const en: Translations = {
     resetText: "Show the welcome tour and the tip on each page again.",
     resetButton: "Show the tour and tips again",
     resetFailed: "This didn't work. Please try again.",
+    videosTitle: "How it works",
+    videosWatch: "Watch how",
+    videosReplay: "Watch the how-to videos",
     tip_homePage: "The first screen members see when they open your community. Add texts, photos and badges, and check the result on the phone beside it.",
     tip_members: "Everyone who has joined your community in the app. Search for someone and send them a private message: they get a notification.",
     tip_requests: "What members ask you for from the app: a certificate, an appointment, a registration. Open one to answer, change its status or add a document.",
@@ -3125,6 +3131,9 @@ const es: Translations = {
     resetText: "Vuelve a mostrar el recorrido de bienvenida y el consejo de cada página.",
     resetButton: "Volver a ver el recorrido y los consejos",
     resetFailed: "No ha funcionado. Inténtalo de nuevo.",
+    videosTitle: "Cómo funciona",
+    videosWatch: "Ver cómo",
+    videosReplay: "Ver los vídeos explicativos",
     tip_homePage: "La primera pantalla que ven los miembros al abrir tu comunidad. Añade textos, fotos y distintivos, y comprueba el resultado en el móvil de al lado.",
     tip_members: "Todas las personas que se han unido a tu comunidad en la app. Busca a alguien y envíale un mensaje privado: recibirá una notificación.",
     tip_requests: "Lo que los miembros te piden desde la app: un certificado, una cita, una inscripción. Abre una para responder, cambiar su estado o añadir un documento.",
@@ -4591,6 +4600,9 @@ const fr: Translations = {
     resetText: "Revoir la visite de bienvenue et l'astuce de chaque page.",
     resetButton: "Revoir la visite et les astuces",
     resetFailed: "Cela n'a pas marché. Réessayez.",
+    videosTitle: "Comment ça marche",
+    videosWatch: "Voir comment",
+    videosReplay: "Voir les vidéos explicatives",
     tip_homePage: "Le premier écran que les membres voient en ouvrant votre communauté. Ajoutez textes, photos et badges, et vérifiez le résultat sur le téléphone à côté.",
     tip_members: "Toutes les personnes qui ont rejoint votre communauté dans l'app. Cherchez quelqu'un et envoyez-lui un message privé : il reçoit une notification.",
     tip_requests: "Ce que les membres vous demandent depuis l'app : un certificat, un rendez-vous, une inscription. Ouvrez-en une pour répondre, changer son statut ou ajouter un document.",
@@ -6057,6 +6069,9 @@ const va: Translations = {
     resetText: "Torna a mostrar el recorregut de benvinguda i el consell de cada pàgina.",
     resetButton: "Tornar a veure el recorregut i els consells",
     resetFailed: "No ha funcionat. Torna-ho a provar.",
+    videosTitle: "Com funciona",
+    videosWatch: "Vore com",
+    videosReplay: "Vore els vídeos explicatius",
     tip_homePage: "La primera pantalla que veuen els membres quan obrin la teua comunitat. Afig textos, fotos i distintius, i comprova el resultat en el mòbil del costat.",
     tip_members: "Totes les persones que s'han unit a la teua comunitat en l'aplicació. Busca algú i envia-li un missatge privat: rebrà una notificació.",
     tip_requests: "El que els membres et demanen des de l'aplicació: un certificat, una cita, una inscripció. Obri'n una per a respondre, canviar-ne l'estat o afegir un document.",
@@ -7523,6 +7538,9 @@ const ca: Translations = {
     resetText: "Torna a mostrar el recorregut de benvinguda i el consell de cada pàgina.",
     resetButton: "Tornar a veure el recorregut i els consells",
     resetFailed: "No ha funcionat. Torna-ho a provar.",
+    videosTitle: "Com funciona",
+    videosWatch: "Veure com",
+    videosReplay: "Veure els vídeos explicatius",
     tip_homePage: "La primera pantalla que veuen els membres quan obren la teva comunitat. Afegeix-hi textos, fotos i distintius, i comprova el resultat al mòbil del costat.",
     tip_members: "Totes les persones que s'han unit a la teva comunitat a l'aplicació. Busca algú i envia-li un missatge privat: rebrà una notificació.",
     tip_requests: "El que els membres et demanen des de l'aplicació: un certificat, una cita, una inscripció. Obre'n una per respondre, canviar-ne l'estat o afegir-hi un document.",
@@ -8989,6 +9007,9 @@ const gl: Translations = {
     resetText: "Volve mostrar o percorrido de benvida e o consello de cada páxina.",
     resetButton: "Volver ver o percorrido e os consellos",
     resetFailed: "Non funcionou. Téntao de novo.",
+    videosTitle: "Como funciona",
+    videosWatch: "Ver como",
+    videosReplay: "Ver os vídeos explicativos",
     tip_homePage: "A primeira pantalla que ven os membros ao abrir a túa comunidade. Engade textos, fotos e distintivos, e comproba o resultado no móbil do lado.",
     tip_members: "Todas as persoas que se uniron á túa comunidade na app. Busca a alguén e mándalle unha mensaxe privada: recibirá unha notificación.",
     tip_requests: "O que os membros che piden desde a app: un certificado, unha cita, unha inscrición. Abre unha para responder, cambiar o seu estado ou engadir un documento.",
@@ -10455,6 +10476,9 @@ const pt: Translations = {
     resetText: "Voltar a mostrar a visita de boas-vindas e a dica de cada página.",
     resetButton: "Ver de novo a visita e as dicas",
     resetFailed: "Não funcionou. Tente novamente.",
+    videosTitle: "Como funciona",
+    videosWatch: "Ver como",
+    videosReplay: "Ver os vídeos explicativos",
     tip_homePage: "O primeiro ecrã que os membros veem ao abrir a sua comunidade. Adicione textos, fotos e distintivos, e confira o resultado no telemóvel ao lado.",
     tip_members: "Todas as pessoas que se juntaram à sua comunidade na app. Procure alguém e envie-lhe uma mensagem privada: recebe uma notificação.",
     tip_requests: "O que os membros lhe pedem pela app: um certificado, uma marcação, uma inscrição. Abra um para responder, mudar o estado ou juntar um documento.",

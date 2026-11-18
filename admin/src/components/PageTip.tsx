@@ -23,7 +23,16 @@ export const PAGE_TIPS: Record<string, { tip: TipKey; title: `layout.${keyof Tra
 };
 
 /** A page's tip, above its content until "Got it". */
-export function PageTip({ page, onDismiss }: { page: string; onDismiss: () => void }) {
+export function PageTip({
+  page,
+  onDismiss,
+  watch,
+}: {
+  page: string;
+  onDismiss: () => void;
+  /** The page's how-to clip, when one is recorded in this language. */
+  watch?: { duration: string; onWatch: () => void };
+}) {
   const { t } = useI18n();
   const tip = PAGE_TIPS[page];
   if (!tip) return null;
@@ -35,6 +44,12 @@ export function PageTip({ page, onDismiss }: { page: string; onDismiss: () => vo
       <div className="page-tip-body">
         <p className="page-tip-title">{t(tip.title)}</p>
         <p className="page-tip-text">{t(`tour.${tip.tip}`)}</p>
+        {watch && (
+          <button type="button" className="link-button page-tip-watch" onClick={watch.onWatch}>
+            <span aria-hidden="true">▶ </span>
+            {t('tour.videosWatch')} ({watch.duration})
+          </button>
+        )}
       </div>
       <button type="button" className="page-tip-close" onClick={onDismiss}>
         {t('tour.gotIt')} <span aria-hidden="true">✕</span>
