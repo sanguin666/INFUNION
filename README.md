@@ -1,27 +1,88 @@
 # infunion
 
-Mobile + web app for churches and other points of interest: donations, events, and future modules, with a strong focus on accessibility for a mostly elderly audience.
+**La unión que te hace comunidad.**
+
+infunion is the app for communities: churches and other places of worship, associations, choirs, clubs and cultural centres. Members follow their community in one simple, elegant app (events, news, contributions, requests, messages); the community's team runs everything from a web dashboard; infunion runs the platform from a superadmin section.
+
+| | Address |
+| --- | --- |
+| Landing page | [www.infunion.app](https://www.infunion.app) (Spanish at `/`, then `/en/`, `/fr/`, `/ca/`, `/va/`, `/gl/`, `/pt/`) |
+| Admin dashboard | [admin.infunion.app](https://admin.infunion.app) |
+| Member app (web) | [web.infunion.app](https://web.infunion.app); Android APK from the [`demo-apk` release](https://github.com/sanguin666/INFUNION/releases/tag/demo-apk) |
+| API | [api.infunion.app](https://api.infunion.app), which also serves community websites at `/c/<slug>` |
+| Contact | hello@infunion.app |
+
+## Contents
+
+- [What the product does](#what-the-product-does)
+- [Repo structure](#repo-structure)
+- [Run it locally](#run-it-locally)
+- [Environments and branches](#environments-and-branches)
+- [Phones: the APK and over-the-air updates](#phones-the-apk-and-over-the-air-updates)
+- [Plans and modules](#plans-and-modules)
+- [Contributions and payments](#contributions-and-payments)
+- [Members outside the app](#members-outside-the-app)
+- [AI features](#ai-features)
+- [Languages](#languages)
+- [Design and accessibility](#design-and-accessibility)
+- [Sign-in](#sign-in)
+- [Superadmin](#superadmin)
+- [Who can call what](#who-can-call-what)
+- [Tests and CI](#tests-and-ci)
+- [Going to production](#going-to-production)
+- [Domains and email](#domains-and-email)
+- [Landing page and registration](#landing-page-and-registration)
+
+## What the product does
+
+**Member app** (`app/`, Expo / React Native, Android and web):
+
+- A welcome screen with **Sign up**, **Sign in** and **Continue without an account**. Guests see everything public and can get notifications; requests, messages and monthly contributions need an account.
+- Find a community by scanning its QR code, typing its code, or on the **map** of communities near you (one colour per kind of community).
+- Each community has its own home page (sections, pictures, small badges such as the next celebration or "Open now"), designed by its team, plus a bottom menu of its modules: events and timetable, news, Donate, requests, messages, Our group, livestreams, prayer requests, daily readings and Mass intentions, depending on its plan and kind.
+- Push notifications (news, event reminders, livestreams, replies from the team) from the Essentials plan up.
+- On the Complete plan: automatic translation of posts into the reader's language, and an AI assistant ("Ask") that answers questions from the community's published information.
+- Account, language, light/dark appearance, notification switches, data export and account deletion under **More**.
+
+**Admin dashboard** (`admin/`, React + Vite), for each community's team:
+
+- **Dashboard** (figures, things waiting, account), **Home page** (the community's page in a live phone preview, with versions, badges, bottom menu order, colour, logo, info and location), **Members** (app members, imported list, messages, Write to members), one page per active module, then **Community website**, **QR code to join** and **Plans & modules**.
+- Deleting something shows an Undo bar for 10 seconds; a welcome tour, page tips and short how-to videos explain each page; an "Ask" assistant answers questions about the dashboard.
+- One account can manage several communities (a switcher appears).
+
+**Superadmin** (`admin/src/superadmin/`): Overview, Community requests (registrations to approve), Communities, Accounts, Member questions, Technical health and a Journal of who did what. See [Superadmin](#superadmin).
+
+**Landing page** (`landing/`, static): the advert for communities, with pricing, per-language and per-kind pages (religious communities, associations), registration and the legal pages.
+
+**Community website**: each community can publish a public web page built from its home page, timetable, events, news and map, at `api.infunion.app/c/<slug>` (offline until the team switches it on).
 
 ## Repo structure
 
 ```
-backend/   NestJS API (Node.js + TypeORM + PostgreSQL)
-app/       Expo / React Native app (+ React Native Web) — the congregant-facing app
-admin/     React (Vite) admin dashboard for community staff
-landing/   Static marketing site (no build step) advertising infunion to churches
-docker-compose.yml   Local PostgreSQL for development
+backend/     NestJS API (Node.js, TypeORM, PostgreSQL)
+app/         Expo / React Native member app (Android + web)
+admin/       React (Vite) dashboard for community teams and the superadmin
+admin/walkthrough/  Playwright scripts that record the admin's how-to videos
+landing/     Static marketing site, no build step (pages generated by landing/tools)
+brand/       Logo kit: SVG masters, app icons, email and web assets
+captures/    Mockups and screenshots kept for reference
+.github/workflows/  CI, Demo APK, App update, nightly DB backup, IndexNow
+docker-compose.yml  Local PostgreSQL
+start.bat, start-demo.bat  One-click local launchers (Windows)
 ```
 
-## Base data model
+### Base data model
 
-- `users` — either a member (identified by phone number or email, signing in with a code sent by SMS or email) or a community admin (identified by email + password, used by the admin dashboard); each has a `language` (`en`/`es`/`fr`) for their own UI
-- `pois` — a point of interest a user can join, with a name, `type` (only `church` for now — the name stays generic since other kinds of venues/organizations may be supported later), `language` (the language this POI publishes content in), address, and the QR code token used for onboarding
-- `user_pois` — many-to-many join table: a user can belong to several POIs, with a `role` (`member` or `admin`) per POI — an admin user can manage several churches this way
-- `active_modules` — the product modules subscribed to by a POI (e.g. `donations`, `events`), with subscription status and expiration date
+- `users`: a person. Members sign in with an email or a phone number and a one-time code; community admins and the superadmin with email and password. Each has a `language` for their own interface.
+- `pois`: a community (named `poi` in the code). It has a `type` (`church`, `mosque`, `synagogue`, `other_worship`, `association`, `culture`), the `language` it publishes in, address and map position, a `plan` (`basic`, `essentials`, `complete`) and the QR code token members join with.
+- `user_pois`: membership, with a `role` (`member` or `admin`) per community, so one person can belong to or manage several.
+- `active_modules`: the modules a community has switched on within its plan.
 
-## Local demo (no cost)
+Most modules have their own NestJS folder in `backend/src/` (events, announcements, donations, service-requests, member-messages, community, …).
 
-**Windows:** there are two one-click launchers at the root of the repo.
+## Run it locally
+
+**Windows:** two one-click launchers sit at the root of the repo.
 
 | | `start.bat` | `start-demo.bat` |
 |---|---|---|
@@ -30,26 +91,17 @@ docker-compose.yml   Local PostgreSQL for development
 | Phone needs | the same Wi-Fi as this PC | any internet connection |
 | Starts | Postgres, backend, admin, Expo | Postgres, backend, ngrok tunnel |
 
-`start.bat` also rewrites `EXPO_PUBLIC_API_URL` in `app/.env` to this PC's current network IP every time it runs, so Expo Go always points at the right place. Re-run either file any time for a clean restart — each closes the windows it opened last time. Otherwise, follow the manual steps below.
+`start.bat` also rewrites `EXPO_PUBLIC_API_URL` in `app/.env` to this PC's network IP each time, so Expo Go points at the right place. Re-run either file for a clean restart. Otherwise, follow the steps below (they work the same on macOS and Linux).
 
-### 1. PostgreSQL database
-
-With Docker (recommended):
+### 1. PostgreSQL
 
 ```bash
 docker compose up -d
 ```
 
-This starts a local Postgres on `localhost:5432` (database `infunion`, user `infunion` / password `infunion`).
+This starts Postgres on `localhost:5432` (database `infunion`, user `infunion`, password `infunion`). Without Docker, a local PostgreSQL install works too: create an `infunion` user and database matching `backend/.env.example`.
 
-> **Coming from an older database name?** Postgres only creates the
-> database and role named in `docker-compose.yml` the first time its volume
-> is initialised, so an existing volume still holds the old name and the
-> backend won't be able to connect. Run `docker compose down -v` once, then
-> `docker compose up -d` and re-run the seed below — everything in there is
-> demo data, so nothing real is lost.
-
-> No Docker handy? A local PostgreSQL install (`apt install postgresql`) also works: create an `infunion` user and database matching `backend/.env.example`.
+> **Coming from an older database name?** Postgres only creates the database named in `docker-compose.yml` the first time its volume is set up. Run `docker compose down -v` once, then `docker compose up -d` and seed again (it is all demo data).
 
 ### 2. Backend (NestJS)
 
@@ -58,416 +110,305 @@ cd backend
 cp .env.example .env
 npm install
 npm run start:dev
+npm run seed        # demo communities, safe to re-run
 ```
 
-The API starts on `http://localhost:3000`. In development, tables are created/synced automatically from the entities (`synchronize: true`) — no migration to run for the demo.
+The API starts on `http://localhost:3000`. In development the tables are built from the entities (`synchronize: true`); production uses migrations. Every optional service (Stripe, Brevo email, SMS, AI, file storage) has a local fallback, so a fresh clone runs end to end with no keys: emails and codes are written to the log, and payments use a demo account where no money moves.
 
-Seed two demo POIs (with all modules active and sample content) so the app has something real to show:
+The seed creates two main demo communities, both on an offered Complete plan:
 
-```bash
-npm run seed
-```
+| Community | Join code | Admin login |
+| --- | --- | --- |
+| Nuestra Señora del Carmen (church, L'Eliana) | `DEMO-CARMEN` | `admin@carmen.example` / `demo1234` |
+| Crecer Juntos (association) | `DEMO-CRECER-JUNTOS` | `admin@crecerjuntos.example` / `demo1234` |
 
-Safe to re-run — it only creates what's missing. The default demo is "Nuestra Señora del Carmen" (L'Eliana, Spain, QR token `DEMO-CARMEN`) with a full week of Masses, office hours, giving, requests and Mass intentions. Its admin login:
+It also keeps two older demo communities (St. Mary's Community and Holy Trinity Chapel, admin `admin@stmarys.example` / `demo1234`) and places a few fictional neighbours on the map (`DEMO-MAP-*`).
 
-```
-email:    admin@carmen.example
-password: demo1234
-```
-
-In the app, "sign in" goes straight into the demo member (María García, +34600000001) with no code, as long as the backend has no SMS sender and is not in production. Set `DEMO_LOGIN=off` to get the normal phone login back, or `DEMO_LOGIN=on` to keep the demo sign-in on a production server with no SMS sender, like the Railway demo.
-
-The older demo places are still there ("St. Mary's Community" and "Holy Trinity Chapel"), managed by `admin@stmarys.example` / `demo1234`.
-
-### 3. Mobile app (Expo Go)
+### 3. Member app (Expo)
 
 ```bash
 cd app
 cp .env.example .env
 npm install
-npm run start
+npm run start      # scan the QR code with Expo Go
+npm run web        # or open it in a browser (localhost:8081)
 ```
 
-Scan the QR code shown in the terminal with the **Expo Go** app (Android/iOS) to launch the app on your phone, no app store submission needed.
+On a phone, `EXPO_PUBLIC_API_URL` in `app/.env` must be your computer's LAN IP (e.g. `http://192.168.1.23:3000`), not `localhost`. It is inlined when the bundle is built, so restart with `npx expo start --clear` after changing it.
 
-To test in a browser: `npm run web`.
-
-From the home screen, **"My places"** opens the place you were in last (or the seeded demo POI on a fresh device). **"Scan a place's QR code"** is a real scanner: tap **Use the camera**, point it at a flyer printed from the admin dashboard's **My QR** page, and it opens that place. **Simulate scan** is still there for when there's no flyer to hand, and the code under the QR can always be typed in instead. All three land on the same hub, with real Donations, Events, Announcements, Prayer Requests, and Livestream screens. From Announcements, the **+** button opens a compose screen where you can type a message and/or record a voice message (tap the microphone, speak, tap Stop, then Post) — works in `npm run web` too, with a normal browser microphone permission prompt.
-
-### 4. Admin dashboard (community staff)
+### 4. Admin dashboard
 
 ```bash
 cd admin
 cp .env.example .env
 npm install
-npm run dev
+npm run dev        # http://localhost:5173
 ```
 
-Opens on `http://localhost:5173`. Sign in with the demo admin account above. If the account manages more than one POI (like the demo one), a switcher appears in the sidebar. From there: schedule Events, publish and edit Announcements, schedule Livestreams, moderate Prayer Requests and Community posts/replies (remove anything inappropriate), print a QR flyer from **My QR**, and manage **Settings** — active modules plus the community's own info (description, picture) shown in the app.
+Sign in with a demo admin above. The Home page's phone preview is the app's web version, so keep `npm run start` (or `npm run web`) running in `app/` for it to show (`VITE_APP_PREVIEW_URL`, default `http://localhost:8081`).
 
-Its dependency cache is deliberately kept in the OS temp directory rather than
-in `admin/node_modules/.vite` (see `admin/vite.config.ts`). Inside a synced
-folder — Dropbox, OneDrive, Google Drive — the sync client holds the cache files
-open, Vite's rename of them fails with `EBUSY: resource busy or locked`, and the
-dashboard serves a blank page. Losing that temp cache only costs one
-re-optimisation on the next start.
+The admin keeps Vite's dependency cache in the OS temp directory (see `admin/vite.config.ts`), because sync clients such as Dropbox or OneDrive lock files inside a synced folder and Vite then serves a blank page.
 
-Content that's meant to come from community staff requires this admin login: posting, editing and deleting announcements and livestreams, scheduling events, moderating prayer requests and community posts, and toggling modules. What a congregant can post with an ordinary session (see the phone login below) is a prayer request, a "praying" tap, and community posts and replies. Reading needs no account at all.
+### 5. Landing page
 
-### 5. Access from a physical phone
+Open `landing/index.html` in a browser, or serve the folder (`npx serve landing`). After changing `landing/tools/template.html` or `landing/assets/i18n.js`, run `node landing/tools/build-languages.js` to regenerate every language page, the sitemap and `robots.txt`.
 
-The app needs to reach the backend's API. On the same Wi-Fi network, edit `app/.env` and set `EXPO_PUBLIC_API_URL` to your dev machine's LAN IP (e.g. `http://192.168.1.23:3000`) — a phone can't resolve `localhost` as your computer. See the comments in `app/.env.example` for how to find your IP. `EXPO_PUBLIC_*` is inlined when the bundle is built, so restart Expo (`npx expo start --clear`) after changing it.
+### Tunnelling the dev server (fiddly)
 
-That covers development. For a demo away from your own network, build an APK instead — see below.
+To use live reload on a phone off your network, give the backend (port 3000) and the Expo dev server (port 8081) a tunnel each, and point Expo at its own with `EXPO_PACKAGER_PROXY_URL=https://<tunnel-host>`, then use **Enter URL manually** in Expo Go. Avoid `npx expo start --tunnel` (Expo's shared tunnel often fails) and never put both behind one pooled ngrok URL (requests land on either server at random). For demos, the APK below is simpler.
 
-### Environments
-
-The whole stack runs in three places, and every change goes through them in order:
+## Environments and branches
 
 | | Where | Branch | Database |
 |---|---|---|---|
-| **Development** | this PC, via `start.bat` | `dev` | local PostgreSQL |
+| **Development** | your machine | `dev` (default branch) | local PostgreSQL |
 | **Staging** | Railway, "staging" environment | `staging` | its own, demo data |
-| **Production** | Railway, "production" environment | `production` | its own, demo data for now |
+| **Production** | Railway, "production" environment | `production` | its own |
 
-1. Finished work is merged into `dev` (the default branch). Check out `dev` and run `start.bat` to try it on this PC.
-2. Once it works in development, `staging` is fast-forwarded to `dev`. Railway deploys it to `infunion-api-staging`, `infunion-admin-staging` and `infunion-app-staging` (`.up.railway.app`).
-3. After sign-off on staging, `production` is fast-forwarded to `staging`. Railway deploys it to the INFUNION project's "production" environment: the API at `api.infunion.app`, the app at `web.infunion.app`, the admin at `admin.infunion.app` and the landing at `www.infunion.app`.
+Every change goes through all three, in order:
 
-Nothing skips a step: `staging` only ever receives what is on `dev`, and `production` only what is on `staging`. CI runs on pushes to all three branches and on pull requests.
+1. Finished work is merged into `dev` through a pull request.
+2. It is then promoted to `staging`, and after that to `production`, each through its own pull request. Staging and production carry promoted commits, so a promotion is usually a `promote/<date>-<topic>` branch made from the target branch with the change cherry-picked onto it. That way one piece of work can go live without carrying everything else on `dev`.
+3. Railway redeploys each environment on every push to its branch (services `infunion-api`, `infunion-admin`, `infunion-app`, `infunion-landing`, plus their `-staging` twins).
 
-### 6. Demo APK (Android, no laptop needed)
+> GitHub deletes a pull request's head branch after merging. Never open a pull request whose head is `dev`, `staging` or `production`, and check after each promotion that all three still exist.
 
-For showing the app to someone off your network, a standalone build beats Expo Go: the JavaScript ships inside the APK, so there's no Metro dev server, no QR code and no Expo Go login involved. The only thing that still has to be reachable is the backend.
+CI runs on pushes to all three branches and on every pull request.
 
-1. The APK talks to the backend hosted on [Railway](https://railway.com) (EU West), at `https://api.infunion.app` (a custom domain on the `infunion-api` service; DNS at IONOS, see "Domains" below). That URL is in the `env` blocks in `app/eas.json`, and in the over-the-air update address in `app/app.json`, which are baked into the build, so the host can change later without a new APK. The service's own address, `https://infunion-api.up.railway.app`, keeps working for older APKs. Railway redeploys it on every push to `production`, so this PC doesn't need to be on. See "Environments" below.
+### Railway services
 
-   The Railway service builds from the `backend/` folder (Root Directory `/backend`), with build command `npm run build`, pre-deploy command `npx typeorm migration:run -d dist/data-source.js && node dist/seed.js`, start command `npm run start:prod`, a PostgreSQL database in the same project, and a volume mounted at `/data` for uploads. Its variables are `NODE_ENV=production`, `DEMO_LOGIN=on`, `JWT_SECRET`, `DB_HOST`/`DB_PORT`/`DB_USERNAME`/`DB_PASSWORD`/`DB_NAME` taken from the database's `PGHOST`/`PGPORT`/`PGUSER`/`PGPASSWORD`/`PGDATABASE`, `UPLOADS_DIR=/data/uploads` and `PRIVATE_UPLOADS_DIR=/data/private`.
+- **infunion-api**: Root Directory `/backend`, build `npm run build`, pre-deploy `npx typeorm migration:run -d dist/data-source.js && node dist/seed.js`, start `npm run start:prod`, health check `/health`. Files in a Cloudflare R2 bucket (see [Running as several copies](#running-as-several-copies)). Its variables are documented in `backend/.env.example`.
+- **infunion-admin**: Root Directory `/admin`, Railway serves the Vite build. `VITE_API_URL`, `VITE_APP_PREVIEW_URL`, `VITE_DONATION_CURRENCY` are read at build time.
+- **infunion-app**: Root Directory `/app`, `npm run build` runs `expo export --platform web`. `EXPO_PUBLIC_API_URL`.
+- **infunion-landing**: Root Directory `/landing`, served as it is.
 
-   The admin dashboard is a second Railway service in the same project, at `https://infunion-admin.up.railway.app`: Root Directory `/admin`, no build or start command (Railway serves the Vite build itself), and the variables `VITE_API_URL=https://api.infunion.app` and `VITE_DONATION_CURRENCY=EUR`, which are read at build time. The backend's `CORS_ORIGINS` lists the admin's address and `http://localhost:5173`.
+## Phones: the APK and over-the-air updates
 
-   The app's web version, which the admin's phone preview shows, is a third Railway service at `https://infunion-app.up.railway.app`: Root Directory `/app`, no build or start command (`npm run build` runs `expo export --platform web`, and Railway serves the result), and `EXPO_PUBLIC_API_URL=https://api.infunion.app`. The admin's `VITE_APP_PREVIEW_URL` points at it, and the backend's `CORS_ORIGINS` lists it too.
+The Android app is built for free by GitHub: **Actions › Demo APK › Run workflow** (on `production`, about 15–20 minutes). The APK lands on the [`demo-apk` release](https://github.com/sanguin666/INFUNION/releases/tag/demo-apk) as `infunion.apk`; open that page on the phone to install it. It talks to `https://api.infunion.app` (set in `app/eas.json`). The workflow needs the repository secret `EXPO_TOKEN` (expo.dev › Access tokens); the Expo project is `@sanguin666/infunion`, and push notifications go through Firebase project `infunion`.
 
-2. To demo against this PC instead, `start-demo.bat` still exposes the local backend through ngrok. Put its `NGROK_DOMAIN` URL back in `app/eas.json` and rebuild.
-3. Build and install:
+- **Screens and logic** reach phones over the air, with no new APK. When app code lands on `staging` or `production`, the **App update** workflow (`app/scripts/publish-update.mjs`) uploads the new JavaScript to that environment's API (`backend/src/app-updates`). The app checks when it opens and when it comes back to the front, and offers a Restart.
+- **Native changes** (a new native package, a permission, the icon, `app.json` or `eas.json`) need a new APK. Each build has a *runtime version*, a fingerprint of its native side, and an update is only offered to an APK with the same one. A phone on an older APK is offered the new APK instead.
+- Both need `APP_UPDATES_TOKEN`, set on the Railway APIs and as a GitHub secret.
 
-   ```bash
-   cd app
-   npm install --global eas-cli
-   eas login
-   eas init          # adds your Expo project id to app.json
-   eas build --profile preview --platform android
-   ```
+EAS cloud builds (`eas build --profile preview --platform android`) still work too, but use the free GitHub build by default. iOS needs a paid Apple Developer account, so it is not built yet.
 
-   EAS returns a download link when the build finishes. Open it on the phone to install the APK.
+## Plans and modules
 
-   **If the build fails on a git check** — either "git command not found", or the self-contradicting "git found, but `git --help` exited with status undefined" — build with version control disabled instead:
+infunion sells whole plans, never single modules. A year costs ten months. Each paid plan can be tried free for one month, once per community (and once per tax ID). infunion can also offer a plan for free from the superadmin.
 
-   ```powershell
-   $env:EAS_NO_VCS=1
-   eas build --profile preview --platform android
-   ```
+| Plan | Price | Adds |
+| --- | --- | --- |
+| **Basic** | free | Events (with the weekly timetable), Donate |
+| **Essentials** | 39 € / month or 390 € / year | Push notifications, News (announcements), Requests & appointments, Messages, emails to members beyond invitations |
+| **Complete** | 59 € / month or 590 € / year | Our group (discussion), Livestreams, Prayer requests, Daily readings, Mass intentions, automatic translation, AI assistant |
 
-   EAS only uses git to read the branch name and commit hash for build metadata. With `EAS_NO_VCS=1` it still respects `.gitignore`, so `node_modules` stays out of the upload and the resulting APK is the same.
+Rules in `backend/src/active-modules/billing-rules.ts`. Some modules only fit some kinds of community (`module-places.ts`): Mass intentions for churches, prayer requests and daily readings for places of worship. They are hidden elsewhere, never deleted.
 
-   **Free alternative when the Expo build allowance is used up:** GitHub builds the same APK on its own machines. On github.com, open the repo's **Actions** tab, pick **Demo APK**, press **Run workflow** (keep `production`), and wait for the green tick (about 15–20 minutes). The APK is then at [releases/tag/demo-apk](https://github.com/sanguin666/INFUNION/releases/tag/demo-apk): open that page on the phone and tap `infunion.apk`. It is signed with the same key as the EAS builds, so it installs over the existing app. One-time setup: create a token at expo.dev > Account settings > Access tokens, then add it on GitHub under Settings > Secrets and variables > Actions > New repository secret, named `EXPO_TOKEN`. The workflow is `.github/workflows/demo-apk.yml`.
+| Module | Code | What it does |
+| --- | --- | --- |
+| Events | `events` | One-off and weekly events with kinds (celebration, prayer, opening hours…), a timetable in the app, reminders with a bell |
+| Donate | `donations` | Contributions by card, Apple Pay, Google Pay or Bizum; projects with a goal; monthly contributions; tax receipts. See below |
+| News | `announcements` | Posts from the team, optionally as a voice message, with a push to members |
+| Requests | `service-requests` | A member asks for a baptism, a certificate, a meeting…, then follows status, appointment, documents and a conversation with the team. Documents are private and open through short-lived signed links |
+| Messages | `member-messages` | The team writes to one member, who gets a notification and can answer |
+| Our group | `community` | A discussion board with replies, moderated by the team |
+| Livestreams | `livestreams` | Links to services streamed elsewhere, with a "live now" push |
+| Prayer requests | `prayer-requests` | Requests with a "praying" counter |
+| Daily readings | `daily-readings` | The day's texts, with a daily push |
+| Mass intentions | `mass-intentions` | A Mass said for someone, with the community's offering, and a printable register |
 
-On the day, just open the app on the phone. Nothing to start, scan or type.
+Also on every community: the home page and its badges (`poi-page`, `poi-badges`), up to five saved versions of the home page (`home-versions`), the map of communities (`places-map`), the community website (`community-site`), and closing a community's account with a 30-day grace period and a full data export (`place-closure`).
 
-Re-run the build only when the native side changes (see below). Backend changes need nothing rebuilt, as long as the backend URL stays the same.
+## Contributions and payments
 
-#### Keeping phones up to date
+**infunion never receives a community's money.** Every payment goes straight to the community's own account; infunion's share is taken as a fee on the way (`DONATION_FEE_PERCENT`, 1 % by default). The admin never shows that fee in detail.
 
-- **Screens and logic** reach phones over the air, with no new APK. When app code lands on `production` (or `staging`), the **App update** workflow (`.github/workflows/app-update.yml`, running `app/scripts/publish-update.mjs`) uploads the new JS to that environment's backend (`backend/src/app-updates`, files under `APP_UPDATES_DIR`, by default `PRIVATE_UPLOADS_DIR/app-updates`). The app checks when it opens and when it comes back to the front, downloads it, and shows "A new version of infunion is ready" with a Restart button; otherwise it switches on the next launch. It can also be run by hand from the Actions tab.
-- **Native changes** (a new native package, a permission, the icon, `app.json`/`eas.json`) need a new APK. Every build has a *runtime version*, a fingerprint of its native side, and an update is only ever offered to the APK with the same one, so new JS can never land on an APK that can't run it. The Demo APK workflow writes that fingerprint to `version.json` on the `demo-apk` release; a phone on another one shows "A new version of the app is available" with a Download button that fetches the APK.
-- One-time setup: pick a long random string and set it as `APP_UPDATES_TOKEN` on the Railway backends (production and staging) and as the repository secret `APP_UPDATES_TOKEN` on GitHub. Without it the workflow skips with a warning.
+### Card, Apple Pay and Google Pay (Stripe)
 
-> **iOS:** the same flow needs a paid Apple Developer account to install on a physical device, so this route is Android-only for now.
+- Payments use **Stripe Checkout**, Stripe's own hosted page, so no card details touch our code. It shows Apple Pay and Google Pay where the phone supports them.
+- Each community links its **own Stripe account** (Stripe Connect, a Standard account it owns) from the admin's Donate page. Every payment is a *direct charge* on that account, and infunion's share is an *application fee*.
+- Until that account can take payments and pay out, Donate is greyed out in the admin under a "set up your payment account" banner, the app hides it, and a card payment is refused with `409 payments_not_set_up`. A Bizum number (below) opens Donate on its own.
+- How a contribution moves: `POST /pois/:poiId/donations/checkout` creates it as `pending` and returns Stripe's URL; the payer pays and lands on a "go back to the app" page; the app polls `GET /pois/:poiId/donations/:donationId/status`; `POST /stripe/webhook` confirms it from Stripe's side. Only `completed` contributions ever count in totals.
+- Without `STRIPE_SECRET_KEY`, everything runs in demo mode: setting up links a demo account and a contribution completes at once with no payment. With a test key (`sk_test_…`), pay with card `4242 4242 4242 4242`.
+- To go live: turn on **Connect** in the Stripe dashboard, add a webhook endpoint for connected accounts pointing at `/stripe/webhook` (`account.updated`, `checkout.session.completed`, `checkout.session.expired`, `invoice.paid`, `invoice.payment_failed`, `invoice.upcoming`), and set `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` and `STRIPE_CONNECT_WEBHOOK_SECRET`. PayPal is switched on in Stripe's own payment method settings.
 
-### Tunnelling the dev server instead (fiddly)
+### Bizum
 
-If you really need live reload on a phone off your network, note that `ngrok http 3000` exposes only the **backend**. The QR code comes from the Expo dev server, a separate process on port 8081, which needs its own tunnel. Two things to know:
+A community can give its Bizum number (admin › Donate › Payment methods). The member gets the number, the amount and a code to write as the concept (`INF 1234`), sends the Bizum from their bank app and says it is sent. The team then marks it received or not received; a count beside Donate in the admin shows what waits, and the member sees "Waiting for confirmation" in the app. Only a received Bizum counts. A Bizum number alone is enough to open Donate.
 
-- `npx expo start --tunnel` routes through a shared ngrok account run by Expo that carries no uptime guarantee and frequently fails. Prefer your own tunnel and point Expo at it with `EXPO_PACKAGER_PROXY_URL=https://<tunnel-host>`, then use **Enter URL manually** in Expo Go.
-- Don't put both services behind one ngrok URL with `--pooling-enabled`. Pooled endpoints are load balanced per request, so calls land on whichever of the two servers ngrok picks and the app breaks intermittently. Give each service its own hostname, using a second provider if needed (`cloudflared tunnel --url http://localhost:8081`).
+### Payment links
 
-## Scanning a place's QR code
+Admin › Donate › Payment links: named links a community shares or prints as a QR poster, paid on the web with no app and no account (`/m/pay/<code>`). A link can have a fixed amount or let the payer choose, belong to a project, ask for a name or not, carry a message to payers and end on a given day. Each community has its own always-on link; the admin shows what each link has collected.
 
-The flyer encodes a link to the landing site (`https://<landing>/?token=<qrCodeToken>#join`), not the bare token, so that someone scanning it with their phone's own camera app lands on a page explaining what infunion is. The in-app scanner (`app/src/screens/ScanQRScreen.tsx`) pulls the token back out of that link — see `app/src/qr.ts`, which also accepts a bare token and rejects QR codes that aren't ours rather than sending them to the backend as a lookup.
+### Projects, monthly contributions and tax receipts
 
-Scanning uses `expo-camera`'s `CameraView` with `barcodeScannerEnabled` set in `app.json`. Permission is asked for on the screen itself, by a button, rather than on app start — an audience that mostly doesn't trust permission prompts should see what it's for first. A refused permission is not a dead end: typing the code printed under the QR does the same job, and that path is on the screen whether or not the camera works.
+Projects with a goal and progress, monthly contributions (signed-in members only, so they can stop them from the app), and tax receipts: a receipt per contribution or per year, a CSV for the treasurer and the Spanish modelo 182 file. The community's legal details and tax deduction rules are set on the Donate page.
 
-## Accessibility (app)
+## Members outside the app
 
-The accessibility foundations live in `app/src/theme` and `app/src/components`:
+A community can bring in the members it already has, even those who never install the app:
 
-- `theme.ts` — high-contrast palette and a deliberately large text size scale
-- `AccessibleText` — never disables the system text scaling (`allowFontScaling`)
-- `AccessibleButton` — large touch target (≥64px), large text, no complex gestures
-- `Screen` — layout with generous margins and safe area (notch/system bars) support
+- **Import** (admin › Members › Import): a spreadsheet is read in the browser, columns are matched, and the server checks each row (merges the same person, cleans emails and Spanish phone numbers, reports problems) before the team confirms that these people are its members and gave their details.
+- **Write to members** (admin › Members › Write to members): an invitation to join, a contribution request with a payment button, or a free message, by email through Brevo, to everyone, people not in the app yet, a group or chosen people. `{name}` becomes each person's first name. Invitations are on every plan; other messages from Essentials. Each plan has a monthly email allowance. The history shows sent, clicked, joined and contributed.
+- **Opting out**: every email carries "I don't want to receive these emails" (and the one-click `List-Unsubscribe` header). It stops that community's emails, the team sees a "No emails" badge, and the person can change their mind on the same page.
+- A WhatsApp invitation can also be sent from the team's own phone.
 
-Every new screen should reuse these components instead of raw `Text`/`Pressable`.
+Code: `backend/src/contacts/`.
 
-`app/src/theme/poiThemes.ts` layers a per-POI-`type` accent color and wording on top of that base theme (e.g. for the hub screen's hero banner) — it only ever changes brand color/imagery, never text size, contrast, or touch target sizing, which stay fixed regardless of POI type.
+## AI features
 
-## Product modules
+All three use Claude Haiku through `ANTHROPIC_API_KEY` on the API, and say clearly that their text is written by AI.
 
-Each POI activates modules à la carte (`active_modules`). Currently built:
+- **Automatic translation** (Complete plan): "Translate" under posts, comments, prayer requests and news, or "Translate automatically" in More › Language. Each text is translated once per language and stored (`backend/src/translations/`).
+- **Member assistant** (Complete plan): the "Ask" button in the app answers from the community's published information only (home page, timetable, events, news), never from member data, with up to 20 questions per member a day. Questions are kept anonymised and grouped by topic for the superadmin's Member questions page. `ASSISTANT=off` hides it.
+- **Admin assistant** (every plan): the "Ask" button in the dashboard answers questions about using the admin, from a built-in guide and the community's plan. `ADMIN_ASSISTANT=off` hides it.
 
-- **Donations** — in-app donations through Stripe Checkout (see [Donations & Stripe](#donations--stripe) below); without a Stripe key the screen falls back to a demo confirmation that records the gift without taking a payment
-- **Events** — Masses, baptisms, weddings, funerals, communions, etc. (`backend/src/events`); scheduling/editing is admin-only, the app only reads them (a reminder toggle per event is a local, device-only preference — there's no account yet to attach it to)
-- **Announcements** — bulletin/newsletter-style posts (`src/announcements`), optionally recorded as a voice message instead of typed; admin-only throughout, since an announcement is the community speaking to its members. The app's compose screen and its voice recording are there for a signed-in admin; everyone else sees the list without a **+** button
-- **Prayer Requests** — community prayer requests with a "praying" counter (`src/prayer-requests`); posting and the counter need a signed-in congregant, moderation (removal) is admin-only from the dashboard
-- **Livestream** — links out to livestreamed/recorded services on an external platform (`src/livestreams`); scheduling/editing is admin-only
-- **Community** — a discussion board: posts with flat (non-nested) comment replies (`src/community`); posting and replying need a signed-in congregant, moderation is admin-only from the dashboard
-- **Celebration times** — part of Events: an event has a kind (Mass, confession, adoration, prayer, office hours, other) and can repeat every week, with an optional end time and last date. The app works out each week's occurrences on the phone (`app/src/utils/schedule.ts`), shows a timetable at the top of the events screen and a short "next Mass" block on the place's home page (`celebration_times` page block)
-- **Requests** — a member asks the office for a baptism, a wedding, a funeral, a certificate, a meeting… (`src/service-requests`), then follows it in the app: status, appointment, the documents the office asks for (sent as photos or PDFs) and a conversation with the office. Files go to `uploads-private/` (`PRIVATE_UPLOADS_DIR`), never served as-is: they open through short-lived signed links (`common/signed-url`). Needs a signed-in member; the dashboard side is admin-only
-- **Mass intentions** — a member asks for a Mass to be said for someone, for one of the coming Masses or "whenever the community can", paying the community's offering through the same Stripe flow as a gift (`src/mass-intentions`). The dashboard keeps the register grouped by celebration, printable for the celebrant, and takes intentions given at the office
-
-Every place's home page opens with small tiles, its **badges** (`src/poi-badges`, `pois/:poiId/badges`): next Mass, office open or closed, next confessions and a campaign's progress, all worked out on the phone (`app/src/utils/badges.ts`), plus short messages the office writes (40 characters, an important one in orange, an optional last day and a module a tap opens). The dashboard's Home page adds as many as the place wants, switches them on and off and sets their order; a place that never touched them shows the next Mass and the office hours.
-
-The dashboard's Home page shows the place's home page in a phone beside the editor, updated as you type, before anything is saved (unsaved badges and sections are outlined in dashes). The phone is the real app: its web version, opened with `?preview=<poi id>` (`app/src/preview/`), which the dashboard feeds its editor's content through `postMessage`. It loads from `VITE_APP_PREVIEW_URL` (default `http://localhost:8081`, where `npm run start` in `app/` serves the web version), so the app has to be running for the preview to show.
-
-Donations also gained campaigns with a goal (`pois/:poiId/campaigns`), the Sunday collection as a purpose, monthly gifts (Stripe subscriptions, signed-in givers only, stoppable from the app) and yearly tax receipts: a printable receipt per giver and a CSV export for the treasurer (in Spain, the starting point of the modelo 182). The community's legal details for the receipts are set on the dashboard's Donations page.
-
-More modules can be added following the same pattern (an entry in `ModuleType`, its own tables, its own NestJS module).
-
-## Donations & Stripe
-
-The donate screen sends people to **Stripe Checkout** — Stripe's own hosted
-payment page, opened in the phone's browser — rather than collecting card
-details in the app. Nothing sensitive touches our code, and it works in Expo
-Go, in the APK and on the web target alike.
-
-Stripe is optional. With no `STRIPE_SECRET_KEY` in `backend/.env` the donate
-screen says "Demo mode · No payment will be taken" and records the gift
-anyway, so a fresh clone still demos end to end and the admin dashboard's
-graph has data.
-
-To take real (test) payments:
-
-1. Create a Stripe account and copy the **test** secret key (`sk_test_…`) from
-   the dashboard — test mode costs nothing and needs no account activation.
-2. Put it in `backend/.env` as `STRIPE_SECRET_KEY`, and restart the backend
-   (the key is read at startup).
-3. Donate from the app and pay with a [Stripe test card](https://docs.stripe.com/testing):
-   `4242 4242 4242 4242`, any future expiry, any CVC.
-
-Amounts are charged in `DONATION_CURRENCY` (`eur` by default); the admin
-dashboard formats its figures with `VITE_DONATION_CURRENCY`, which has to
-match.
-
-How a gift moves through the system:
-
-- `POST /pois/:poiId/donations/checkout` creates the `donations` row as
-  `pending` and returns Stripe's checkout URL (or `mode: 'demo'`).
-- The payer finishes on Stripe and lands on `/donations/return`, a plain page
-  telling them to go back to the app — Stripe only redirects to http(s) URLs,
-  so it can't reopen the app itself.
-- The app polls `GET /pois/:poiId/donations/:donationId/status`, which
-  re-checks the session with Stripe, and shows the thank-you screen once the
-  payment lands.
-- Only `completed` gifts count towards the admin dashboard's totals, so an
-  abandoned checkout never inflates a community's figures.
-- `POST /stripe/webhook` does the same job from Stripe's side. It needs a
-  publicly reachable backend and `STRIPE_WEBHOOK_SECRET`, so the local demo
-  doesn't use it — polling covers that case.
-
-Going live later means swapping the test key for a live one; Stripe's fee in
-Spain is 1.5% + &euro;0.25 per European card.
-
-### Money goes straight to each community (Stripe Connect)
-
-infunion never holds a community's money (Seb, 9 Nov 2026). Each community
-links its **own Stripe account** (a Standard account it owns) from the
-admin's Contributions page; every payment is a *direct charge* on that
-account, so the community receives it minus Stripe's fees, and infunion's
-share (`DONATION_FEE_PERCENT`, 1 % by default) is taken by Stripe as an
-*application fee* and sent to infunion's account.
-
-- Until the account can take payments and pay out (`charges_enabled` and
-  `payouts_enabled`), Contributions is greyed out in the admin under a large
-  "set up your payment account" banner, the app does not show it
-  (`GET /pois/:poiId/active-modules` leaves it out; the admin asks with
-  `?all=1`), a gift is refused with `409 payments_not_set_up`, and Mass
-  intentions are asked with no offering.
-- `GET /pois/:poiId/payouts-account` gives the state; `POST
-  /pois/:poiId/payouts-account/onboarding` creates the account if needed and
-  returns Stripe's hosted sign-up link (back to `ADMIN_URL`).
-- Without `STRIPE_SECRET_KEY`, setting up links a **demo** account instead
-  (no money moves). Existing communities were given the demo account by the
-  `CommunityPayouts` migration; it stops counting once a real key is set.
-
-To switch it on: in the Stripe dashboard turn on **Connect** (platform),
-then add a webhook endpoint for **connected accounts** pointing at
-`/stripe/webhook` with `account.updated`, `checkout.session.completed`,
-`checkout.session.expired`, `invoice.paid`, `invoice.payment_failed` and
-`invoice.upcoming`, and put its signing secret in
-`STRIPE_CONNECT_WEBHOOK_SECRET`.
+Without a key the assistants are switched off and translation is unavailable; the rest of the app is unaffected.
 
 ## Languages
 
-The app and admin dashboard UI (menus, buttons, labels, error messages — everything that isn't content posted by a POI) is available in English, Spanish, and French.
+The app, the admin, the landing page and every email are in **English, Spanish, French, Catalan, Valencian, Galician and Portuguese** (`en`, `es`, `fr`, `ca`, `va`, `gl`, `pt`).
 
-- **POI language** (`pois.language`) — the language a POI's own staff publish content in (announcements, prayer requests, community posts, livestream titles, etc.). Set from the admin dashboard's Settings page ("Content language" card); it's metadata only for now — posted content is stored and shown exactly as written, in that language, to every reader regardless of their own UI language.
-- **User language** (`users.language`) — each person's own UI language preference. In the app, a language pill switcher on the home screen sets it (device-local, via AsyncStorage, since there's no real congregant account/session yet). In the admin dashboard, it's set from the login screen or the sidebar switcher, stored locally, and synced to the signed-in admin's account (`PATCH /auth/me/language`) so it follows them across devices/browsers.
-- **Not built yet:** automatic translation of POI-authored content into each reader's own language. The `language` fields above lay the groundwork for this (an AI translation service could use the POI's source language and the reader's target language) but for now a POI's posts are shown as-is, in the POI's language, to everyone.
+- **Community language** (`pois.language`): the language its team publishes in.
+- **Personal language** (`users.language`): each person's interface language, chosen in the app's More › Language or the admin's language menu, and synced to their account.
+- Content is shown as the team wrote it; on the Complete plan, readers can translate it (see [AI features](#ai-features)).
 
-## Admin auth
+Wording rules for every new string: say *community* (never place or parish), *members*, *the team* (never the office), *Our group* for the discussion module, *contribution* for money given (the menu is *Donate*; tax receipts keep *donation*).
 
-The admin dashboard (`admin/`) uses a real email + password login (`POST /auth/login`, JWT), separate from the congregant app's phone login below. A `PoiAdminGuard` (`backend/src/auth/guards`) checks the caller has an `admin` `user_pois` row for the `:poiId` in the URL before allowing an admin-only action — see `backend/src/auth` for the guard and `backend/src/user-pois/user-pois.service.ts` for the membership lookups it uses.
+## Design and accessibility
 
-### Forgot password
+- The app's base components live in `app/src/components` and `app/src/theme`: `AccessibleText` keeps the system text size, `AccessibleButton` has a large touch target, `Screen` handles margins and safe areas. New screens reuse them.
+- Light and dark appearance in the app and the admin.
+- Each kind of community has its own accent colour and symbol (`app/src/theme/placeKinds.ts`, `admin/src/placeKinds.ts`; keep them in step); a community can pick its own colour and logo.
+- Brand colours, type and logo files are in [`brand/`](brand/README.md).
 
-The login page has a "Forgot your password?" link, for community admins and the superadmin alike. `POST /auth/password/forgot {email, language}` emails a link (Brevo, through `EmailSender`) to `<ADMIN_URL>/reset-password?token=…`; it answers the same whether or not the address has an account, and sends at most 3 links an hour per address. The token is signed with a key made from `JWT_SECRET` and the account's current password hash, so it is never a sign-in token, works once and expires after an hour. `GET /auth/password/reset?token=` checks it, `POST /auth/password/reset {token, password}` sets the new password (8+ characters, 12+ for the superadmin) and clears the login lockout. The superadmin still types the authenticator code afterwards. Without `BREVO_API_KEY` the link is written to the backend log.
+## Sign-in
+
+### Members (email or phone + code)
+
+One field, "Email or phone number"; the backend tells them apart by the `@`.
+
+- `POST /auth/code/request` `{ login, language? }` sends a 6-digit code by email or SMS, valid 10 minutes (one a minute, five an hour, five wrong guesses before it is burnt; only a hash is stored).
+- `POST /auth/code/verify` `{ login, code }` returns `{ accessToken }` (a 7-day JWT). A new email or number gets an account there and then.
+- Emails go through Brevo when `BREVO_API_KEY` is set (`EMAIL_FROM`, `EMAIL_FROM_NAME`); SMS too with `SMS_PROVIDER=brevo`. Without them the message is logged and the code comes back as `devCode` (never when `NODE_ENV=production`).
+- The older `/auth/phone/*` routes stay for old APKs. `DEMO_LOGIN=on` keeps the demo member sign-in on a production server; set it to `off` before real communities use it.
+- Joining a church asks for a separate consent for religious data; the app asks everyone to accept the terms (`CONSENT_VERSION` in `backend/src/privacy/consent.ts`, bump it when the terms change).
+- Members can export their data and delete their account from the app.
+
+### Community admins
+
+Email and password (`POST /auth/login`, JWT). `PoiAdminGuard` checks the caller has an `admin` membership for the `:poiId` in the URL. Five wrong passwords lock the address for 15 minutes.
+
+**Forgot password**: the login page's link calls `POST /auth/password/forgot`, which emails a one-hour, single-use link to `<ADMIN_URL>/reset-password?token=…` (at most 3 an hour per address; same answer whether or not the address has an account). The token is signed with a key derived from `JWT_SECRET` and the current password hash, so it can never be used to sign in.
 
 ## Superadmin
 
-infunion's own section of the admin (Seb, 17 Oct 2026): the whole app's figures (revenue of the month, members, donations), every community (create, edit, admins, modules, offering a module, suspending, deleting), every account, server health and a Journal of who did what.
+infunion's own section of the admin: revenue and figures, community requests, every community (create, edit, admins, plans, offering a plan, linking one admin to several communities, closing), every account, member questions to the assistant, technical health and a Journal (`audit_log`).
 
 How it is locked:
 
-- **One account, named by the server.** `SUPERADMIN_EMAIL` on the backend is the superadmin. On every boot `SuperadminBootstrap` flags that account and unflags any other; nothing in the API can set the flag, and every check also compares the email to the variable, so the database alone can't make someone superadmin.
-- **First sign-in.** If the account doesn't exist, it is created with `SUPERADMIN_INITIAL_PASSWORD` (12 characters or more). Remove that variable once signed in and the password changed (Santé technique shows a warning while it is set).
-- **Password, then a six-digit code.** After the ordinary sign-in, the admin asks for a code from an authenticator app (Google Authenticator, 1Password...). Setting up the app asks for the password again. The code buys a separate superadmin token (`aud: infunion-superadmin`) good for one hour, kept in the browser tab's session storage only. Ordinary tokens never pass `SuperadminGuard`. Each code works once.
-- **Code switched off.** `SUPERADMIN_2FA=off` (Seb, 3 Nov 2026) skips the code: the password sign-in alone opens the section, still with a one-hour superadmin token. Remove the variable to bring the code back (Technical health shows a warning while it is off).
-- **Lost phone.** Set `SUPERADMIN_RESET_2FA=yes`, restart, set the app up again, then remove the variable.
-- **Guessing.** Five wrong passwords on an admin address, or five wrong superadmin codes, lock it for 15 minutes.
-- **Seeing a community's admin.** `PoiAdminGuard` lets the superadmin in only with a superadmin token, and every change made that way goes in the Journal (`audit_log`), as do admin sign-ins, failed ones included.
-- The authenticator secret is stored encrypted (AES-256-GCM, key from `SUPERADMIN_SECRET_KEY` or else `JWT_SECRET`). Superadmin answers carry `Cache-Control: no-store`.
+- **One account, named by the server.** `SUPERADMIN_EMAIL` is the superadmin; on every boot the flag is set on that account and removed from any other. Nothing in the API can set it, and every check also compares the email to the variable.
+- **First sign-in.** If the account doesn't exist it is created with `SUPERADMIN_INITIAL_PASSWORD` (12+ characters). Remove that variable afterwards; Technical health warns while it is set.
+- **Password, then a six-digit code** from an authenticator app, which buys a separate one-hour superadmin token kept in the tab's session storage. Ordinary tokens never pass `SuperadminGuard`. `SUPERADMIN_2FA=off` skips the code (Technical health warns); `SUPERADMIN_RESET_2FA=yes` resets a lost authenticator.
+- **Inside a community's admin**, the superadmin needs a superadmin token, and every change is written to the Journal, as are admin sign-ins.
+- The authenticator secret is encrypted (AES-256-GCM, key from `SUPERADMIN_SECRET_KEY` or `JWT_SECRET`). Superadmin answers carry `Cache-Control: no-store`.
 
 ## Who can call what
 
-Every write route is behind something now. The rules, in one place:
-
 | Route | Who |
 | --- | --- |
-| `GET` on places, events, announcements, prayer requests, community, livestreams, page blocks | anyone |
-| `POST` a prayer request, a "praying" tap, a community post or reply | any signed-in congregant |
-| `POST` an announcement | an admin of that place — an announcement is the community speaking |
-| creating a community (`POST /superadmin/pois`) and everything else under `/superadmin` | the superadmin only, with a superadmin token (see below) |
-| `PATCH`/`DELETE` a place, its modules, its settings, its page, and all moderation | an admin of *that* place (`PoiAdminGuard`) |
-| anything under `/users/:id` or `/users/:userId/pois` | that user, and only that user (`SelfGuard`) |
-| `POST` a donation, and the Stripe webhook | anyone (a gift doesn't need an account; the webhook verifies Stripe's signature) |
-| a monthly gift, and the member's own monthly gifts and receipts | a signed-in member, for their own only |
-| `POST` a request, and reading, answering, cancelling or sending documents for it | the signed-in member who made it (anyone else gets a 404) |
-| the office's side of requests, the intentions register, campaigns and receipt exports | an admin of that place |
-| `POST` a Mass intention | anyone (signed in or not) |
-| `GET /private-files/…`, `GET /receipts/…` | whoever holds a signed link, until it expires (about an hour) |
+| `GET` on communities, events, news, prayer requests, Our group, livestreams, home pages, the map | anyone |
+| post a prayer request, a "praying" tap, a post or reply in Our group | a signed-in member |
+| a contribution (`checkout`, `bizum`), a Mass intention | anyone, signed in or not |
+| a monthly contribution, one's own contributions and receipts | a signed-in member, for their own only |
+| a request and everything about it, one's own messages | the member it belongs to (anyone else gets a 404) |
+| everything a community's team does: news, events, members, imports, Write to members, payment links, payment account, moderation, home page, website, plan | an admin of *that* community (`PoiAdminGuard`) |
+| `/users/:id…` | that user only (`SelfGuard`) |
+| everything under `/superadmin`, creating a community | the superadmin, with a superadmin token |
+| `/m/…` pages (email buttons, payment links, opt-out) | whoever holds the link; each link names one person or one payment link |
+| `GET /private-files/…`, `/receipts/…`, data exports | whoever holds a signed link, until it expires |
+| `POST /stripe/webhook` | Stripe only (its signature is verified; anything unsigned is refused) |
 
-Three things changed shape rather than just gaining a guard:
-
-- `GET /users` (which returned every account, password hashes included, to anyone who asked) and `POST /users` are **gone**. Accounts are created by signing in, and nothing in the app or dashboard ever called either route.
-- `User.passwordHash` is now `select: false`, so no query returns it unless it asks by name — only `UsersService.findByEmailForLogin` does.
-- The guards live in `auth/auth-guards.module.ts` rather than `AuthModule`, and `PoiAdminGuard` reads the `user_pois` table directly. `AuthModule` needs `users`, `user-pois` and `pois`, so guards living there made every guarded module's imports circular.
-
-## Member login (email or phone + code)
-
-The app signs someone in with an email address or a phone number and a 6-digit code — no password. One field, "Email or phone number"; the backend tells them apart by the `@`.
-
-- `POST /auth/code/request` `{ login, language? }` — sends a code to that email or number (`channel: 'email' | 'sms'` in the answer), same limits as below. The email is written in `language` and sent from `EMAIL_FROM` (default `register@infunion.app`).
-- `POST /auth/code/verify` `{ login, code, firstName? }` — returns `{ accessToken }`. An email that already belongs to an admin opens that admin's account (whoever reads the inbox could reset the password anyway); the superadmin still needs its own code.
-- The phone-only endpoints below stay for APKs built before 30 Oct 2026.
-
-**Email sending.** Set `BREVO_API_KEY` (Brevo, EU-hosted, free up to 300 emails a day) and the codes go out by email; `EMAIL_FROM` / `EMAIL_FROM_NAME` set the sender. The sender's domain must be verified in Brevo (SPF, DKIM and DMARC records on infunion.app). Without the key, `ConsoleEmailSender` logs the email and the code comes back as `devCode`, as for SMS.
-
-**SMS sending.** Also through Brevo (same account and key, prepaid SMS credits): set `SMS_PROVIDER=brevo` as well as `BREVO_API_KEY`, and the codes go out by SMS in the app's language, from `SMS_SENDER` (default `infunion`). Without `SMS_PROVIDER=brevo`, `ConsoleSmsSender` logs the SMS and the code comes back as `devCode` on demo servers.
-
-- `POST /auth/phone/request-code` `{ phone }` — sends a code, valid 10 minutes. One code per number per minute, five per hour, five wrong guesses before the code is burnt. Only a bcrypt hash of the code is stored (`phone_verification_codes`).
-- `POST /auth/phone/verify` `{ phone, code, firstName? }` — returns `{ accessToken }` (the same 7-day JWT the admin dashboard uses). A number that verifies for the first time gets an account right there; `firstName` is only written on that first sign-in.
-- `GET /auth/me` now also returns `phone` and `pois` (every place the person belongs to), so "my places" follows the account instead of the device.
-- `POST /auth/me/pois` / `DELETE /auth/me/pois/:poiId` — join or leave a place as whoever the token belongs to. The app calls join every time a signed-in person opens a place.
-
-**There is no SMS account wired up.** `ConsoleSmsSender` (`backend/src/auth/sms/sms-sender.ts`) logs the code instead of sending it, and because nothing is really delivered the request endpoint hands the code back as `devCode` — the login screen displays it, so the flow is usable on a laptop with no phone involved. Both of those stop the moment a real sender is configured, and `devCode` is never returned when `NODE_ENV=production`. Adding Twilio is a new `SmsSender` subclass and one line in `auth.module.ts`; nothing else in the flow changes.
-
-## Settings & the QR flyer
-
-The admin dashboard's **Settings** page (`admin/src/pages/SettingsPage.tsx`, `PATCH /pois/:poiId/profile`) combines the active-module toggles with the POI's own public info — a description and a picture (pasted in as a URL for now; the upload pipeline used for announcement voice messages could be reused for direct uploads later) — plus the content-language picker.
-
-The **My QR** page (`admin/src/pages/MyQrPage.tsx`) generates a printable flyer for the community's entrance: a QR code (via the `qrcode` package) encoding a link to the landing site's `#join` section (`/?token=<poi token>#join`), an editable headline/subtext (`qrFlyerHeadline`/`qrFlyerSubtext` on `Poi`, defaulting to generic copy if left blank), and a "Print / Save as PDF" button that uses the browser's own print dialog with a dedicated print stylesheet — no PDF library needed.
+`User.passwordHash` is `select: false`, so no query returns it unless it asks by name. The guards live in `auth/auth-guards.module.ts` so guarded modules don't import `AuthModule` in a circle.
 
 ## Tests and CI
 
 ```bash
-cd backend && npm test        # unit tests, no database needed
+cd backend && npm test           # unit tests, no database needed
 cd backend && npm run test:e2e   # boots the real app against Postgres
-cd app && npm test            # pure logic (QR parsing); npm run typecheck for the rest
-cd admin && npm run build     # tsc -b, so this is the typecheck too
+cd backend && npm run lint       # oxlint
+cd app && npm test               # pure logic; npx tsc --noEmit for types
+cd admin && npm run build        # tsc -b + vite build: this is the type check
 ```
 
-The e2e tests use the database named by `DB_NAME`, defaulting to `infunion_test`, and **truncate every table between tests** — never point them at your development database. Create it once with `createdb infunion_test` (or `docker compose exec db createdb -U infunion infunion_test`). They run one file at a time for that reason.
+The e2e tests use the database named by `DB_NAME`, defaulting to `infunion_test`, and **empty every table between tests**: never point them at a real database. Create it once with `createdb infunion_test`. They run one file at a time.
 
-What's covered is the part that can break quietly: the login flow (one-shot codes, expiry, throttling, a number spelled two ways), and the access-control table above, as tests that call the real endpoints. A guard that stops applying is not something a type checker or a lint rule notices.
+The e2e suite covers what can break quietly: sign-in codes, the access rules above, plans and billing, contributions (only finished payments count, Stripe's answer applied once), payment links, Bizum, Write to members (plans, opt-outs, personalised emails), the opt-out page, requests, messages, moderation, closing a community, privacy exports and more.
 
-`.github/workflows/ci.yml` runs all of it on every push and pull request, with Postgres as a service container. It also applies the checked-in migrations to an empty database and asks TypeORM whether the entities still match — an entity changed without a migration fails the build, because that combination is a deploy that breaks on boot.
+`.github/workflows/ci.yml` runs all of it on every push and pull request, with Postgres as a service. It also applies the checked-in migrations to an empty database and checks the entities still match them, so an entity changed without a migration fails the build.
 
 ## Going to production
 
-The demo defaults are deliberately convenient, and each one is a different setting in production rather than something to remember:
-
 | | Development | Production (`NODE_ENV=production`) |
 | --- | --- | --- |
-| Schema | `synchronize: true` — built from the entities on every start | migrations only, applied on boot (`migrationsRun`), `synchronize` off |
-| `JWT_SECRET` | falls back to a fixed development secret | **required** — the app refuses to start without it |
-| CORS | any origin, so a phone on the LAN and a browser both work | only the origins listed in `CORS_ORIGINS`, and none if it's unset |
-| Login codes | returned in the response as `devCode`, since nothing is sent | never returned; configure a real `SmsSender` |
-| Uploads | `./uploads` next to the backend | an S3-compatible bucket (Cloudflare R2) once `S3_BUCKET` is set; local disk otherwise |
+| Schema | `synchronize: true`, built from the entities | migrations only, `synchronize` off |
+| `JWT_SECRET` | a fixed development secret | **required**, the API refuses to start without it |
+| CORS | any origin | only `CORS_ORIGINS` (the landing's origins are always allowed for registration) |
+| Sign-in codes | returned as `devCode` | sent by Brevo, never returned |
+| Files | `./uploads` on disk | a private Cloudflare R2 bucket once `S3_BUCKET` is set |
+| Payments | demo account | Stripe Connect (see above) |
 
 ### Migrations
 
-`src/migrations/` holds the schema as checked-in migrations, and `src/data-source.ts` is what the TypeORM CLI loads. They point at the compiled output, so each script builds first:
+`backend/src/migrations/` holds the schema; `src/data-source.ts` is what the TypeORM CLI loads.
 
 ```bash
 npm run migration:generate -- src/migrations/WhatChanged   # after editing an entity
-npm run migration:run                                      # apply
-npm run migration:revert                                   # undo the last one
+npm run migration:run
+npm run migration:revert
 ```
 
-Development doesn't need any of this — it still builds the schema straight from the entities, so an entity edit shows up on the next save. Generate a migration when you change an entity so production has a path from the old shape to the new one; `synchronize` against real data is how a renamed column silently becomes a dropped one.
+Write a migration with every entity change: `synchronize` against real data is how a renamed column becomes a dropped one.
 
 ### Running as several copies
 
-The API is built to run as more than one copy behind Railway's load balancer (Settings > Replicas), so a deploy never takes it down and one crashed copy doesn't either. What makes that safe:
+The API can run as several copies behind Railway's load balancer:
 
-- **Files** live in an S3-compatible bucket, Cloudflare R2 in the EU jurisdiction (`src/common/storage/file-store.ts`). The bucket is private. `/uploads/…` is streamed by the API with a one-year cache header (file names change whenever a file does), so the CDN in front serves repeats; private documents open through a five-minute signed link to the bucket. Without `S3_BUCKET` everything stays on local disk, as in development.
-- **Timed sweeps** (event reminders every minute, daily readings, data retention hourly) each take a Postgres advisory lock (`src/common/locks/run-exclusive.ts`), so only one copy sends at a time.
-- **Login lockouts** (admin password, superadmin code) are counted in the `rate_limits` table, and the public geocoder's one-request-a-second pace is shared through it too.
-- **Reminders** store their next check time, so the minute sweep only reads bells that are due.
-- `GET /health` answers 200 only when the copy reaches its database: use it as Railway's health check path.
+- **Files** live in an S3-compatible bucket (Cloudflare R2, EU). `/uploads/…` is streamed with a one-year cache header; private documents open through five-minute signed links. Without `S3_BUCKET` everything stays on local disk. To move from a Railway volume, set the `S3_*` variables and `MIGRATE_LOCAL_FILES=on` once.
+- **Timed jobs** (event reminders, daily readings, data retention, closures) take a Postgres advisory lock, so only one copy runs each.
+- **Lockouts and rate limits** are counted in the `rate_limits` table.
+- `GET /health` answers 200 only when the copy reaches its database.
+- Copies × `DB_POOL_SIZE` (default 10) must stay under Postgres's `max_connections`.
 
-Copies × `DB_POOL_SIZE` (default 10) must stay under Postgres's `max_connections` (100 by default).
+**Backups**: `.github/workflows/db-backup.yml` dumps the production database every night to a separate R2 bucket and keeps 30 days; secrets and restore steps are at the top of the file.
 
-**Moving from the Railway volume to R2** (once): create the bucket and an API token in Cloudflare, set `S3_BUCKET`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` and `MIGRATE_LOCAL_FILES=on` on the backend, and deploy with the volume still attached. Files not copied yet are read from the volume meanwhile; the log says `Copied N file(s) from disk to the bucket` when done. Then detach the volume, remove `UPLOADS_DIR` / `PRIVATE_UPLOADS_DIR` / `MIGRATE_LOCAL_FILES`, and raise the replica count.
+**Privacy**: a daily sweep deletes member accounts unused for 24 months, old codes and old journal entries (`backend/src/privacy/`).
 
-**Backups**: `.github/workflows/db-backup.yml` dumps the production database every night to a separate R2 bucket and keeps 30 days. The secrets it needs, and how to restore, are at the top of the file.
+## Domains and email
 
-**Regions**: a region (Europe, Americas, Asia) is a complete copy of the backend with its own database and bucket; `REGION` names it in `/health`. See the scaling plan for when to open one.
-
-## Domains
-
-`infunion.app` is registered at IONOS, which also hosts its DNS. Each Railway service has a custom domain (a CNAME plus a `_railway-verify` TXT record in IONOS):
+`infunion.app` is registered at IONOS, which also hosts its DNS. Each Railway service has a custom domain (a CNAME plus a `_railway-verify` TXT record):
 
 | Address | Railway service |
 | --- | --- |
 | `www.infunion.app` | infunion-landing |
 | `admin.infunion.app` | infunion-admin |
-| `web.infunion.app` | infunion-app (web build, admin phone preview) |
+| `web.infunion.app` | infunion-app |
 | `api.infunion.app` | infunion-api |
 
-The bare `infunion.app` is an IONOS HTTP redirect to `https://www.infunion.app` (IONOS's free wildcard certificate). A CNAME can't sit on the bare domain without blocking the mail TXT records. When editing that redirect, leave "also for www subdomains" unticked: it replaces the `www` CNAME with IONOS's own records.
+The bare `infunion.app` is an IONOS redirect to `https://www.infunion.app` (leave "also for www subdomains" unticked, or it replaces the `www` CNAME). The old `*.up.railway.app` addresses keep working.
 
-Production variables that follow: `CORS_ORIGINS` and `ADMIN_URL=https://admin.infunion.app` on infunion-api, `VITE_API_URL` and `VITE_APP_PREVIEW_URL=https://web.infunion.app` on infunion-admin, `EXPO_PUBLIC_API_URL` on infunion-app. The old `*.up.railway.app` addresses keep working.
+Mail: `hello@` and `register@infunion.app` are IONOS forwards. Emails go out through Brevo (one SPF record including `include:spf.brevo.com`, plus DKIM and DMARC). Every email ends with the same "Made with infunion" footer and support@infunion.app.
 
-Mail: `hello@` and `register@infunion.app` are IONOS forwards to the team Gmail; the IONOS MX/SPF/DKIM records stay. Sign-in code emails go out through Brevo (add `include:spf.brevo.com` to the one existing SPF record, never a second one).
+Search: Google Search Console is verified for `infunion.app` and `api.infunion.app`, with the landing and community-website sitemaps submitted; `.github/workflows/indexnow.yml` sends the landing's pages to IndexNow (Bing and others) after each landing change reaches production.
 
-## Marketing landing page
+## Landing page and registration
 
-`landing/` is a small static site (plain HTML/CSS/JS, no build step, no framework) advertising infunion to churches — open `landing/index.html` directly in a browser, or serve the folder with any static file server (e.g. `npx serve landing`). It's one scrolling page: features, pricing, and the "join" flow are all sections of `index.html` (`#pricing`, `#join`), not separate pages. The `#join` section is what the QR flyer's code links to: today it explains how to get the app (the store links are placeholders — the app isn't published yet) and displays the scanned POI token for manual entry as a fallback (`landing/assets/main.js` reads it from the URL's `?token=` query param). Each language has its own page, with its text in the HTML: Spanish at `/`, then `/en/`, `/fr/`, `/ca/`, `/va/`, `/gl/` and `/pt/`. The header language menu opens the matching page. These pages are generated: run `node landing/tools/build-languages.js` after changing `landing/tools/template.html` or the translations in `landing/assets/i18n.js`. The same run writes `landing/sitemap.xml` and `landing/robots.txt`. It is hosted on Railway like the rest (Root Directory `/landing`, no build or start command: Railway serves the folder as it is) at `https://infunion-landing.up.railway.app`, with `infunion-landing-staging` for staging. The admin's `VITE_LANDING_URL` (what the QR flyer opens) is left at its `https://infunion.app` default for now. A real domain can later be attached to that service in Railway.
+`landing/` is plain HTML, CSS and JavaScript. Each language has its own page with its text in the HTML (Spanish at `/`, then `/en/`, `/fr/`, `/ca/`, `/va/`, `/gl/`, `/pt/`), with `hreflang` links, structured data, a sitemap and `robots.txt`, all generated by `node landing/tools/build-languages.js` from `landing/tools/template.html` and `landing/assets/i18n.js`. There are also pages per kind of community (`religion/`, `asociaciones/`). Bump the assets' `?v=` when landing files change.
 
-### Place registration
+The QR code a community prints links to `https://www.infunion.app/?token=<code>#join`, so a phone's camera opens a page explaining infunion; the in-app scanner reads the code back out of that link (`app/src/qr.ts`).
 
-`landing/register.html` (with `landing/assets/register.js`, its own six-language words) is the "Register your place" form that the header, the plan cards (`?plan=basic|essentials|complete`) and the final call to action open. Five steps: the place (search of places already on infunion, kind, address, legal name, tax ID, a proof document), the person (email confirmed with a 6-digit code), the plan, the agreement (Terms for places, DPA, authority, religious data for places of worship, typed name), sent. It calls `POST /registrations/email/code`, `/registrations/email/verify` and `POST /registrations` (multipart) on the API next to it (production, `-staging`, or `localhost:3000`); the API always allows the landing's origins for CORS.
+### Registration
 
-Nothing is created until the superadmin approves it in **Superadmin › Community requests** (`admin/src/superadmin/RegistrationsPage.tsx`, `RegistrationPage.tsx`): checks (tax ID format and letter, same tax ID or similar name in the town, same email/IP/phone on other requests), the private document, then Approve (only once the document is ticked as checked: creates the place like "Add community", starts the chosen plan's free month, emails the admin), Ask a question, Decline, or Decline and block (bans the email and tax ID). Limits: disposable emails refused, one open request per email, 3 requests per IP per day, a hidden spam field. Declined requests, and the documents of decided ones, are deleted after 90 days. Rules in `backend/src/registrations/registration-rules.ts`, including the signed document versions `PLACE_TERMS_VERSION` / `PLACE_DPA_VERSION`. `ADMIN_URL` (optional) is the dashboard address used in emails; otherwise the admin origin in `CORS_ORIGINS` is used.
+`landing/register.html` is the "Register your community" form: the community (kind, address, legal name, tax ID, a proof document), the person (email confirmed by code), the plan, the agreement (terms, DPA, authority, religious data for places of worship, typed name). Nothing is created until the superadmin approves it in **Community requests**, after checks on the tax ID, duplicates and the document. Approval creates the community, starts the chosen plan's free month and emails the admin. Rules in `backend/src/registrations/registration-rules.ts`.
 
-**Withdrawal (14 days).** Spanish consumer law treats non-profits as consumers, so a place can withdraw from its contract without a reason until 14 days after approval (`WITHDRAWAL_DAYS`). `landing/withdraw.html` (linked in the landing footers, the agreement step and the emails) asks for the registration email, sends a code (`POST /registrations/withdraw/code`), then "Confirm withdrawal" (`POST /registrations/withdraw`). The request becomes `withdrawn`, the person gets an acknowledgement email and the superadmin a notice. If the place was already approved, the superadmin closes it and stops its plan by hand within 2 working days; the request page says so. `LANDING_URL` (optional, default `https://infunion.app`) is the address used for the withdrawal link in emails. The form also shows the GDPR privacy notice (steps 1 and 2) and the pre-contract information (step 4).
+**Withdrawal**: a community can withdraw without a reason within 14 days of approval (`landing/withdraw.html`, `WITHDRAWAL_DAYS`), as Spanish consumer law requires for non-profits.
