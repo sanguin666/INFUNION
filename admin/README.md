@@ -1,32 +1,26 @@
-# React + TypeScript + Vite
+# infunion: admin dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The web dashboard where each community's team runs its community, and where infunion runs the platform (the superadmin section). React 19 + Vite + TypeScript. See the [root README](../README.md) for the whole picture.
 
-Currently, two official plugins are available:
+## Quick start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+cp .env.example .env
+npm install
+npm run dev       # http://localhost:5173
+npm run build     # tsc -b + vite build: run it before merging, it is the type check
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+It talks to the API at `VITE_API_URL` (default `http://localhost:3000`). The Home page's phone preview is the member app's web version at `VITE_APP_PREVIEW_URL` (default `http://localhost:8081`), so run the app too for it to show. Demo login: `admin@carmen.example` / `demo1234`.
+
+## Where things are
+
+- `src/layout/DashboardLayout.tsx`: the menu (Dashboard, Home page, Members, one page per active module, Community website, QR code to join, Plans & modules) and the community switcher.
+- `src/pages/`: one file per page. Settings no longer exists: old links redirect to Home page or Dashboard.
+- `src/superadmin/`: infunion's own section (Overview, Community requests, Communities, Accounts, Member questions, Technical health, Journal).
+- `src/components/`: shared pieces, including Undo, the welcome tour and page tips, the how-to video player, the admin assistant, the phone preview and the logo.
+- `src/i18n/translations.ts`: every string, in English, Spanish, French, Catalan, Valencian, Galician and Portuguese. A new string needs all seven.
+- `public/modules/`: the "Learn more" screenshots of each module. Retake them when a module's screen changes.
+- `public/walkthrough/`: the how-to videos, recorded by [`walkthrough/`](walkthrough/README.md).
+
+Vite's dependency cache is kept in the OS temp directory (`vite.config.ts`), because sync clients such as Dropbox lock files inside a synced folder.
