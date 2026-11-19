@@ -197,7 +197,8 @@ export class DonationsController {
   @UseGuards(JwtAuthGuard)
   async myGifts(@Param('poiId') poiId: string, @Req() request: AuthenticatedRequest) {
     const gifts = await this.donationsService.listMyGifts(poiId, request.userId);
-    return gifts.map((gift) => this.withReceiptUrl(gift));
+    // A Bizum still waiting has no receipt yet.
+    return gifts.map((gift) => (gift.waitingBizumCode ? { ...gift, receiptUrl: null } : this.withReceiptUrl(gift)));
   }
 
   // A receipt for a gift made without one: the details it needs, then the link.

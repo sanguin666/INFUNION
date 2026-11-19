@@ -47,7 +47,7 @@ const MODULE_NAV: (NavItem & { module: ModuleType })[] = [
   { to: 'requests', label: 'layout.navRequests', module: 'requests', icon: MODULE_ICON.requests, count: 'requests' },
   { to: 'events', label: 'layout.navEvents', module: 'events', icon: MODULE_ICON.events },
   { to: 'announcements', label: 'layout.navAnnouncements', module: 'announcements', icon: MODULE_ICON.announcements },
-  { to: 'donations', label: 'layout.navDonations', module: 'donations', icon: MODULE_ICON.donations },
+  { to: 'donations', label: 'layout.navDonations', module: 'donations', icon: MODULE_ICON.donations, count: 'donations' },
   { to: 'mass-intentions', label: 'layout.navMassIntentions', module: 'mass_intentions', icon: MODULE_ICON.mass_intentions, count: 'massIntentions' },
   { to: 'prayer-requests', label: 'layout.navPrayerRequests', module: 'prayer_requests', icon: MODULE_ICON.prayer_requests, count: 'prayerRequests' },
   { to: 'readings', label: 'layout.navReadings', module: 'daily_readings', icon: MODULE_ICON.daily_readings },
