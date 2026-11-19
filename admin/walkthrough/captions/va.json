@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "title": "Tauler",
+    "intro": "El tauler: el que t'espera hui",
+    "todo": "El que espera una resposta, sempre dalt",
+    "open": "Un clic i ja hi eres",
+    "figures": "Les teues xifres clau d'un colp d'ull",
+    "week": "I l'agenda d'esta setmana"
+  },
+  "home-page": {
+    "title": "Pàgina d’inici",
+    "intro": "El primer que veuen els membres en l'app",
+    "phone": "El mòbil mostra el resultat a l'instant",
+    "order": "Ordena els avisos amb les fletxes",
+    "toggle": "Mostra o amaga cada un",
+    "sections": "I afig textos, fotos i un botó per a donar"
+  },
+  "members": {
+    "title": "Membres",
+    "intro": "Qui s'unix des de l'app apareix ací",
+    "member": "Cada membre, amb el seu últim missatge",
+    "private": "Respon en privat, com en un xat",
+    "all": "O escriu a tots alhora"
+  },
+  "requests": {
+    "title": "Sol·licituds",
+    "intro": "El que els membres demanen des de l'app",
+    "waiting": "El que necessita resposta va primer",
+    "open": "Obri una sol·licitud per a respondre",
+    "detail": "Canvia l'estat, fixa una cita o demana un document"
+  },
+  "events": {
+    "title": "Esdeveniments",
+    "intro": "La teua setmana habitual, tal com la veu l'app",
+    "new": "Afig un esdeveniment nou",
+    "type": "Posa-li un nom, una data i una hora",
+    "repeat": "Es pot repetir cada setmana",
+    "sample": "Concert de Nadal"
+  },
+  "donations": {
+    "title": "Donar",
+    "intro": "Com poden donar els membres",
+    "bizum": "Targeta, Bizum i PayPal des de l'app",
+    "figures": "Seguix els donatius setmana a setmana",
+    "campaigns": "I llança una campanya amb el seu objectiu"
+  },
+  "website": {
+    "title": "Web i QR",
+    "intro": "Una web pública feta amb el que ja publiques",
+    "online": "Activa-la quan estiga llesta",
+    "parts": "Cada part apareix quan té contingut",
+    "qr": "El codi QR per a unir-s'hi",
+    "print": "Imprimix el cartell i posa'l ben a la vista"
+  }
+}

@@ -88,5 +88,125 @@
       "title": "Site et QR code",
       "duration": 17.4
     }
+  },
+  "ca": {
+    "dashboard": {
+      "title": "Tauler",
+      "duration": 18.3
+    },
+    "home-page": {
+      "title": "Pàgina d’inici",
+      "duration": 18.7
+    },
+    "members": {
+      "title": "Membres",
+      "duration": 16.7
+    },
+    "requests": {
+      "title": "Sol·licituds",
+      "duration": 14.2
+    },
+    "events": {
+      "title": "Esdeveniments",
+      "duration": 17.7
+    },
+    "donations": {
+      "title": "Donar",
+      "duration": 16.7
+    },
+    "website": {
+      "title": "Web i QR",
+      "duration": 17.4
+    }
+  },
+  "va": {
+    "dashboard": {
+      "title": "Tauler",
+      "duration": 18.3
+    },
+    "home-page": {
+      "title": "Pàgina d’inici",
+      "duration": 18.7
+    },
+    "members": {
+      "title": "Membres",
+      "duration": 16.7
+    },
+    "requests": {
+      "title": "Sol·licituds",
+      "duration": 14.2
+    },
+    "events": {
+      "title": "Esdeveniments",
+      "duration": 17.7
+    },
+    "donations": {
+      "title": "Donar",
+      "duration": 16.7
+    },
+    "website": {
+      "title": "Web i QR",
+      "duration": 17.4
+    }
+  },
+  "gl": {
+    "dashboard": {
+      "title": "Panel",
+      "duration": 18.3
+    },
+    "home-page": {
+      "title": "Páxina de inicio",
+      "duration": 18.7
+    },
+    "members": {
+      "title": "Membros",
+      "duration": 16.7
+    },
+    "requests": {
+      "title": "Solicitudes",
+      "duration": 14.2
+    },
+    "events": {
+      "title": "Eventos",
+      "duration": 17.8
+    },
+    "donations": {
+      "title": "Doar",
+      "duration": 16.7
+    },
+    "website": {
+      "title": "Web e QR",
+      "duration": 17.4
+    }
+  },
+  "pt": {
+    "dashboard": {
+      "title": "Painel",
+      "duration": 18.3
+    },
+    "home-page": {
+      "title": "Página inicial",
+      "duration": 18.7
+    },
+    "members": {
+      "title": "Membros",
+      "duration": 16.7
+    },
+    "requests": {
+      "title": "Pedidos",
+      "duration": 14.2
+    },
+    "events": {
+      "title": "Eventos",
+      "duration": 17.8
+    },
+    "donations": {
+      "title": "Doar",
+      "duration": 16.7
+    },
+    "website": {
+      "title": "Site e QR",
+      "duration": 17.4
+    }
   }
 }
