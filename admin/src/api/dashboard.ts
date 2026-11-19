@@ -15,6 +15,8 @@ export type MenuCounts = {
   // Reported posts and replies, and reported prayer requests.
   community: number;
   prayerRequests: number;
+  // Bizums waiting for the team to confirm.
+  donations: number;
 };
 
 export function getMenuCounts(poiId: string): Promise<MenuCounts> {

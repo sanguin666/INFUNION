@@ -1,3 +1,5 @@
+import { Donation, DonationStatus } from '../donations/entities/donation.entity.js';
+import { BIZUM_KEEP_DAYS } from '../donations/bizum.js';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, In, IsNull, LessThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
@@ -81,6 +83,8 @@ export type MenuCounts = {
   // Reported posts and replies, and reported prayer requests.
   community: number;
   prayerRequests: number;
+  // Bizums members say they sent, waiting for the team (Seb, 19 Nov 2026).
+  donations: number;
 };
 
 function iso(date: Date): string {
@@ -110,6 +114,7 @@ export class DashboardService {
     @InjectRepository(UserPoi) private readonly memberships: Repository<UserPoi>,
     @InjectRepository(PrayerRequest) private readonly prayers: Repository<PrayerRequest>,
     @InjectRepository(ActiveModule) private readonly modules: Repository<ActiveModule>,
+    @InjectRepository(Donation) private readonly donations: Repository<Donation>,
   ) {}
 
   /**
@@ -143,6 +148,7 @@ export class DashboardService {
           waiting += summary.newRequests.length + summary.awaitingReply.length + summary.documentsToCheck.length;
         }
         if (isLive(poiId, ModuleType.MESSAGES)) waiting += await this.unreadConversations(poiId);
+        waiting += await this.bizumWaiting(poiId);
         return { poiId, waiting };
       }),
     );
@@ -169,6 +175,7 @@ export class DashboardService {
       messages: 0,
       community: reported.community,
       prayerRequests: reported.prayer,
+      donations: await this.bizumWaiting(poiId),
     };
     if (isLive(ModuleType.REQUESTS) || isLive(ModuleType.MASS_INTENTIONS)) {
       const summary = await this.summary(poiId);
@@ -181,6 +188,19 @@ export class DashboardService {
     }
     if (isLive(ModuleType.MESSAGES)) counts.messages = await this.unreadConversations(poiId);
     return counts;
+  }
+
+  /** Bizums sent by members and not yet confirmed (see donations/bizum.ts). */
+  private bizumWaiting(poiId: string): Promise<number> {
+    const since = new Date(Date.now() - BIZUM_KEEP_DAYS * 24 * 60 * 60 * 1000);
+    return this.donations.count({
+      where: {
+        poi: { id: poiId },
+        paymentMethod: 'bizum',
+        status: DonationStatus.PENDING,
+        bizumSentAt: MoreThanOrEqual(since),
+      },
+    });
   }
 
   /** Conversations where a member wrote last, after the office last looked. */
