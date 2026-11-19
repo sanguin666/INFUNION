@@ -16,6 +16,8 @@ export type ContactRow = {
   invitedAt: string | null;
   linkedAt: string | null;
   lastWrittenAt: string | null;
+  // Said "I don't want to receive these emails".
+  unsubscribedAt?: string | null;
   invitationClicked: boolean;
   createdAt: string;
 };
@@ -95,7 +97,7 @@ export const whatsappInvite = (poiId: string, id: string) =>
 export const getOutreach = (poiId: string) => apiGet<OutreachView[]>(`/pois/${poiId}/outreach`);
 export const getAllowance = (poiId: string) => apiGet<Allowance>(`/pois/${poiId}/outreach/allowance`);
 export const getAudience = (poiId: string, input: OutreachInput) =>
-  apiPost<{ withEmail: number; withoutEmail: number }>(`/pois/${poiId}/outreach/audience`, input);
+  apiPost<{ withEmail: number; withoutEmail: number; optedOut?: number }>(`/pois/${poiId}/outreach/audience`, input);
 export const sendOutreach = (poiId: string, input: OutreachInput) => apiPost<OutreachView>(`/pois/${poiId}/outreach`, input);
 export const sendOutreachTest = (poiId: string, input: OutreachInput) =>
   apiPost<{ to: string }>(`/pois/${poiId}/outreach/test`, input);

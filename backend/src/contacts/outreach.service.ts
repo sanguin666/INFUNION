@@ -158,10 +158,15 @@ export class OutreachService {
   }
 
   /** Who a message would go to: the count the Send button shows. */
-  async audienceSize(poiId: string, dto: Pick<OutreachDto, 'kind' | 'audience' | 'group' | 'contactIds'>): Promise<{ withEmail: number; withoutEmail: number }> {
+  async audienceSize(
+    poiId: string,
+    dto: Pick<OutreachDto, 'kind' | 'audience' | 'group' | 'contactIds'>,
+  ): Promise<{ withEmail: number; withoutEmail: number; optedOut: number }> {
     const all = await this.audienceOf(poiId, dto, false);
     const withEmail = all.filter((c) => !!c.email).length;
-    return { withEmail, withoutEmail: all.length - withEmail };
+    // Those who said "I don't want to receive these emails" are never written to.
+    const optedOut = await this.contacts.count({ where: { poi: { id: poiId }, unsubscribedAt: Not(IsNull()) } });
+    return { withEmail, withoutEmail: all.length - withEmail, optedOut };
   }
 
   async send(poiId: string, actorId: string, dto: OutreachDto, links: Links): Promise<OutreachView> {
@@ -302,6 +307,17 @@ export class OutreachService {
     const contact = await this.findByToken(token);
     if (!contact) return null;
     if (!contact.unsubscribedAt) await this.contacts.update(contact.id, { unsubscribedAt: new Date() });
+    return contact;
+  }
+
+  /** "I changed my mind": the community may email them again. */
+  async resume(token: string): Promise<Contact | null> {
+    const contact = await this.findByToken(token);
+    if (!contact) return null;
+    if (contact.unsubscribedAt) {
+      await this.contacts.update(contact.id, { unsubscribedAt: null });
+      contact.unsubscribedAt = null;
+    }
     return contact;
   }
 
