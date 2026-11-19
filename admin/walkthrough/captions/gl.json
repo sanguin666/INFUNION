@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "title": "Panel",
+    "intro": "O panel: o que che agarda hoxe",
+    "todo": "O que agarda unha resposta, sempre arriba",
+    "open": "Un clic e xa estás alí",
+    "figures": "As túas cifras clave dunha ollada",
+    "week": "E a axenda desta semana"
+  },
+  "home-page": {
+    "title": "Páxina de inicio",
+    "intro": "O primeiro que ven os membros na app",
+    "phone": "O móbil amosa o resultado ao momento",
+    "order": "Ordena os avisos coas frechas",
+    "toggle": "Amosa ou agocha cada un",
+    "sections": "E engade textos, fotos e un botón para doar"
+  },
+  "members": {
+    "title": "Membros",
+    "intro": "Quen se une dende a app aparece aquí",
+    "member": "Cada membro, coa súa última mensaxe",
+    "private": "Responde en privado, coma nun chat",
+    "all": "Ou escribe a todos á vez"
+  },
+  "requests": {
+    "title": "Solicitudes",
+    "intro": "O que os membros piden dende a app",
+    "waiting": "O que precisa resposta vai primeiro",
+    "open": "Abre unha solicitude para responder",
+    "detail": "Cambia o estado, fixa unha cita ou pide un documento"
+  },
+  "events": {
+    "title": "Eventos",
+    "intro": "A túa semana habitual, tal como a ve a app",
+    "new": "Engade un evento novo",
+    "type": "Ponlle un nome, unha data e unha hora",
+    "repeat": "Pode repetirse cada semana",
+    "sample": "Concerto de Nadal"
+  },
+  "donations": {
+    "title": "Doar",
+    "intro": "Como poden doar os membros",
+    "bizum": "Tarxeta, Bizum e PayPal dende a app",
+    "figures": "Segue as doazóns semana a semana",
+    "campaigns": "E lanza unha campaña co seu obxectivo"
+  },
+  "website": {
+    "title": "Web e QR",
+    "intro": "Unha web pública feita co que xa publicas",
+    "online": "Actívaa cando estea lista",
+    "parts": "Cada parte aparece cando ten contido",
+    "qr": "O código QR para unirse",
+    "print": "Imprime o cartel e colócao á vista"
+  }
+}
