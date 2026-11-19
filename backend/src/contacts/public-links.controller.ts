@@ -70,6 +70,11 @@ export class PublicLinksController {
     });
   }
 
+  /**
+   * "I don't want to receive these emails" (Seb, 10 Nov 2026), from the
+   * foot of every email a community sends. Stops that community's emails
+   * only; "I changed my mind" undoes it.
+   */
   @Get('stop/:token')
   @Header('Content-Type', 'text/html; charset=utf-8')
   @Header('Cache-Control', 'no-store')
@@ -78,14 +83,15 @@ export class PublicLinksController {
     if (!contact) return this.gone('en');
     const lang = contact.language ?? contact.poi.language;
     const words = outreachText(lang);
-    if (contact.unsubscribedAt) return this.stopped(words, lang, contact.poi);
+    if (contact.unsubscribedAt) return this.stopped(words, lang, contact.poi, token);
     return publicPage({
       lang,
-      title: fill(words.stopTitle, { community: contact.poi.name }),
+      title: words.stopTitle,
       community: contact.poi.name,
       logoUrl: contact.poi.logoUrl,
       body: `<p>${escapeHtml(fill(words.stopText, { community: contact.poi.name }))}</p>
-<form method="post"><button type="submit">${escapeHtml(words.stopButton)}</button></form>`,
+<form method="post" action="/m/stop/${escapeHtml(token)}"><button type="submit">${escapeHtml(words.stopButton)}</button></form>
+<p class="link-row"><a href="/m/stop/${escapeHtml(token)}/keep">${escapeHtml(words.stopKeep)}</a></p>`,
     });
   }
 
@@ -96,7 +102,42 @@ export class PublicLinksController {
     const contact = await this.outreach.stop(token);
     if (!contact) return this.gone('en');
     const lang = contact.language ?? contact.poi.language;
-    return this.stopped(outreachText(lang), lang, contact.poi);
+    return this.stopped(outreachText(lang), lang, contact.poi, token);
+  }
+
+  /** "Keep receiving them": nothing changes. */
+  @Get('stop/:token/keep')
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  @Header('Cache-Control', 'no-store')
+  async keep(@Param('token') token: string): Promise<string> {
+    const contact = await this.outreach.findByToken(token);
+    if (!contact) return this.gone('en');
+    const lang = contact.language ?? contact.poi.language;
+    const words = outreachText(lang);
+    return publicPage({
+      lang,
+      title: words.keptTitle,
+      community: contact.poi.name,
+      logoUrl: contact.poi.logoUrl,
+      body: `<p>${escapeHtml(fill(words.keptText, { community: contact.poi.name }))}</p>`,
+    });
+  }
+
+  /** "I changed my mind": the community may email them again. */
+  @Post('stop/:token/resume')
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  async resume(@Param('token') token: string): Promise<string> {
+    const contact = await this.outreach.resume(token);
+    if (!contact) return this.gone('en');
+    const lang = contact.language ?? contact.poi.language;
+    const words = outreachText(lang);
+    return publicPage({
+      lang,
+      title: words.resumedTitle,
+      community: contact.poi.name,
+      logoUrl: contact.poi.logoUrl,
+      body: `<p>${escapeHtml(fill(words.resumedText, { community: contact.poi.name }))}</p>`,
+    });
   }
 
   /** "Send me a test": the button leads where the real one will, for nobody. */
@@ -424,13 +465,15 @@ ${amountBlock}${nameBlock}${buttons}
     });
   }
 
-  private stopped(words: OutreachText, lang: string, poi: Poi): string {
+  private stopped(words: OutreachText, lang: string, poi: Poi, token: string): string {
     return publicPage({
       lang,
       title: words.stoppedTitle,
       community: poi.name,
       logoUrl: poi.logoUrl,
-      body: `<p>${escapeHtml(fill(words.stoppedText, { community: poi.name }))}</p>`,
+      body: `<p>${escapeHtml(fill(words.stoppedText, { community: poi.name }))}</p>
+<p class="note">${escapeHtml(words.stoppedApp)}</p>
+<form method="post" action="/m/stop/${escapeHtml(token)}/resume"><button type="submit" class="alt">${escapeHtml(words.resumeButton)}</button></form>`,
     });
   }
 

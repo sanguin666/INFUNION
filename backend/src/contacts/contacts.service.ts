@@ -40,6 +40,7 @@ export type ContactRow = {
   invitedAt: Date | null;
   linkedAt: Date | null;
   lastWrittenAt: Date | null;
+  unsubscribedAt: Date | null;
   // The invitation was opened (its button tapped).
   invitationClicked: boolean;
   createdAt: Date;
@@ -185,6 +186,8 @@ export class ContactsService {
       invitedAt: contact.invitedAt,
       linkedAt: contact.linkedAt,
       lastWrittenAt: contact.lastWrittenAt,
+      // Said "I don't want to receive these emails": never emailed.
+      unsubscribedAt: contact.unsubscribedAt ?? null,
       invitationClicked,
       createdAt: contact.createdAt,
     };
