@@ -51,6 +51,8 @@ export type MyGift = {
   recurring: boolean;
   wantsReceipt: boolean;
   receiptUrl: string | null;
+  // A Bizum sent and not yet confirmed by the team: its concept.
+  waitingBizumCode?: string | null;
 };
 
 export type ReceiptDetails = {

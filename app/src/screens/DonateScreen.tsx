@@ -294,6 +294,7 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
     try {
       await markBizumSent(poi.id, bizum.donationId);
       setBizumSent(true);
+      loadMine();
     } catch {
       setError(true);
     } finally {
@@ -835,7 +836,13 @@ export function DonateScreen({ poi, project, onOpenProject, onDone, onSignIn }: 
                     </AccessibleText>
                     <AccessibleText variant="caption">{date}</AccessibleText>
                   </View>
-                  {gift.receiptUrl ? (
+                  {gift.waitingBizumCode ? (
+                    <View style={styles.waitingChip}>
+                      <AccessibleText variant="caption" style={styles.bold}>
+                        {`${t('donate.bizumWaiting')} · ${gift.waitingBizumCode.replace(' ', '\u00A0')}`}
+                      </AccessibleText>
+                    </View>
+                  ) : gift.receiptUrl ? (
                     <Pressable
                       accessibilityRole="link"
                       accessibilityLabel={t('donate.taxReceiptFor', { amount: amountText, date })}
@@ -1230,6 +1237,13 @@ const styles = themedStyles(() => ({
     borderColor: colors.text,
     borderRadius: 999,
     paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+  },
+  waitingChip: {
+    maxWidth: '50%',
+    backgroundColor: '#FFF6DC',
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 4,
   },
   waitingTag: {
