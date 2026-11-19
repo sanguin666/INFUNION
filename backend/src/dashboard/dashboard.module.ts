@@ -1,3 +1,4 @@
+import { Donation } from '../donations/entities/donation.entity.js';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServiceRequest } from '../service-requests/entities/service-request.entity.js';
@@ -23,6 +24,7 @@ import { ActiveModule } from '../active-modules/entities/active-module.entity.js
       UserPoi,
       PrayerRequest,
       ActiveModule,
+      Donation,
     ]),
     AuthModule,
   ],
