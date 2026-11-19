@@ -1302,6 +1302,8 @@ export type Translations = {
     aud_group: string;
     audienceSize: string;
     audienceNoEmail: string;
+    noEmailsBadge: string;
+    audienceOptedOut: string;
     nobody: string;
     project: string;
     projectNone: string;
@@ -2771,6 +2773,8 @@ const en: Translations = {
     aud_group: "A group",
     audienceSize: "{{count}} people will get this email.",
     audienceNoEmail: "No email for {{count}} of them: invite them by WhatsApp from the list.",
+    noEmailsBadge: "No emails",
+    audienceOptedOut: "{{count}} members asked not to receive emails and are left out.",
     nobody: "Nobody to write to here.",
     project: "Project",
     projectNone: "Where it is most needed",
@@ -4240,6 +4244,8 @@ const es: Translations = {
     aud_group: "Un grupo",
     audienceSize: "{{count}} personas recibirán este correo.",
     audienceNoEmail: "{{count}} no tienen correo: invítalas por WhatsApp desde la lista.",
+    noEmailsBadge: "Sin correos",
+    audienceOptedOut: "{{count}} miembros pidieron no recibir correos y quedan fuera.",
     nobody: "No hay nadie a quien escribir aquí.",
     project: "Proyecto",
     projectNone: "Donde más se necesite",
@@ -5709,6 +5715,8 @@ const fr: Translations = {
     aud_group: "Un groupe",
     audienceSize: "{{count}} personnes recevront cet e-mail.",
     audienceNoEmail: "{{count}} n'ont pas d'e-mail : invitez-les par WhatsApp depuis la liste.",
+    noEmailsBadge: "Pas d’e-mails",
+    audienceOptedOut: "{{count}} membres ont demandé à ne plus recevoir d’e-mails et sont exclus.",
     nobody: "Personne à qui écrire ici.",
     project: "Projet",
     projectNone: "Là où c’est le plus utile",
@@ -7178,6 +7186,8 @@ const va: Translations = {
     aud_group: "Un grup",
     audienceSize: "{{count}} persones rebran este correu.",
     audienceNoEmail: "{{count}} no tenen correu: convida-les per WhatsApp des de la llista.",
+    noEmailsBadge: "Sense correus",
+    audienceOptedOut: "{{count}} membres van demanar no rebre correus i queden fora.",
     nobody: "No hi ha ningú a qui escriure ací.",
     project: "Projecte",
     projectNone: "On més es necessite",
@@ -8647,6 +8657,8 @@ const ca: Translations = {
     aud_group: "Un grup",
     audienceSize: "{{count}} persones rebran aquest correu.",
     audienceNoEmail: "{{count}} no tenen correu: convida-les per WhatsApp des de la llista.",
+    noEmailsBadge: "Sense correus",
+    audienceOptedOut: "{{count}} membres van demanar no rebre correus i queden fora.",
     nobody: "No hi ha ningú a qui escriure aquí.",
     project: "Projecte",
     projectNone: "On més es necessiti",
@@ -10116,6 +10128,8 @@ const gl: Translations = {
     aud_group: "Un grupo",
     audienceSize: "{{count}} persoas recibirán este correo.",
     audienceNoEmail: "{{count}} non teñen correo: convídaas por WhatsApp desde a lista.",
+    noEmailsBadge: "Sen correos",
+    audienceOptedOut: "{{count}} membros pediron non recibir correos e quedan fóra.",
     nobody: "Non hai ninguén a quen escribir aquí.",
     project: "Proxecto",
     projectNone: "Onde máis se precise",
@@ -11585,6 +11599,8 @@ const pt: Translations = {
     aud_group: "Um grupo",
     audienceSize: "{{count}} pessoas vão receber este e-mail.",
     audienceNoEmail: "{{count}} não têm e-mail: convide-as por WhatsApp a partir da lista.",
+    noEmailsBadge: "Sem e-mails",
+    audienceOptedOut: "{{count}} membros pediram para não receber e-mails e ficam de fora.",
     nobody: "Ninguém a quem escrever aqui.",
     project: "Projeto",
     projectNone: "Onde for mais preciso",
