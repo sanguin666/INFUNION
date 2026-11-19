@@ -52,7 +52,7 @@ export function WriteToMembersPage() {
   const [campaignId, setCampaignId] = useState('');
   const [subject, setSubject] = useState(t(`contacts.${initialKind === 'invitation' ? 'invite' : initialKind}SubjectDefault`));
   const [body, setBody] = useState(t(`contacts.${initialKind === 'invitation' ? 'invite' : initialKind}BodyDefault`));
-  const [size, setSize] = useState<{ withEmail: number; withoutEmail: number } | null>(null);
+  const [size, setSize] = useState<{ withEmail: number; withoutEmail: number; optedOut?: number } | null>(null);
   const [allowance, setAllowance] = useState<Allowance | null>(null);
   const [history, setHistory] = useState<OutreachView[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -271,7 +271,8 @@ export function WriteToMembersPage() {
                   : size.withEmail === 0 && size.withoutEmail === 0
                     ? t('contacts.nobody')
                     : t('contacts.audienceSize', { count: size.withEmail }) +
-                      (size.withoutEmail > 0 ? ` ${t('contacts.audienceNoEmail', { count: size.withoutEmail })}` : '')}
+                      (size.withoutEmail > 0 ? ` ${t('contacts.audienceNoEmail', { count: size.withoutEmail })}` : '') +
+                      (size.optedOut ? ` ${t('contacts.audienceOptedOut', { count: size.optedOut })}` : '')}
               </p>
             </section>
 

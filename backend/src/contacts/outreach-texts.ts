@@ -28,6 +28,13 @@ export type OutreachText = {
   stopButton: string;
   stoppedTitle: string;
   stoppedText: string;
+  stopKeep: string;
+  keptTitle: string;
+  keptText: string;
+  stoppedApp: string;
+  resumeButton: string;
+  resumedTitle: string;
+  resumedText: string;
   goneTitle: string;
   goneText: string;
   whatsappInvite: string;
@@ -50,7 +57,7 @@ const en: OutreachText = {
   join: 'Join our community',
   contribute: 'Make a contribution',
   why: 'You receive this email because you are a member of {community}.',
-  stop: 'Stop these emails',
+  stop: 'I don\'t want to receive these emails',
   giveTitle: 'Contribute to {community}',
   giveIntro: 'Thank you for supporting your community.',
   giveProject: 'For: {project}',
@@ -65,11 +72,11 @@ const en: OutreachText = {
   thanksText: 'Your contribution went through. You can close this page.',
   cancelledTitle: 'Payment cancelled',
   cancelledText: 'No payment was taken. You can close this page.',
-  stopTitle: 'Stop emails from {community}?',
-  stopText: 'You will no longer receive emails from {community} through infunion.',
-  stopButton: 'Stop the emails',
+  stopTitle: 'I don\'t want to receive these emails',
+  stopText: 'You will no longer receive emails from {community}. Other communities are not affected.',
+  stopButton: 'Stop these emails',
   stoppedTitle: 'Done',
-  stoppedText: '{community} will not write to you by email any more.',
+  stoppedText: '{community} will not email you any more.',
   goneTitle: 'This link no longer works',
   goneText: 'It may have been removed by the community.',
   whatsappInvite: 'Hello {name}, {community} is now on infunion: times, news and contributions on your phone. Join us here: {link}',
@@ -86,13 +93,20 @@ const en: OutreachText = {
   bizumWaiting: 'Waiting for confirmation',
   copy: 'Copy',
   copied: 'Copied',
+  stopKeep: 'Keep receiving them',
+  keptTitle: 'Nothing changed',
+  keptText: 'You will keep receiving emails from {community}. You can close this page.',
+  stoppedApp: 'If you use the infunion app, its notifications are not affected: you choose them in the app.',
+  resumeButton: 'I changed my mind',
+  resumedTitle: 'Welcome back',
+  resumedText: '{community} can email you again.',
 };
 
 const es: OutreachText = {
   join: 'Entrar en la comunidad',
   contribute: 'Hacer una contribución',
   why: 'Recibes este correo porque eres miembro de {community}.',
-  stop: 'No quiero recibir más correos',
+  stop: 'No quiero recibir estos correos',
   giveTitle: 'Contribuir a {community}',
   giveIntro: 'Gracias por apoyar a tu comunidad.',
   giveProject: 'Para: {project}',
@@ -107,8 +121,8 @@ const es: OutreachText = {
   thanksText: 'Tu contribución se ha realizado. Ya puedes cerrar esta página.',
   cancelledTitle: 'Pago cancelado',
   cancelledText: 'No se ha cobrado nada. Ya puedes cerrar esta página.',
-  stopTitle: '¿Dejar de recibir correos de {community}?',
-  stopText: 'Ya no recibirás correos de {community} a través de infunion.',
+  stopTitle: 'No quiero recibir estos correos',
+  stopText: 'Ya no recibirás correos de {community}. Las demás comunidades no cambian.',
   stopButton: 'Dejar de recibirlos',
   stoppedTitle: 'Hecho',
   stoppedText: '{community} ya no te escribirá por correo.',
@@ -128,13 +142,20 @@ const es: OutreachText = {
   bizumWaiting: 'Pendiente de confirmación',
   copy: 'Copiar',
   copied: 'Copiado',
+  stopKeep: 'Seguir recibiéndolos',
+  keptTitle: 'No ha cambiado nada',
+  keptText: 'Seguirás recibiendo los correos de {community}. Ya puedes cerrar esta página.',
+  stoppedApp: 'Si usas la app infunion, sus notificaciones no cambian: las eliges en la app.',
+  resumeButton: 'He cambiado de opinión',
+  resumedTitle: 'Bienvenido de nuevo',
+  resumedText: '{community} puede volver a escribirte por correo.',
 };
 
 const fr: OutreachText = {
   join: 'Rejoindre la communauté',
   contribute: 'Faire une contribution',
   why: 'Vous recevez cet e-mail car vous êtes membre de {community}.',
-  stop: 'Ne plus recevoir ces e-mails',
+  stop: 'Je ne veux plus recevoir ces e-mails',
   giveTitle: 'Contribuer à {community}',
   giveIntro: 'Merci de soutenir votre communauté.',
   giveProject: 'Pour : {project}',
@@ -149,9 +170,9 @@ const fr: OutreachText = {
   thanksText: 'Votre contribution a bien été effectuée. Vous pouvez fermer cette page.',
   cancelledTitle: 'Paiement annulé',
   cancelledText: 'Aucun paiement n’a été pris. Vous pouvez fermer cette page.',
-  stopTitle: 'Ne plus recevoir d’e-mails de {community} ?',
-  stopText: 'Vous ne recevrez plus d’e-mails de {community} via infunion.',
-  stopButton: 'Arrêter les e-mails',
+  stopTitle: 'Je ne veux plus recevoir ces e-mails',
+  stopText: 'Vous ne recevrez plus d’e-mails de {community}. Les autres communautés ne changent pas.',
+  stopButton: 'Arrêter ces e-mails',
   stoppedTitle: 'C’est fait',
   stoppedText: '{community} ne vous écrira plus par e-mail.',
   goneTitle: 'Ce lien ne fonctionne plus',
@@ -170,13 +191,20 @@ const fr: OutreachText = {
   bizumWaiting: 'En attente de confirmation',
   copy: 'Copier',
   copied: 'Copié',
+  stopKeep: 'Continuer à les recevoir',
+  keptTitle: 'Rien n’a changé',
+  keptText: 'Vous continuerez à recevoir les e-mails de {community}. Vous pouvez fermer cette page.',
+  stoppedApp: 'Si vous utilisez l’application infunion, ses notifications ne changent pas : vous les choisissez dans l’application.',
+  resumeButton: 'J’ai changé d’avis',
+  resumedTitle: 'Bon retour',
+  resumedText: '{community} peut de nouveau vous écrire par e-mail.',
 };
 
 const va: OutreachText = {
   join: 'Entrar en la comunitat',
   contribute: 'Fer una contribució',
   why: 'Reps este correu perquè eres membre de {community}.',
-  stop: 'No vull rebre més correus',
+  stop: 'No vull rebre estos correus',
   giveTitle: 'Contribuir a {community}',
   giveIntro: 'Gràcies per donar suport a la teua comunitat.',
   giveProject: 'Per a: {project}',
@@ -191,8 +219,8 @@ const va: OutreachText = {
   thanksText: 'La teua contribució s’ha fet. Ja pots tancar esta pàgina.',
   cancelledTitle: 'Pagament cancel·lat',
   cancelledText: 'No s’ha cobrat res. Ja pots tancar esta pàgina.',
-  stopTitle: 'Deixar de rebre correus de {community}?',
-  stopText: 'Ja no rebràs correus de {community} a través d’infunion.',
+  stopTitle: 'No vull rebre estos correus',
+  stopText: 'Ja no rebràs correus de {community}. Les altres comunitats no canvien.',
   stopButton: 'Deixar de rebre’ls',
   stoppedTitle: 'Fet',
   stoppedText: '{community} ja no t’escriurà per correu.',
@@ -212,6 +240,13 @@ const va: OutreachText = {
   bizumWaiting: 'Pendent de confirmació',
   copy: 'Copiar',
   copied: 'Copiat',
+  stopKeep: 'Continuar rebent-los',
+  keptTitle: 'No ha canviat res',
+  keptText: 'Continuaràs rebent els correus de {community}. Ja pots tancar esta pàgina.',
+  stoppedApp: 'Si uses l’app infunion, les seues notificacions no canvien: les tries en l’app.',
+  resumeButton: 'He canviat d’opinió',
+  resumedTitle: 'Benvingut de nou',
+  resumedText: '{community} pot tornar a escriure’t per correu.',
 };
 
 const ca: OutreachText = {
@@ -237,13 +272,25 @@ const ca: OutreachText = {
   bizumWaiting: 'Pendent de confirmació',
   copy: 'Copiar',
   copied: 'Copiat',
+  stop: 'No vull rebre aquests correus',
+  stopTitle: 'No vull rebre aquests correus',
+  stopText: 'Ja no rebràs correus de {community}. Les altres comunitats no canvien.',
+  stopButton: 'Deixar de rebre’ls',
+  stoppedText: '{community} ja no t’escriurà per correu.',
+  stopKeep: 'Continuar rebent-los',
+  keptTitle: 'No ha canviat res',
+  keptText: 'Continuaràs rebent els correus de {community}. Ja pots tancar aquesta pàgina.',
+  stoppedApp: 'Si fas servir l’app infunion, les seves notificacions no canvien: les tries a l’app.',
+  resumeButton: 'He canviat d’opinió',
+  resumedTitle: 'Benvingut de nou',
+  resumedText: '{community} pot tornar a escriure’t per correu.',
 };
 
 const gl: OutreachText = {
   join: 'Entrar na comunidade',
   contribute: 'Facer unha contribución',
   why: 'Recibes este correo porque es membro de {community}.',
-  stop: 'Non quero recibir máis correos',
+  stop: 'Non quero recibir estes correos',
   giveTitle: 'Contribuír a {community}',
   giveIntro: 'Grazas por apoiar a túa comunidade.',
   giveProject: 'Para: {project}',
@@ -258,8 +305,8 @@ const gl: OutreachText = {
   thanksText: 'A túa contribución realizouse. Xa podes pechar esta páxina.',
   cancelledTitle: 'Pagamento cancelado',
   cancelledText: 'Non se cobrou nada. Xa podes pechar esta páxina.',
-  stopTitle: 'Deixar de recibir correos de {community}?',
-  stopText: 'Xa non recibirás correos de {community} a través de infunion.',
+  stopTitle: 'Non quero recibir estes correos',
+  stopText: 'Xa non recibirás correos de {community}. As demais comunidades non cambian.',
   stopButton: 'Deixar de recibilos',
   stoppedTitle: 'Feito',
   stoppedText: '{community} xa non che escribirá por correo.',
@@ -279,13 +326,20 @@ const gl: OutreachText = {
   bizumWaiting: 'Pendente de confirmación',
   copy: 'Copiar',
   copied: 'Copiado',
+  stopKeep: 'Seguir recibíndoos',
+  keptTitle: 'Non cambiou nada',
+  keptText: 'Seguirás recibindo os correos de {community}. Xa podes pechar esta páxina.',
+  stoppedApp: 'Se usas a app infunion, as súas notificacións non cambian: escólleas na app.',
+  resumeButton: 'Cambiei de opinión',
+  resumedTitle: 'Benvido de novo',
+  resumedText: '{community} pode volver escribirche por correo.',
 };
 
 const pt: OutreachText = {
   join: 'Entrar na comunidade',
   contribute: 'Fazer uma contribuição',
   why: 'Recebe este e-mail porque é membro de {community}.',
-  stop: 'Não quero receber mais e-mails',
+  stop: 'Não quero receber estes e-mails',
   giveTitle: 'Contribuir para {community}',
   giveIntro: 'Obrigado por apoiar a sua comunidade.',
   giveProject: 'Para: {project}',
@@ -300,8 +354,8 @@ const pt: OutreachText = {
   thanksText: 'A sua contribuição foi feita. Já pode fechar esta página.',
   cancelledTitle: 'Pagamento cancelado',
   cancelledText: 'Nada foi cobrado. Já pode fechar esta página.',
-  stopTitle: 'Deixar de receber e-mails de {community}?',
-  stopText: 'Deixará de receber e-mails de {community} através do infunion.',
+  stopTitle: 'Não quero receber estes e-mails',
+  stopText: 'Deixará de receber e-mails de {community}. As outras comunidades não mudam.',
   stopButton: 'Deixar de receber',
   stoppedTitle: 'Feito',
   stoppedText: '{community} não lhe voltará a escrever por e-mail.',
@@ -321,6 +375,13 @@ const pt: OutreachText = {
   bizumWaiting: 'A aguardar confirmação',
   copy: 'Copiar',
   copied: 'Copiado',
+  stopKeep: 'Continuar a receber',
+  keptTitle: 'Nada mudou',
+  keptText: 'Vai continuar a receber os e-mails de {community}. Pode fechar esta página.',
+  stoppedApp: 'Se usa a app infunion, as notificações não mudam: escolhe-as na app.',
+  resumeButton: 'Mudei de ideias',
+  resumedTitle: 'Bem-vindo de volta',
+  resumedText: '{community} pode voltar a escrever-lhe por e-mail.',
 };
 
 const TEXTS: Record<string, OutreachText> = { en, es, fr, va, ca, gl, pt };

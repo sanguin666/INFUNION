@@ -42,6 +42,9 @@ button{margin-top:24px;width:100%;font:inherit;font-weight:700;color:#fff;backgr
 .foot a{display:inline-flex;align-items:center;gap:6px;color:#8b87a0;text-decoration:none}
 .foot b{color:#1D1A2D}
 .amounts .other{grid-column:span 2;width:100%;min-width:0;margin:0;border-radius:999px;padding:8px 18px;font-weight:600;text-align:center}
+.link-row{text-align:center;margin:16px 0 0}
+.link-row a{color:#5638c7;font-weight:700;text-decoration:none}
+.note{background:#f6f5f9;border-radius:12px;padding:10px 14px;font-size:15px}
 .alt{margin-top:12px;background:#fff;color:#1D1A2D;border:1.5px solid rgba(45,30,110,.25)}
 .bizum-tag{display:inline-block;margin-left:6px;padding:0 8px;border-radius:6px;background:#05c3dd;color:#fff;font-size:13px;font-weight:700;vertical-align:1px}
 .steps{list-style:none;padding:0;margin:8px 0 0}
