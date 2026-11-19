@@ -74,6 +74,12 @@ describe('Bizum by number (e2e)', () => {
     expect(pending.body).toHaveLength(1);
     expect(pending.body[0]).toMatchObject({ amount: 25, code: started.body.code, donorName: 'Ana' });
 
+    // The team sees it beside Donate in the admin menu; the member sees it waiting.
+    const counts = await client(app).get(`/pois/${place.id}/dashboard/menu-counts`).set(as(adminToken)).expect(200);
+    expect(counts.body.donations).toBe(1);
+    const mine = await client(app).get(`/pois/${place.id}/donations/mine/gifts`).set(as(memberToken)).expect(200);
+    expect(mine.body[0]).toMatchObject({ amount: 25, waitingBizumCode: started.body.code, receiptUrl: null });
+
     let stats = await client(app).get(`/pois/${place.id}/donations/stats`).set(as(adminToken)).expect(200);
     const before = JSON.stringify(stats.body);
 
@@ -91,6 +97,10 @@ describe('Bizum by number (e2e)', () => {
     expect(recent.body[0]).toMatchObject({ amount: 25, paymentMethod: 'bizum', platformFee: 0 });
     const after = await client(app).get(`/pois/${place.id}/donations/bizum/pending`).set(as(adminToken)).expect(200);
     expect(after.body).toEqual([]);
+    const cleared = await client(app).get(`/pois/${place.id}/dashboard/menu-counts`).set(as(adminToken)).expect(200);
+    expect(cleared.body.donations).toBe(0);
+    const confirmed = await client(app).get(`/pois/${place.id}/donations/mine/gifts`).set(as(memberToken)).expect(200);
+    expect(confirmed.body[0].waitingBizumCode).toBeNull();
   });
 
   it('takes no monthly Bizum, and drops what the team never confirmed', async () => {

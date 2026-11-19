@@ -101,6 +101,9 @@ export type MyGift = {
   campaignTitle: string | null;
   recurring: boolean;
   wantsReceipt: boolean;
+  // A Bizum sent and not yet confirmed by the team: its concept, shown
+  // as "Waiting for confirmation" (Seb, 19 Nov 2026). null otherwise.
+  waitingBizumCode: string | null;
 };
 
 /** Anything the Stripe session tells us about how a checkout ended. */
@@ -777,8 +780,19 @@ export class DonationsService {
 
   /** A signed-in giver's completed gifts to a place, newest first. */
   async listMyGifts(poiId: string, userId: string): Promise<MyGift[]> {
+    await this.removeStaleBizum(poiId);
     const gifts = await this.donationsRepository.find({
-      where: { poi: { id: poiId }, donor: { id: userId }, status: DonationStatus.COMPLETED },
+      where: [
+        { poi: { id: poiId }, donor: { id: userId }, status: DonationStatus.COMPLETED },
+        // Bizums they said they sent, still waiting for the team.
+        {
+          poi: { id: poiId },
+          donor: { id: userId },
+          status: DonationStatus.PENDING,
+          paymentMethod: 'bizum',
+          bizumSentAt: Not(IsNull()),
+        },
+      ],
       relations: { campaign: true },
       order: { createdAt: 'DESC' },
       take: 100,
@@ -827,6 +841,7 @@ export class DonationsService {
       campaignTitle: gift.campaign?.title ?? null,
       recurring: gift.recurring,
       wantsReceipt: gift.wantsReceipt,
+      waitingBizumCode: gift.status === DonationStatus.PENDING ? (gift.bizumCode ?? null) : null,
     };
   }
 
