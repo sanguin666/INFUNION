@@ -85,6 +85,8 @@ export function MembersPage() {
   const [contactsLoaded, setContactsLoaded] = useState<{ poiId: string; list: ContactRow[] } | null>(null);
   const contacts = contactsLoaded && contactsLoaded.poiId === poiId ? contactsLoaded.list : null;
   const waitingCount = contacts?.filter((c) => !c.userId).length ?? null;
+  // App members who said "I don't want to receive these emails".
+  const noEmails = new Set((contacts ?? []).filter((c) => c.userId && c.unsubscribedAt).map((c) => c.userId));
   const [tab, setTab] = useTab(['app', 'list'] as const);
 
   useEffect(() => {
@@ -251,6 +253,7 @@ export function MembersPage() {
                     <p className="card-title" style={{ margin: 0, fontSize: 17 }}>
                       {nameOf(member, t)}
                       {live && member.unread && <span className="badge badge-active">{`\u00a0· ${t('members.newBadge')}`}</span>}
+                      {noEmails.has(member.userId) && <span className="badge badge-no-emails">{t('contacts.noEmailsBadge')}</span>}
                     </p>
                     <p className="card-meta member-preview">
                       {live && member.lastMessage
