@@ -149,7 +149,7 @@ export class AssistantService {
         [userId, this.today()],
       );
       this.logger.warn(`Assistant failed for ${poi.id}: ${(error as Error).message}`);
-      throw new ServiceUnavailableException('assistant_failed');
+      throw new ServiceUnavailableException('assistant_failed', { cause: error });
     }
   }
 
