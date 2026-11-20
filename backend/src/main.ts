@@ -6,6 +6,7 @@ import { AppModule } from './app.module.js';
 import { DataSource } from 'typeorm';
 import { fileStore, migrateLocalFiles, S3FileStore, UPLOADS_ROOT } from './common/storage/file-store.js';
 import { runExclusive } from './common/locks/run-exclusive.js';
+import { AlertingLogger } from './common/logging/alerting-logger.js';
 
 /**
  * Who may call the API from a browser.
@@ -53,7 +54,12 @@ function corsOrigins(configService: ConfigService): string[] | boolean {
 async function bootstrap() {
   // rawBody keeps the untouched request body around for Stripe's webhook
   // signature check, which is computed over the exact bytes Stripe sent.
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
+  // The logger is Nest's own, plus logged errors passed on to the error
+  // alerts emailed to the superadmin (superadmin/error-alerts.service.ts).
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+    logger: new AlertingLogger(),
+  });
   // A community's member list arrives as JSON rows (up to 5,000 of them).
   app.useBodyParser('json', { limit: '2mb' });
   const configService = app.get(ConfigService);

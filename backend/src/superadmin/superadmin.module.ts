@@ -16,6 +16,7 @@ import { SuperadminAuthService } from './superadmin-auth.service.js';
 import { SuperadminService } from './superadmin.service.js';
 import { SuperadminBootstrap } from './superadmin-bootstrap.service.js';
 import { ErrorTracker } from './error-tracker.js';
+import { ErrorAlerts } from './error-alerts.service.js';
 import { RegistrationsModule } from '../registrations/registrations.module.js';
 import { PlaceClosureModule } from '../place-closure/place-closure.module.js';
 
@@ -34,6 +35,7 @@ import { PlaceClosureModule } from '../place-closure/place-closure.module.js';
     SuperadminAuthService,
     SuperadminService,
     SuperadminBootstrap,
+    ErrorAlerts,
     ErrorTracker,
     // The same instance counts every route's server errors.
     { provide: APP_INTERCEPTOR, useExisting: ErrorTracker },

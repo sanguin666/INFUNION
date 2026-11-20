@@ -80,7 +80,7 @@ export class TranslationsService implements OnModuleInit, OnModuleDestroy {
     if (this.config.get<string>('NODE_ENV') === 'test') return;
     this.sweepTimer = setInterval(() => {
       runExclusive(this.dataSource, 'translations-sweep', () => this.sweep()).catch(
-        (error: Error) => this.logger.warn(`Translation sweep failed: ${error.message}`),
+        (error: Error) => this.logger.error(`Translation sweep failed: ${error.message}`),
       );
     }, HOUR_MS);
   }
@@ -139,7 +139,7 @@ export class TranslationsService implements OnModuleInit, OnModuleDestroy {
         if (rows.length > 0) await this.languages.upsert(rows, ['kind', 'targetId']);
         Object.assign(result, found);
       } catch (error) {
-        this.logger.warn(`Detecting languages failed: ${(error as Error).message}`);
+        this.logger.error(`Detecting languages failed: ${(error as Error).message}`);
       }
     }
     return result;
@@ -186,7 +186,7 @@ export class TranslationsService implements OnModuleInit, OnModuleDestroy {
             await this.translations.upsert(row, ['kind', 'targetId', 'language']);
             return view(row);
           } catch (error) {
-            this.logger.warn(`Translating ${kind} ${id} failed: ${(error as Error).message}`);
+            this.logger.error(`Translating ${kind} ${id} failed: ${(error as Error).message}`);
             return null;
           }
         }),
@@ -227,7 +227,7 @@ export class TranslationsService implements OnModuleInit, OnModuleDestroy {
   // 503, so the app keeps the original text.
   private failed(step: string, error: Error): never {
     this.logger.warn(`Translation ${step} failed: ${error.message}`);
-    throw new ServiceUnavailableException('translation_failed');
+    throw new ServiceUnavailableException('translation_failed', { cause: error });
   }
 
   async sweep(): Promise<void> {
