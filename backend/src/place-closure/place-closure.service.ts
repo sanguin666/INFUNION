@@ -141,7 +141,7 @@ export class PlaceClosureService implements OnModuleInit, OnModuleDestroy {
     this.sweepTimer = setInterval(() => {
       runExclusive(this.dataSource, 'place-closure', () => this.sweep()).catch(
         (error: Error) =>
-          this.logger.warn(`Place closure sweep failed: ${error.message}`),
+          this.logger.error(`Place closure sweep failed: ${error.message}`),
       );
     }, HOUR_MS);
   }
