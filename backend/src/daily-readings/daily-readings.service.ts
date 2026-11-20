@@ -52,7 +52,7 @@ export class DailyReadingsService implements OnModuleInit, OnModuleDestroy {
       runExclusive(this.repository.manager.connection, 'daily-readings', () =>
         this.sendDueNotifications(),
       ).catch((error: Error) =>
-        this.logger.warn(`Readings notifications failed: ${error.message}`),
+        this.logger.error(`Readings notifications failed: ${error.message}`),
       );
     }, SWEEP_MS);
   }

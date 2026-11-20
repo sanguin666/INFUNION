@@ -76,7 +76,7 @@ export class PrivacyService implements OnModuleInit, OnModuleDestroy {
     // and every step of the sweep is safe to repeat.
     this.sweep = setInterval(() => {
       runExclusive(this.dataSource, 'privacy-retention', () => this.applyRetention()).catch((error: Error) =>
-        this.logger.warn(`Retention sweep failed: ${error.message}`),
+        this.logger.error(`Retention sweep failed: ${error.message}`),
       );
     }, 60 * 60 * 1000);
   }

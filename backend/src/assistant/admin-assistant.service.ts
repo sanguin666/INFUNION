@@ -104,7 +104,7 @@ export class AdminAssistantService {
         [userId, this.today()],
       );
       this.logger.warn(`Admin assistant failed for ${poi.id}: ${(error as Error).message}`);
-      throw new ServiceUnavailableException('assistant_failed');
+      throw new ServiceUnavailableException('assistant_failed', { cause: error });
     }
   }
 
