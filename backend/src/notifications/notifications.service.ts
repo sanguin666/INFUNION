@@ -120,7 +120,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
       runExclusive(this.reminderRepository.manager.connection, 'event-reminders', () =>
         this.sendDueEventReminders(),
       ).catch((error: Error) =>
-        this.logger.warn(`Event reminders failed: ${error.message}`),
+        this.logger.error(`Event reminders failed: ${error.message}`),
       );
     }, REMINDER_SWEEP_MS);
   }
