@@ -313,6 +313,8 @@ How it is locked:
 - **Inside a community's admin**, the superadmin needs a superadmin token, and every change is written to the Journal, as are admin sign-ins.
 - The authenticator secret is encrypted (AES-256-GCM, key from `SUPERADMIN_SECRET_KEY` or `JWT_SECRET`). Superadmin answers carry `Cache-Control: no-store`.
 
+**Error alerts.** When the API hits a new error (a 500 on a route, or an error a background job logged), an email goes to `ERROR_ALERTS_EMAIL`, else `SUPERADMIN_EMAIL`, with the route or job, the message (email addresses and tokens removed) and a link to Technical health. Errors of the same minute share one email; the same error on any community is emailed at most once every 6 hours across every copy of the API (a row in `rate_limits`), and at most 20 alerts go out a day. On in production by default; `ERROR_ALERTS=off` stops it, `ERROR_ALERTS=on` turns it on elsewhere. Code: `backend/src/superadmin/error-alerts.service.ts` and `backend/src/common/logging/alerting-logger.ts`.
+
 ## Who can call what
 
 | Route | Who |
