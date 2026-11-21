@@ -993,6 +993,8 @@ export type Translations = {
     typeRegistration: string;
   };
   massIntentions: {
+    addButton: string;
+    tabAll: string;
     title: string;
     subtitle: string;
     addTitle: string;
@@ -2476,6 +2478,8 @@ const en: Translations = {
     typeRegistration: 'Registration',
   },
   massIntentions: {
+    addButton: "+ Add an intention",
+    tabAll: "Whole register",
     title: 'Mass intentions',
     subtitle: "The Masses said for someone, asked for from the app or in person, listed by celebration for the celebrant.",
     addTitle: "Add one taken in person",
@@ -3959,6 +3963,8 @@ const es: Translations = {
     typeRegistration: 'Inscripción',
   },
   massIntentions: {
+    addButton: "+ Añadir una intención",
+    tabAll: "Todo el registro",
     title: 'Intenciones de misa',
     subtitle: "Las misas ofrecidas por alguien, pedidas desde la app o en persona, ordenadas por celebración para el celebrante.",
     addTitle: "Añadir una recibida en persona",
@@ -5442,6 +5448,8 @@ const fr: Translations = {
     typeRegistration: 'Inscription',
   },
   massIntentions: {
+    addButton: "+ Ajouter une intention",
+    tabAll: "Tout le registre",
     title: 'Intentions de messe',
     subtitle: "Les messes dites pour quelqu'un, demandées depuis l'application ou en personne, classées par célébration pour le célébrant.",
     addTitle: "Ajouter une intention reçue en personne",
@@ -6925,6 +6933,8 @@ const va: Translations = {
     typeRegistration: 'Inscripció',
   },
   massIntentions: {
+    addButton: "+ Afegir una intenció",
+    tabAll: "Tot el registre",
     title: 'Intencions de missa',
     subtitle: "Les misses oferides per algú, demanades des de l’aplicació o en persona, ordenades per celebració per al celebrant.",
     addTitle: "Afegir-ne una rebuda en persona",
@@ -8408,6 +8418,8 @@ const ca: Translations = {
     typeRegistration: 'Inscripció',
   },
   massIntentions: {
+    addButton: "+ Afegeix una intenció",
+    tabAll: "Tot el registre",
     title: 'Intencions de missa',
     subtitle: "Les misses oferides per algú, demanades des de l’aplicació o en persona, ordenades per celebració per al celebrant.",
     addTitle: "Afegir-ne una rebuda en persona",
@@ -9891,6 +9903,8 @@ const gl: Translations = {
     typeRegistration: 'Inscrición',
   },
   massIntentions: {
+    addButton: "+ Engadir unha intención",
+    tabAll: "Todo o rexistro",
     title: 'Intencións de misa',
     subtitle: "As misas ofrecidas por alguén, pedidas desde a app ou en persoa, ordenadas por celebración para o celebrante.",
     addTitle: "Engadir unha recibida en persoa",
@@ -11374,6 +11388,8 @@ const pt: Translations = {
     typeRegistration: 'Inscrição',
   },
   massIntentions: {
+    addButton: "+ Adicionar uma intenção",
+    tabAll: "Registo completo",
     title: 'Intenções de missa',
     subtitle: "As missas oferecidas por alguém, pedidas pela app ou presencialmente, organizadas por celebração para o celebrante.",
     addTitle: "Adicionar uma recebida presencialmente",
