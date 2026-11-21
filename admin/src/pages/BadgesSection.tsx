@@ -4,7 +4,7 @@ import { intlLocale } from '../i18n/translations';
 import { createBadge, deleteBadge, getBadges, reorderBadges, updateBadge, type BadgeInput } from '../api/badges';
 import { getCampaigns } from '../api/donations';
 import type { ActiveModule, BadgeKind, Campaign, ModuleType, PoiBadge } from '../api/types';
-import { DestructiveButton } from '../components/DestructiveButton';
+import { Grip, MoreMenu, moved, useReorder } from '../components/Reorder';
 import { toDateInputValue } from '../format';
 import { moduleName } from './MenuOrder';
 import { hideFromList, useUndo } from '../components/Undo';
@@ -166,12 +166,9 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
     save(badge, { enabled: !badge.enabled });
   }
 
-  async function move(index: number, delta: number) {
+  async function move(from: number, to: number) {
     if (!badges) return;
-    const target = index + delta;
-    if (target < 0 || target >= badges.length) return;
-    const next = [...badges];
-    [next[index], next[target]] = [next[target], next[index]];
+    const next = moved(badges, from, to);
     setBadges(next);
     setError(null);
     try {
@@ -241,6 +238,7 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
   if (draft.linkModule && !linkable.includes(draft.linkModule)) linkable.push(draft.linkModule);
 
   const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
+  const drag = useReorder(badges?.length ?? 0, move);
 
   return (
     <section aria-label={t('badges.title')}>
@@ -255,27 +253,8 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
               const title =
                 badge.kind === 'message' ? badge.text ?? '' : AUTO_TITLES[badge.kind];
               return (
-                <li key={badge.id} className="card-row">
-                  <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                    <button
-                      type="button"
-                      className="btn btn-icon"
-                      onClick={() => move(index, -1)}
-                      disabled={index === 0}
-                      aria-label={t('badges.moveUp')}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-icon"
-                      onClick={() => move(index, 1)}
-                      disabled={index === badges.length - 1}
-                      aria-label={t('badges.moveDown')}
-                    >
-                      ↓
-                    </button>
-                  </div>
+                <li key={badge.id} className="card-row reorder-row" {...drag.row(index)}>
+                  <Grip {...drag.grip(index)} name={title} />
                   <span className="badge-kind">
                     {badge.kind === 'message' ? t('badges.kindMessage') : t('badges.kindAuto')}
                   </span>
@@ -310,12 +289,13 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
                     </p>
                   </div>
                   {badge.kind === 'message' && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 8 }}>
-                      <button type="button" className="text-action" onClick={() => startEdit(badge)}>
-                        {t('badges.edit')}
-                      </button>
-                      <DestructiveButton quiet label={t('badges.delete')} onConfirm={() => handleDelete(badge.id)} />
-                    </div>
+                    <MoreMenu
+                      label={t('reorder.more', { name: title })}
+                      items={[
+                        { label: t('badges.edit'), onSelect: () => startEdit(badge) },
+                        { label: t('badges.delete'), destructive: true, undoable: true, onSelect: () => handleDelete(badge.id) },
+                      ]}
+                    />
                   )}
                   <input
                     type="checkbox"

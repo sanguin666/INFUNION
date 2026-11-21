@@ -5107,3 +5107,92 @@ select.chip {
   color: #a32020;
   vertical-align: 2px;
 }
+
+/* Drag to reorder and the "⋯" menu of a row (Seb, 21 Nov 2026: fewer
+   buttons per page). The grip replaces the ↑ ↓ pair; the menu holds the
+   actions a row needs now and then. */
+.grip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  min-height: 44px;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  fill: currentColor;
+  cursor: grab;
+  border-radius: 8px;
+  touch-action: none;
+}
+.grip:hover, .grip:focus-visible { color: var(--color-text); background: var(--color-primary-soft); }
+[data-dragging] { opacity: 0.45; }
+[data-drop='before'] { box-shadow: inset 0 3px 0 var(--color-primary); }
+[data-drop='after'] { box-shadow: inset 0 -3px 0 var(--color-primary); }
+.reorder-row { display: flex; align-items: center; gap: 12px; }
+.reorder-row > .grow { flex: 1; min-width: 0; }
+
+.more-menu { position: relative; flex: none; }
+.more-menu-button {
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.more-menu-button:hover, .more-menu-button[aria-expanded='true'] { background: var(--color-primary-soft); }
+.more-menu-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 40;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+}
+.more-menu-item {
+  text-align: left;
+  min-height: 44px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--color-text);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.more-menu-item:hover:not(:disabled), .more-menu-item:focus-visible { background: var(--color-primary-soft); }
+.more-menu-item:disabled { opacity: 0.45; cursor: not-allowed; }
+.more-menu-item-destructive { color: var(--color-danger); }
+
+/* One Save for a whole tab, kept in view at the bottom of the window
+   while the page scrolls (Home page > Sections). */
+.save-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 12px 0;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-card-border);
+}
+.save-bar .muted { margin: 0; }
+
+.phone-preview-language { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; font-size: 15px; color: var(--color-text-muted); }
+.phone-preview-language select { width: auto; font-size: 16px; font-weight: 700; color: var(--color-text); }

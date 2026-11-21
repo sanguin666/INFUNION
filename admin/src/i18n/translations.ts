@@ -51,6 +51,7 @@ export type Translations = {
     massNote: string;
   };
   tabs: {
+    homeIdentity: string;
     label: string;
     settingsInfo: string;
     settingsPersonalise: string;
@@ -1499,6 +1500,12 @@ export type Translations = {
     restart: string;
     goTo: string;
   };
+  reorder: {
+    grip: string;
+    hint: string;
+    more: string;
+    dragNote: string;
+  },
 };
 
 const en: Translations = {
@@ -1521,6 +1528,7 @@ const en: Translations = {
     massNote: "Offerings are paid the same way. Until your payment account is set up, members ask for intentions in the app without paying an offering.",
   },
   tabs: {
+    homeIdentity: "Identity",
     label: "Parts of this page",
     settingsInfo: "Information",
     settingsPersonalise: "Personalise",
@@ -2348,7 +2356,7 @@ const en: Translations = {
     edit: 'Edit',
     delete: 'Delete',
     showLabel: 'Show “{{name}}”',
-    orderNote: 'Use ↑ ↓ to change the order. Every badge switched on shows, in this order.',
+    orderNote: 'Drag ⠿ to change the order. Every badge switched on shows, in this order.',
     addTitle: 'Add a message',
     editTitle: 'Edit the message',
     textLabel: 'Text ({{n}} characters at most)',
@@ -2970,6 +2978,12 @@ const en: Translations = {
     restart: "New conversation",
     goTo: "Open {{page}}",
   },
+  reorder: {
+    grip: "Move {{name}} (position {{n}} of {{total}})",
+    hint: "Drag to change the order, or use the arrow keys",
+    more: "More actions for {{name}}",
+    dragNote: "Drag ⠿ to change the order.",
+  },
 };
 
 const es: Translations = {
@@ -2992,6 +3006,7 @@ const es: Translations = {
     massNote: "Los estipendios se pagan igual. Hasta que configures tu cuenta de cobro, los miembros piden intenciones en la app sin pagar estipendio.",
   },
   tabs: {
+    homeIdentity: "Identidad",
     label: "Partes de esta página",
     settingsInfo: "Información",
     settingsPersonalise: "Personalización",
@@ -3819,7 +3834,7 @@ const es: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Use ↑ ↓ para cambiar el orden. Se muestran todas las insignias activadas, en este orden.',
+    orderNote: 'Arrastra ⠿ para cambiar el orden. Se muestran todas las insignias activadas, en este orden.',
     addTitle: 'Añadir un mensaje',
     editTitle: 'Editar el mensaje',
     textLabel: 'Texto ({{n}} caracteres como máximo)',
@@ -4441,6 +4456,12 @@ const es: Translations = {
     restart: "Nueva conversación",
     goTo: "Abrir {{page}}",
   },
+  reorder: {
+    grip: "Mover {{name}} (posición {{n}} de {{total}})",
+    hint: "Arrastra para cambiar el orden, o usa las flechas del teclado",
+    more: "Más acciones para {{name}}",
+    dragNote: "Arrastra ⠿ para cambiar el orden.",
+  },
 };
 
 const fr: Translations = {
@@ -4463,6 +4484,7 @@ const fr: Translations = {
     massNote: "Les offrandes sont payées de la même façon. Tant que votre compte de paiement n'est pas configuré, les membres demandent des intentions dans l'app sans payer d'offrande.",
   },
   tabs: {
+    homeIdentity: "Identité",
     label: "Parties de cette page",
     settingsInfo: "Informations",
     settingsPersonalise: "Personnalisation",
@@ -5290,7 +5312,7 @@ const fr: Translations = {
     edit: 'Modifier',
     delete: 'Supprimer',
     showLabel: 'Afficher « {{name}} »',
-    orderNote: "Utilisez ↑ ↓ pour changer l'ordre. Tous les badges activés s'affichent, dans cet ordre.",
+    orderNote: "Faites glisser ⠿ pour changer l'ordre. Tous les badges activés s'affichent, dans cet ordre.",
     addTitle: 'Ajouter un message',
     editTitle: 'Modifier le message',
     textLabel: 'Texte ({{n}} caractères au plus)',
@@ -5912,6 +5934,12 @@ const fr: Translations = {
     restart: "Nouvelle conversation",
     goTo: "Ouvrir {{page}}",
   },
+  reorder: {
+    grip: "Déplacer {{name}} (position {{n}} sur {{total}})",
+    hint: "Faites glisser pour changer l'ordre, ou utilisez les flèches du clavier",
+    more: "Plus d'actions pour {{name}}",
+    dragNote: "Faites glisser ⠿ pour changer l'ordre.",
+  },
 };
 
 const va: Translations = {
@@ -5934,6 +5962,7 @@ const va: Translations = {
     massNote: "Les ofrenes es paguen igual. Fins que configures el teu compte de cobrament, els membres demanen intencions en l'app sense pagar ofrena.",
   },
   tabs: {
+    homeIdentity: "Identitat",
     label: "Parts d’esta pàgina",
     settingsInfo: "Informació",
     settingsPersonalise: "Personalització",
@@ -6761,7 +6790,7 @@ const va: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Usa ↑ ↓ per a canviar l’orde. Es mostren tots els distintius activats, en este orde.',
+    orderNote: 'Arrossega ⠿ per a canviar l’orde. Es mostren tots els distintius activats, en este orde.',
     addTitle: 'Afegir un missatge',
     editTitle: 'Editar el missatge',
     textLabel: 'Text ({{n}} caràcters com a màxim)',
@@ -7383,6 +7412,12 @@ const va: Translations = {
     restart: "Conversa nova",
     goTo: "Obrir {{page}}",
   },
+  reorder: {
+    grip: "Moure {{name}} (posició {{n}} de {{total}})",
+    hint: "Arrossega per a canviar l'orde, o usa les fletxes del teclat",
+    more: "Més accions per a {{name}}",
+    dragNote: "Arrossega ⠿ per a canviar l'orde.",
+  },
 };
 
 const ca: Translations = {
@@ -7405,6 +7440,7 @@ const ca: Translations = {
     massNote: "Les ofrenes es paguen igual. Fins que configuris el teu compte de cobrament, els membres demanen intencions a l'app sense pagar ofrena.",
   },
   tabs: {
+    homeIdentity: "Identitat",
     label: "Parts d’aquesta pàgina",
     settingsInfo: "Informació",
     settingsPersonalise: "Personalització",
@@ -8232,7 +8268,7 @@ const ca: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Usa ↑ ↓ per canviar l’ordre. Es mostren tots els distintius activats, en aquest ordre.',
+    orderNote: 'Arrossega ⠿ per canviar l’ordre. Es mostren tots els distintius activats, en aquest ordre.',
     addTitle: 'Afegir un missatge',
     editTitle: 'Editar el missatge',
     textLabel: 'Text ({{n}} caràcters com a màxim)',
@@ -8854,6 +8890,12 @@ const ca: Translations = {
     restart: "Conversa nova",
     goTo: "Obrir {{page}}",
   },
+  reorder: {
+    grip: "Moure {{name}} (posició {{n}} de {{total}})",
+    hint: "Arrossega per canviar l'ordre, o fes servir les fletxes del teclat",
+    more: "Més accions per a {{name}}",
+    dragNote: "Arrossega ⠿ per canviar l'ordre.",
+  },
 };
 
 const gl: Translations = {
@@ -8876,6 +8918,7 @@ const gl: Translations = {
     massNote: "As ofrendas páganse igual. Ata que configures a túa conta de cobro, os membros piden intencións na app sen pagar ofrenda.",
   },
   tabs: {
+    homeIdentity: "Identidade",
     label: "Partes desta páxina",
     settingsInfo: "Información",
     settingsPersonalise: "Personalización",
@@ -9703,7 +9746,7 @@ const gl: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Usa ↑ ↓ para cambiar a orde. Móstranse todas as insignias activadas, nesta orde.',
+    orderNote: 'Arrastra ⠿ para cambiar a orde. Móstranse todas as insignias activadas, nesta orde.',
     addTitle: 'Engadir unha mensaxe',
     editTitle: 'Editar a mensaxe',
     textLabel: 'Texto ({{n}} caracteres como máximo)',
@@ -10325,6 +10368,12 @@ const gl: Translations = {
     restart: "Nova conversa",
     goTo: "Abrir {{page}}",
   },
+  reorder: {
+    grip: "Mover {{name}} (posición {{n}} de {{total}})",
+    hint: "Arrastra para cambiar a orde, ou usa as frechas do teclado",
+    more: "Máis accións para {{name}}",
+    dragNote: "Arrastra ⠿ para cambiar a orde.",
+  },
 };
 
 const pt: Translations = {
@@ -10347,6 +10396,7 @@ const pt: Translations = {
     massNote: "As ofertas são pagas da mesma forma. Até configurar a sua conta de pagamentos, os membros pedem intenções na app sem pagar oferta.",
   },
   tabs: {
+    homeIdentity: "Identidade",
     label: "Partes desta página",
     settingsInfo: "Informações",
     settingsPersonalise: "Personalização",
@@ -11174,7 +11224,7 @@ const pt: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Use ↑ ↓ para mudar a ordem. São mostrados todos os distintivos ativados, por esta ordem.',
+    orderNote: 'Arraste ⠿ para mudar a ordem. São mostrados todos os distintivos ativados, por esta ordem.',
     addTitle: 'Adicionar uma mensagem',
     editTitle: 'Editar a mensagem',
     textLabel: 'Texto (máximo {{n}} caracteres)',
@@ -11795,6 +11845,12 @@ const pt: Translations = {
     close: "Fechar",
     restart: "Nova conversa",
     goTo: "Abrir {{page}}",
+  },
+  reorder: {
+    grip: "Mover {{name}} (posição {{n}} de {{total}})",
+    hint: "Arraste para mudar a ordem, ou use as setas do teclado",
+    more: "Mais ações para {{name}}",
+    dragNote: "Arraste ⠿ para mudar a ordem.",
   },
 };
 
