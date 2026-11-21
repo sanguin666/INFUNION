@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { MoreMenu } from '../components/Reorder';
 import { useI18n } from '../i18n/I18nContext';
 import { API_BASE_URL } from '../api/client';
 import { getModelo182Check, getReceipts } from '../api/donations';
@@ -114,6 +115,7 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
       setLegal(saved);
       setSavedLegal(saved);
       setLegalSaved(true);
+      if (saved.legalName) setEditingLegal(false);
     } catch {
       setLegalError(t('receipts.legalSaveError'));
     } finally {
@@ -132,6 +134,12 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
       .catch(() => setCheck(null));
   }, [poiId, year, canFile, savedLegal]);
 
+  // The form shows by itself until the community's legal name is saved.
+  const [editingLegal, setEditingLegal] = useState(false);
+  useEffect(() => {
+    if (legal && !savedLegal.legalName) setEditingLegal(true);
+  }, [legal === null, savedLegal.legalName]);
+
   const legalDirty =
     !!legal && (Object.keys(EMPTY_LEGAL) as (keyof Legal)[]).some((k) => legal[k].trim() !== savedLegal[k]);
   const years = Array.from({ length: YEARS_BACK + 1 }, (_, i) => thisYear - i);
@@ -140,7 +148,25 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
     <section aria-label={t('receipts.title')}>
       <p className="muted" style={{ marginTop: 0 }}>{t('receipts.subtitle')}</p>
 
-      {legal && (
+      {/* Filled in once, then one line with Edit (Seb, 21 Nov 2026). */}
+      {legal && !editingLegal && (
+        <div className="card">
+          <div className="card-row" style={{ borderBottom: 'none' }}>
+            <div>
+              <p className="card-title" style={{ margin: 0 }}>
+                {t('receipts.legalTitle')}
+              </p>
+              <p className="card-meta" style={{ margin: 0 }}>
+                {[savedLegal.legalName, savedLegal.legalTaxId, savedLegal.receiptSignatory].filter(Boolean).join(' · ')}
+              </p>
+            </div>
+            <button type="button" className="text-action" onClick={() => setEditingLegal(true)}>
+              {t('receipts.legalEdit')}
+            </button>
+          </div>
+        </div>
+      )}
+      {legal && editingLegal && (
         <div className="card form">
           <p className="card-title" style={{ margin: '12px 0 0' }}>
             {t('receipts.legalTitle')}
@@ -201,6 +227,18 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
               {savingLegal ? t('receipts.saving') : t('receipts.save')}
             </button>
             {legalSaved && !legalDirty && <span className="muted">{t('receipts.saved')}</span>}
+            {!!savedLegal.legalName && (
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setLegal(savedLegal);
+                  setEditingLegal(false);
+                }}
+              >
+                {legalDirty ? t('common.cancel') : t('receipts.legalClose')}
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -224,18 +262,20 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
             ))}
           </select>
         </label>
-        <div className="card-actions" style={{ marginTop: 0 }}>
-          {list && (
-            <a className="btn" href={`${API_BASE_URL}${list.giftsUrl}`} download={`gifts-${list.year}.csv`}>
-              {t('receipts.giftsCsv')}
-            </a>
-          )}
-          {list && list.donors.length > 0 && (
-            <a className="btn" href={`${API_BASE_URL}${list.exportUrl}`} download={`donors-${list.year}.csv`}>
-              {t('receipts.exportCsv')}
-            </a>
-          )}
-        </div>
+        {list && (
+          <MoreMenu
+            buttonLabel={`${t('receipts.download')} ▾`}
+            label={t('receipts.download')}
+            items={[
+              { label: t('receipts.giftsCsv'), onSelect: () => download(`${API_BASE_URL}${list.giftsUrl}`, `gifts-${list.year}.csv`) },
+              {
+                label: t('receipts.exportCsv'),
+                hidden: list.donors.length === 0,
+                onSelect: () => download(`${API_BASE_URL}${list.exportUrl}`, `donors-${list.year}.csv`),
+              },
+            ]}
+          />
+        )}
       </div>
 
       {/* Spain's yearly return of gifts, for a community whose gifts
@@ -306,7 +346,7 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
               <div className="card-actions" style={{ marginTop: 0, flexShrink: 0 }}>
                 <span className="donation-amount">{formatMoney(donor.total)}</span>
                 <a
-                  className="btn"
+                  className="text-action"
                   href={`${API_BASE_URL}${donor.url}`}
                   target="_blank"
                   rel="noreferrer"
@@ -321,4 +361,12 @@ export function ReceiptsSection({ poiId }: { poiId: string }) {
       )}
     </section>
   );
+}
+
+/** Saves a file from the API the way a download link would. */
+function download(href: string, name: string) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.download = name;
+  a.click();
 }

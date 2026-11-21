@@ -144,7 +144,10 @@ export function moved<T>(list: T[], from: number, to: number): T[] {
 export function MoreMenu({
   label,
   items,
+  buttonLabel,
 }: {
+  /** Words on the button ("Share ▾") instead of "⋯". */
+  buttonLabel?: string;
   /** For screen readers: "More actions for Por las almas…". */
   label: string;
   /** A destructive item asks "Yes, …?" inside the menu first, unless an undo follows anyway (`undoable`). */
@@ -177,8 +180,8 @@ export function MoreMenu({
     <div className="more-menu" ref={box}>
       <button
         type="button"
-        className="more-menu-button"
-        aria-label={label}
+        className={buttonLabel ? 'btn' : 'more-menu-button'}
+        aria-label={buttonLabel ? undefined : label}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => {
@@ -186,7 +189,7 @@ export function MoreMenu({
           setOpen((v) => !v);
         }}
       >
-        ⋯
+        {buttonLabel ?? '⋯'}
       </button>
       {open && asking !== null && (
         <div className="more-menu-list" role="menu">

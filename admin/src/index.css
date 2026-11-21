@@ -5196,3 +5196,8 @@ select.chip {
 
 .phone-preview-language { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; font-size: 15px; color: var(--color-text-muted); }
 .phone-preview-language select { width: auto; font-size: 16px; font-weight: 700; color: var(--color-text); }
+
+/* A poster that is printed but not shown on screen (Donate > Payment links). */
+.flyer-print-only { display: none; }
+@media print { .flyer-print-only { display: block; } }
+a.text-action { display: inline-flex; align-items: center; text-decoration: none; }

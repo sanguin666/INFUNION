@@ -51,6 +51,7 @@ export type Translations = {
     massNote: string;
   };
   tabs: {
+    donationsHowToPay: string;
     homeIdentity: string;
     label: string;
     settingsInfo: string;
@@ -250,6 +251,7 @@ export type Translations = {
     navAddModules: string;
   };
   paymentLinks: {
+    share: string;
     listTitle: string;
     intro: string;
     new: string;
@@ -1110,6 +1112,9 @@ export type Translations = {
     sampleButton: string;
   };
   receipts: {
+    legalEdit: string;
+    legalClose: string;
+    download: string;
     title: string;
     subtitle: string;
     legalTitle: string;
@@ -1528,6 +1533,7 @@ const en: Translations = {
     massNote: "Offerings are paid the same way. Until your payment account is set up, members ask for intentions in the app without paying an offering.",
   },
   tabs: {
+    donationsHowToPay: "How to pay",
     homeIdentity: "Identity",
     label: "Parts of this page",
     settingsInfo: "Information",
@@ -1727,6 +1733,7 @@ const en: Translations = {
     navAddModules: "Add modules",
   },
   paymentLinks: {
+    share: "Share",
     listTitle: "Your payment links",
     intro: "Each link has its own QR code. Anyone can pay with card, Apple Pay or Google Pay, with no app and no account. The money goes to your account.",
     new: "New payment link",
@@ -2588,6 +2595,9 @@ const en: Translations = {
     sampleButton: "Support us",
   },
   receipts: {
+    legalEdit: "Edit",
+    legalClose: "Close",
+    download: "Download",
     title: 'Tax receipts',
     subtitle: 'One receipt a year for each person who asked for one when giving, adding up everything they gave. Open a receipt to print it or save it as a PDF; the links work for an hour.',
     legalTitle: 'Who issues the receipts',
@@ -3006,6 +3016,7 @@ const es: Translations = {
     massNote: "Los estipendios se pagan igual. Hasta que configures tu cuenta de cobro, los miembros piden intenciones en la app sin pagar estipendio.",
   },
   tabs: {
+    donationsHowToPay: "Cómo pagar",
     homeIdentity: "Identidad",
     label: "Partes de esta página",
     settingsInfo: "Información",
@@ -3205,6 +3216,7 @@ const es: Translations = {
     navAddModules: "Añadir módulos",
   },
   paymentLinks: {
+    share: "Compartir",
     listTitle: "Tus enlaces de pago",
     intro: "Cada enlace tiene su propio código QR. Cualquiera puede pagar con tarjeta, Apple Pay o Google Pay, sin app y sin cuenta. El dinero llega a vuestra cuenta.",
     new: "Nuevo enlace de pago",
@@ -4066,6 +4078,9 @@ const es: Translations = {
     sampleButton: "Apóyanos",
   },
   receipts: {
+    legalEdit: "Editar",
+    legalClose: "Cerrar",
+    download: "Descargar",
     title: 'Certificados de donación',
     subtitle: 'Un certificado al año para cada persona que lo pidió al donar, con la suma de todo lo que dio. Abre un certificado para imprimirlo o guardarlo en PDF; los enlaces funcionan durante una hora.',
     legalTitle: 'Quién emite los certificados',
@@ -4484,6 +4499,7 @@ const fr: Translations = {
     massNote: "Les offrandes sont payées de la même façon. Tant que votre compte de paiement n'est pas configuré, les membres demandent des intentions dans l'app sans payer d'offrande.",
   },
   tabs: {
+    donationsHowToPay: "Moyens de paiement",
     homeIdentity: "Identité",
     label: "Parties de cette page",
     settingsInfo: "Informations",
@@ -4683,6 +4699,7 @@ const fr: Translations = {
     navAddModules: "Ajouter des modules",
   },
   paymentLinks: {
+    share: "Partager",
     listTitle: "Vos liens de paiement",
     intro: "Chaque lien a son propre QR code. Tout le monde peut payer par carte, Apple Pay ou Google Pay, sans application ni compte. L'argent arrive sur votre compte.",
     new: "Nouveau lien de paiement",
@@ -5544,6 +5561,9 @@ const fr: Translations = {
     sampleButton: "Nous soutenir",
   },
   receipts: {
+    legalEdit: "Modifier",
+    legalClose: "Fermer",
+    download: "Télécharger",
     title: 'Reçus fiscaux',
     subtitle: "Un reçu par an pour chaque personne qui l'a demandé en donnant, avec le total de ses dons. Ouvrez un reçu pour l'imprimer ou l'enregistrer en PDF ; les liens fonctionnent pendant une heure.",
     legalTitle: 'Qui émet les reçus',
@@ -5962,6 +5982,7 @@ const va: Translations = {
     massNote: "Les ofrenes es paguen igual. Fins que configures el teu compte de cobrament, els membres demanen intencions en l'app sense pagar ofrena.",
   },
   tabs: {
+    donationsHowToPay: "Com pagar",
     homeIdentity: "Identitat",
     label: "Parts d’esta pàgina",
     settingsInfo: "Informació",
@@ -6161,6 +6182,7 @@ const va: Translations = {
     navAddModules: "Afegir mòduls",
   },
   paymentLinks: {
+    share: "Compartir",
     listTitle: "Els vostres enllaços de pagament",
     intro: "Cada enllaç té el seu propi codi QR. Qualsevol pot pagar amb targeta, Apple Pay o Google Pay, sense app i sense compte. Els diners arriben al vostre compte.",
     new: "Nou enllaç de pagament",
@@ -7022,6 +7044,9 @@ const va: Translations = {
     sampleButton: "Dona’ns suport",
   },
   receipts: {
+    legalEdit: "Editar",
+    legalClose: "Tancar",
+    download: "Descarregar",
     title: 'Certificats de donatius',
     subtitle: 'Un certificat a l’any per a cada persona que el va demanar en donar, amb la suma de tot el que va donar. Obri un certificat per a imprimir-lo o guardar-lo en PDF; els enllaços funcionen durant una hora.',
     legalTitle: 'Qui emet els certificats',
@@ -7440,6 +7465,7 @@ const ca: Translations = {
     massNote: "Les ofrenes es paguen igual. Fins que configuris el teu compte de cobrament, els membres demanen intencions a l'app sense pagar ofrena.",
   },
   tabs: {
+    donationsHowToPay: "Com pagar",
     homeIdentity: "Identitat",
     label: "Parts d’aquesta pàgina",
     settingsInfo: "Informació",
@@ -7639,6 +7665,7 @@ const ca: Translations = {
     navAddModules: "Afegeix mòduls",
   },
   paymentLinks: {
+    share: "Compartir",
     listTitle: "Els vostres enllaços de pagament",
     intro: "Cada enllaç té el seu propi codi QR. Qualsevol pot pagar amb targeta, Apple Pay o Google Pay, sense app i sense compte. Els diners arriben al vostre compte.",
     new: "Nou enllaç de pagament",
@@ -8500,6 +8527,9 @@ const ca: Translations = {
     sampleButton: "Dona’ns suport",
   },
   receipts: {
+    legalEdit: "Edita",
+    legalClose: "Tanca",
+    download: "Descarrega",
     title: 'Certificats de donatius',
     subtitle: 'Un certificat a l’any per a cada persona que el va demanar en donar, amb la suma de tot el que va donar. Obre un certificat per imprimir-lo o desar-lo en PDF; els enllaços funcionen durant una hora.',
     legalTitle: 'Qui emet els certificats',
@@ -8918,6 +8948,7 @@ const gl: Translations = {
     massNote: "As ofrendas páganse igual. Ata que configures a túa conta de cobro, os membros piden intencións na app sen pagar ofrenda.",
   },
   tabs: {
+    donationsHowToPay: "Como pagar",
     homeIdentity: "Identidade",
     label: "Partes desta páxina",
     settingsInfo: "Información",
@@ -9117,6 +9148,7 @@ const gl: Translations = {
     navAddModules: "Engadir módulos",
   },
   paymentLinks: {
+    share: "Compartir",
     listTitle: "As vosas ligazóns de pagamento",
     intro: "Cada ligazón ten o seu propio código QR. Calquera pode pagar con tarxeta, Apple Pay ou Google Pay, sen app e sen conta. O diñeiro chega á vosa conta.",
     new: "Nova ligazón de pagamento",
@@ -9978,6 +10010,9 @@ const gl: Translations = {
     sampleButton: "Apóianos",
   },
   receipts: {
+    legalEdit: "Editar",
+    legalClose: "Pechar",
+    download: "Descargar",
     title: 'Certificados de doazón',
     subtitle: 'Un certificado ao ano para cada persoa que o pediu ao doar, coa suma de todo o que deu. Abre un certificado para imprimilo ou gardalo en PDF; as ligazóns funcionan durante unha hora.',
     legalTitle: 'Quen emite os certificados',
@@ -10396,6 +10431,7 @@ const pt: Translations = {
     massNote: "As ofertas são pagas da mesma forma. Até configurar a sua conta de pagamentos, os membros pedem intenções na app sem pagar oferta.",
   },
   tabs: {
+    donationsHowToPay: "Como pagar",
     homeIdentity: "Identidade",
     label: "Partes desta página",
     settingsInfo: "Informações",
@@ -10595,6 +10631,7 @@ const pt: Translations = {
     navAddModules: "Adicionar módulos",
   },
   paymentLinks: {
+    share: "Partilhar",
     listTitle: "As suas ligações de pagamento",
     intro: "Cada ligação tem o seu próprio código QR. Qualquer pessoa pode pagar com cartão, Apple Pay ou Google Pay, sem app e sem conta. O dinheiro chega à vossa conta.",
     new: "Nova ligação de pagamento",
@@ -11456,6 +11493,9 @@ const pt: Translations = {
     sampleButton: "Apoiem-nos",
   },
   receipts: {
+    legalEdit: "Editar",
+    legalClose: "Fechar",
+    download: "Descarregar",
     title: 'Recibos de donativos',
     subtitle: 'Um recibo por ano para cada pessoa que o pediu ao doar, com a soma de tudo o que deu. Abra um recibo para o imprimir ou guardar em PDF; as ligações funcionam durante uma hora.',
     legalTitle: 'Quem emite os recibos',
