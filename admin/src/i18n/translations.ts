@@ -51,6 +51,8 @@ export type Translations = {
     massNote: string;
   };
   tabs: {
+    donationsHowToPay: string;
+    homeIdentity: string;
     label: string;
     settingsInfo: string;
     settingsPersonalise: string;
@@ -249,6 +251,7 @@ export type Translations = {
     navAddModules: string;
   };
   paymentLinks: {
+    share: string;
     listTitle: string;
     intro: string;
     new: string;
@@ -412,6 +415,7 @@ export type Translations = {
     onceHeading: string;
   };
   announcements: {
+    newButton: string;
     title: string;
     subtitle: string;
     titleLabel: string;
@@ -442,6 +446,8 @@ export type Translations = {
     photoError: string;
   };
   livestreams: {
+    newButton: string;
+    statusLabel: string;
     title: string;
     subtitle: string;
     titleLabel: string;
@@ -604,6 +610,9 @@ export type Translations = {
     descMessages: string;
   };
   plans: {
+    tabModules: string;
+    tabPlan: string;
+    showLabel: string;
     title: string;
     subtitle: string;
     subtitleOffered: string;
@@ -990,6 +999,8 @@ export type Translations = {
     typeRegistration: string;
   };
   massIntentions: {
+    addButton: string;
+    tabAll: string;
     title: string;
     subtitle: string;
     addTitle: string;
@@ -1109,6 +1120,9 @@ export type Translations = {
     sampleButton: string;
   };
   receipts: {
+    legalEdit: string;
+    legalClose: string;
+    download: string;
     title: string;
     subtitle: string;
     legalTitle: string;
@@ -1341,6 +1355,8 @@ export type Translations = {
     messageBodyDefault: string;
   };
   readings: {
+    tabDays: string;
+    tabLink: string;
     title: string;
     subtitle: string;
     earlier: string;
@@ -1499,6 +1515,12 @@ export type Translations = {
     restart: string;
     goTo: string;
   };
+  reorder: {
+    grip: string;
+    hint: string;
+    more: string;
+    dragNote: string;
+  },
 };
 
 const en: Translations = {
@@ -1521,6 +1543,8 @@ const en: Translations = {
     massNote: "Offerings are paid the same way. Until your payment account is set up, members ask for intentions in the app without paying an offering.",
   },
   tabs: {
+    donationsHowToPay: "How to pay",
+    homeIdentity: "Identity",
     label: "Parts of this page",
     settingsInfo: "Information",
     settingsPersonalise: "Personalise",
@@ -1719,6 +1743,7 @@ const en: Translations = {
     navAddModules: "Add modules",
   },
   paymentLinks: {
+    share: "Share",
     listTitle: "Your payment links",
     intro: "Each link has its own QR code. Anyone can pay with card, Apple Pay or Google Pay, with no app and no account. The money goes to your account.",
     new: "New payment link",
@@ -1882,6 +1907,7 @@ const en: Translations = {
     onceHeading: 'Dates',
   },
   announcements: {
+    newButton: "+ New announcement",
     title: 'Announcements',
     subtitle: 'Post bulletin-style updates for this community.',
     titleLabel: 'Title',
@@ -1912,6 +1938,8 @@ const en: Translations = {
     photoError: 'The photo could not be saved.',
   },
   livestreams: {
+    newButton: "+ Schedule a livestream",
+    statusLabel: "Status of {{name}}",
     title: 'Livestreams',
     subtitle: 'Schedule a link to a livestreamed or recorded service.',
     titleLabel: 'Title',
@@ -2074,6 +2102,9 @@ const en: Translations = {
     descMessages: "Write to one member in particular; they get a notification and can answer.",
   },
   plans: {
+    tabModules: "Modules",
+    tabPlan: "Plan and billing",
+    showLabel: "Show {{name}} in the app",
     title: "Plans and modules",
     subtitle: "Your plan decides which modules your community can offer. Show or hide each one at no cost.",
     subtitleOffered: "Every module is offered to your community. Show the ones you want.",
@@ -2246,7 +2277,7 @@ const en: Translations = {
     loading: 'Loading the page…',
     loadError: "Couldn't load this page.",
     saveError: "Couldn't save that change.",
-    empty: "You have no sections yet, so people see your community's description in Home page › Personalise.",
+    empty: "You have no sections yet, so people see your community's description in Home page › Identity.",
     useDefault: 'Start from the default page',
     addSection: 'Add a section',
     moveUp: 'Move up',
@@ -2348,7 +2379,7 @@ const en: Translations = {
     edit: 'Edit',
     delete: 'Delete',
     showLabel: 'Show “{{name}}”',
-    orderNote: 'Use ↑ ↓ to change the order. Every badge switched on shows, in this order.',
+    orderNote: 'Drag ⠿ to change the order. Every badge switched on shows, in this order.',
     addTitle: 'Add a message',
     editTitle: 'Edit the message',
     textLabel: 'Text ({{n}} characters at most)',
@@ -2461,6 +2492,8 @@ const en: Translations = {
     typeRegistration: 'Registration',
   },
   massIntentions: {
+    addButton: "+ Add an intention",
+    tabAll: "Whole register",
     title: 'Mass intentions',
     subtitle: "The Masses said for someone, asked for from the app or in person, listed by celebration for the celebrant.",
     addTitle: "Add one taken in person",
@@ -2580,6 +2613,9 @@ const en: Translations = {
     sampleButton: "Support us",
   },
   receipts: {
+    legalEdit: "Edit",
+    legalClose: "Close",
+    download: "Download",
     title: 'Tax receipts',
     subtitle: 'One receipt a year for each person who asked for one when giving, adding up everything they gave. Open a receipt to print it or save it as a PDF; the links work for an hour.',
     legalTitle: 'Who issues the receipts',
@@ -2812,6 +2848,8 @@ const en: Translations = {
     messageBodyDefault: "Hello {name},\n\n",
   },
   readings: {
+    tabDays: "Day by day",
+    tabLink: "Link to the full readings",
     title: 'Daily readings',
     subtitle: 'The texts members read in the app, one day at a time. Prepare them ahead: each published day appears in the app from midnight on its date.',
     earlier: 'Earlier',
@@ -2970,6 +3008,12 @@ const en: Translations = {
     restart: "New conversation",
     goTo: "Open {{page}}",
   },
+  reorder: {
+    grip: "Move {{name}} (position {{n}} of {{total}})",
+    hint: "Drag to change the order, or use the arrow keys",
+    more: "More actions for {{name}}",
+    dragNote: "Drag ⠿ to change the order.",
+  },
 };
 
 const es: Translations = {
@@ -2992,6 +3036,8 @@ const es: Translations = {
     massNote: "Los estipendios se pagan igual. Hasta que configures tu cuenta de cobro, los miembros piden intenciones en la app sin pagar estipendio.",
   },
   tabs: {
+    donationsHowToPay: "Cómo pagar",
+    homeIdentity: "Identidad",
     label: "Partes de esta página",
     settingsInfo: "Información",
     settingsPersonalise: "Personalización",
@@ -3190,6 +3236,7 @@ const es: Translations = {
     navAddModules: "Añadir módulos",
   },
   paymentLinks: {
+    share: "Compartir",
     listTitle: "Tus enlaces de pago",
     intro: "Cada enlace tiene su propio código QR. Cualquiera puede pagar con tarjeta, Apple Pay o Google Pay, sin app y sin cuenta. El dinero llega a vuestra cuenta.",
     new: "Nuevo enlace de pago",
@@ -3353,6 +3400,7 @@ const es: Translations = {
     onceHeading: 'Fechas',
   },
   announcements: {
+    newButton: "+ Nuevo anuncio",
     title: 'Anuncios',
     subtitle: 'Publica actualizaciones tipo boletín para esta comunidad.',
     titleLabel: 'Título',
@@ -3383,6 +3431,8 @@ const es: Translations = {
     photoError: 'No se pudo guardar la foto.',
   },
   livestreams: {
+    newButton: "+ Programar una transmisión",
+    statusLabel: "Estado de {{name}}",
     title: 'Transmisiones',
     subtitle: 'Programa un enlace a un servicio en vivo o grabado.',
     titleLabel: 'Título',
@@ -3545,6 +3595,9 @@ const es: Translations = {
     descMessages: "Escribe a un miembro en concreto; recibe una notificación y puede responder.",
   },
   plans: {
+    tabModules: "Módulos",
+    tabPlan: "Plan y facturación",
+    showLabel: "Mostrar {{name}} en la app",
     title: "Planes y módulos",
     subtitle: "Tu plan decide qué módulos puede ofrecer tu comunidad. Muestra u oculta cada uno sin coste.",
     subtitleOffered: "Todos los módulos se ofrecen a tu comunidad. Muestra los que quieras.",
@@ -3717,7 +3770,7 @@ const es: Translations = {
     loading: 'Cargando la página…',
     loadError: 'No se pudo cargar esta página.',
     saveError: 'No se pudo guardar ese cambio.',
-    empty: "Todavía no tienes secciones, así que la gente ve la descripción de tu comunidad (Página de inicio › Personalización).",
+    empty: "Todavía no tienes secciones, así que la gente ve la descripción de tu comunidad (Página de inicio › Identidad).",
     useDefault: 'Empezar con la página por defecto',
     addSection: 'Añadir una sección',
     moveUp: 'Subir',
@@ -3819,7 +3872,7 @@ const es: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Use ↑ ↓ para cambiar el orden. Se muestran todas las insignias activadas, en este orden.',
+    orderNote: 'Arrastra ⠿ para cambiar el orden. Se muestran todas las insignias activadas, en este orden.',
     addTitle: 'Añadir un mensaje',
     editTitle: 'Editar el mensaje',
     textLabel: 'Texto ({{n}} caracteres como máximo)',
@@ -3932,6 +3985,8 @@ const es: Translations = {
     typeRegistration: 'Inscripción',
   },
   massIntentions: {
+    addButton: "+ Añadir una intención",
+    tabAll: "Todo el registro",
     title: 'Intenciones de misa',
     subtitle: "Las misas ofrecidas por alguien, pedidas desde la app o en persona, ordenadas por celebración para el celebrante.",
     addTitle: "Añadir una recibida en persona",
@@ -4051,6 +4106,9 @@ const es: Translations = {
     sampleButton: "Apóyanos",
   },
   receipts: {
+    legalEdit: "Editar",
+    legalClose: "Cerrar",
+    download: "Descargar",
     title: 'Certificados de donación',
     subtitle: 'Un certificado al año para cada persona que lo pidió al donar, con la suma de todo lo que dio. Abre un certificado para imprimirlo o guardarlo en PDF; los enlaces funcionan durante una hora.',
     legalTitle: 'Quién emite los certificados',
@@ -4283,6 +4341,8 @@ const es: Translations = {
     messageBodyDefault: "Hola {name},\n\n",
   },
   readings: {
+    tabDays: "Día a día",
+    tabLink: "Enlace a las lecturas completas",
     title: 'Lecturas del día',
     subtitle: 'Los textos que los miembros leen en la app, día a día. Prepáralos con antelación: cada día publicado aparece en la app a medianoche de su fecha.',
     earlier: 'Antes',
@@ -4441,6 +4501,12 @@ const es: Translations = {
     restart: "Nueva conversación",
     goTo: "Abrir {{page}}",
   },
+  reorder: {
+    grip: "Mover {{name}} (posición {{n}} de {{total}})",
+    hint: "Arrastra para cambiar el orden, o usa las flechas del teclado",
+    more: "Más acciones para {{name}}",
+    dragNote: "Arrastra ⠿ para cambiar el orden.",
+  },
 };
 
 const fr: Translations = {
@@ -4463,6 +4529,8 @@ const fr: Translations = {
     massNote: "Les offrandes sont payées de la même façon. Tant que votre compte de paiement n'est pas configuré, les membres demandent des intentions dans l'app sans payer d'offrande.",
   },
   tabs: {
+    donationsHowToPay: "Moyens de paiement",
+    homeIdentity: "Identité",
     label: "Parties de cette page",
     settingsInfo: "Informations",
     settingsPersonalise: "Personnalisation",
@@ -4661,6 +4729,7 @@ const fr: Translations = {
     navAddModules: "Ajouter des modules",
   },
   paymentLinks: {
+    share: "Partager",
     listTitle: "Vos liens de paiement",
     intro: "Chaque lien a son propre QR code. Tout le monde peut payer par carte, Apple Pay ou Google Pay, sans application ni compte. L'argent arrive sur votre compte.",
     new: "Nouveau lien de paiement",
@@ -4824,6 +4893,7 @@ const fr: Translations = {
     onceHeading: 'Dates',
   },
   announcements: {
+    newButton: "+ Nouvelle annonce",
     title: 'Annonces',
     subtitle: 'Publiez des mises à jour de type bulletin pour cette communauté.',
     titleLabel: 'Titre',
@@ -4854,6 +4924,8 @@ const fr: Translations = {
     photoError: 'La photo n’a pas pu être enregistrée.',
   },
   livestreams: {
+    newButton: "+ Programmer une diffusion",
+    statusLabel: "État de {{name}}",
     title: 'Diffusions',
     subtitle: 'Planifiez un lien vers un service en direct ou enregistré.',
     titleLabel: 'Titre',
@@ -5016,6 +5088,9 @@ const fr: Translations = {
     descMessages: "Écrivez à un membre en particulier ; il reçoit une notification et peut répondre.",
   },
   plans: {
+    tabModules: "Modules",
+    tabPlan: "Offre et facturation",
+    showLabel: "Afficher {{name}} dans l'app",
     title: "Formules et modules",
     subtitle: "Votre formule décide des modules que votre communauté peut proposer. Affichez ou masquez chacun sans frais.",
     subtitleOffered: "Tous les modules sont offerts à votre communauté. Affichez ceux que vous voulez.",
@@ -5188,7 +5263,7 @@ const fr: Translations = {
     loading: 'Chargement de la page…',
     loadError: 'Impossible de charger cette page.',
     saveError: "Impossible d'enregistrer cette modification.",
-    empty: "Vous n'avez pas encore de sections, donc les gens voient la description de votre communauté (Page d'accueil › Personnalisation).",
+    empty: "Vous n'avez pas encore de sections, donc les gens voient la description de votre communauté (Page d'accueil › Identité).",
     useDefault: 'Partir de la page par défaut',
     addSection: 'Ajouter une section',
     moveUp: 'Monter',
@@ -5290,7 +5365,7 @@ const fr: Translations = {
     edit: 'Modifier',
     delete: 'Supprimer',
     showLabel: 'Afficher « {{name}} »',
-    orderNote: "Utilisez ↑ ↓ pour changer l'ordre. Tous les badges activés s'affichent, dans cet ordre.",
+    orderNote: "Faites glisser ⠿ pour changer l'ordre. Tous les badges activés s'affichent, dans cet ordre.",
     addTitle: 'Ajouter un message',
     editTitle: 'Modifier le message',
     textLabel: 'Texte ({{n}} caractères au plus)',
@@ -5403,6 +5478,8 @@ const fr: Translations = {
     typeRegistration: 'Inscription',
   },
   massIntentions: {
+    addButton: "+ Ajouter une intention",
+    tabAll: "Tout le registre",
     title: 'Intentions de messe',
     subtitle: "Les messes dites pour quelqu'un, demandées depuis l'application ou en personne, classées par célébration pour le célébrant.",
     addTitle: "Ajouter une intention reçue en personne",
@@ -5522,6 +5599,9 @@ const fr: Translations = {
     sampleButton: "Nous soutenir",
   },
   receipts: {
+    legalEdit: "Modifier",
+    legalClose: "Fermer",
+    download: "Télécharger",
     title: 'Reçus fiscaux',
     subtitle: "Un reçu par an pour chaque personne qui l'a demandé en donnant, avec le total de ses dons. Ouvrez un reçu pour l'imprimer ou l'enregistrer en PDF ; les liens fonctionnent pendant une heure.",
     legalTitle: 'Qui émet les reçus',
@@ -5754,6 +5834,8 @@ const fr: Translations = {
     messageBodyDefault: "Bonjour {name},\n\n",
   },
   readings: {
+    tabDays: "Jour par jour",
+    tabLink: "Lien vers les lectures complètes",
     title: 'Lectures du jour',
     subtitle: 'Les textes que les membres lisent dans l’app, jour après jour. Préparez-les à l’avance : chaque jour publié apparaît dans l’app à minuit le jour même.',
     earlier: 'Plus tôt',
@@ -5912,6 +5994,12 @@ const fr: Translations = {
     restart: "Nouvelle conversation",
     goTo: "Ouvrir {{page}}",
   },
+  reorder: {
+    grip: "Déplacer {{name}} (position {{n}} sur {{total}})",
+    hint: "Faites glisser pour changer l'ordre, ou utilisez les flèches du clavier",
+    more: "Plus d'actions pour {{name}}",
+    dragNote: "Faites glisser ⠿ pour changer l'ordre.",
+  },
 };
 
 const va: Translations = {
@@ -5934,6 +6022,8 @@ const va: Translations = {
     massNote: "Les ofrenes es paguen igual. Fins que configures el teu compte de cobrament, els membres demanen intencions en l'app sense pagar ofrena.",
   },
   tabs: {
+    donationsHowToPay: "Com pagar",
+    homeIdentity: "Identitat",
     label: "Parts d’esta pàgina",
     settingsInfo: "Informació",
     settingsPersonalise: "Personalització",
@@ -6132,6 +6222,7 @@ const va: Translations = {
     navAddModules: "Afegir mòduls",
   },
   paymentLinks: {
+    share: "Compartir",
     listTitle: "Els vostres enllaços de pagament",
     intro: "Cada enllaç té el seu propi codi QR. Qualsevol pot pagar amb targeta, Apple Pay o Google Pay, sense app i sense compte. Els diners arriben al vostre compte.",
     new: "Nou enllaç de pagament",
@@ -6295,6 +6386,7 @@ const va: Translations = {
     onceHeading: 'Dates',
   },
   announcements: {
+    newButton: "+ Nou anunci",
     title: 'Anuncis',
     subtitle: 'Publica notícies a manera de full informatiu per a esta comunitat.',
     titleLabel: 'Títol',
@@ -6325,6 +6417,8 @@ const va: Translations = {
     photoError: 'No s’ha pogut guardar la foto.',
   },
   livestreams: {
+    newButton: "+ Programar una retransmissió",
+    statusLabel: "Estat de {{name}}",
     title: 'Retransmissions',
     subtitle: 'Programa un enllaç a una celebració en directe o gravada.',
     titleLabel: 'Títol',
@@ -6487,6 +6581,9 @@ const va: Translations = {
     descMessages: "Escriu a un membre en concret; rep una notificació i pot respondre.",
   },
   plans: {
+    tabModules: "Mòduls",
+    tabPlan: "Pla i facturació",
+    showLabel: "Mostrar {{name}} a l'app",
     title: "Plans i mòduls",
     subtitle: "El teu pla decidix quins mòduls pot oferir la teua comunitat. Mostra o amaga cadascun sense cost.",
     subtitleOffered: "Tots els mòduls s’oferixen a la teua comunitat. Mostra els que vulgues.",
@@ -6659,7 +6756,7 @@ const va: Translations = {
     loading: 'Carregant la pàgina…',
     loadError: 'No s’ha pogut carregar esta pàgina.',
     saveError: 'No s’ha pogut guardar eixe canvi.',
-    empty: "Encara no tens seccions, així que la gent veu la descripció de la teua comunitat (Pàgina d’inici › Personalització).",
+    empty: "Encara no tens seccions, així que la gent veu la descripció de la teua comunitat (Pàgina d’inici › Identitat).",
     useDefault: 'Començar amb la pàgina per defecte',
     addSection: 'Afegir una secció',
     moveUp: 'Pujar',
@@ -6761,7 +6858,7 @@ const va: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Usa ↑ ↓ per a canviar l’orde. Es mostren tots els distintius activats, en este orde.',
+    orderNote: 'Arrossega ⠿ per a canviar l’orde. Es mostren tots els distintius activats, en este orde.',
     addTitle: 'Afegir un missatge',
     editTitle: 'Editar el missatge',
     textLabel: 'Text ({{n}} caràcters com a màxim)',
@@ -6874,6 +6971,8 @@ const va: Translations = {
     typeRegistration: 'Inscripció',
   },
   massIntentions: {
+    addButton: "+ Afegir una intenció",
+    tabAll: "Tot el registre",
     title: 'Intencions de missa',
     subtitle: "Les misses oferides per algú, demanades des de l’aplicació o en persona, ordenades per celebració per al celebrant.",
     addTitle: "Afegir-ne una rebuda en persona",
@@ -6993,6 +7092,9 @@ const va: Translations = {
     sampleButton: "Dona’ns suport",
   },
   receipts: {
+    legalEdit: "Editar",
+    legalClose: "Tancar",
+    download: "Descarregar",
     title: 'Certificats de donatius',
     subtitle: 'Un certificat a l’any per a cada persona que el va demanar en donar, amb la suma de tot el que va donar. Obri un certificat per a imprimir-lo o guardar-lo en PDF; els enllaços funcionen durant una hora.',
     legalTitle: 'Qui emet els certificats',
@@ -7225,6 +7327,8 @@ const va: Translations = {
     messageBodyDefault: "Hola {name},\n\n",
   },
   readings: {
+    tabDays: "Dia a dia",
+    tabLink: "Enllaç a les lectures completes",
     title: 'Lectures del dia',
     subtitle: 'Els textos que els membres lligen en l’app, dia a dia. Prepara’ls amb antelació: cada dia publicat apareix en l’app a mitjanit de la seua data.',
     earlier: 'Abans',
@@ -7383,6 +7487,12 @@ const va: Translations = {
     restart: "Conversa nova",
     goTo: "Obrir {{page}}",
   },
+  reorder: {
+    grip: "Moure {{name}} (posició {{n}} de {{total}})",
+    hint: "Arrossega per a canviar l'orde, o usa les fletxes del teclat",
+    more: "Més accions per a {{name}}",
+    dragNote: "Arrossega ⠿ per a canviar l'orde.",
+  },
 };
 
 const ca: Translations = {
@@ -7405,6 +7515,8 @@ const ca: Translations = {
     massNote: "Les ofrenes es paguen igual. Fins que configuris el teu compte de cobrament, els membres demanen intencions a l'app sense pagar ofrena.",
   },
   tabs: {
+    donationsHowToPay: "Com pagar",
+    homeIdentity: "Identitat",
     label: "Parts d’aquesta pàgina",
     settingsInfo: "Informació",
     settingsPersonalise: "Personalització",
@@ -7603,6 +7715,7 @@ const ca: Translations = {
     navAddModules: "Afegeix mòduls",
   },
   paymentLinks: {
+    share: "Compartir",
     listTitle: "Els vostres enllaços de pagament",
     intro: "Cada enllaç té el seu propi codi QR. Qualsevol pot pagar amb targeta, Apple Pay o Google Pay, sense app i sense compte. Els diners arriben al vostre compte.",
     new: "Nou enllaç de pagament",
@@ -7766,6 +7879,7 @@ const ca: Translations = {
     onceHeading: 'Dates',
   },
   announcements: {
+    newButton: "+ Nou anunci",
     title: 'Anuncis',
     subtitle: 'Publica notícies a manera de full informatiu per a aquesta comunitat.',
     titleLabel: 'Títol',
@@ -7796,6 +7910,8 @@ const ca: Translations = {
     photoError: 'No s’ha pogut desar la foto.',
   },
   livestreams: {
+    newButton: "+ Programa una retransmissió",
+    statusLabel: "Estat de {{name}}",
     title: 'Retransmissions',
     subtitle: 'Programa un enllaç a una celebració en directe o gravada.',
     titleLabel: 'Títol',
@@ -7958,6 +8074,9 @@ const ca: Translations = {
     descMessages: "Escriu a un membre en concret; rep una notificació i pot respondre.",
   },
   plans: {
+    tabModules: "Mòduls",
+    tabPlan: "Pla i facturació",
+    showLabel: "Mostra {{name}} a l'app",
     title: "Plans i mòduls",
     subtitle: "El teu pla decideix quins mòduls pot oferir la teva comunitat. Mostra o amaga cadascun sense cost.",
     subtitleOffered: "Tots els mòduls s’ofereixen a la teva comunitat. Mostra els que vulguis.",
@@ -8130,7 +8249,7 @@ const ca: Translations = {
     loading: 'Carregant la pàgina…',
     loadError: 'No s’ha pogut carregar aquesta pàgina.',
     saveError: 'No s’ha pogut desar aquest canvi.',
-    empty: "Encara no tens seccions, així que la gent veu la descripció de la teva comunitat (Pàgina d’inici › Personalització).",
+    empty: "Encara no tens seccions, així que la gent veu la descripció de la teva comunitat (Pàgina d’inici › Identitat).",
     useDefault: 'Començar amb la pàgina per defecte',
     addSection: 'Afegir una secció',
     moveUp: 'Pujar',
@@ -8232,7 +8351,7 @@ const ca: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Usa ↑ ↓ per canviar l’ordre. Es mostren tots els distintius activats, en aquest ordre.',
+    orderNote: 'Arrossega ⠿ per canviar l’ordre. Es mostren tots els distintius activats, en aquest ordre.',
     addTitle: 'Afegir un missatge',
     editTitle: 'Editar el missatge',
     textLabel: 'Text ({{n}} caràcters com a màxim)',
@@ -8345,6 +8464,8 @@ const ca: Translations = {
     typeRegistration: 'Inscripció',
   },
   massIntentions: {
+    addButton: "+ Afegeix una intenció",
+    tabAll: "Tot el registre",
     title: 'Intencions de missa',
     subtitle: "Les misses oferides per algú, demanades des de l’aplicació o en persona, ordenades per celebració per al celebrant.",
     addTitle: "Afegir-ne una rebuda en persona",
@@ -8464,6 +8585,9 @@ const ca: Translations = {
     sampleButton: "Dona’ns suport",
   },
   receipts: {
+    legalEdit: "Edita",
+    legalClose: "Tanca",
+    download: "Descarrega",
     title: 'Certificats de donatius',
     subtitle: 'Un certificat a l’any per a cada persona que el va demanar en donar, amb la suma de tot el que va donar. Obre un certificat per imprimir-lo o desar-lo en PDF; els enllaços funcionen durant una hora.',
     legalTitle: 'Qui emet els certificats',
@@ -8696,6 +8820,8 @@ const ca: Translations = {
     messageBodyDefault: "Hola {name},\n\n",
   },
   readings: {
+    tabDays: "Dia a dia",
+    tabLink: "Enllaç a les lectures completes",
     title: 'Lectures del dia',
     subtitle: 'Els textos que els membres llegeixen a l’app, dia a dia. Prepara’ls amb antelació: cada dia publicat apareix a l’app a mitjanit de la seva data.',
     earlier: 'Abans',
@@ -8854,6 +8980,12 @@ const ca: Translations = {
     restart: "Conversa nova",
     goTo: "Obrir {{page}}",
   },
+  reorder: {
+    grip: "Moure {{name}} (posició {{n}} de {{total}})",
+    hint: "Arrossega per canviar l'ordre, o fes servir les fletxes del teclat",
+    more: "Més accions per a {{name}}",
+    dragNote: "Arrossega ⠿ per canviar l'ordre.",
+  },
 };
 
 const gl: Translations = {
@@ -8876,6 +9008,8 @@ const gl: Translations = {
     massNote: "As ofrendas páganse igual. Ata que configures a túa conta de cobro, os membros piden intencións na app sen pagar ofrenda.",
   },
   tabs: {
+    donationsHowToPay: "Como pagar",
+    homeIdentity: "Identidade",
     label: "Partes desta páxina",
     settingsInfo: "Información",
     settingsPersonalise: "Personalización",
@@ -9074,6 +9208,7 @@ const gl: Translations = {
     navAddModules: "Engadir módulos",
   },
   paymentLinks: {
+    share: "Compartir",
     listTitle: "As vosas ligazóns de pagamento",
     intro: "Cada ligazón ten o seu propio código QR. Calquera pode pagar con tarxeta, Apple Pay ou Google Pay, sen app e sen conta. O diñeiro chega á vosa conta.",
     new: "Nova ligazón de pagamento",
@@ -9237,6 +9372,7 @@ const gl: Translations = {
     onceHeading: 'Datas',
   },
   announcements: {
+    newButton: "+ Novo anuncio",
     title: 'Anuncios',
     subtitle: 'Publica novidades tipo boletín para esta comunidade.',
     titleLabel: 'Título',
@@ -9267,6 +9403,8 @@ const gl: Translations = {
     photoError: 'Non se puido gardar a foto.',
   },
   livestreams: {
+    newButton: "+ Programar unha emisión",
+    statusLabel: "Estado de {{name}}",
     title: 'Emisións',
     subtitle: 'Programa unha ligazón a unha celebración en directo ou gravada.',
     titleLabel: 'Título',
@@ -9429,6 +9567,9 @@ const gl: Translations = {
     descMessages: "Escribe a un membro en concreto; recibe unha notificación e pode responder.",
   },
   plans: {
+    tabModules: "Módulos",
+    tabPlan: "Plan e facturación",
+    showLabel: "Mostrar {{name}} na app",
     title: "Plans e módulos",
     subtitle: "O teu plan decide que módulos pode ofrecer a túa comunidade. Amosa ou agocha cada un sen custo.",
     subtitleOffered: "Todos os módulos ofrécense á túa comunidade. Amosa os que queiras.",
@@ -9601,7 +9742,7 @@ const gl: Translations = {
     loading: 'Cargando a páxina…',
     loadError: 'Non se puido cargar esta páxina.',
     saveError: 'Non se puido gardar ese cambio.',
-    empty: "Aínda non tes seccións, así que a xente ve a descrición da túa comunidade (Páxina de inicio › Personalización).",
+    empty: "Aínda non tes seccións, así que a xente ve a descrición da túa comunidade (Páxina de inicio › Identidade).",
     useDefault: 'Comezar coa páxina por defecto',
     addSection: 'Engadir unha sección',
     moveUp: 'Subir',
@@ -9703,7 +9844,7 @@ const gl: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Usa ↑ ↓ para cambiar a orde. Móstranse todas as insignias activadas, nesta orde.',
+    orderNote: 'Arrastra ⠿ para cambiar a orde. Móstranse todas as insignias activadas, nesta orde.',
     addTitle: 'Engadir unha mensaxe',
     editTitle: 'Editar a mensaxe',
     textLabel: 'Texto ({{n}} caracteres como máximo)',
@@ -9816,6 +9957,8 @@ const gl: Translations = {
     typeRegistration: 'Inscrición',
   },
   massIntentions: {
+    addButton: "+ Engadir unha intención",
+    tabAll: "Todo o rexistro",
     title: 'Intencións de misa',
     subtitle: "As misas ofrecidas por alguén, pedidas desde a app ou en persoa, ordenadas por celebración para o celebrante.",
     addTitle: "Engadir unha recibida en persoa",
@@ -9935,6 +10078,9 @@ const gl: Translations = {
     sampleButton: "Apóianos",
   },
   receipts: {
+    legalEdit: "Editar",
+    legalClose: "Pechar",
+    download: "Descargar",
     title: 'Certificados de doazón',
     subtitle: 'Un certificado ao ano para cada persoa que o pediu ao doar, coa suma de todo o que deu. Abre un certificado para imprimilo ou gardalo en PDF; as ligazóns funcionan durante unha hora.',
     legalTitle: 'Quen emite os certificados',
@@ -10167,6 +10313,8 @@ const gl: Translations = {
     messageBodyDefault: "Ola {name},\n\n",
   },
   readings: {
+    tabDays: "Día a día",
+    tabLink: "Ligazón ás lecturas completas",
     title: 'Lecturas do día',
     subtitle: 'Os textos que os membros len na app, día a día. Prepáraos con antelación: cada día publicado aparece na app á medianoite da súa data.',
     earlier: 'Antes',
@@ -10325,6 +10473,12 @@ const gl: Translations = {
     restart: "Nova conversa",
     goTo: "Abrir {{page}}",
   },
+  reorder: {
+    grip: "Mover {{name}} (posición {{n}} de {{total}})",
+    hint: "Arrastra para cambiar a orde, ou usa as frechas do teclado",
+    more: "Máis accións para {{name}}",
+    dragNote: "Arrastra ⠿ para cambiar a orde.",
+  },
 };
 
 const pt: Translations = {
@@ -10347,6 +10501,8 @@ const pt: Translations = {
     massNote: "As ofertas são pagas da mesma forma. Até configurar a sua conta de pagamentos, os membros pedem intenções na app sem pagar oferta.",
   },
   tabs: {
+    donationsHowToPay: "Como pagar",
+    homeIdentity: "Identidade",
     label: "Partes desta página",
     settingsInfo: "Informações",
     settingsPersonalise: "Personalização",
@@ -10545,6 +10701,7 @@ const pt: Translations = {
     navAddModules: "Adicionar módulos",
   },
   paymentLinks: {
+    share: "Partilhar",
     listTitle: "As suas ligações de pagamento",
     intro: "Cada ligação tem o seu próprio código QR. Qualquer pessoa pode pagar com cartão, Apple Pay ou Google Pay, sem app e sem conta. O dinheiro chega à vossa conta.",
     new: "Nova ligação de pagamento",
@@ -10708,6 +10865,7 @@ const pt: Translations = {
     onceHeading: 'Datas',
   },
   announcements: {
+    newButton: "+ Novo anúncio",
     title: 'Anúncios',
     subtitle: 'Publique notícias, como num boletim, para esta comunidade.',
     titleLabel: 'Título',
@@ -10738,6 +10896,8 @@ const pt: Translations = {
     photoError: 'Não foi possível guardar a fotografia.',
   },
   livestreams: {
+    newButton: "+ Agendar uma transmissão",
+    statusLabel: "Estado de {{name}}",
     title: 'Transmissões',
     subtitle: 'Agende uma ligação para uma celebração em direto ou gravada.',
     titleLabel: 'Título',
@@ -10900,6 +11060,9 @@ const pt: Translations = {
     descMessages: "Escreva a um membro em particular; recebe uma notificação e pode responder.",
   },
   plans: {
+    tabModules: "Módulos",
+    tabPlan: "Plano e faturação",
+    showLabel: "Mostrar {{name}} na app",
     title: "Planos e módulos",
     subtitle: "O seu plano decide que módulos a sua comunidade pode oferecer. Mostre ou oculte cada um sem custo.",
     subtitleOffered: "Todos os módulos são oferecidos à sua comunidade. Mostre os que quiser.",
@@ -11072,7 +11235,7 @@ const pt: Translations = {
     loading: 'A carregar a página…',
     loadError: 'Não foi possível carregar esta página.',
     saveError: 'Não foi possível guardar essa alteração.',
-    empty: "Ainda não tem secções, por isso as pessoas veem a descrição da sua comunidade (Página inicial › Personalização).",
+    empty: "Ainda não tem secções, por isso as pessoas veem a descrição da sua comunidade (Página inicial › Identidade).",
     useDefault: 'Começar com a página predefinida',
     addSection: 'Adicionar uma secção',
     moveUp: 'Subir',
@@ -11174,7 +11337,7 @@ const pt: Translations = {
     edit: 'Editar',
     delete: 'Eliminar',
     showLabel: 'Mostrar «{{name}}»',
-    orderNote: 'Use ↑ ↓ para mudar a ordem. São mostrados todos os distintivos ativados, por esta ordem.',
+    orderNote: 'Arraste ⠿ para mudar a ordem. São mostrados todos os distintivos ativados, por esta ordem.',
     addTitle: 'Adicionar uma mensagem',
     editTitle: 'Editar a mensagem',
     textLabel: 'Texto (máximo {{n}} caracteres)',
@@ -11287,6 +11450,8 @@ const pt: Translations = {
     typeRegistration: 'Inscrição',
   },
   massIntentions: {
+    addButton: "+ Adicionar uma intenção",
+    tabAll: "Registo completo",
     title: 'Intenções de missa',
     subtitle: "As missas oferecidas por alguém, pedidas pela app ou presencialmente, organizadas por celebração para o celebrante.",
     addTitle: "Adicionar uma recebida presencialmente",
@@ -11406,6 +11571,9 @@ const pt: Translations = {
     sampleButton: "Apoiem-nos",
   },
   receipts: {
+    legalEdit: "Editar",
+    legalClose: "Fechar",
+    download: "Descarregar",
     title: 'Recibos de donativos',
     subtitle: 'Um recibo por ano para cada pessoa que o pediu ao doar, com a soma de tudo o que deu. Abra um recibo para o imprimir ou guardar em PDF; as ligações funcionam durante uma hora.',
     legalTitle: 'Quem emite os recibos',
@@ -11638,6 +11806,8 @@ const pt: Translations = {
     messageBodyDefault: "Olá {name},\n\n",
   },
   readings: {
+    tabDays: "Dia a dia",
+    tabLink: "Ligação às leituras completas",
     title: 'Leituras do dia',
     subtitle: 'Os textos que os membros leem na app, dia a dia. Prepare-os com antecedência: cada dia publicado aparece na app à meia-noite da sua data.',
     earlier: 'Antes',
@@ -11795,6 +11965,12 @@ const pt: Translations = {
     close: "Fechar",
     restart: "Nova conversa",
     goTo: "Abrir {{page}}",
+  },
+  reorder: {
+    grip: "Mover {{name}} (posição {{n}} de {{total}})",
+    hint: "Arraste para mudar a ordem, ou use as setas do teclado",
+    more: "Mais ações para {{name}}",
+    dragNote: "Arraste ⠿ para mudar a ordem.",
   },
 };
 

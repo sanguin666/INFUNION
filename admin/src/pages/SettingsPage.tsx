@@ -4,9 +4,9 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 // sits under Home page, the account under Dashboard. Old links (emails,
 // bookmarks) land on the tab that took their place.
 const MOVED: Record<string, string> = {
-  info: '../home-page?tab=personalise',
-  personalise: '../home-page?tab=personalise',
-  place: '../home-page?tab=place',
+  info: '../home-page?tab=identity',
+  personalise: '../home-page?tab=identity',
+  place: '../home-page?tab=identity',
   account: '../dashboard?tab=account',
 };
 

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useModules, usePoiId, useRefreshModules } from '../layout/usePoiId';
 import { useI18n } from '../i18n/I18nContext';
+import { MoreMenu } from '../components/Reorder';
 import { intlLocale } from '../i18n/translations';
 import { getBilling, startModule, startPlanTrial } from '../api/billing';
 import type { BillingSummary } from '../api/types';
@@ -235,12 +236,15 @@ export function MembersPage() {
 
       {tab === 'app' && members && members.length > 0 && (
         <>
-          <div className="card form">
-            <label>
-              {t('members.search')}
-              <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} />
-            </label>
-          </div>
+          {/* A plain field, not a box of its own (Seb, 21 Nov 2026). */}
+          <input
+            type="search"
+            className="search-field"
+            aria-label={t('members.search')}
+            placeholder={t('members.search')}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
           {shown?.length === 0 && <p className="muted">{t('members.noMatch')}</p>}
           {shown && shown.length > 0 && (
             <div className="card card-list" role="list">
@@ -261,19 +265,18 @@ export function MembersPage() {
                         : [contactOf(member), t('members.memberSince', { date: date(member.joinedAt) })].filter(Boolean).join(' · ')}
                     </p>
                   </div>
-                  <button type="button" className="text-action" onClick={() => void downloadData(member)}>
-                    {t('members.dataExport')}
-                  </button>
-                  <button
-                    type="button"
-                    className="text-action text-action-destructive"
-                    onClick={() => void removeData(member)}
-                  >
-                    {t('members.dataRemove')}
-                  </button>
-                  <button type="button" className="btn" onClick={() => write(member)}>
+                  <button type="button" className="btn btn-small" onClick={() => write(member)}>
                     {live && member.lastMessage ? t('members.open') : t('members.write')}
                   </button>
+                  {/* The data requests are rare: behind ⋯ (Seb, 21 Nov 2026). */}
+                  <MoreMenu
+                    label={t('reorder.more', { name: nameOf(member, t) })}
+                    items={[
+                      { label: t('members.dataExport'), onSelect: () => void downloadData(member) },
+                      // removeData asks its own question first.
+                      { label: t('members.dataRemove'), destructive: true, undoable: true, onSelect: () => void removeData(member) },
+                    ]}
+                  />
                 </div>
               ))}
             </div>

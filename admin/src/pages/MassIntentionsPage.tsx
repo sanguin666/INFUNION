@@ -14,7 +14,9 @@ import {
   type IntentionFilter,
 } from '../api/massIntentions';
 import type { Event, MassIntention, MassIntentionStatus } from '../api/types';
-import { DestructiveButton } from '../components/DestructiveButton';
+import { MoreMenu } from '../components/Reorder';
+import { Dialog } from '../components/Dialog';
+import { TabBar, useTab } from '../components/Tabs';
 import { CURRENCY, formatMoney, fromLocalInputValue } from '../format';
 import { occurrencesBetween } from '../schedule';
 
@@ -129,7 +131,10 @@ export function MassIntentionsPage() {
   const poiId = usePoiId();
   const { user } = useAuth();
   const { t, language } = useI18n();
-  const [filter, setFilter] = useState<IntentionFilter>('upcoming');
+  const [tab, setTab] = useTab(['upcoming', 'all', 'offering'] as const);
+  // The Offering tab keeps the list it came from loaded behind it.
+  const [filter, setFilter] = useState<IntentionFilter>(tab === 'all' ? 'all' : 'upcoming');
+  const [addOpen, setAddOpen] = useState(false);
   const [items, setItems] = useState<MassIntention[] | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -254,6 +259,7 @@ export function MassIntentionsPage() {
       setRequesterContact('');
       setChoice(NO_CHOICE);
       setOffering(settingsOffering == null ? '' : String(settingsOffering));
+      setAddOpen(false);
     } catch {
       setError(t('massIntentions.addError'));
     } finally {
@@ -290,15 +296,53 @@ export function MassIntentionsPage() {
 
   return (
     <div>
-      <h2 className="no-print">{t('massIntentions.title')}</h2>
-      <p className="muted no-print">{t('massIntentions.subtitle')}</p>
+      {/* Three tabs, the add form in a window, the rare actions behind ⋯
+          (Seb, 21 Nov 2026: fewer buttons per page). */}
+      <div className="page-head no-print">
+        <div>
+          <h2>{t('massIntentions.title')}</h2>
+          <p className="muted">{t('massIntentions.subtitle')}</p>
+        </div>
+        <div className="card-actions" style={{ marginTop: 0, flexShrink: 0 }}>
+          {tab !== 'offering' && (
+            <button type="button" className="btn" onClick={() => window.print()} disabled={!items?.length}>
+              {t('massIntentions.print')}
+            </button>
+          )}
+          <button type="button" className="btn btn-primary" onClick={() => setAddOpen(true)}>
+            {t('massIntentions.addButton')}
+          </button>
+        </div>
+      </div>
 
       <div className="no-print">
+        <TabBar
+          idPrefix="intentions"
+          label={t('tabs.label')}
+          current={tab}
+          onChange={(key) => {
+            setTab(key);
+            if (key !== 'offering' && key !== filter) {
+              setFilter(key);
+              setItems(null);
+              setError(null);
+            }
+          }}
+          tabs={[
+            { key: 'upcoming', label: t('massIntentions.filterUpcoming'), count: filter === 'upcoming' ? items?.length ?? null : null },
+            { key: 'all', label: t('massIntentions.tabAll') },
+            { key: 'offering', label: t('massIntentions.offeringTitle') },
+          ]}
+        />
+      </div>
 
-        <form className="form card" onSubmit={handleAdd}>
-          <p className="card-title" style={{ margin: '12px 0 0' }}>
-            {t('massIntentions.addTitle')}
-          </p>
+      <Dialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        title={t('massIntentions.addTitle')}
+        closeLabel={t('common.cancel')}
+      >
+        <form className="form" onSubmit={handleAdd}>
           <label>
             {t('massIntentions.intentionLabel')}
             <textarea
@@ -336,140 +380,126 @@ export function MassIntentionsPage() {
             {adding ? t('massIntentions.adding') : t('massIntentions.add')}
           </button>
         </form>
+      </Dialog>
 
-        <h3>{t('massIntentions.registerTitle')}</h3>
-        <div className="card-actions" style={{ marginTop: 0, marginBottom: 16, justifyContent: 'space-between' }}>
-          <label>
-            {t('massIntentions.filterLabel')}{' '}
-            <select
-              value={filter}
-              onChange={(e) => {
-                setFilter(e.target.value as IntentionFilter);
-                setItems(null);
-                setError(null);
-              }}
-            >
-              <option value="upcoming">{t('massIntentions.filterUpcoming')}</option>
-              <option value="all">{t('massIntentions.filterAll')}</option>
-            </select>
-          </label>
-          <button type="button" className="btn" onClick={() => window.print()} disabled={!items?.length}>
-            {t('massIntentions.print')}
-          </button>
-        </div>
+      {tab !== 'offering' && (
+        <>
+          <div className="no-print">
+            {error && <p className="error-text">{error}</p>}
+            {items === null && !error && <p className="muted">{t('massIntentions.loading')}</p>}
+            {items?.length === 0 && <p className="muted">{t('massIntentions.empty')}</p>}
+          </div>
 
-        {error && <p className="error-text">{error}</p>}
-        {items === null && !error && <p className="muted">{t('massIntentions.loading')}</p>}
-        {items?.length === 0 && <p className="muted">{t('massIntentions.empty')}</p>}
-      </div>
-
-      {/* What the print button prints: just the register, for the celebrant. */}
-      <div className="print-area">
-        <div className="print-only">
-          <h2>{t('massIntentions.printTitle')}</h2>
-          <p>
-            {poiName}
-            {poiName ? ' · ' : ''}
-            {new Date().toLocaleDateString(intlLocale(language), { day: 'numeric', month: 'long', year: 'numeric' })}
-          </p>
-        </div>
-
-        {groups.map((group) => {
-          const confirmed = group.items.filter((i) => i.status === 'confirmed');
-          return (
-            <section key={group.key} className="card" aria-label={group.celebrationTitle ?? undefined}>
-              <p className="card-title">
-                {group.celebrationAt ? formatWhen(group.celebrationAt) : t('massIntentions.noDateHeading')}
-                {group.celebrationTitle ? ` · ${group.celebrationTitle}` : ''}
+          {/* What the print button prints: just the register, for the celebrant. */}
+          <div className="print-area">
+            <div className="print-only">
+              <h2>{t('massIntentions.printTitle')}</h2>
+              <p>
+                {poiName}
+                {poiName ? ' · ' : ''}
+                {new Date().toLocaleDateString(intlLocale(language), { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
-              <ul className="card-rows" style={{ marginTop: 4 }}>
-                {group.items.map((item) =>
-                  movingId === item.id ? (
-                    <li key={item.id} className="card-row no-print" style={{ display: 'block' }}>
-                      <p style={{ margin: 0, fontWeight: 700 }}>{item.intention}</p>
-                      <div className="form">
-                        <CelebrationFields
-                          masses={masses}
-                          choice={moveChoice}
-                          onChange={setMoveChoice}
-                          formatWhen={formatWhen}
-                        />
-                      </div>
-                      <div className="card-actions" style={{ marginTop: 8 }}>
-                        <button type="button" className="btn btn-primary" onClick={() => saveMove(item.id)}>
-                          {t('massIntentions.saveMove')}
-                        </button>
-                        <button type="button" className="btn" onClick={() => setMovingId(null)}>
-                          {t('common.cancel')}
-                        </button>
-                      </div>
-                    </li>
-                  ) : (
-                    <li key={item.id} className="card-row" style={{ alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                      <div style={{ flex: '1 1 280px' }}>
-                        <p style={{ margin: 0, fontWeight: 700, fontSize: 19 }}>{item.intention}</p>
-                        <p className="card-meta">
-                          {[
-                            t('massIntentions.askedBy', { name: item.requesterName }),
-                            item.requesterContact,
-                            item.offeringAmount !== null ? formatMoney(item.offeringAmount) : null,
-                            item.fromOffice ? t('massIntentions.fromOffice') : t('massIntentions.fromApp'),
-                          ]
-                            .filter(Boolean)
-                            .join(' · ')}
+            </div>
+
+            {groups.length > 0 && (
+              <div className="card">
+                {groups.map((group) => {
+                  const confirmed = group.items.filter((i) => i.status === 'confirmed');
+                  return (
+                    <section key={group.key} aria-label={group.celebrationTitle ?? undefined} className="intention-group">
+                      <div className="intention-group-head">
+                        <p className="list-heading" style={{ margin: 0 }}>
+                          {group.celebrationAt ? formatWhen(group.celebrationAt) : t('massIntentions.noDateHeading')}
+                          {group.celebrationTitle ? ` · ${group.celebrationTitle}` : ''}
                         </p>
-                        {statusWord(item.status) && (
-                          <span className={`badge ${item.status === 'celebrated' ? 'badge-active' : ''}`}>
-                            {statusWord(item.status)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="card-actions no-print" style={{ marginTop: 0 }}>
-                        {item.status === 'confirmed' ? (
-                          <>
-                            <button
-                              type="button"
-                              className="btn btn-primary"
-                              onClick={() => setStatus(item.id, 'celebrated')}
-                            >
-                              {t('massIntentions.markCelebrated')}
-                            </button>
-                            <button type="button" className="btn" onClick={() => startMove(item)}>
-                              {t('massIntentions.move')}
-                            </button>
-                            <DestructiveButton
-                              label={t('massIntentions.cancelIntention')}
-                              onConfirm={() => setStatus(item.id, 'cancelled')}
-                            />
-                          </>
-                        ) : (
-                          <button type="button" className="btn" onClick={() => setStatus(item.id, 'confirmed')}>
-                            {t('massIntentions.putBack')}
+                        {confirmed.length > 1 && (
+                          <button type="button" className="text-action no-print" onClick={() => markGroupCelebrated(group)}>
+                            {t('massIntentions.markAllCelebrated', { n: confirmed.length })}
                           </button>
                         )}
                       </div>
-                    </li>
-                  ),
-                )}
-              </ul>
-              {confirmed.length > 1 && (
-                <div className="card-actions no-print">
-                  <button type="button" className="btn btn-primary" onClick={() => markGroupCelebrated(group)}>
-                    {t('massIntentions.markAllCelebrated', { n: confirmed.length })}
-                  </button>
-                </div>
-              )}
-            </section>
-          );
-        })}
-      </div>
+                      <ul className="card-rows" style={{ marginTop: 0 }}>
+                        {group.items.map((item) =>
+                          movingId === item.id ? (
+                            <li key={item.id} className="card-row no-print" style={{ display: 'block' }}>
+                              <p style={{ margin: 0, fontWeight: 700 }}>{item.intention}</p>
+                              <div className="form">
+                                <CelebrationFields
+                                  masses={masses}
+                                  choice={moveChoice}
+                                  onChange={setMoveChoice}
+                                  formatWhen={formatWhen}
+                                />
+                              </div>
+                              <div className="card-actions" style={{ marginTop: 8 }}>
+                                <button type="button" className="btn btn-primary" onClick={() => saveMove(item.id)}>
+                                  {t('massIntentions.saveMove')}
+                                </button>
+                                <button type="button" className="btn" onClick={() => setMovingId(null)}>
+                                  {t('common.cancel')}
+                                </button>
+                              </div>
+                            </li>
+                          ) : (
+                            <li key={item.id} className="card-row" style={{ alignItems: 'center' }}>
+                              <div style={{ flex: '1 1 280px', minWidth: 0 }}>
+                                <p style={{ margin: 0, fontWeight: 700, fontSize: 19 }}>{item.intention}</p>
+                                <p className="card-meta">
+                                  {[
+                                    t('massIntentions.askedBy', { name: item.requesterName }),
+                                    item.requesterContact,
+                                    item.offeringAmount !== null ? formatMoney(item.offeringAmount) : null,
+                                    item.fromOffice ? t('massIntentions.fromOffice') : t('massIntentions.fromApp'),
+                                  ]
+                                    .filter(Boolean)
+                                    .join(' · ')}
+                                </p>
+                                {statusWord(item.status) && (
+                                  <span className={`badge ${item.status === 'celebrated' ? 'badge-active' : ''}`}>
+                                    {statusWord(item.status)}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="card-actions no-print" style={{ marginTop: 0, flexWrap: 'nowrap' }}>
+                                {item.status === 'confirmed' ? (
+                                  <>
+                                    <button type="button" className="btn btn-small" onClick={() => setStatus(item.id, 'celebrated')}>
+                                      {t('massIntentions.markCelebrated')}
+                                    </button>
+                                    <MoreMenu
+                                      label={t('reorder.more', { name: item.intention })}
+                                      items={[
+                                        { label: t('massIntentions.move'), onSelect: () => startMove(item) },
+                                        {
+                                          label: t('massIntentions.cancelIntention'),
+                                          destructive: true,
+                                          onSelect: () => setStatus(item.id, 'cancelled'),
+                                        },
+                                      ]}
+                                    />
+                                  </>
+                                ) : (
+                                  <button type="button" className="text-action" onClick={() => setStatus(item.id, 'confirmed')}>
+                                    {t('massIntentions.putBack')}
+                                  </button>
+                                )}
+                              </div>
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    </section>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
-      {settingsOffering !== undefined && (
-        <div className="card form no-print" style={{ marginTop: 24 }}>
-          <p className="card-title" style={{ margin: '12px 0 0' }}>
-            {t('massIntentions.offeringTitle')}
-          </p>
-          <p className="muted" style={{ margin: '4px 0 0' }}>
+      {tab === 'offering' && settingsOffering !== undefined && (
+        <div className="card form no-print">
+          <p className="muted" style={{ margin: '12px 0 0' }}>
             {t('massIntentions.offeringHint')}
           </p>
           {!paymentsReady && (
@@ -504,6 +534,7 @@ export function MassIntentionsPage() {
             </button>
             {offeringSaved && !offeringDirty && <span className="muted">{t('massIntentions.saved')}</span>}
           </div>
+          {error && <p className="error-text">{error}</p>}
         </div>
       )}
     </div>
