@@ -116,6 +116,10 @@ export function WebsitePage() {
             </a>
           </div>
         </div>
+        {/* Was a box of its own (Seb, 21 Nov 2026). */}
+        <p className="muted" style={{ margin: '4px 0 0' }}>
+          {t('site.shareHint')}
+        </p>
 
         <label>
           {t('site.addressLabel')}
@@ -162,10 +166,6 @@ export function WebsitePage() {
         </div>
       </div>
 
-      <div className="card" style={{ marginTop: 20 }}>
-        <p className="card-title">{t('site.shareTitle')}</p>
-        <p className="muted">{t('site.shareHint')}</p>
-      </div>
     </div>
   );
 }

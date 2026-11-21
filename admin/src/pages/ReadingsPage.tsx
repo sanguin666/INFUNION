@@ -12,7 +12,8 @@ import {
   type ReadingKind,
   type ReadingSection,
 } from '../api/readings';
-import { DestructiveButton } from '../components/DestructiveButton';
+import { MoreMenu } from '../components/Reorder';
+import { TabBar, useTab } from '../components/Tabs';
 import { useUndo } from '../components/Undo';
 
 const KINDS: ReadingKind[] = ['first', 'psalm', 'second', 'gospel', 'other'];
@@ -76,6 +77,7 @@ export function ReadingsPage() {
   const poiId = usePoiId();
   const { t, language } = useI18n();
   const today = dayKey(new Date());
+  const [tab, setTab] = useTab(['days', 'link'] as const);
   const [start, setStart] = useState(today);
   const [selected, setSelected] = useState(today);
   const [days, setDays] = useState<Map<string, DailyReading> | null>(null);
@@ -194,6 +196,21 @@ export function ReadingsPage() {
       <h2>{t('readings.title')}</h2>
       <p className="muted">{t('readings.subtitle')}</p>
 
+      {/* The day's texts, and the one-off link setting in a tab of its own
+          (Seb, 21 Nov 2026). */}
+      <TabBar
+        idPrefix="readings"
+        label={t('tabs.label')}
+        current={tab}
+        onChange={setTab}
+        tabs={[
+          { key: 'days', label: t('readings.tabDays') },
+          { key: 'link', label: t('readings.tabLink') },
+        ]}
+      />
+
+      {tab === 'days' && (
+        <>
       <div className="readings-strip-nav">
         <button
           type="button"
@@ -286,20 +303,19 @@ export function ReadingsPage() {
             <Fragment key={index}>
               <div className="form-row readings-section-start">
                 <span>{t('readings.textNumber', { number: String(index + 1) })}</span>
-                <div className="chips" role="radiogroup" aria-label={t('readings.kindLabel')}>
+                {/* One menu instead of five buttons (Seb, 21 Nov 2026). */}
+                <select
+                  aria-label={t('readings.kindLabel')}
+                  value={section.kind}
+                  onChange={(e) => patchSection(index, { kind: e.target.value as ReadingKind })}
+                  style={{ width: 'auto' }}
+                >
                   {KINDS.map((kind) => (
-                    <button
-                      key={kind}
-                      type="button"
-                      role="radio"
-                      aria-checked={section.kind === kind}
-                      className={`chip ${section.kind === kind ? 'chip-selected' : ''}`}
-                      onClick={() => patchSection(index, { kind })}
-                    >
+                    <option key={kind} value={kind}>
                       {t(`readings.kind_${kind}`)}
-                    </button>
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
               {section.kind === 'other' && (
                 <label>
@@ -385,16 +401,27 @@ export function ReadingsPage() {
             <button type="submit" className="btn btn-primary" disabled={saving || !hasContent}>
               {current?.published ? t('readings.saveChanges') : t('readings.publish')}
             </button>
-            <button type="button" className="btn" disabled={saving || !hasContent} onClick={() => save(false)}>
-              {current?.published ? t('readings.unpublish') : t('readings.saveDraft')}
-            </button>
-            {current && <DestructiveButton label={t('readings.deleteDay')} onConfirm={remove} />}
+            <MoreMenu
+              label={t('reorder.more', { name: selected })}
+              items={[
+                {
+                  label: current?.published ? t('readings.unpublish') : t('readings.saveDraft'),
+                  disabled: saving || !hasContent,
+                  onSelect: () => save(false),
+                },
+                { label: t('readings.deleteDay'), destructive: true, undoable: true, hidden: !current, onSelect: remove },
+              ]}
+            />
           </div>
           {saved && <p className="muted">{saved}</p>}
           {error && <p className="error-text">{error}</p>}
         </form>
       )}
 
+        </>
+      )}
+
+      {tab === 'link' && (
       <form
         className="form card"
         onSubmit={(event) => {
@@ -423,6 +450,7 @@ export function ReadingsPage() {
         </div>
         {linkError && <p className="error-text">{linkError}</p>}
       </form>
+      )}
     </div>
   );
 }

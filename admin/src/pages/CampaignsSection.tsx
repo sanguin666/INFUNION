@@ -12,7 +12,7 @@ import {
 } from '../api/donations';
 import { API_BASE_URL } from '../api/client';
 import type { Campaign, CampaignAllocationLine } from '../api/types';
-import { DestructiveButton } from '../components/DestructiveButton';
+import { MoreMenu } from '../components/Reorder';
 import { Dialog } from '../components/Dialog';
 import { CURRENCY, endOfDayFromDateInput, formatMoney, toDateInputValue } from '../format';
 import { hideFromList, useUndo } from '../components/Undo';
@@ -431,10 +431,13 @@ export function CampaignsSection({ poiId }: { poiId: string }) {
               >
                 {t('campaigns.edit')}
               </button>
-              <button type="button" className="btn" onClick={() => toggleActive(campaign)}>
-                {campaign.active ? t('campaigns.hide') : t('campaigns.show')}
-              </button>
-              <DestructiveButton label={t('campaigns.delete')} onConfirm={() => handleDelete(campaign.id)} />
+              <MoreMenu
+                label={t('reorder.more', { name: campaign.title })}
+                items={[
+                  { label: campaign.active ? t('campaigns.hide') : t('campaigns.show'), onSelect: () => toggleActive(campaign) },
+                  { label: t('campaigns.delete'), destructive: true, undoable: true, onSelect: () => handleDelete(campaign.id) },
+                ]}
+              />
             </div>
           </div>
         );

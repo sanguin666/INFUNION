@@ -12,6 +12,7 @@ import {
   stopModule,
 } from '../api/billing';
 import { MODULE_ICON } from '../components/moduleIcons';
+import { TabBar, useTab } from '../components/Tabs';
 import type { ActiveModule, BillingInterval, BillingSummary, ModuleType, PlanTier } from '../api/types';
 
 type Key<S extends keyof Translations> = `${S}.${Extract<keyof Translations[S], string>}`;
@@ -105,6 +106,7 @@ export function ModulesPage() {
   const [last4, setLast4] = useState('');
   const [showInvoices, setShowInvoices] = useState(false);
   const [details, setDetails] = useState<ModuleInfo | null>(null);
+  const [tab, setTab] = useTab(['modules', 'plan'] as const);
   const plansRef = useRef<HTMLDivElement>(null);
   const paymentRef = useRef<HTMLDivElement>(null);
 
@@ -317,7 +319,7 @@ export function ModulesPage() {
           className="btn btn-primary"
           onClick={() => {
             afterwards?.();
-            plansRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTab('plan');
           }}
         >
           {t('plans.switchTo', { plan: planName(planOf(info.type)) })}
@@ -335,32 +337,50 @@ export function ModulesPage() {
     );
   }
 
-  function moduleCard(info: ModuleInfo) {
+  // One row per module in one white box, with a switch (Seb, 21 Nov
+  // 2026), instead of a coloured card with an On badge and a button.
+  function moduleRow(info: ModuleInfo) {
     const row: ActiveModule | undefined = rowFor(info.type);
     const allowed = inPlan(info.type);
     const on = allowed && !!row && LIVE.has(row.status);
+    const busy = pending === info.type;
     const style = { '--c': `var(--module-${info.hue})`, '--s': `var(--module-${info.hue}-soft)` } as CSSProperties;
-    let pill: string;
-    if (!allowed) pill = t('plans.inPlan', { plan: planName(planOf(info.type)) });
-    else if (row?.offered && !billing!.comped) pill = t('plans.offeredModule');
-    else pill = on ? t('plans.on') : t('plans.hidden');
+    const name = t(info.name);
     return (
-      <article key={info.type} className={`module-card${on ? ' module-card-on' : ''}${allowed ? '' : ' module-card-locked'}`} style={style}>
-        <div className="module-card-top">
-          <span className="module-card-icon">
-            <Icon path={info.icon} />
-          </span>
-          <span className={`module-card-pill${on ? ' module-card-pill-on' : ''}`}>{pill}</span>
+      <li key={info.type} className="card-row module-switch-row" style={style}>
+        <span className="module-card-icon" aria-hidden="true">
+          <Icon path={info.icon} />
+        </span>
+        <div className="grow">
+          <p className="card-title" style={{ margin: 0 }}>
+            {name}
+            {allowed && row?.offered && !billing!.comped && <span className="module-row-tag">{t('plans.offeredModule')}</span>}
+          </p>
+          <p className="card-meta" style={{ margin: 0 }}>
+            {t(info.description)}
+          </p>
         </div>
-        <h3>{t(info.name)}</h3>
-        <p className="module-card-desc">{t(info.description)}</p>
-        <div className="module-card-actions">
-          <button type="button" className="text-action module-card-more" onClick={() => setDetails(info)}>
-            {t('plans.learnMore')}
-          </button>
-          {moduleAction(info)}
-        </div>
-      </article>
+        <button type="button" className="text-action" onClick={() => setDetails(info)}>
+          {t('plans.learnMore')}
+        </button>
+        {allowed ? (
+          <input
+            type="checkbox"
+            role="switch"
+            className="switch"
+            checked={on}
+            disabled={busy}
+            aria-label={t('plans.showLabel', { name })}
+            onChange={() => run(info.type, () => (on ? stopModule(poiId, info.type) : startModule(poiId, info.type)))}
+          />
+        ) : (
+          !fixed && (
+            <button type="button" className="text-action" onClick={() => setTab('plan')}>
+              {t('plans.inPlan', { plan: planName(planOf(info.type)) })}
+            </button>
+          )
+        )}
+      </li>
     );
   }
 
@@ -378,6 +398,38 @@ export function ModulesPage() {
 
       {error && <p className="error-text">{error}</p>}
 
+      {/* Modules first, the plan and the bill in a tab of their own
+          (Seb, 21 Nov 2026). */}
+      <TabBar
+        idPrefix="modules"
+        label={t('tabs.label')}
+        current={tab}
+        onChange={setTab}
+        tabs={[
+          { key: 'modules', label: t('plans.tabModules') },
+          { key: 'plan', label: t('plans.tabPlan') },
+        ]}
+      />
+
+      {tab === 'modules' && (
+        <>
+          <p className="muted" style={{ marginTop: 0 }}>{t('plans.inYourPlanHint')}</p>
+          <ul className="card card-list" style={{ listStyle: 'none' }}>
+            {shown.filter((m) => inPlan(m.type)).map(moduleRow)}
+          </ul>
+          {shown.some((m) => !inPlan(m.type)) && (
+            <>
+              <h3 className="modules-heading">{t('plans.withBigger')}</h3>
+              <ul className="card card-list" style={{ listStyle: 'none' }}>
+                {shown.filter((m) => !inPlan(m.type)).map(moduleRow)}
+              </ul>
+            </>
+          )}
+        </>
+      )}
+
+      {tab === 'plan' && (
+        <>
       {billing.trialEndsAt && !fixed && (
         <div className="card">
           <p className="module-alert">
@@ -401,16 +453,6 @@ export function ModulesPage() {
         {PLAN_ORDER.map(planCard)}
       </div>
 
-      <h3 className="modules-heading">{t('plans.inYourPlan')}</h3>
-      <p className="muted">{t('plans.inYourPlanHint')}</p>
-      <div className="module-grid">{shown.filter((m) => inPlan(m.type)).map(moduleCard)}</div>
-
-      {shown.some((m) => !inPlan(m.type)) && (
-        <>
-          <h3 className="modules-heading">{t('plans.withBigger')}</h3>
-          <div className="module-grid">{shown.filter((m) => !inPlan(m.type)).map(moduleCard)}</div>
-        </>
-      )}
 
       {!fixed && (
         <div className="card modules-subscription" ref={paymentRef}>
@@ -525,6 +567,8 @@ export function ModulesPage() {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
 
       <ModuleDetails

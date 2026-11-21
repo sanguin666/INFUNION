@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 import { updatePoiMenuOrder } from '../api/poiSettings';
 import type { ActiveModule, ModuleType, Poi } from '../api/types';
+import { Grip, moved, useReorder } from '../components/Reorder';
 
 // Kept in step with the app's PoiShell: Home takes the first of five
 // buttons and More always takes the last, so three are left for modules.
@@ -61,20 +62,21 @@ export function menuLayout(order: ModuleType[]): { bar: ModuleType[]; placement:
 }
 
 /**
- * The bottom menu's modules as a numbered list with up and down arrows,
- * in two groups: the ones that get a button of their own in the app, then
- * the ones under More. The livestream says when the app shows it inside
- * Events instead.
+ * The bottom menu's modules as a numbered list, in two groups: the ones
+ * that get a button of their own in the app, then the ones under More.
+ * Each row has a grip to drag it (Seb, 21 Nov 2026, instead of ↑ ↓). The
+ * livestream says when the app shows it inside Events instead.
  */
 export function MenuOrderRows({
   order,
   onMove,
 }: {
   order: ModuleType[];
-  onMove: (index: number, delta: number) => void;
+  onMove: (from: number, to: number) => void;
 }) {
   const { t } = useI18n();
   const { bar, placement } = menuLayout(order);
+  const drag = useReorder(order.length, onMove);
 
   if (order.length === 0) {
     return (
@@ -85,36 +87,16 @@ export function MenuOrderRows({
   }
 
   function row(type: ModuleType, index: number) {
+    const name = moduleName(type, t);
     return (
-      <li key={type} className="card-row">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <span style={{ fontWeight: 700, minWidth: 20, textAlign: 'right' }}>{index + 1}</span>
-          <div>
-            <p className="card-title" style={{ margin: 0 }}>
-              {moduleName(type, t)}
-            </p>
-            {placement(type) === 'events' && <span className="muted">{t('menuOrder.insideEvents')}</span>}
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button
-            type="button"
-            className="btn btn-icon"
-            aria-label={t('menuOrder.moveUp')}
-            disabled={index === 0}
-            onClick={() => onMove(index, -1)}
-          >
-            ↑
-          </button>
-          <button
-            type="button"
-            className="btn btn-icon"
-            aria-label={t('menuOrder.moveDown')}
-            disabled={index === order.length - 1}
-            onClick={() => onMove(index, 1)}
-          >
-            ↓
-          </button>
+      <li key={type} className="card-row reorder-row" {...drag.row(index)}>
+        <Grip {...drag.grip(index)} name={name} />
+        <span style={{ fontWeight: 700, minWidth: 20, textAlign: 'right' }}>{index + 1}</span>
+        <div className="grow">
+          <p className="card-title" style={{ margin: 0 }}>
+            {name}
+          </p>
+          {placement(type) === 'events' && <span className="muted">{t('menuOrder.insideEvents')}</span>}
         </div>
       </li>
     );
@@ -162,13 +144,9 @@ export function BottomMenuPanel({
   const [error, setError] = useState<string | null>(null);
   const dirty = order.join(',') !== savedOrder.join(',');
 
-  function move(index: number, delta: number) {
-    const target = index + delta;
-    if (target < 0 || target >= order.length) return;
-    const next = [...order];
-    [next[index], next[target]] = [next[target], next[index]];
+  function move(from: number, to: number) {
     setSaved(false);
-    onChange(next);
+    onChange(moved(order, from, to));
   }
 
   async function save() {
@@ -193,6 +171,9 @@ export function BottomMenuPanel({
           {t('menuOrder.subtitle')}
         </p>
         <MenuOrderRows order={order} onMove={move} />
+        <p className="muted" style={{ marginTop: 8 }}>
+          {t('reorder.dragNote')}
+        </p>
       </div>
       <div className="card-actions">
         <button type="button" className="btn btn-primary" disabled={saving || !dirty} onClick={save}>

@@ -87,20 +87,17 @@ export function PhonePreview({ poiId, badges, blocks, drafts, menuOrder }: Props
         <iframe ref={frame} src={src} title={t('preview.frameTitle')} />
         {timedOut && !ready && <p className="phone-preview-missing">{t('preview.notRunning')}</p>}
       </div>
-      <div className="chips" role="radiogroup" aria-label={t('preview.languageLabel')}>
-        {SUPPORTED_LANGUAGES.map((code) => (
-          <button
-            key={code}
-            type="button"
-            role="radio"
-            aria-checked={previewLanguage === code}
-            className={`chip ${previewLanguage === code ? 'chip-selected' : ''}`}
-            onClick={() => setPreviewLanguage(code)}
-          >
-            {LANGUAGE_NAMES[code]}
-          </button>
-        ))}
-      </div>
+      {/* One menu instead of seven buttons (Seb, 21 Nov 2026). */}
+      <label className="phone-preview-language">
+        {t('preview.languageLabel')}
+        <select value={previewLanguage} onChange={(e) => setPreviewLanguage(e.target.value as SupportedLanguage)}>
+          {SUPPORTED_LANGUAGES.map((code) => (
+            <option key={code} value={code}>
+              {LANGUAGE_NAMES[code]}
+            </option>
+          ))}
+        </select>
+      </label>
       <p className="muted phone-preview-hint">{t('preview.hint')}</p>
     </aside>
   );

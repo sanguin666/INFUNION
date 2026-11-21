@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { MoreMenu } from '../components/Reorder';
 import QRCode from 'qrcode';
 import { translatorFor, useI18n } from '../i18n/I18nContext';
 import {
@@ -344,33 +345,38 @@ function ShareLink({ link, poi }: { link: PaymentLink; poi: Poi }) {
         <div>
           <p className="card-title">{t('paymentLinks.shareTitle')}</p>
           <p className="paylink-url">{url}</p>
+          {/* Copy, and the rest behind one Share menu (Seb, 21 Nov 2026). */}
           <div className="card-actions">
-            <button type="button" className="btn btn-primary" onClick={copy}>
+            <button type="button" className="btn" onClick={copy}>
               {copied ? t('payLink.copied') : t('payLink.copy')}
             </button>
-            <a className="btn" href={whatsapp} target="_blank" rel="noreferrer">
-              {t('paymentLinks.whatsapp')}
-            </a>
-            {qr && (
-              <a className="btn" href={qr} download={`${fileSafe(poi.name)}-${fileSafe(link.title)}-qr.png`}>
-                {t('payLink.download')}
-              </a>
-            )}
-            <button type="button" className="btn" onClick={() => window.print()}>
-              {t('payLink.print')}
-            </button>
-            <a className="btn" href={url} target="_blank" rel="noreferrer">
-              {t('payLink.open')}
-            </a>
+            <MoreMenu
+              buttonLabel={`${t('paymentLinks.share')} ▾`}
+              label={t('paymentLinks.share')}
+              items={[
+                { label: t('paymentLinks.whatsapp'), onSelect: () => window.open(whatsapp, '_blank', 'noopener') },
+                {
+                  label: t('payLink.download'),
+                  hidden: !qr,
+                  onSelect: () => {
+                    if (!qr) return;
+                    const a = document.createElement('a');
+                    a.href = qr;
+                    a.download = `${fileSafe(poi.name)}-${fileSafe(link.title)}-qr.png`;
+                    a.click();
+                  },
+                },
+                { label: t('payLink.print'), onSelect: () => window.print() },
+                { label: t('payLink.open'), onSelect: () => window.open(url, '_blank', 'noopener') },
+              ]}
+            />
           </div>
         </div>
       </div>
 
+      {/* The poster only goes on paper now, from Share > Print the poster. */}
       {qr && (
-        <>
-          <p className="card-title" style={{ marginTop: 24 }}>
-            {t('payLink.previewTitle')}
-          </p>
+        <div className="flyer-print-only">
           <div className="qr-flyer">
             <div className="qr-flyer-inner">
               {poi.pictureUrl && <img src={poi.pictureUrl} alt={poi.name} className="qr-flyer-logo" />}
@@ -400,7 +406,7 @@ function ShareLink({ link, poi }: { link: PaymentLink; poi: Poi }) {
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );
