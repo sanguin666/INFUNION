@@ -607,6 +607,9 @@ export type Translations = {
     descMessages: string;
   };
   plans: {
+    tabModules: string;
+    tabPlan: string;
+    showLabel: string;
     title: string;
     subtitle: string;
     subtitleOffered: string;
@@ -2091,6 +2094,9 @@ const en: Translations = {
     descMessages: "Write to one member in particular; they get a notification and can answer.",
   },
   plans: {
+    tabModules: "Modules",
+    tabPlan: "Plan and billing",
+    showLabel: "Show {{name}} in the app",
     title: "Plans and modules",
     subtitle: "Your plan decides which modules your community can offer. Show or hide each one at no cost.",
     subtitleOffered: "Every module is offered to your community. Show the ones you want.",
@@ -3576,6 +3582,9 @@ const es: Translations = {
     descMessages: "Escribe a un miembro en concreto; recibe una notificación y puede responder.",
   },
   plans: {
+    tabModules: "Módulos",
+    tabPlan: "Plan y facturación",
+    showLabel: "Mostrar {{name}} en la app",
     title: "Planes y módulos",
     subtitle: "Tu plan decide qué módulos puede ofrecer tu comunidad. Muestra u oculta cada uno sin coste.",
     subtitleOffered: "Todos los módulos se ofrecen a tu comunidad. Muestra los que quieras.",
@@ -5061,6 +5070,9 @@ const fr: Translations = {
     descMessages: "Écrivez à un membre en particulier ; il reçoit une notification et peut répondre.",
   },
   plans: {
+    tabModules: "Modules",
+    tabPlan: "Offre et facturation",
+    showLabel: "Afficher {{name}} dans l'app",
     title: "Formules et modules",
     subtitle: "Votre formule décide des modules que votre communauté peut proposer. Affichez ou masquez chacun sans frais.",
     subtitleOffered: "Tous les modules sont offerts à votre communauté. Affichez ceux que vous voulez.",
@@ -6546,6 +6558,9 @@ const va: Translations = {
     descMessages: "Escriu a un membre en concret; rep una notificació i pot respondre.",
   },
   plans: {
+    tabModules: "Mòduls",
+    tabPlan: "Pla i facturació",
+    showLabel: "Mostrar {{name}} a l'app",
     title: "Plans i mòduls",
     subtitle: "El teu pla decidix quins mòduls pot oferir la teua comunitat. Mostra o amaga cadascun sense cost.",
     subtitleOffered: "Tots els mòduls s’oferixen a la teua comunitat. Mostra els que vulgues.",
@@ -8031,6 +8046,9 @@ const ca: Translations = {
     descMessages: "Escriu a un membre en concret; rep una notificació i pot respondre.",
   },
   plans: {
+    tabModules: "Mòduls",
+    tabPlan: "Pla i facturació",
+    showLabel: "Mostra {{name}} a l'app",
     title: "Plans i mòduls",
     subtitle: "El teu pla decideix quins mòduls pot oferir la teva comunitat. Mostra o amaga cadascun sense cost.",
     subtitleOffered: "Tots els mòduls s’ofereixen a la teva comunitat. Mostra els que vulguis.",
@@ -9516,6 +9534,9 @@ const gl: Translations = {
     descMessages: "Escribe a un membro en concreto; recibe unha notificación e pode responder.",
   },
   plans: {
+    tabModules: "Módulos",
+    tabPlan: "Plan e facturación",
+    showLabel: "Mostrar {{name}} na app",
     title: "Plans e módulos",
     subtitle: "O teu plan decide que módulos pode ofrecer a túa comunidade. Amosa ou agocha cada un sen custo.",
     subtitleOffered: "Todos os módulos ofrécense á túa comunidade. Amosa os que queiras.",
@@ -11001,6 +11022,9 @@ const pt: Translations = {
     descMessages: "Escreva a um membro em particular; recebe uma notificação e pode responder.",
   },
   plans: {
+    tabModules: "Módulos",
+    tabPlan: "Plano e faturação",
+    showLabel: "Mostrar {{name}} na app",
     title: "Planos e módulos",
     subtitle: "O seu plano decide que módulos a sua comunidade pode oferecer. Mostre ou oculte cada um sem custo.",
     subtitleOffered: "Todos os módulos são oferecidos à sua comunidade. Mostre os que quiser.",
