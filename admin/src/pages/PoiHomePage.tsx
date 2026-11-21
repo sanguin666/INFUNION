@@ -13,7 +13,7 @@ import {
   uploadPageImage,
 } from '../api/poiPage';
 import type { ActiveModule, ModuleType, PageBlockType, Poi, PoiPageBlock } from '../api/types';
-import { DestructiveButton } from '../components/DestructiveButton';
+import { Grip, MoreMenu, moved, useReorder } from '../components/Reorder';
 import { BadgesSection } from './BadgesSection';
 import { PhonePreview } from '../components/PhonePreview';
 import type { PoiBadge } from '../api/types';
@@ -25,7 +25,9 @@ import { BottomMenuPanel, initialMenuOrder } from './MenuOrder';
 import { hideFromList, useUndo } from '../components/Undo';
 import { HomeVersionsButton } from '../components/HomeVersions';
 
-const HOME_TABS = ['badges', 'sections', 'menu', 'personalise', 'place'] as const;
+// Four tabs, on one line (Seb, 21 Nov 2026): the colour, name, logo and
+// address share Identity instead of two tabs of their own.
+const HOME_TABS = ['badges', 'sections', 'menu', 'identity'] as const;
 
 // Blocks that fill themselves from a module's content. They have nothing
 // to write, only a count, and they need that module switched on.
@@ -95,7 +97,6 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
   const [menuOrder, setMenuOrder] = useState<ModuleType[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [justSavedId, setJustSavedId] = useState<string | null>(null);
   // What the phone beside the editor shows: the badges as the badge
   // editor holds them, and which of them are not saved yet.
   const [tab, setTab] = useTab(HOME_TABS);
@@ -147,7 +148,7 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
   }
 
   function editLocally(id: string, patch: Partial<PoiPageBlock>) {
-    setJustSavedId(null);
+    setJustSaved(false);
     setBlocks((current) => current?.map((b) => (b.id === id ? { ...b, ...patch } : b)) ?? null);
   }
 
@@ -162,23 +163,32 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
     );
   }
 
-  async function save(block: PoiPageBlock) {
-    setBusyId(block.id);
+  // One Save for every section changed (Seb, 21 Nov 2026), instead of a
+  // Save under each one.
+  const [savingAll, setSavingAll] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
+  async function saveAll() {
+    const changed = (blocks ?? []).filter(isDirty);
+    if (changed.length === 0) return;
+    setSavingAll(true);
+    setJustSaved(false);
     setError(null);
     try {
-      const updated = await updatePageBlock(poiId, block.id, {
-        title: block.title ?? '',
-        body: block.body ?? '',
-        imageUrl: block.imageUrl ?? '',
-        itemCount: block.itemCount,
-      });
-      setBlocks((current) => current?.map((b) => (b.id === updated.id ? updated : b)) ?? null);
-      setSaved((current) => ({ ...current, [updated.id]: updated }));
-      setJustSavedId(updated.id);
+      for (const block of changed) {
+        const updated = await updatePageBlock(poiId, block.id, {
+          title: block.title ?? '',
+          body: block.body ?? '',
+          imageUrl: block.imageUrl ?? '',
+          itemCount: block.itemCount,
+        });
+        setBlocks((current) => current?.map((b) => (b.id === updated.id ? updated : b)) ?? null);
+        setSaved((current) => ({ ...current, [updated.id]: updated }));
+      }
+      setJustSaved(true);
     } catch {
       setError(t('homePage.saveError'));
     } finally {
-      setBusyId(null);
+      setSavingAll(false);
     }
   }
 
@@ -209,6 +219,7 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
   }
 
   const undo = useUndo();
+  const drag = useReorder(blocks?.length ?? 0, move);
 
   function remove(id: string) {
     setError(null);
@@ -223,18 +234,19 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
     });
   }
 
-  async function move(index: number, delta: number) {
+  async function move(from: number, to: number) {
     if (!blocks) return;
     // The order must list every section: a delete still waiting goes first.
     await undo.flush();
-    const target = index + delta;
-    if (target < 0 || target >= blocks.length) return;
-    const next = [...blocks];
-    [next[index], next[target]] = [next[target], next[index]];
+    // Edits not saved yet ride along: the server's list replaces ours.
+    const edits = Object.fromEntries(blocks.filter(isDirty).map((b) => [b.id, b]));
+    const next = moved(blocks, from, to);
     setBlocks(next);
     setError(null);
     try {
-      adopt(await reorderPageBlocks(poiId, [...next.map((b) => b.id), ...hiddenIds]));
+      const fresh = await reorderPageBlocks(poiId, [...next.map((b) => b.id), ...hiddenIds]);
+      adopt(fresh);
+      setBlocks((current) => current?.map((b) => edits[b.id] ?? b) ?? null);
     } catch {
       setError(t('homePage.saveError'));
       // Put the list back the way the server still has it.
@@ -290,10 +302,9 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
             { key: 'badges', label: t('tabs.homeBadges') },
             { key: 'sections', label: t('tabs.homeSections'), count: blocks?.length ?? null },
             { key: 'menu', label: t('tabs.homeMenu') },
-            // What Settings held about the community's look and details
-            // (Seb, 10 Nov 2026).
-            { key: 'personalise', label: t('tabs.settingsPersonalise') },
-            { key: 'place', label: t('tabs.settingsPlace') },
+            // What Settings held about the community's look, details and
+            // address (Seb, 10 Nov 2026), in one tab since 21 Nov 2026.
+            { key: 'identity', label: t('tabs.homeIdentity') },
           ]}
         />
 
@@ -326,34 +337,19 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
             const requiredModule = BLOCK_MODULE[block.type];
             const moduleOff = requiredModule && !isModuleLive(requiredModule);
             const busy = busyId === block.id;
+            const name = `${index + 1}. ${BLOCK_NAMES[block.type]}`;
 
             return (
-              <div key={block.id} className="card form">
-                <div className="card-actions" style={{ justifyContent: 'space-between', marginTop: 10, marginBottom: 4 }}>
-                  <p className="card-title" style={{ margin: 0 }}>
-                    {index + 1}. {BLOCK_NAMES[block.type]}
+              <div key={block.id} className="card form" {...drag.row(index)}>
+                <div className="reorder-row" style={{ marginTop: 6, marginBottom: 4 }}>
+                  <Grip {...drag.grip(index)} name={name} />
+                  <p className="card-title grow" style={{ margin: 0 }}>
+                    {name}
                   </p>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button
-                      type="button"
-                      className="btn btn-icon"
-                      onClick={() => move(index, -1)}
-                      disabled={index === 0}
-                      aria-label={t('homePage.moveUp')}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-icon"
-                      onClick={() => move(index, 1)}
-                      disabled={index === blocks.length - 1}
-                      aria-label={t('homePage.moveDown')}
-                    >
-                      ↓
-                    </button>
-                    <DestructiveButton label={t('homePage.delete')} onConfirm={() => remove(block.id)} />
-                  </div>
+                  <MoreMenu
+                    label={t('reorder.more', { name })}
+                    items={[{ label: t('homePage.delete'), destructive: true, undoable: true, onSelect: () => remove(block.id) }]}
+                  />
                 </div>
 
                 {moduleOff && <p className="error-text">{t('homePage.moduleOffNote')}</p>}
@@ -425,33 +421,27 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
                   </>
                 )}
 
-                <div className="card-actions">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => save(block)}
-                    disabled={busy || !isDirty(block)}
-                  >
-                    {busy ? t('homePage.saving') : t('homePage.save')}
-                  </button>
-                  {justSavedId === block.id && !isDirty(block) && (
-                    <span className="muted">{t('homePage.saved')}</span>
-                  )}
-                </div>
               </div>
             );
           })}
 
-          {blocks !== null && (
-            <div className="card">
-              <p className="card-title">{t('homePage.addSection')}</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
-                {ADDABLE_BLOCKS.map((type) => (
-                  <button key={type} type="button" className="btn btn-primary" onClick={() => add(type)}>
-                    + {BLOCK_NAMES[type]}
-                  </button>
-                ))}
-              </div>
+          {blocks !== null && blocks.length > 0 && (
+            <div className="card-actions" style={{ flexWrap: 'wrap' }}>
+              <span className="muted">{t('homePage.addSection')}</span>
+              {ADDABLE_BLOCKS.map((type) => (
+                <button key={type} type="button" className="btn btn-small" onClick={() => add(type)}>
+                  + {BLOCK_NAMES[type]}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {blocks !== null && blocks.length > 0 && (
+            <div className="save-bar">
+              <span className="muted">{justSaved && !blocks.some(isDirty) ? t('homePage.saved') : t('reorder.dragNote')}</span>
+              <button type="button" className="btn btn-primary" onClick={saveAll} disabled={savingAll || !blocks.some(isDirty)}>
+                {savingAll ? t('homePage.saving') : t('homePage.save')}
+              </button>
             </div>
           )}
         </TabPanel>
@@ -463,14 +453,12 @@ function HomePageEditor({ onReload, switched }: { onReload: (message: string) =>
           {(!poi || !menuOrder) && <p className="muted">{t('homePage.loading')}</p>}
         </TabPanel>
 
-        {/* The colour, then the name, description and logo. */}
-        <TabPanel idPrefix="home" tabKey="personalise" current={tab}>
+        {/* The colour, the name, description and logo, then the address. */}
+        <TabPanel idPrefix="home" tabKey="identity" current={tab}>
           {poi && modulesLoaded && <PersonalisePanel poi={poi} modules={modules} onSaved={setPoi} preview={false} />}
           <div style={{ height: 24 }} />
           {poi && <CommunityInfoCard key={poi.id} poi={poi} onSaved={setPoi} />}
-        </TabPanel>
-
-        <TabPanel idPrefix="home" tabKey="place" current={tab}>
+          <div style={{ height: 24 }} />
           {poi && <LocationCard key={poi.id} poi={poi} onSaved={setPoi} />}
         </TabPanel>
       </div>

@@ -11,7 +11,9 @@ import { TabBar, TabPanel, useTab } from '../components/Tabs';
 import { PayoutsBanner, PayoutsLock, PayoutsReadyNote, usePayoutsAccount } from '../components/PayoutsBanner';
 import { BizumToConfirm, PaymentMethodsCard } from '../components/BizumSection';
 
-const TABS = ['overview', 'paylink', 'campaigns', 'receipts'] as const;
+// How members can pay has a tab of its own once it works (Seb, 21 Nov
+// 2026); until then it stays above the tabs, as the first thing to do.
+const TABS = ['overview', 'paylink', 'campaigns', 'receipts', 'howtopay'] as const;
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -339,8 +341,7 @@ export function DonationsPage() {
       {payouts.account && (
         <>
           <PayoutsBanner poiId={poiId} account={payouts.account} onChange={payouts.setAccount} />
-          <PayoutsReadyNote account={payouts.account} />
-          <PaymentMethodsCard poiId={poiId} account={payouts.account} onChange={payouts.setAccount} />
+          {locked && <PaymentMethodsCard poiId={poiId} account={payouts.account} onChange={payouts.setAccount} />}
         </>
       )}
 
@@ -355,6 +356,7 @@ export function DonationsPage() {
             { key: 'paylink', label: t('tabs.donationsPayLink') },
             { key: 'campaigns', label: t('tabs.donationsCampaigns') },
             { key: 'receipts', label: t('tabs.donationsReceipts') },
+            { key: 'howtopay', label: t('tabs.donationsHowToPay') },
           ]}
         />
 
@@ -375,6 +377,15 @@ export function DonationsPage() {
 
         <TabPanel idPrefix="donations" tabKey="receipts" current={tab}>
           <ReceiptsSection poiId={poiId} />
+        </TabPanel>
+
+        <TabPanel idPrefix="donations" tabKey="howtopay" current={tab}>
+          {payouts.account && (
+            <>
+              <PaymentMethodsCard poiId={poiId} account={payouts.account} onChange={payouts.setAccount} />
+              <PayoutsReadyNote account={payouts.account} />
+            </>
+          )}
         </TabPanel>
       </PayoutsLock>
     </div>

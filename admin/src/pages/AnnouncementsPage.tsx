@@ -13,6 +13,7 @@ import {
 import { API_BASE_URL } from '../api/client';
 import type { Announcement } from '../api/types';
 import { DestructiveButton } from '../components/DestructiveButton';
+import { Dialog } from '../components/Dialog';
 import { hideFromList, useUndo } from '../components/Undo';
 
 // `notify` is null until somebody picks: it then follows `important`.
@@ -123,6 +124,7 @@ export function AnnouncementsPage() {
   // Remounts the new-post form after a save, which is the only way to
   // empty its file picker.
   const [formKey, setFormKey] = useState(0);
+  const [newOpen, setNewOpen] = useState(false);
 
   function load() {
     getAnnouncements(poiId)
@@ -157,6 +159,7 @@ export function AnnouncementsPage() {
       setItems((current) => [created, ...(current ?? [])]);
       setDraft(EMPTY_DRAFT);
       setFormKey((key) => key + 1);
+      setNewOpen(false);
     } catch {
       setError(t('announcements.createError'));
     } finally {
@@ -207,15 +210,31 @@ export function AnnouncementsPage() {
 
   return (
     <div>
-      <h2>{t('announcements.title')}</h2>
-      <p className="muted">{t('announcements.subtitle')}</p>
-
-      <form key={formKey} className="form card" onSubmit={handleCreate}>
-        <PostFields showNotify draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
-        <button type="submit" className="btn btn-primary" disabled={submitting || !draft.title.trim()}>
-          {submitting ? t('announcements.publishing') : t('announcements.publish')}
+      {/* The form opens from a button, as on Events, instead of standing
+          open above the posts (Seb, 21 Nov 2026). */}
+      <div className="page-head">
+        <div>
+          <h2>{t('announcements.title')}</h2>
+          <p className="muted">{t('announcements.subtitle')}</p>
+        </div>
+        <button type="button" className="btn btn-primary" onClick={() => setNewOpen(true)}>
+          {t('announcements.newButton')}
         </button>
-      </form>
+      </div>
+
+      <Dialog
+        open={newOpen}
+        onClose={() => setNewOpen(false)}
+        title={t('announcements.newButton')}
+        closeLabel={t('announcements.cancel')}
+      >
+        <form key={formKey} className="form" onSubmit={handleCreate}>
+          <PostFields showNotify draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
+          <button type="submit" className="btn btn-primary" disabled={submitting || !draft.title.trim()}>
+            {submitting ? t('announcements.publishing') : t('announcements.publish')}
+          </button>
+        </form>
+      </Dialog>
 
       {error && <p className="error-text">{error}</p>}
       {items === null && !error && <p className="muted">{t('announcements.loading')}</p>}
@@ -255,10 +274,10 @@ export function AnnouncementsPage() {
               {new Date(item.createdAt).toLocaleString(intlLocale(language), { dateStyle: 'long', timeStyle: 'short' })}
             </p>
             <div className="card-actions">
-              <button type="button" className="btn" onClick={() => startEdit(item)}>
+              <button type="button" className="text-action" onClick={() => startEdit(item)}>
                 {t('announcements.edit')}
               </button>
-              <DestructiveButton label={t('announcements.delete')} onConfirm={() => handleDelete(item.id)} />
+              <DestructiveButton quiet label={t('announcements.delete')} onConfirm={() => handleDelete(item.id)} />
             </div>
           </div>
         ),

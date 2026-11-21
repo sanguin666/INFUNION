@@ -34,17 +34,20 @@ export function PersonalisePanel({
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const themeDirty = theme !== savedTheme;
-
-  async function save() {
+  // A colour is saved as soon as it is picked (Seb, 21 Nov 2026: one
+  // button fewer); the phone beside it shows it straight away.
+  async function pick(next: PoiThemeName) {
+    if (next === theme && next === savedTheme) return;
+    setTheme(next);
     setSaving(true);
     setSaved(false);
     setError(null);
     try {
-      if (themeDirty) onSaved(await updatePoiBranding(poi.id, theme));
+      onSaved(await updatePoiBranding(poi.id, next));
       setSaved(true);
     } catch {
       setError(t('branding.saveError'));
+      setTheme(savedTheme);
     } finally {
       setSaving(false);
     }
@@ -66,30 +69,17 @@ export function PersonalisePanel({
                 role="radio"
                 aria-checked={theme === option.name}
                 className={`chip ${theme === option.name ? 'chip-selected' : ''}`}
-                onClick={() => {
-                  setTheme(option.name);
-                  setSaved(false);
-                }}
+                disabled={saving}
+                onClick={() => pick(option.name)}
               >
                 <span className="theme-swatch" style={{ background: option.primary }} aria-hidden="true" />
                 {t(`branding.${option.name}`)}
               </button>
             ))}
           </div>
+          {saved && <p className="muted" role="status" style={{ marginTop: 8 }}>{t('branding.saved')}</p>}
+          {error && <p className="error-text">{error}</p>}
         </div>
-
-        <div className="card-actions">
-          <button
-            type="button"
-            className="btn btn-primary"
-            disabled={saving || !themeDirty}
-            onClick={save}
-          >
-            {saving ? t('tabs.saving') : t('tabs.save')}
-          </button>
-          {saved && !themeDirty && <span className="muted">{t('branding.saved')}</span>}
-        </div>
-        {error && <p className="error-text">{error}</p>}
       </div>
 
       {preview && <AppPreview poi={poi} theme={theme} order={order} />}
