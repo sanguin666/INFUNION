@@ -6,7 +6,15 @@
 // with the admin account's language set to English.
 //   APP_URL=http://localhost:8082 ADMIN_URL=http://localhost:5199 node scripts/module-screenshots.cjs
 // Python 3 with Pillow turns the PNGs into the JPGs.
-const { chromium } = require('playwright');
+// ADMIN_ONLY=1 retakes only the admin halves (when only admin pages
+// changed; no app build needed). CHROME_PATH points at a browser when
+// Playwright has none of its own.
+let chromium;
+try {
+  ({ chromium } = require('playwright'));
+} catch {
+  ({ chromium } = require('playwright-core'));
+}
 const { execFileSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
@@ -38,8 +46,9 @@ const ADMIN_ROUTES = {
 };
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 
+  if (!process.env.ADMIN_ONLY) {
   const app = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
   const p = await app.newPage();
   await p.goto(APP); await p.waitForTimeout(3000);
@@ -60,6 +69,7 @@ const ADMIN_ROUTES = {
     if (r.then) { await p.getByText(r.then).click(); await p.waitForTimeout(2000); }
     await p.screenshot({ path: path.join(tmp, `${type}-app.png`) });
   }
+  }
 
   const admin = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 });
   const q = await admin.newPage();
@@ -69,7 +79,7 @@ const ADMIN_ROUTES = {
   await q.keyboard.press('Enter'); await q.waitForTimeout(3000);
   for (const [type, route] of Object.entries(ADMIN_ROUTES)) {
     await q.goto(`${ADMIN}/poi/${POI}/${route}`); await q.waitForTimeout(2500);
-    if (type === 'messages') { await q.getByRole('button', { name: 'Open' }).first().click(); await q.waitForTimeout(2000); }
+    if (type === 'messages') { await q.locator('main .card-row .btn').first().click(); await q.waitForTimeout(2000); }
     const x = await q.evaluate(() => (document.querySelector('main') || document.body).getBoundingClientRect().x);
     await q.screenshot({ path: path.join(tmp, `${type}-admin.png`), clip: { x, y: 0, width: Math.min(900, 1280 - x), height: 640 } });
   }

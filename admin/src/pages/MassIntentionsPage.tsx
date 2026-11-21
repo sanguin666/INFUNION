@@ -134,9 +134,6 @@ export function MassIntentionsPage() {
   const [tab, setTab] = useTab(['upcoming', 'all', 'offering'] as const);
   // The Offering tab keeps the list it came from loaded behind it.
   const [filter, setFilter] = useState<IntentionFilter>(tab === 'all' ? 'all' : 'upcoming');
-  useEffect(() => {
-    if (tab !== 'offering') setFilter(tab);
-  }, [tab]);
   const [addOpen, setAddOpen] = useState(false);
   const [items, setItems] = useState<MassIntention[] | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
@@ -326,6 +323,7 @@ export function MassIntentionsPage() {
           onChange={(key) => {
             setTab(key);
             if (key !== 'offering' && key !== filter) {
+              setFilter(key);
               setItems(null);
               setError(null);
             }
