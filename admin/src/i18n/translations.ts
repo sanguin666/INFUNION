@@ -415,6 +415,7 @@ export type Translations = {
     onceHeading: string;
   };
   announcements: {
+    newButton: string;
     title: string;
     subtitle: string;
     titleLabel: string;
@@ -445,6 +446,8 @@ export type Translations = {
     photoError: string;
   };
   livestreams: {
+    newButton: string;
+    statusLabel: string;
     title: string;
     subtitle: string;
     titleLabel: string;
@@ -1352,6 +1355,8 @@ export type Translations = {
     messageBodyDefault: string;
   };
   readings: {
+    tabDays: string;
+    tabLink: string;
     title: string;
     subtitle: string;
     earlier: string;
@@ -1902,6 +1907,7 @@ const en: Translations = {
     onceHeading: 'Dates',
   },
   announcements: {
+    newButton: "+ New announcement",
     title: 'Announcements',
     subtitle: 'Post bulletin-style updates for this community.',
     titleLabel: 'Title',
@@ -1932,6 +1938,8 @@ const en: Translations = {
     photoError: 'The photo could not be saved.',
   },
   livestreams: {
+    newButton: "+ Schedule a livestream",
+    statusLabel: "Status of {{name}}",
     title: 'Livestreams',
     subtitle: 'Schedule a link to a livestreamed or recorded service.',
     titleLabel: 'Title',
@@ -2840,6 +2848,8 @@ const en: Translations = {
     messageBodyDefault: "Hello {name},\n\n",
   },
   readings: {
+    tabDays: "Day by day",
+    tabLink: "Link to the full readings",
     title: 'Daily readings',
     subtitle: 'The texts members read in the app, one day at a time. Prepare them ahead: each published day appears in the app from midnight on its date.',
     earlier: 'Earlier',
@@ -3390,6 +3400,7 @@ const es: Translations = {
     onceHeading: 'Fechas',
   },
   announcements: {
+    newButton: "+ Nuevo anuncio",
     title: 'Anuncios',
     subtitle: 'Publica actualizaciones tipo boletín para esta comunidad.',
     titleLabel: 'Título',
@@ -3420,6 +3431,8 @@ const es: Translations = {
     photoError: 'No se pudo guardar la foto.',
   },
   livestreams: {
+    newButton: "+ Programar una transmisión",
+    statusLabel: "Estado de {{name}}",
     title: 'Transmisiones',
     subtitle: 'Programa un enlace a un servicio en vivo o grabado.',
     titleLabel: 'Título',
@@ -4328,6 +4341,8 @@ const es: Translations = {
     messageBodyDefault: "Hola {name},\n\n",
   },
   readings: {
+    tabDays: "Día a día",
+    tabLink: "Enlace a las lecturas completas",
     title: 'Lecturas del día',
     subtitle: 'Los textos que los miembros leen en la app, día a día. Prepáralos con antelación: cada día publicado aparece en la app a medianoche de su fecha.',
     earlier: 'Antes',
@@ -4878,6 +4893,7 @@ const fr: Translations = {
     onceHeading: 'Dates',
   },
   announcements: {
+    newButton: "+ Nouvelle annonce",
     title: 'Annonces',
     subtitle: 'Publiez des mises à jour de type bulletin pour cette communauté.',
     titleLabel: 'Titre',
@@ -4908,6 +4924,8 @@ const fr: Translations = {
     photoError: 'La photo n’a pas pu être enregistrée.',
   },
   livestreams: {
+    newButton: "+ Programmer une diffusion",
+    statusLabel: "État de {{name}}",
     title: 'Diffusions',
     subtitle: 'Planifiez un lien vers un service en direct ou enregistré.',
     titleLabel: 'Titre',
@@ -5816,6 +5834,8 @@ const fr: Translations = {
     messageBodyDefault: "Bonjour {name},\n\n",
   },
   readings: {
+    tabDays: "Jour par jour",
+    tabLink: "Lien vers les lectures complètes",
     title: 'Lectures du jour',
     subtitle: 'Les textes que les membres lisent dans l’app, jour après jour. Préparez-les à l’avance : chaque jour publié apparaît dans l’app à minuit le jour même.',
     earlier: 'Plus tôt',
@@ -6366,6 +6386,7 @@ const va: Translations = {
     onceHeading: 'Dates',
   },
   announcements: {
+    newButton: "+ Nou anunci",
     title: 'Anuncis',
     subtitle: 'Publica notícies a manera de full informatiu per a esta comunitat.',
     titleLabel: 'Títol',
@@ -6396,6 +6417,8 @@ const va: Translations = {
     photoError: 'No s’ha pogut guardar la foto.',
   },
   livestreams: {
+    newButton: "+ Programar una retransmissió",
+    statusLabel: "Estat de {{name}}",
     title: 'Retransmissions',
     subtitle: 'Programa un enllaç a una celebració en directe o gravada.',
     titleLabel: 'Títol',
@@ -7304,6 +7327,8 @@ const va: Translations = {
     messageBodyDefault: "Hola {name},\n\n",
   },
   readings: {
+    tabDays: "Dia a dia",
+    tabLink: "Enllaç a les lectures completes",
     title: 'Lectures del dia',
     subtitle: 'Els textos que els membres lligen en l’app, dia a dia. Prepara’ls amb antelació: cada dia publicat apareix en l’app a mitjanit de la seua data.',
     earlier: 'Abans',
@@ -7854,6 +7879,7 @@ const ca: Translations = {
     onceHeading: 'Dates',
   },
   announcements: {
+    newButton: "+ Nou anunci",
     title: 'Anuncis',
     subtitle: 'Publica notícies a manera de full informatiu per a aquesta comunitat.',
     titleLabel: 'Títol',
@@ -7884,6 +7910,8 @@ const ca: Translations = {
     photoError: 'No s’ha pogut desar la foto.',
   },
   livestreams: {
+    newButton: "+ Programa una retransmissió",
+    statusLabel: "Estat de {{name}}",
     title: 'Retransmissions',
     subtitle: 'Programa un enllaç a una celebració en directe o gravada.',
     titleLabel: 'Títol',
@@ -8792,6 +8820,8 @@ const ca: Translations = {
     messageBodyDefault: "Hola {name},\n\n",
   },
   readings: {
+    tabDays: "Dia a dia",
+    tabLink: "Enllaç a les lectures completes",
     title: 'Lectures del dia',
     subtitle: 'Els textos que els membres llegeixen a l’app, dia a dia. Prepara’ls amb antelació: cada dia publicat apareix a l’app a mitjanit de la seva data.',
     earlier: 'Abans',
@@ -9342,6 +9372,7 @@ const gl: Translations = {
     onceHeading: 'Datas',
   },
   announcements: {
+    newButton: "+ Novo anuncio",
     title: 'Anuncios',
     subtitle: 'Publica novidades tipo boletín para esta comunidade.',
     titleLabel: 'Título',
@@ -9372,6 +9403,8 @@ const gl: Translations = {
     photoError: 'Non se puido gardar a foto.',
   },
   livestreams: {
+    newButton: "+ Programar unha emisión",
+    statusLabel: "Estado de {{name}}",
     title: 'Emisións',
     subtitle: 'Programa unha ligazón a unha celebración en directo ou gravada.',
     titleLabel: 'Título',
@@ -10280,6 +10313,8 @@ const gl: Translations = {
     messageBodyDefault: "Ola {name},\n\n",
   },
   readings: {
+    tabDays: "Día a día",
+    tabLink: "Ligazón ás lecturas completas",
     title: 'Lecturas do día',
     subtitle: 'Os textos que os membros len na app, día a día. Prepáraos con antelación: cada día publicado aparece na app á medianoite da súa data.',
     earlier: 'Antes',
@@ -10830,6 +10865,7 @@ const pt: Translations = {
     onceHeading: 'Datas',
   },
   announcements: {
+    newButton: "+ Novo anúncio",
     title: 'Anúncios',
     subtitle: 'Publique notícias, como num boletim, para esta comunidade.',
     titleLabel: 'Título',
@@ -10860,6 +10896,8 @@ const pt: Translations = {
     photoError: 'Não foi possível guardar a fotografia.',
   },
   livestreams: {
+    newButton: "+ Agendar uma transmissão",
+    statusLabel: "Estado de {{name}}",
     title: 'Transmissões',
     subtitle: 'Agende uma ligação para uma celebração em direto ou gravada.',
     titleLabel: 'Título',
@@ -11768,6 +11806,8 @@ const pt: Translations = {
     messageBodyDefault: "Olá {name},\n\n",
   },
   readings: {
+    tabDays: "Dia a dia",
+    tabLink: "Ligação às leituras completas",
     title: 'Leituras do dia',
     subtitle: 'Os textos que os membros leem na app, dia a dia. Prepare-os com antecedência: cada dia publicado aparece na app à meia-noite da sua data.',
     earlier: 'Antes',
