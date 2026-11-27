@@ -168,6 +168,12 @@ export function BadgesSection({ poiId, modules, onPreview }: Props) {
 
   async function move(from: number, to: number) {
     if (!badges) return;
+    // The order must list every badge the server still has: a delete
+    // waiting behind the Undo bar goes first. Without this the server
+    // refused the order, the list came back with the badge still in it,
+    // and the delete then went through anyway, so deleting the badge
+    // again failed (Seb, 27 Nov 2026).
+    await undo.flush();
     const next = moved(badges, from, to);
     setBadges(next);
     setError(null);
