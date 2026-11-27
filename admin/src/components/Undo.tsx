@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { markLeaving } from '../api/client';
+import { commitDelete } from './deleteCommit';
 import { useI18n } from '../i18n/I18nContext';
 
 /**
@@ -83,10 +84,7 @@ export function UndoProvider({ children }: { children: ReactNode }) {
   const counter = useRef(0);
 
   const send = useCallback(async (item: Pending) => {
-    try {
-      await item.commit();
-    } catch {
-      item.restore();
+    if ((await commitDelete(item)) === 'restored') {
       item.onError?.();
       setFailed(true);
       window.setTimeout(() => setFailed(false), 6000);
