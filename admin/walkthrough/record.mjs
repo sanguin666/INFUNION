@@ -58,7 +58,7 @@ const CLIPS = {
     await r.move('iframe', 1.2);
     await r.say(c.phone);
     await r.hold(2.2);
-    await r.move('main button.btn-icon:visible >> nth=3', 1);
+    await r.move('main .grip:visible >> nth=3', 1);
     await r.say(c.order);
     await r.hold(1.8);
     await r.move('main input.switch:visible >> nth=1', 1);
@@ -122,16 +122,18 @@ const CLIPS = {
   async donations(r, c) {
     await r.say(c.intro);
     await r.hold(1.4);
-    await r.move('main input >> nth=0', 1.1);
-    await r.say(c.bizum);
-    await r.hold(1.8);
     await r.say(c.figures);
     await r.move('main .stat-tile >> nth=1', 1);
+    await r.hold(1.8);
+    // How to pay is the last tab since 21 Nov 2026.
+    await r.say(c.bizum);
+    await r.click('[role=tab] >> nth=-1', { settle: 1200 });
+    await r.move('main [role=tabpanel]:visible input >> nth=0', 1);
     await r.hold(1.8);
     await r.say(c.campaigns);
     await r.click('[role=tab] >> nth=2', { settle: 1200 });
     await r.scroll('[role=tablist]', 1.4);
-    await r.move('main [role=tablist] ~ * .btn-primary, main .btn-primary >> nth=-1', 1);
+    await r.move('main [role=tabpanel]:visible .btn-primary >> nth=0', 1);
     await r.hold(2.4);
   },
 
@@ -172,6 +174,11 @@ await context.route(`${API}/**`, async (route) => {
   const response = await route.fetch();
   const type = response.headers()['content-type'] ?? '';
   if (!type.includes('json')) return route.fulfill({ response });
+  // Clips always show the plain "Versions" button, whatever versions
+  // the local database holds (tests and other work save some).
+  if (/\/page-versions$/.test(new URL(route.request().url()).pathname) && route.request().method() === 'GET') {
+    return route.fulfill({ response, body: JSON.stringify({ versions: [], max: 5 }) });
+  }
   const body = (await response.text()).replaceAll(`${API}/c/`, `${SITE}/c/`);
   return route.fulfill({ response, body });
 });
