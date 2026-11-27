@@ -144,6 +144,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test
+        run: npm test
+
       # `tsc -b && vite build` — the typecheck is part of it.
       - name: Build
         run: npm run build
